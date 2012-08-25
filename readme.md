@@ -1,6 +1,12 @@
 Geo - a simple geospatial library for .NET
 ==========================================
 
+NuGet Packages
+--------------
+
+* [Geo](https://nuget.org/packages/Geo)
+* [Geo.Raven](https://nuget.org/packages/Geo.Raven)
+
 Why Geo?
 --------
 
