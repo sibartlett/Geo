@@ -1,0 +1,46 @@
+﻿<gpx version="1.1" creator="Software 1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name><![CDATA[Some Title]]></name>
+    <desc><![CDATA[Some Notes]]></desc>
+    <author>
+      <name><![CDATA[FF SS]]></name>
+    </author>
+    <link href="http://www.example.com">
+      <text>See this track at www.example.com</text>
+    </link>
+    <time>2010-10-15T17:42:33Z</time>
+  </metadata>
+  <rte>
+    <desc>Planned track</desc>
+    <rtept lat="-2" lon="2">
+      <name>waypoint 1</name>
+    </rtept>
+    <rtept lat="-3" lon="3">
+      <name>waypoint 2</name>
+    </rtept>
+    <rtept lat="-4" lon="4">
+      <name>waypoint 3</name>
+    </rtept>
+  </rte>
+  <trk>
+    <name>Actual Track</name>
+    <trkseg>
+      <trkpt lat="-51" lon="51">
+        <ele>102</ele>
+        <time>2010-10-15T17:42:33Z</time>
+      </trkpt>
+      <trkpt lat="-52" lon="52">
+        <ele>104</ele>
+        <time>2010-10-15T17:43:33Z</time>
+      </trkpt>
+      <trkpt lat="-53" lon="53">
+        <ele>106</ele>
+        <time>2010-10-15T17:44:33Z</time>
+      </trkpt>
+      <trkpt lat="-54" lon="54">
+        <ele>108</ele>
+        <time>2010-10-15T17:45:33Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

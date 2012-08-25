@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B2E32781-A0AE-4803-8DE0-92A95F218363}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Geo</RootNamespace>
+    <AssemblyName>Geo</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Geometries\Bounds.cs" />
+    <Compile Include="Geometries\ILatLngCoordinate.cs" />
+    <Compile Include="Geometries\IPoint.cs" />
+    <Compile Include="Geometries\LatLngCoordinate.cs" />
+    <Compile Include="GeoUtil.cs" />
+    <Compile Include="Geometries\LineString.cs" />
+    <Compile Include="Geometries\MultiPoint.cs" />
+    <Compile Include="Gps\Metadata\Metadata.cs" />
+    <Compile Include="Gps\Serialization\Gpx10Serializer.cs" />
+    <Compile Include="Gps\Serialization\Xml\GpsXmlSerializer.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx10\gpx10.cs">
+      <DependentUpon>gpx10.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Gps\Serialization\Xml\Gpx11\gpx11.cs">
+      <DependentUpon>gpx11.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Gps\Route.cs" />
+    <Compile Include="Gps\Metadata\RouteMetadata.cs" />
+    <Compile Include="Gps\Track.cs" />
+    <Compile Include="Gps\Metadata\TrackMetadata.cs" />
+    <Compile Include="Measure\DistanceUnit.cs" />
+    <Compile Include="Measure\SpeedUnit.cs" />
+    <Compile Include="Measure\SpeedUnitExtensions.cs" />
+    <Compile Include="Measure\DistanceUnitExtensions.cs" />
+    <Compile Include="Measure\UnitAttribute.cs" />
+    <Compile Include="Measure\UnitMetadata.cs" />
+    <Compile Include="Reference\Ellipsoid.cs" />
+    <Compile Include="Gps\Metadata\GpsMetadata.cs" />
+    <Compile Include="Measure\Distance.cs" />
+    <Compile Include="Geometries\GeodeticLine.cs" />
+    <Compile Include="Geometries\GeodeticCalculations.cs" />
+    <Compile Include="Gps\Fix.cs" />
+    <Compile Include="Geometries\Point.cs" />
+    <Compile Include="Geometries\LineStringExtensions.cs" />
+    <Compile Include="Measure\Speed.cs" />
+    <Compile Include="Gps\GpsData.cs" />
+    <Compile Include="Gps\Serialization\IGpsFileDeSerializer.cs" />
+    <Compile Include="Gps\Serialization\Gpx11Serializer.cs" />
+    <Compile Include="Gps\Serialization\IgcDeSerializer.cs" />
+    <Compile Include="Gps\Serialization\NmeaDeSerializer.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Geo.nuspec" />
+    <None Include="Gps\Serialization\Xml\Gpx10\gpx10.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Gps\Serialization\Xml\Gpx11\gpx11.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
