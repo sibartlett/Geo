@@ -45,7 +45,6 @@
     <Compile Include="Geometries\LatLngCoordinate.cs" />
     <Compile Include="GeoUtil.cs" />
     <Compile Include="Geometries\LineString.cs" />
-    <Compile Include="Geometries\MultiPoint.cs" />
     <Compile Include="Gps\Metadata\Metadata.cs" />
     <Compile Include="Gps\Serialization\Gpx10Serializer.cs" />
     <Compile Include="Gps\Serialization\Xml\GpsXmlSerializer.cs" />
