@@ -21,5 +21,15 @@ namespace Raven.Client
         {
             return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Mile).Value, coord.Latitude, coord.Longitude);
         }
+
+        public static IDocumentQueryCustomization WithinRadiusOf<T>(this IDocumentQueryCustomization self, double radiusMiles, ILatLngCoordinate coord)
+        {
+            return self.WithinRadiusOf(radiusMiles, coord.Latitude, coord.Longitude);
+        }
+
+        public static IDocumentQueryCustomization WithinRadiusOf<T>(this IDocumentQueryCustomization self, Distance radius, ILatLngCoordinate coord)
+        {
+            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Mile).Value, coord.Latitude, coord.Longitude);
+        }
     }
 }
