@@ -1,14 +1,11 @@
-Geo - a simple geospatial library for .NET
-==========================================
+# Geo - a simple geospatial library for .NET
 
-NuGet Packages
---------------
+#### NuGet Packages
 
 * [Geo](https://nuget.org/packages/Geo)
 * [Geo.Raven](https://nuget.org/packages/Geo.Raven)
 
-Why Geo?
---------
+#### Why Geo?
 
 Geo is a spatial library that:
 
@@ -16,8 +13,7 @@ Geo is a spatial library that:
 * uses geographic terminology
 * is simple
 
-What does Geo do?
------------------
+#### What does Geo do?
 
 * Provides geographic data types
 * Performs geodesic calculations, such as calculating great circle lines and rhumb lines
@@ -25,8 +21,7 @@ What does Geo do?
 * Writes GPX files/streams
 * Integrates with RavenDB client (using the Geo.Raven package)
 
-Geo doesn't have the features I need?
--------------------------------------
+#### Geo doesn't have the features I need?
 
 I add data types and/or features when I need them, or when I have the time.
 
@@ -37,13 +32,11 @@ If Geo does not meet your needs then you should checkout the following libraries
 * NetTopologySuite ([Homepage](http://code.google.com/p/nettopologysuite/), [NuGet](http://nuget.org/profiles/nettopologysuite%20-%20team))
 * DotSpatial ([Homepage](http://dotspatial.codeplex.com/), [NuGet](http://nuget.org/profiles/mudnug))
 
-Useful Information
-------------------
+#### Useful Information
 
 * All ordinates are in degress, unless specified otherwise
 * All measurements are in S.I. units (metres, seconds, etc.), unless specified otherwise
 
-License
--------
+#### License
 
 Geo is licensed under the terms of the GNU Lesser General Public License as published by the Free Software Foundation.
