@@ -5,6 +5,10 @@ namespace Geo.Gps
 {
     public class Fix : Point
     {
+        protected Fix()
+        {
+        }
+
         public Fix(double lat, double lon, DateTime dateTime) : base(lat, lon)
         {
             TimeUtc = dateTime;

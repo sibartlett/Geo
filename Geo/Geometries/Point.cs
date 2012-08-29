@@ -2,7 +2,7 @@
 {
     public class Point : IPoint
     {
-        private Point()
+        protected Point()
         {
         }
 

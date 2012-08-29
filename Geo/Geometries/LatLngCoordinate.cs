@@ -4,7 +4,7 @@ namespace Geo.Geometries
 {
     public class LatLngCoordinate : ILatLngCoordinate
     {
-        private LatLngCoordinate()
+        protected LatLngCoordinate()
         {
         }
 
