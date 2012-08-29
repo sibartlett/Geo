@@ -14,7 +14,7 @@ namespace Geo.Geometries
 
         public static TimeSpan GetDuration<T>(this LineString<T> lineString) where T : Fix
         {
-            return lineString.StartPoint.TimeUtc - lineString.EndPoint.TimeUtc;
+            return lineString.EndPoint.TimeUtc - lineString.StartPoint.TimeUtc;
         }
 
         public static DateTime GetStartTime<T>(this LineString<T> lineString) where T : Fix

@@ -48,8 +48,15 @@ namespace Geo.Geometries
             var distance = new Distance(0);
 
             if (Count > 1)
+            {
+
                 for (var i = 1; i < Count; i++)
-                    distance += this[i - 1].CalculateShortestLine(this[i]).Distance;
+                {
+                    var line = this[i - 1].CalculateShortestLine(this[i]);
+                    if(line !=null)
+                        distance += line.Distance;
+                }
+            }
 
             return distance;
         }

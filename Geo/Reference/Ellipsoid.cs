@@ -67,6 +67,9 @@ namespace Geo.Reference
 
         public GeodeticLine CalculateOrthodromicLine(double lat1, double lon1, double lat2, double lon2)
         {
+            if (Math.Abs(lat1 - lat2) < double.Epsilon && Math.Abs(lon1 - lon2) < double.Epsilon)
+                return null;
+
             lon1 = lon1.ToRadians();
             lat1 = lat1.ToRadians();
             lon2 = lon2.ToRadians();
@@ -159,6 +162,9 @@ namespace Geo.Reference
 
         public GeodeticLine CalculateLoxodromicLine(double lat1, double lon1, double lat2, double lon2)
         {
+            if (Math.Abs(lat1 - lat2) < double.Epsilon && Math.Abs(lon1 - lon2) < double.Epsilon)
+                return null;
+
             double distance;
             var latDeltaRad = (lat2 - lat1).ToRadians();
             var meridionalDistance = CalculateMeridionalDistance(lat2) - CalculateMeridionalDistance(lat1);
