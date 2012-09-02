@@ -12,9 +12,9 @@ namespace Raven.Client
             return store;
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusMiles, ILatLngCoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusKm, ILatLngCoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
         {
-            return self.WithinRadiusOf(radiusMiles, coord.Latitude, coord.Longitude);
+            return self.WithinRadiusOf(radiusKm, coord.Latitude, coord.Longitude);
         }
 
         public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, Distance radius, ILatLngCoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
@@ -22,9 +22,9 @@ namespace Raven.Client
             return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Mile).Value, coord.Latitude, coord.Longitude);
         }
 
-        public static IDocumentQueryCustomization WithinRadiusOf<T>(this IDocumentQueryCustomization self, double radiusMiles, ILatLngCoordinate coord)
+        public static IDocumentQueryCustomization WithinRadiusOf<T>(this IDocumentQueryCustomization self, double radiusKm, ILatLngCoordinate coord)
         {
-            return self.WithinRadiusOf(radiusMiles, coord.Latitude, coord.Longitude);
+            return self.WithinRadiusOf(radiusKm, coord.Latitude, coord.Longitude);
         }
 
         public static IDocumentQueryCustomization WithinRadiusOf<T>(this IDocumentQueryCustomization self, Distance radius, ILatLngCoordinate coord)

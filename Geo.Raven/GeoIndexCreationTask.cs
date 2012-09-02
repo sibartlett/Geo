@@ -19,6 +19,7 @@ namespace Geo.Raven
 
         public override IndexDefinition CreateIndexDefinition()
         {
+            
             var definition = base.CreateIndexDefinition();
             definition.Map = TransformGeoIndexes(definition.Map);
             definition.Reduce = TransformGeoIndexes(definition.Reduce);
@@ -30,8 +31,8 @@ namespace Geo.Raven
             if (value == null)
                 return null;
 
-            return Regex.Replace(value, @"(this.)?GeoIndex\((?<prop>[\w\d\s\.]+)\)", match =>
-                       string.Format("SpatialIndex.Generate({0}.Latitude, {0}.Longitude)", match.Groups["prop"].Value));
+            return Regex.Replace(value, @"GeoIndex\((?<prop>[\w\d\s\.]+)\)", match =>
+                       string.Format("SpatialGenerate({0}.Latitude, {0}.Longitude)", match.Groups["prop"].Value));
         }
     }
 }
