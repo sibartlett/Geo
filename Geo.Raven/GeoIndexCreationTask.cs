@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Geo.Geometries;
 using Raven.Abstractions.Indexing;
+using Raven.Client;
 using Raven.Client.Indexes;
 
 namespace Geo.Raven
@@ -12,14 +13,23 @@ namespace Geo.Raven
 
     public class GeoIndexCreationTask<TDocument, TReduceResult> : AbstractIndexCreationTask<TDocument, TReduceResult>
     {
-        public object GeoIndex(ILatLngCoordinate coordinate)
+        public object GeoIndex(IGeometry shape)
+        {
+            throw new NotSupportedException("This method is provided solely to allow query translation on the server");
+        }
+
+        public object GeoIndex(IGeometry shape, SpatialSearchStrategy strategy)
+        {
+            throw new NotSupportedException("This method is provided solely to allow query translation on the server");
+        }
+
+        public object GeoIndex(IGeometry shape, SpatialSearchStrategy strategy, int maxTreeLevel)
         {
             throw new NotSupportedException("This method is provided solely to allow query translation on the server");
         }
 
         public override IndexDefinition CreateIndexDefinition()
         {
-            
             var definition = base.CreateIndexDefinition();
             definition.Map = TransformGeoIndexes(definition.Map);
             definition.Reduce = TransformGeoIndexes(definition.Reduce);
@@ -31,8 +41,12 @@ namespace Geo.Raven
             if (value == null)
                 return null;
 
-            return Regex.Replace(value, @"GeoIndex\((?<prop>[\w\d\s\.]+)\)", match =>
-                       string.Format("SpatialGenerate({0}.Latitude, {0}.Longitude)", match.Groups["prop"].Value));
+            return Regex.Replace(value, @"GeoIndex\((?<prop>[\w\d\s\.]+)(?<sep>[,)])", match =>
+                       string.Format("SpatialGenerate(\"{0}\", {1}.{2}{3}",
+                       GeoRavenExtensions.DefaultGeoFieldName,
+                       match.Groups["prop"].Value,
+                       GeoContractResolver.IndexProperty,
+                       match.Groups["sep"].Value));
         }
     }
 }

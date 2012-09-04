@@ -144,8 +144,8 @@ namespace Geo.Gps.Serialization
                 for (var i = 0; i < track.Segments.Count; i++)
                 {
                     var segment = track.Segments[i];
-                    var pts = new wptType[segment.Count];
-                    for (var j = 0; j < segment.Count; j++)
+                    var pts = new wptType[segment.Points.Count];
+                    for (var j = 0; j < segment.Points.Count; j++)
                     {
                         pts[j] = new wptType
                         {
@@ -171,8 +171,8 @@ namespace Geo.Gps.Serialization
                 SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                rte.rtept = new wptType[route.LineString.Count];
-                for (var j = 0; j < route.LineString.Count; j++)
+                rte.rtept = new wptType[route.LineString.Points.Count];
+                for (var j = 0; j < route.LineString.Points.Count; j++)
                 {
                     rte.rtept[j] = new wptType
                     {

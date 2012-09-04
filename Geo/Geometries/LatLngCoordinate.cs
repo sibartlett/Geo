@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Geo.Geometries
 {
@@ -50,7 +51,17 @@ namespace Geo.Geometries
             {
                 return (Latitude.GetHashCode()*397) ^ Longitude.GetHashCode();
             }
-        } 
+        }
+
+        public string ToWktPartString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
+        }
+
+        public string ToWktString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "POINT ({0})", ToWktPartString());
+        }
 
         public static LatLngCoordinate Parse(string coordinate)
         {

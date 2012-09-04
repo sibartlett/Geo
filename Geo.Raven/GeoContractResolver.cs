@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Geo.Geometries;
 using Raven.Imports.Newtonsoft.Json.Serialization;
 
@@ -7,6 +8,7 @@ namespace Geo.Raven
     public class GeoContractResolver : DefaultContractResolver
     {
         private readonly Assembly _assembly = typeof (ILatLngCoordinate).Assembly;
+        public const string IndexProperty = "RavenIndex";
 
         protected override JsonProperty CreateProperty(MemberInfo member, global::Raven.Imports.Newtonsoft.Json.MemberSerialization memberSerialization)
         {
@@ -28,6 +30,26 @@ namespace Geo.Raven
             }
 
             return prop;
+        }
+
+        protected override JsonObjectContract CreateObjectContract(Type objectType)
+        {
+            var contract = base.CreateObjectContract(objectType);
+
+            if (typeof(IGeometry).IsAssignableFrom(objectType))
+            {
+                contract.Properties.Add(new JsonProperty
+                {
+                    Readable = true,
+                    ShouldSerialize = value => true,
+                    PropertyName = IndexProperty,
+                    PropertyType = typeof(string),
+                    Converter = ResolveContractConverter(typeof(string)),
+                    ValueProvider = new GeoValueProvider()
+                });
+            }
+
+            return contract;
         }
     }
 }

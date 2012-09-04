@@ -1,4 +1,6 @@
-﻿namespace Geo.Geometries
+﻿using System.Globalization;
+
+namespace Geo.Geometries
 {
     public class Point : IPoint
     {
@@ -58,6 +60,16 @@
                 hashCode = (hashCode*397) ^ Elevation.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public string ToWktPartString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
+        }
+
+        public string ToWktString()
+        {
+            return string.Format("POINT ({0})", ToWktPartString());
         }
 
         public static Point ParseCoordinate(string coordinate)

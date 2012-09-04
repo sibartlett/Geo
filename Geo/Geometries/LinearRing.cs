@@ -1,69 +1,59 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : LineString<Point>
+    public class LinearRing : LinearRing<Point>
     {
-        public LineString()
+        public LinearRing()
         {
         }
 
-        public LineString(IEnumerable<Point> items) : base(items)
+        public LinearRing(IEnumerable<Point> items)
+            : base(items)
         {
         }
     }
 
-    public class LineString<T> : IGeometry, IWktShape, IWktPart where T : class, IPoint
+    public class LinearRing<T> : IGeometry, IWktShape, IWktPart where T : class, IPoint
     {
-        public LineString()
+        public LinearRing()
         {
             Points = new List<T>();
         }
 
-        public LineString(IEnumerable<T> items)
+        public LinearRing(IEnumerable<T> items)
         {
             Points = new List<T>(items);
         }
 
         public List<T> Points { get; protected set; }
 
-        public T StartPoint
-        {
-            get
-            {
-                return IsEmpty ? default(T) : Points[0];
-            }
-        }
-
-        public T EndPoint
-        {
-            get
-            {
-                return IsEmpty ? default(T) : Points[Points.Count - 1];
-            }
-        }
-
-        public Distance CalculateLength()
+        public Distance CalculatePerimeter()
         {
             var distance = new Distance(0);
 
             if (!IsEmpty)
             {
-
                 for (var i = 1; i < Points.Count; i++)
                 {
                     var line = Points[i - 1].CalculateShortestLine(Points[i]);
-                    if(line !=null)
+                    if (line != null)
                         distance += line.Distance;
+
+                    if (i == Points.Count - 1)
+                    {
+                        line = Points[0].CalculateShortestLine(Points[i - 1]);
+                        if (line != null)
+                            distance += line.Distance;
+                    }
                 }
             }
 
             return distance;
-        }
+        } 
 
         public bool IsEmpty
         {
@@ -72,7 +62,7 @@ namespace Geo.Geometries
 
         public bool IsClosed
         {
-            get { return !IsEmpty && StartPoint == EndPoint; }
+            get { return !IsEmpty && Points[0] == Points[Points.Count - 1]; }
         }
 
         public Bounds GetBounds()
@@ -94,6 +84,12 @@ namespace Geo.Geometries
                     if (i > 0)
                         buf.Append(", ");
                     buf.Append(Points[i].ToWktPartString());
+
+                    if (i == Points.Count - 1 && Points[0] != Points[Points.Count - 1])
+                    {
+                        buf.Append(", ");
+                        buf.Append(Points[0].ToWktPartString());
+                    }
                 }
                 buf.Append(")");
             }
@@ -103,7 +99,7 @@ namespace Geo.Geometries
         public string ToWktString()
         {
             var buf = new StringBuilder();
-            buf.Append("LINESTRING ");
+            buf.Append("LINEARRING ");
             buf.Append(ToWktPartString());
             return buf.ToString();
         }

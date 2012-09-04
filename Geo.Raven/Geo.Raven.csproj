@@ -47,6 +47,7 @@
     <Compile Include="GeoContractResolver.cs" />
     <Compile Include="GeoIndexCreationTask.cs" />
     <Compile Include="GeoRavenExtensions.cs" />
+    <Compile Include="GeoValueProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

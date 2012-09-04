@@ -23,9 +23,9 @@ Geo is a spatial library that:
 
 #### Geo doesn't have the features I need?
 
-I add data types and/or features when I need them, or when I have the time.
+I add features when I need them, or when I have the time.
 
-I am taking contributes, but would appreciate discussing your idea(s) first. Please raise a ticket to kick off a discussion.
+I am taking contributions, but would appreciate discussing your idea(s) first. Please raise a ticket to kick off a discussion.
 
 If Geo does not meet your needs then you should checkout the following libraries:
 

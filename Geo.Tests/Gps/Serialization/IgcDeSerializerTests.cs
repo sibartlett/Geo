@@ -22,7 +22,7 @@ namespace Geo.Tests.Gps.Serialization
                 Assert.That(result.Waypoints.Count, Is.EqualTo(0));
                 Assert.That(result.Tracks.Count, Is.EqualTo(1));
                 Assert.That(result.Tracks[0].Segments.Count, Is.EqualTo(1));
-                Assert.That(result.Tracks[0].Segments[0].Count, Is.EqualTo(9));
+                Assert.That(result.Tracks[0].Segments[0].Points.Count, Is.EqualTo(9));
             }
         }
     }
