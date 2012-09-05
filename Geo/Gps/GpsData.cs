@@ -31,7 +31,7 @@ namespace Geo.Gps
             Metadata = new GpsMetadata();
             Routes = new List<Route>();
             Tracks = new List<Track>();
-            Waypoints=new List<Point>();
+            Waypoints = new List<Point>();
         }
 
         public GpsMetadata Metadata { get; private set; }
@@ -61,10 +61,10 @@ namespace Geo.Gps
             return parser == null ? null : parser.DeSerialize(stream);
         }
 
-        public static GpsData Parse(string path)
-        {
-            using (var stream = new FileStream(path, FileMode.Open))
-                return Parse(stream);
-        }
+        //public static GpsData Parse(string path)
+        //{
+        //    using (var stream = new FileStream(path, FileMode.Open))
+        //        return Parse(stream);
+        //}
     }
 }

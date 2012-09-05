@@ -37,7 +37,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
         [XmlElement("trk")]
         public trkType[] trk { get; set; }
 
-        public extensionsType extensions { get; set; }
+        //public extensionsType extensions { get; set; }
 
         [XmlAttribute]
         public string version { get; set; }
@@ -69,7 +69,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
 
         public boundsType bounds { get; set; }
 
-        public extensionsType extensions { get; set; }
+        //public extensionsType extensions { get; set; }
     }
     
     [GeneratedCode("xsd", "4.0.30319.1")]
@@ -98,7 +98,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
         [XmlElement("trkpt")]
         public wptType[] trkpt { get; set; }
 
-        public extensionsType extensions { get; set; }
+        //public extensionsType extensions { get; set; }
     }
     
     [GeneratedCode("xsd", "4.0.30319.1")]
@@ -170,7 +170,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
         [XmlElement(DataType="integer")]
         public string dgpsid { get; set; }
 
-        public extensionsType extensions { get; set; }
+        //public extensionsType extensions { get; set; }
 
         [XmlAttribute]
         public decimal lat { get; set; }
@@ -207,12 +207,12 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
         pps,
     }
     
-    [GeneratedCode("xsd", "4.0.30319.1")]
-    [XmlType(Namespace="http://www.topografix.com/GPX/1/1")]
-    public partial class extensionsType {
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
-    }
+    //[GeneratedCode("xsd", "4.0.30319.1")]
+    //[XmlType(Namespace="http://www.topografix.com/GPX/1/1")]
+    //public partial class extensionsType {
+    //    [XmlAnyElement]
+    //    public XmlElement[] Any { get; set; }
+    //}
     
     [GeneratedCode("xsd", "4.0.30319.1")]
     [XmlType(Namespace="http://www.topografix.com/GPX/1/1")]
@@ -233,7 +233,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
 
         public string type { get; set; }
 
-        public extensionsType extensions { get; set; }
+        //public extensionsType extensions { get; set; }
 
         [XmlElement("trkseg")]
         public trksegType[] trkseg { get; set; }
@@ -258,7 +258,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx11 {
 
         public string type { get; set; }
 
-        public extensionsType extensions { get; set; }
+        //public extensionsType extensions { get; set; }
 
         [XmlElement("rtept")]
         public wptType[] rtept { get; set; }

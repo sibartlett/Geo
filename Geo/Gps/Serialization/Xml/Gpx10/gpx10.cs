@@ -57,8 +57,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx10 {
         [XmlElement("trk")]
         public gpxTrk[] trk { get; set; }
 
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
+        //[XmlAnyElement]
+        //public XmlElement[] Any { get; set; }
 
         [XmlAttribute]
         public string version { get; set; }
@@ -155,8 +155,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx10 {
         [XmlElement(DataType="integer")]
         public string dgpsid { get; set; }
 
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
+        //[XmlAnyElement]
+        //public XmlElement[] Any { get; set; }
 
         [XmlAttribute]
         public decimal lat { get; set; }
@@ -201,8 +201,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx10 {
         [XmlElement(DataType="nonNegativeInteger")]
         public string number { get; set; }
 
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
+        //[XmlAnyElement]
+        //public XmlElement[] Any { get; set; }
 
         [XmlElement("rtept")]
         public gpxRteRtept[] rtept { get; set; }
@@ -279,8 +279,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx10 {
         [XmlElement(DataType="integer")]
         public string dgpsid { get; set; }
 
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
+        //[XmlAnyElement]
+        //public XmlElement[] Any { get; set; }
 
         [XmlAttribute]
         public decimal lat { get; set; }
@@ -308,8 +308,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx10 {
         [XmlElement(DataType="nonNegativeInteger")]
         public string number { get; set; }
 
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
+        //[XmlAnyElement]
+        //public XmlElement[] Any { get; set; }
 
         [XmlArrayItem("trkpt", typeof(gpxTrkTrksegTrkpt[]), IsNullable=false)]
         public gpxTrkTrksegTrkpt[][] trkseg { get; set; }
@@ -396,8 +396,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx10 {
         [XmlElement(DataType="integer")]
         public string dgpsid { get; set; }
 
-        [XmlAnyElement]
-        public XmlElement[] Any { get; set; }
+        //[XmlAnyElement]
+        //public XmlElement[] Any { get; set; }
 
         [XmlAttribute]
         public decimal lat { get; set; }

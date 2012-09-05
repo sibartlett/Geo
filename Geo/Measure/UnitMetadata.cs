@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 
 namespace Geo.Measure
 {
@@ -28,12 +29,13 @@ namespace Geo.Measure
 
         private static ReadOnlyDictionary<T, UnitAttribute> Init<T>()
         {
-            var type = typeof (T);
+            var type = typeof(T);
             var a = new Dictionary<T, UnitAttribute>();
             foreach (T unit in Enum.GetValues(type))
             {
                 var name = Enum.GetName(type, unit);
-                var attr = type.GetField(name)
+
+                var attr = type.GetTypeInfo().GetDeclaredField(name)
                     .GetCustomAttributes(typeof(UnitAttribute), false)
                     .Cast<UnitAttribute>()
                     .FirstOrDefault();
