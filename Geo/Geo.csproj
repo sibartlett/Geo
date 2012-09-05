@@ -76,6 +76,10 @@
     <Compile Include="Gps\Serialization\Xml\Gpx11\gpx11.cs">
       <DependentUpon>gpx11.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxBoundsBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxMetadataBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxRteTrkBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxWaypointBase.cs" />
     <Compile Include="Gps\Track.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Measure\Distance.cs" />
