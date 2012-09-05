@@ -14,1787 +14,395 @@
 namespace Geo.Gps.Serialization.Xml.Gpx10 {
     using System;
     using System.CodeDom.Compiler;
-    using System.ComponentModel;
-    using System.Diagnostics;
+    using System.Xml;
     using System.Xml.Serialization;
     
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(AnonymousType=true, Namespace="http://www.topografix.com/GPX/1/0")]
     [XmlRoot(Namespace="http://www.topografix.com/GPX/1/0", IsNullable=false)]
     public partial class gpx {
-        
-        private string nameField;
-        
-        private string descField;
-        
-        private string authorField;
-        
-        private string emailField;
-        
-        private string urlField;
-        
-        private string urlnameField;
-        
-        private System.DateTime timeField;
-        
-        private bool timeFieldSpecified;
-        
-        private string keywordsField;
-        
-        private boundsType boundsField;
-        
-        private gpxWpt[] wptField;
-        
-        private gpxRte[] rteField;
-        
-        private gpxTrk[] trkField;
-        
-        private System.Xml.XmlElement[] anyField;
-        
-        private string versionField;
-        
-        private string creatorField;
-        
         public gpx() {
-            this.versionField = "1.0";
+            this.version = "1.0";
         }
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string author {
-            get {
-                return this.authorField;
-            }
-            set {
-                this.authorField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string email {
-            get {
-                return this.emailField;
-            }
-            set {
-                this.emailField = value;
-            }
-        }
-        
-        /// <remarks/>
+
+        public string name { get; set; }
+
+        public string desc { get; set; }
+
+        public string author { get; set; }
+
+        public string email { get; set; }
+
         [XmlElement(DataType="anyURI")]
-        public string url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string urlname {
-            get {
-                return this.urlnameField;
-            }
-            set {
-                this.urlnameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public System.DateTime time {
-            get {
-                return this.timeField;
-            }
-            set {
-                this.timeField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string url { get; set; }
+
+        public string urlname { get; set; }
+
+        public DateTime time { get; set; }
+
         [XmlIgnore]
-        public bool timeSpecified {
-            get {
-                return this.timeFieldSpecified;
-            }
-            set {
-                this.timeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string keywords {
-            get {
-                return this.keywordsField;
-            }
-            set {
-                this.keywordsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public boundsType bounds {
-            get {
-                return this.boundsField;
-            }
-            set {
-                this.boundsField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool timeSpecified { get; set; }
+
+        public string keywords { get; set; }
+
+        public boundsType bounds { get; set; }
+
         [XmlElement("wpt")]
-        public gpxWpt[] wpt {
-            get {
-                return this.wptField;
-            }
-            set {
-                this.wptField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public gpxWpt[] wpt { get; set; }
+
         [XmlElement("rte")]
-        public gpxRte[] rte {
-            get {
-                return this.rteField;
-            }
-            set {
-                this.rteField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public gpxRte[] rte { get; set; }
+
         [XmlElement("trk")]
-        public gpxTrk[] trk {
-            get {
-                return this.trkField;
-            }
-            set {
-                this.trkField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public gpxTrk[] trk { get; set; }
+
         [XmlAnyElement]
-        public System.Xml.XmlElement[] Any {
-            get {
-                return this.anyField;
-            }
-            set {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public XmlElement[] Any { get; set; }
+
         [XmlAttribute]
-        public string version {
-            get {
-                return this.versionField;
-            }
-            set {
-                this.versionField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string version { get; set; }
+
         [XmlAttribute]
-        public string creator {
-            get {
-                return this.creatorField;
-            }
-            set {
-                this.creatorField = value;
-            }
-        }
+        public string creator { get; set; }
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(Namespace="http://www.topografix.com/GPX/1/0")]
     public partial class boundsType {
-        
-        private decimal minlatField;
-        
-        private decimal minlonField;
-        
-        private decimal maxlatField;
-        
-        private decimal maxlonField;
-        
-        /// <remarks/>
+
         [XmlAttribute]
-        public decimal minlat {
-            get {
-                return this.minlatField;
-            }
-            set {
-                this.minlatField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal minlat { get; set; }
+
         [XmlAttribute]
-        public decimal minlon {
-            get {
-                return this.minlonField;
-            }
-            set {
-                this.minlonField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal minlon { get; set; }
+
         [XmlAttribute]
-        public decimal maxlat {
-            get {
-                return this.maxlatField;
-            }
-            set {
-                this.maxlatField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal maxlat { get; set; }
+
         [XmlAttribute]
-        public decimal maxlon {
-            get {
-                return this.maxlonField;
-            }
-            set {
-                this.maxlonField = value;
-            }
-        }
+        public decimal maxlon { get; set; }
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(AnonymousType=true, Namespace="http://www.topografix.com/GPX/1/0")]
     public partial class gpxWpt {
-        
-        private decimal eleField;
-        
-        private bool eleFieldSpecified;
-        
-        private System.DateTime timeField;
-        
-        private bool timeFieldSpecified;
-        
-        private decimal magvarField;
-        
-        private bool magvarFieldSpecified;
-        
-        private decimal geoidheightField;
-        
-        private bool geoidheightFieldSpecified;
-        
-        private string nameField;
-        
-        private string cmtField;
-        
-        private string descField;
-        
-        private string srcField;
-        
-        private string urlField;
-        
-        private string urlnameField;
-        
-        private string symField;
-        
-        private string typeField;
-        
-        private fixType fixField;
-        
-        private bool fixFieldSpecified;
-        
-        private string satField;
-        
-        private decimal hdopField;
-        
-        private bool hdopFieldSpecified;
-        
-        private decimal vdopField;
-        
-        private bool vdopFieldSpecified;
-        
-        private decimal pdopField;
-        
-        private bool pdopFieldSpecified;
-        
-        private decimal ageofdgpsdataField;
-        
-        private bool ageofdgpsdataFieldSpecified;
-        
-        private string dgpsidField;
-        
-        private System.Xml.XmlElement[] anyField;
-        
-        private decimal latField;
-        
-        private decimal lonField;
-        
-        /// <remarks/>
-        public decimal ele {
-            get {
-                return this.eleField;
-            }
-            set {
-                this.eleField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal ele { get; set; }
+
         [XmlIgnore]
-        public bool eleSpecified {
-            get {
-                return this.eleFieldSpecified;
-            }
-            set {
-                this.eleFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public System.DateTime time {
-            get {
-                return this.timeField;
-            }
-            set {
-                this.timeField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool eleSpecified { get; set; }
+
+        public DateTime time { get; set; }
+
         [XmlIgnore]
-        public bool timeSpecified {
-            get {
-                return this.timeFieldSpecified;
-            }
-            set {
-                this.timeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal magvar {
-            get {
-                return this.magvarField;
-            }
-            set {
-                this.magvarField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool timeSpecified { get; set; }
+
+        public decimal magvar { get; set; }
+
         [XmlIgnore]
-        public bool magvarSpecified {
-            get {
-                return this.magvarFieldSpecified;
-            }
-            set {
-                this.magvarFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal geoidheight {
-            get {
-                return this.geoidheightField;
-            }
-            set {
-                this.geoidheightField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool magvarSpecified { get; set; }
+
+        public decimal geoidheight { get; set; }
+
         [XmlIgnore]
-        public bool geoidheightSpecified {
-            get {
-                return this.geoidheightFieldSpecified;
-            }
-            set {
-                this.geoidheightFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string cmt {
-            get {
-                return this.cmtField;
-            }
-            set {
-                this.cmtField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string src {
-            get {
-                return this.srcField;
-            }
-            set {
-                this.srcField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool geoidheightSpecified { get; set; }
+
+        public string name { get; set; }
+
+        public string cmt { get; set; }
+
+        public string desc { get; set; }
+
+        public string src { get; set; }
+
         [XmlElement(DataType="anyURI")]
-        public string url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string urlname {
-            get {
-                return this.urlnameField;
-            }
-            set {
-                this.urlnameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string sym {
-            get {
-                return this.symField;
-            }
-            set {
-                this.symField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public fixType fix {
-            get {
-                return this.fixField;
-            }
-            set {
-                this.fixField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string url { get; set; }
+
+        public string urlname { get; set; }
+
+        public string sym { get; set; }
+
+        public string type { get; set; }
+
+        public fixType fix { get; set; }
+
         [XmlIgnore]
-        public bool fixSpecified {
-            get {
-                return this.fixFieldSpecified;
-            }
-            set {
-                this.fixFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool fixSpecified { get; set; }
+
         [XmlElement(DataType="nonNegativeInteger")]
-        public string sat {
-            get {
-                return this.satField;
-            }
-            set {
-                this.satField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal hdop {
-            get {
-                return this.hdopField;
-            }
-            set {
-                this.hdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string sat { get; set; }
+
+        public decimal hdop { get; set; }
+
         [XmlIgnore]
-        public bool hdopSpecified {
-            get {
-                return this.hdopFieldSpecified;
-            }
-            set {
-                this.hdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal vdop {
-            get {
-                return this.vdopField;
-            }
-            set {
-                this.vdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool hdopSpecified { get; set; }
+
+        public decimal vdop { get; set; }
+
         [XmlIgnore]
-        public bool vdopSpecified {
-            get {
-                return this.vdopFieldSpecified;
-            }
-            set {
-                this.vdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal pdop {
-            get {
-                return this.pdopField;
-            }
-            set {
-                this.pdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool vdopSpecified { get; set; }
+
+        public decimal pdop { get; set; }
+
         [XmlIgnore]
-        public bool pdopSpecified {
-            get {
-                return this.pdopFieldSpecified;
-            }
-            set {
-                this.pdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal ageofdgpsdata {
-            get {
-                return this.ageofdgpsdataField;
-            }
-            set {
-                this.ageofdgpsdataField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool pdopSpecified { get; set; }
+
+        public decimal ageofdgpsdata { get; set; }
+
         [XmlIgnore]
-        public bool ageofdgpsdataSpecified {
-            get {
-                return this.ageofdgpsdataFieldSpecified;
-            }
-            set {
-                this.ageofdgpsdataFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool ageofdgpsdataSpecified { get; set; }
+
         [XmlElement(DataType="integer")]
-        public string dgpsid {
-            get {
-                return this.dgpsidField;
-            }
-            set {
-                this.dgpsidField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string dgpsid { get; set; }
+
         [XmlAnyElement]
-        public System.Xml.XmlElement[] Any {
-            get {
-                return this.anyField;
-            }
-            set {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public XmlElement[] Any { get; set; }
+
         [XmlAttribute]
-        public decimal lat {
-            get {
-                return this.latField;
-            }
-            set {
-                this.latField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal lat { get; set; }
+
         [XmlAttribute]
-        public decimal lon {
-            get {
-                return this.lonField;
-            }
-            set {
-                this.lonField = value;
-            }
-        }
+        public decimal lon { get; set; }
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
     [XmlType(Namespace="http://www.topografix.com/GPX/1/0")]
     public enum fixType {
         
-        /// <remarks/>
         none,
         
-        /// <remarks/>
         [XmlEnum("2d")]
         Item2d,
         
-        /// <remarks/>
         [XmlEnum("3d")]
         Item3d,
         
-        /// <remarks/>
         dgps,
         
-        /// <remarks/>
         pps,
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(AnonymousType=true, Namespace="http://www.topografix.com/GPX/1/0")]
     public partial class gpxRte {
-        
-        private string nameField;
-        
-        private string cmtField;
-        
-        private string descField;
-        
-        private string srcField;
-        
-        private string urlField;
-        
-        private string urlnameField;
-        
-        private string numberField;
-        
-        private System.Xml.XmlElement[] anyField;
-        
-        private gpxRteRtept[] rteptField;
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string cmt {
-            get {
-                return this.cmtField;
-            }
-            set {
-                this.cmtField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string src {
-            get {
-                return this.srcField;
-            }
-            set {
-                this.srcField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string name { get; set; }
+
+        public string cmt { get; set; }
+
+        public string desc { get; set; }
+
+        public string src { get; set; }
+
         [XmlElement(DataType="anyURI")]
-        public string url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string urlname {
-            get {
-                return this.urlnameField;
-            }
-            set {
-                this.urlnameField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string url { get; set; }
+
+        public string urlname { get; set; }
+
         [XmlElement(DataType="nonNegativeInteger")]
-        public string number {
-            get {
-                return this.numberField;
-            }
-            set {
-                this.numberField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string number { get; set; }
+
         [XmlAnyElement]
-        public System.Xml.XmlElement[] Any {
-            get {
-                return this.anyField;
-            }
-            set {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public XmlElement[] Any { get; set; }
+
         [XmlElement("rtept")]
-        public gpxRteRtept[] rtept {
-            get {
-                return this.rteptField;
-            }
-            set {
-                this.rteptField = value;
-            }
-        }
+        public gpxRteRtept[] rtept { get; set; }
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(AnonymousType=true, Namespace="http://www.topografix.com/GPX/1/0")]
     public partial class gpxRteRtept {
-        
-        private decimal eleField;
-        
-        private bool eleFieldSpecified;
-        
-        private System.DateTime timeField;
-        
-        private bool timeFieldSpecified;
-        
-        private decimal magvarField;
-        
-        private bool magvarFieldSpecified;
-        
-        private decimal geoidheightField;
-        
-        private bool geoidheightFieldSpecified;
-        
-        private string nameField;
-        
-        private string cmtField;
-        
-        private string descField;
-        
-        private string srcField;
-        
-        private string urlField;
-        
-        private string urlnameField;
-        
-        private string symField;
-        
-        private string typeField;
-        
-        private fixType fixField;
-        
-        private bool fixFieldSpecified;
-        
-        private string satField;
-        
-        private decimal hdopField;
-        
-        private bool hdopFieldSpecified;
-        
-        private decimal vdopField;
-        
-        private bool vdopFieldSpecified;
-        
-        private decimal pdopField;
-        
-        private bool pdopFieldSpecified;
-        
-        private decimal ageofdgpsdataField;
-        
-        private bool ageofdgpsdataFieldSpecified;
-        
-        private string dgpsidField;
-        
-        private System.Xml.XmlElement[] anyField;
-        
-        private decimal latField;
-        
-        private decimal lonField;
-        
-        /// <remarks/>
-        public decimal ele {
-            get {
-                return this.eleField;
-            }
-            set {
-                this.eleField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal ele { get; set; }
+
         [XmlIgnore]
-        public bool eleSpecified {
-            get {
-                return this.eleFieldSpecified;
-            }
-            set {
-                this.eleFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public System.DateTime time {
-            get {
-                return this.timeField;
-            }
-            set {
-                this.timeField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool eleSpecified { get; set; }
+
+        public DateTime time { get; set; }
+
         [XmlIgnore]
-        public bool timeSpecified {
-            get {
-                return this.timeFieldSpecified;
-            }
-            set {
-                this.timeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal magvar {
-            get {
-                return this.magvarField;
-            }
-            set {
-                this.magvarField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool timeSpecified { get; set; }
+
+        public decimal magvar { get; set; }
+
         [XmlIgnore]
-        public bool magvarSpecified {
-            get {
-                return this.magvarFieldSpecified;
-            }
-            set {
-                this.magvarFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal geoidheight {
-            get {
-                return this.geoidheightField;
-            }
-            set {
-                this.geoidheightField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool magvarSpecified { get; set; }
+
+        public decimal geoidheight { get; set; }
+
         [XmlIgnore]
-        public bool geoidheightSpecified {
-            get {
-                return this.geoidheightFieldSpecified;
-            }
-            set {
-                this.geoidheightFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string cmt {
-            get {
-                return this.cmtField;
-            }
-            set {
-                this.cmtField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string src {
-            get {
-                return this.srcField;
-            }
-            set {
-                this.srcField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool geoidheightSpecified { get; set; }
+
+        public string name { get; set; }
+
+        public string cmt { get; set; }
+
+        public string desc { get; set; }
+
+        public string src { get; set; }
+
         [XmlElement(DataType="anyURI")]
-        public string url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string urlname {
-            get {
-                return this.urlnameField;
-            }
-            set {
-                this.urlnameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string sym {
-            get {
-                return this.symField;
-            }
-            set {
-                this.symField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public fixType fix {
-            get {
-                return this.fixField;
-            }
-            set {
-                this.fixField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string url { get; set; }
+
+        public string urlname { get; set; }
+
+        public string sym { get; set; }
+
+        public string type { get; set; }
+
+        public fixType fix { get; set; }
+
         [XmlIgnore]
-        public bool fixSpecified {
-            get {
-                return this.fixFieldSpecified;
-            }
-            set {
-                this.fixFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool fixSpecified { get; set; }
+
         [XmlElement(DataType="nonNegativeInteger")]
-        public string sat {
-            get {
-                return this.satField;
-            }
-            set {
-                this.satField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal hdop {
-            get {
-                return this.hdopField;
-            }
-            set {
-                this.hdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string sat { get; set; }
+
+        public decimal hdop { get; set; }
+
         [XmlIgnore]
-        public bool hdopSpecified {
-            get {
-                return this.hdopFieldSpecified;
-            }
-            set {
-                this.hdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal vdop {
-            get {
-                return this.vdopField;
-            }
-            set {
-                this.vdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool hdopSpecified { get; set; }
+
+        public decimal vdop { get; set; }
+
         [XmlIgnore]
-        public bool vdopSpecified {
-            get {
-                return this.vdopFieldSpecified;
-            }
-            set {
-                this.vdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal pdop {
-            get {
-                return this.pdopField;
-            }
-            set {
-                this.pdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool vdopSpecified { get; set; }
+
+        public decimal pdop { get; set; }
+
         [XmlIgnore]
-        public bool pdopSpecified {
-            get {
-                return this.pdopFieldSpecified;
-            }
-            set {
-                this.pdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal ageofdgpsdata {
-            get {
-                return this.ageofdgpsdataField;
-            }
-            set {
-                this.ageofdgpsdataField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool pdopSpecified { get; set; }
+
+        public decimal ageofdgpsdata { get; set; }
+
         [XmlIgnore]
-        public bool ageofdgpsdataSpecified {
-            get {
-                return this.ageofdgpsdataFieldSpecified;
-            }
-            set {
-                this.ageofdgpsdataFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool ageofdgpsdataSpecified { get; set; }
+
         [XmlElement(DataType="integer")]
-        public string dgpsid {
-            get {
-                return this.dgpsidField;
-            }
-            set {
-                this.dgpsidField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string dgpsid { get; set; }
+
         [XmlAnyElement]
-        public System.Xml.XmlElement[] Any {
-            get {
-                return this.anyField;
-            }
-            set {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public XmlElement[] Any { get; set; }
+
         [XmlAttribute]
-        public decimal lat {
-            get {
-                return this.latField;
-            }
-            set {
-                this.latField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal lat { get; set; }
+
         [XmlAttribute]
-        public decimal lon {
-            get {
-                return this.lonField;
-            }
-            set {
-                this.lonField = value;
-            }
-        }
+        public decimal lon { get; set; }
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(AnonymousType=true, Namespace="http://www.topografix.com/GPX/1/0")]
     public partial class gpxTrk {
-        
-        private string nameField;
-        
-        private string cmtField;
-        
-        private string descField;
-        
-        private string srcField;
-        
-        private string urlField;
-        
-        private string urlnameField;
-        
-        private string numberField;
-        
-        private System.Xml.XmlElement[] anyField;
-        
-        private gpxTrkTrksegTrkpt[][] trksegField;
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string cmt {
-            get {
-                return this.cmtField;
-            }
-            set {
-                this.cmtField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string src {
-            get {
-                return this.srcField;
-            }
-            set {
-                this.srcField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string name { get; set; }
+
+        public string cmt { get; set; }
+
+        public string desc { get; set; }
+
+        public string src { get; set; }
+
         [XmlElement(DataType="anyURI")]
-        public string url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string urlname {
-            get {
-                return this.urlnameField;
-            }
-            set {
-                this.urlnameField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string url { get; set; }
+
+        public string urlname { get; set; }
+
         [XmlElement(DataType="nonNegativeInteger")]
-        public string number {
-            get {
-                return this.numberField;
-            }
-            set {
-                this.numberField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string number { get; set; }
+
         [XmlAnyElement]
-        public System.Xml.XmlElement[] Any {
-            get {
-                return this.anyField;
-            }
-            set {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public XmlElement[] Any { get; set; }
+
         [XmlArrayItem("trkpt", typeof(gpxTrkTrksegTrkpt[]), IsNullable=false)]
-        public gpxTrkTrksegTrkpt[][] trkseg {
-            get {
-                return this.trksegField;
-            }
-            set {
-                this.trksegField = value;
-            }
-        }
+        public gpxTrkTrksegTrkpt[][] trkseg { get; set; }
     }
     
-    /// <remarks/>
     [GeneratedCode("xsd", "4.0.30319.1")]
-    [Serializable]
-    [DebuggerStepThrough]
-    [DesignerCategory("code")]
     [XmlType(AnonymousType=true, Namespace="http://www.topografix.com/GPX/1/0")]
     public partial class gpxTrkTrksegTrkpt {
-        
-        private decimal eleField;
-        
-        private bool eleFieldSpecified;
-        
-        private System.DateTime timeField;
-        
-        private bool timeFieldSpecified;
-        
-        private decimal courseField;
-        
-        private bool courseFieldSpecified;
-        
-        private decimal speedField;
-        
-        private bool speedFieldSpecified;
-        
-        private decimal magvarField;
-        
-        private bool magvarFieldSpecified;
-        
-        private decimal geoidheightField;
-        
-        private bool geoidheightFieldSpecified;
-        
-        private string nameField;
-        
-        private string cmtField;
-        
-        private string descField;
-        
-        private string srcField;
-        
-        private string urlField;
-        
-        private string urlnameField;
-        
-        private string symField;
-        
-        private string typeField;
-        
-        private fixType fixField;
-        
-        private bool fixFieldSpecified;
-        
-        private string satField;
-        
-        private decimal hdopField;
-        
-        private bool hdopFieldSpecified;
-        
-        private decimal vdopField;
-        
-        private bool vdopFieldSpecified;
-        
-        private decimal pdopField;
-        
-        private bool pdopFieldSpecified;
-        
-        private decimal ageofdgpsdataField;
-        
-        private bool ageofdgpsdataFieldSpecified;
-        
-        private string dgpsidField;
-        
-        private System.Xml.XmlElement[] anyField;
-        
-        private decimal latField;
-        
-        private decimal lonField;
-        
-        /// <remarks/>
-        public decimal ele {
-            get {
-                return this.eleField;
-            }
-            set {
-                this.eleField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal ele { get; set; }
+
         [XmlIgnore]
-        public bool eleSpecified {
-            get {
-                return this.eleFieldSpecified;
-            }
-            set {
-                this.eleFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public System.DateTime time {
-            get {
-                return this.timeField;
-            }
-            set {
-                this.timeField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool eleSpecified { get; set; }
+
+        public DateTime time { get; set; }
+
         [XmlIgnore]
-        public bool timeSpecified {
-            get {
-                return this.timeFieldSpecified;
-            }
-            set {
-                this.timeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal course {
-            get {
-                return this.courseField;
-            }
-            set {
-                this.courseField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool timeSpecified { get; set; }
+
+        public decimal course { get; set; }
+
         [XmlIgnore]
-        public bool courseSpecified {
-            get {
-                return this.courseFieldSpecified;
-            }
-            set {
-                this.courseFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal speed {
-            get {
-                return this.speedField;
-            }
-            set {
-                this.speedField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool courseSpecified { get; set; }
+
+        public decimal speed { get; set; }
+
         [XmlIgnore]
-        public bool speedSpecified {
-            get {
-                return this.speedFieldSpecified;
-            }
-            set {
-                this.speedFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal magvar {
-            get {
-                return this.magvarField;
-            }
-            set {
-                this.magvarField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool speedSpecified { get; set; }
+
+        public decimal magvar { get; set; }
+
         [XmlIgnore]
-        public bool magvarSpecified {
-            get {
-                return this.magvarFieldSpecified;
-            }
-            set {
-                this.magvarFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal geoidheight {
-            get {
-                return this.geoidheightField;
-            }
-            set {
-                this.geoidheightField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool magvarSpecified { get; set; }
+
+        public decimal geoidheight { get; set; }
+
         [XmlIgnore]
-        public bool geoidheightSpecified {
-            get {
-                return this.geoidheightFieldSpecified;
-            }
-            set {
-                this.geoidheightFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string cmt {
-            get {
-                return this.cmtField;
-            }
-            set {
-                this.cmtField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string desc {
-            get {
-                return this.descField;
-            }
-            set {
-                this.descField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string src {
-            get {
-                return this.srcField;
-            }
-            set {
-                this.srcField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool geoidheightSpecified { get; set; }
+
+        public string name { get; set; }
+
+        public string cmt { get; set; }
+
+        public string desc { get; set; }
+
+        public string src { get; set; }
+
         [XmlElement(DataType="anyURI")]
-        public string url {
-            get {
-                return this.urlField;
-            }
-            set {
-                this.urlField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string urlname {
-            get {
-                return this.urlnameField;
-            }
-            set {
-                this.urlnameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string sym {
-            get {
-                return this.symField;
-            }
-            set {
-                this.symField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public fixType fix {
-            get {
-                return this.fixField;
-            }
-            set {
-                this.fixField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string url { get; set; }
+
+        public string urlname { get; set; }
+
+        public string sym { get; set; }
+
+        public string type { get; set; }
+
+        public fixType fix { get; set; }
+
         [XmlIgnore]
-        public bool fixSpecified {
-            get {
-                return this.fixFieldSpecified;
-            }
-            set {
-                this.fixFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool fixSpecified { get; set; }
+
         [XmlElement(DataType="nonNegativeInteger")]
-        public string sat {
-            get {
-                return this.satField;
-            }
-            set {
-                this.satField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal hdop {
-            get {
-                return this.hdopField;
-            }
-            set {
-                this.hdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string sat { get; set; }
+
+        public decimal hdop { get; set; }
+
         [XmlIgnore]
-        public bool hdopSpecified {
-            get {
-                return this.hdopFieldSpecified;
-            }
-            set {
-                this.hdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal vdop {
-            get {
-                return this.vdopField;
-            }
-            set {
-                this.vdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool hdopSpecified { get; set; }
+
+        public decimal vdop { get; set; }
+
         [XmlIgnore]
-        public bool vdopSpecified {
-            get {
-                return this.vdopFieldSpecified;
-            }
-            set {
-                this.vdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal pdop {
-            get {
-                return this.pdopField;
-            }
-            set {
-                this.pdopField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool vdopSpecified { get; set; }
+
+        public decimal pdop { get; set; }
+
         [XmlIgnore]
-        public bool pdopSpecified {
-            get {
-                return this.pdopFieldSpecified;
-            }
-            set {
-                this.pdopFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public decimal ageofdgpsdata {
-            get {
-                return this.ageofdgpsdataField;
-            }
-            set {
-                this.ageofdgpsdataField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool pdopSpecified { get; set; }
+
+        public decimal ageofdgpsdata { get; set; }
+
         [XmlIgnore]
-        public bool ageofdgpsdataSpecified {
-            get {
-                return this.ageofdgpsdataFieldSpecified;
-            }
-            set {
-                this.ageofdgpsdataFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
+        public bool ageofdgpsdataSpecified { get; set; }
+
         [XmlElement(DataType="integer")]
-        public string dgpsid {
-            get {
-                return this.dgpsidField;
-            }
-            set {
-                this.dgpsidField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public string dgpsid { get; set; }
+
         [XmlAnyElement]
-        public System.Xml.XmlElement[] Any {
-            get {
-                return this.anyField;
-            }
-            set {
-                this.anyField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public XmlElement[] Any { get; set; }
+
         [XmlAttribute]
-        public decimal lat {
-            get {
-                return this.latField;
-            }
-            set {
-                this.latField = value;
-            }
-        }
-        
-        /// <remarks/>
+        public decimal lat { get; set; }
+
         [XmlAttribute]
-        public decimal lon {
-            get {
-                return this.lonField;
-            }
-            set {
-                this.lonField = value;
-            }
-        }
+        public decimal lon { get; set; }
     }
 }
