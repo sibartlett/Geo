@@ -8,7 +8,7 @@ namespace Geo.Raven
     public class GeoContractResolver : DefaultContractResolver
     {
         private readonly Assembly _assembly = typeof (ILatLngCoordinate).Assembly;
-        public const string IndexProperty = "RavenIndex";
+        public const string IndexProperty = "__geo";
 
         protected override JsonProperty CreateProperty(MemberInfo member, global::Raven.Imports.Newtonsoft.Json.MemberSerialization memberSerialization)
         {
