@@ -17,15 +17,16 @@ namespace Geo.Tests.Gps.Serialization
             {
                 using (var stream = new FileStream(fileInfo.FullName, FileMode.Open))
                 {
-                    if (gpx10.CanDeSerialize(stream))
+                    var streamWrapper = new StreamWrapper(stream);
+                    if (gpx10.CanDeSerialize(streamWrapper))
                     {
-                        var data = gpx10.DeSerialize(stream);
+                        var data = gpx10.DeSerialize(streamWrapper);
                         data.ToGpx();
                         data.ToGpx(1);
                     }
-                    else if (gpx11.CanDeSerialize(stream))
+                    else if (gpx11.CanDeSerialize(streamWrapper))
                     {
-                        var data = gpx11.DeSerialize(stream);
+                        var data = gpx11.DeSerialize(streamWrapper);
                         data.ToGpx();
                         data.ToGpx(1); 
                     }

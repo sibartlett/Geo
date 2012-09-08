@@ -15,10 +15,10 @@ namespace Geo.Gps.Serialization
 
         public Uri FileFormatSpecificationUri { get { return null; } }
 
-        public bool CanDeSerialize(Stream stream)
+        public bool CanDeSerialize(StreamWrapper streamWrapper)
         {
-            stream.Position = 0;
-            using (var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, true))
+            streamWrapper.Position = 0;
+            using (var reader = new StreamReader(streamWrapper))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -28,12 +28,12 @@ namespace Geo.Gps.Serialization
             return false;
         }
 
-        public GpsData DeSerialize(Stream stream)
+        public GpsData DeSerialize(StreamWrapper streamWrapper)
         {
             var data = new GpsData();
             var track = new LineString<Fix>();
-            stream.Position = 0;
-            using (var reader = new StreamReader(stream, Encoding.UTF8, true, 1024, true))
+            streamWrapper.Position = 0;
+            using (var reader = new StreamReader(streamWrapper))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
@@ -55,7 +55,7 @@ namespace Geo.Gps.Serialization
 
         private bool ParseFix(string line, LineString<Fix> data)
         {
-            if (string.IsNullOrWhiteSpace(line))
+            if (line.IsNullOrWhitespace())
                 return false;
 
             var match = Regex.Match(line, FIX_SENTENCE);
@@ -78,7 +78,7 @@ namespace Geo.Gps.Serialization
 
         private bool ParseWaypoint(string line, GpsData data)
         {
-            if (string.IsNullOrWhiteSpace(line))
+            if (line.IsNullOrWhitespace())
                 return false;
 
             var match = Regex.Match(line, WPT_SENTENCE);

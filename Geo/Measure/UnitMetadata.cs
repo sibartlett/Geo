@@ -8,8 +8,8 @@ namespace Geo.Measure
 {
     public class UnitMetadata
     {
-        private static readonly ReadOnlyDictionary<DistanceUnit, UnitAttribute> DistanceCache;
-        private static readonly ReadOnlyDictionary<SpeedUnit, UnitAttribute> SpeedCache;
+        private static readonly Dictionary<DistanceUnit, UnitAttribute> DistanceCache;
+        private static readonly Dictionary<SpeedUnit, UnitAttribute> SpeedCache;
 
         static UnitMetadata()
         {
@@ -27,15 +27,15 @@ namespace Geo.Measure
             return SpeedCache[unit];
         }
 
-        private static ReadOnlyDictionary<T, UnitAttribute> Init<T>()
+        private static Dictionary<T, UnitAttribute> Init<T>()
         {
             var type = typeof(T);
             var a = new Dictionary<T, UnitAttribute>();
-            foreach (T unit in Enum.GetValues(type))
+            foreach (T unit in Helpers.GetEnumValues<T>())
             {
                 var name = Enum.GetName(type, unit);
 
-                var attr = type.GetTypeInfo().GetDeclaredField(name)
+                var attr = type.GetField(name)
                     .GetCustomAttributes(typeof(UnitAttribute), false)
                     .Cast<UnitAttribute>()
                     .FirstOrDefault();
@@ -44,7 +44,9 @@ namespace Geo.Measure
                     a.Add(unit, attr);
             }
 
-            return new ReadOnlyDictionary<T, UnitAttribute>(a);
+            return new Dictionary<T, UnitAttribute>(a);
         }
     }
+
+
 }

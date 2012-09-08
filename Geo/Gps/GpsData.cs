@@ -19,7 +19,7 @@ namespace Geo.Gps
                         new Gpx10Serializer(),
                         new Gpx11Serializer(),
                     };
-            FileParsers = new List<IGpsFileDeSerializer>(FileSerializers)
+            FileParsers = new List<IGpsFileDeSerializer>(FileSerializers.OfType<IGpsFileDeSerializer>())
                     {
                         new IgcDeSerializer(),
                         new NmeaDeSerializer(),
@@ -57,8 +57,9 @@ namespace Geo.Gps
 
         public static GpsData Parse(Stream stream)
         {
-            var parser = FileParsers.FirstOrDefault(x => x.CanDeSerialize(stream));
-            return parser == null ? null : parser.DeSerialize(stream);
+            var gpsStream = new StreamWrapper(stream);
+            var parser = FileParsers.FirstOrDefault(x => x.CanDeSerialize(gpsStream));
+            return parser == null ? null : parser.DeSerialize(gpsStream);
         }
 
         //public static GpsData Parse(string path)

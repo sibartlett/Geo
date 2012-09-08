@@ -12,18 +12,18 @@ namespace Geo.Gps.Serialization.Xml
         public abstract string[] FileExtensions { get; }
         public abstract Uri FileFormatSpecificationUri { get; }
 
-        public bool CanDeSerialize(Stream stream)
+        public bool CanDeSerialize(StreamWrapper streamWrapper)
         {
-            stream.Position = 0;
-            using (var reader = XmlReader.Create(stream, new XmlReaderSettings {CloseInput = false}))
+            streamWrapper.Position = 0;
+            using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings {CloseInput = false}))
                 return _xmlSerializer.CanDeserialize(reader);
         }
 
-        public GpsData DeSerialize(Stream stream)
+        public GpsData DeSerialize(StreamWrapper streamWrapper)
         {
-            stream.Position = 0;
+            streamWrapper.Position = 0;
             T doc;
-            using (var reader = XmlReader.Create(stream, new XmlReaderSettings { CloseInput = false }))
+            using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
                 doc = (T)_xmlSerializer.Deserialize(reader);
 
             return DeSerialize(doc);
@@ -47,21 +47,21 @@ namespace Geo.Gps.Serialization.Xml
         protected void SerializeMetadata(GpsData data, T xml, Func<GpsMetadata.MetadataKeys, string> attribute, Action<T, string> action)
         {
             var value = data.Metadata.Attribute(attribute);
-            if (!string.IsNullOrWhiteSpace(value))
+            if (!value.IsNullOrWhitespace())
                 action(xml, value);
         }
 
         protected void SerializeTrackMetadata<TTrack>(Track data, TTrack xml, Func<TrackMetadata.MetadataKeys, string> attribute, Action<TTrack, string> action)
         {
             var value = data.Metadata.Attribute(attribute);
-            if (!string.IsNullOrWhiteSpace(value))
+            if (!value.IsNullOrWhitespace())
                 action(xml, value);
         }
 
         protected void SerializeRouteMetadata<TRoute>(Route data, TRoute xml, Func<RouteMetadata.MetadataKeys, string> attribute, Action<TRoute, string> action)
         {
             var value = data.Metadata.Attribute(attribute);
-            if (!string.IsNullOrWhiteSpace(value))
+            if (!value.IsNullOrWhitespace())
                 action(xml, value);
         }
     }

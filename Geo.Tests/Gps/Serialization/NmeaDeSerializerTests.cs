@@ -14,9 +14,10 @@ namespace Geo.Tests.Gps.Serialization
             var file = GetReferenceFileDirectory("nmea").GetFiles().First(x => x.Name == "Stockholm_Walk.nmea");
             using (var stream = new FileStream(file.FullName, FileMode.Open))
             {
+                var streamWrapper = new StreamWrapper(stream);
                 var parser = new NmeaDeSerializer();
-                var canParse = parser.CanDeSerialize(stream);
-                var result = parser.DeSerialize(stream);
+                var canParse = parser.CanDeSerialize(streamWrapper);
+                var result = parser.DeSerialize(streamWrapper);
 
                 Assert.That(canParse, Is.EqualTo(true));
                 Assert.That(result.Waypoints.Count, Is.EqualTo(0));

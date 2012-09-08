@@ -10,7 +10,7 @@ namespace Geo
         internal static bool TryParseOrdinateInternal(string ordinateString, OrdinateType type, out double ordinate)
         {
             ordinate = default(double);
-            if (string.IsNullOrWhiteSpace(ordinateString))
+            if (ordinateString.IsNullOrWhitespace())
                 return false;
 
             ordinateString = ordinateString.Trim();
@@ -103,9 +103,9 @@ namespace Geo
             Longitude,
         }
 
-        public static Tuple<string,string> SplitCoordinateString(string coordinate)
+        public static string[] SplitCoordinateString(string coordinate)
         {
-            if(string.IsNullOrWhiteSpace(coordinate))
+            if (coordinate.IsNullOrWhitespace())
                 return null;
 
             coordinate = coordinate.Trim();
@@ -139,9 +139,7 @@ namespace Geo
             if (ordinates == null)
                 return null;
 
-            return new Tuple<string, string>(
-                ordinates[0].Trim(), ordinates[1].Trim()
-            );
+            return new[] {ordinates[0].Trim(), ordinates[1].Trim()};
         }
     }
 }

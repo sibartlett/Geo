@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Geo.Geometries
+﻿namespace Geo.Geometries
 {
     public interface IGeometry
     {

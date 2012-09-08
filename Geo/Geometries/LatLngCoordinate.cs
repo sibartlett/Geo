@@ -68,7 +68,7 @@ namespace Geo.Geometries
             if (coordinate == null)
                 throw new ArgumentNullException("coordinate");
 
-            if (string.IsNullOrWhiteSpace(coordinate))
+            if (coordinate.IsNullOrWhitespace())
                 throw new ArgumentException("Value was empty", "coordinate");
 
             LatLngCoordinate result;
@@ -92,8 +92,8 @@ namespace Geo.Geometries
             {
                 double lat;
                 double lon;
-                if (GeoUtil.TryParseOrdinateInternal(a.Item1, GeoUtil.OrdinateType.Latitude, out lat))
-                    if (GeoUtil.TryParseOrdinateInternal(a.Item2, GeoUtil.OrdinateType.Longitude, out lon))
+                if (GeoUtil.TryParseOrdinateInternal(a[0], GeoUtil.OrdinateType.Latitude, out lat))
+                    if (GeoUtil.TryParseOrdinateInternal(a[1], GeoUtil.OrdinateType.Longitude, out lon))
                     {
                         result = new LatLngCoordinate(lat, lon);
                         return true;

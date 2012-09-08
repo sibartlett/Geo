@@ -7,8 +7,8 @@ namespace Geo.Gps.Serialization
     {
         string[] FileExtensions { get; }
         Uri FileFormatSpecificationUri { get; }
-        bool CanDeSerialize(Stream stream);
-        GpsData DeSerialize(Stream stream);
+        bool CanDeSerialize(StreamWrapper streamWrapper);
+        GpsData DeSerialize(StreamWrapper streamWrapper);
     }
 
     public interface IGpsFileSerializer : IGpsFileDeSerializer
