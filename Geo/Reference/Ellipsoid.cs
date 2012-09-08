@@ -212,7 +212,7 @@ namespace Geo.Reference
             var lonDeltaRad = lonDelta.ToRadians();
 
             // Calculate course and distance
-            var course = Math.Atan(NauticalMile * EquatorialAxis * lonDeltaRad / mpDelta);
+            var course = Math.Atan(EquatorialAxis / NauticalMile * lonDeltaRad / mpDelta);
             var courseDeg = course.ToDegrees();
 
             if (latDelta >= 0)
