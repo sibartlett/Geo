@@ -14,17 +14,33 @@ namespace Geo.Gps.Serialization.Xml
 
         public bool CanDeSerialize(StreamWrapper streamWrapper)
         {
-            streamWrapper.Position = 0;
-            using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings {CloseInput = false}))
-                return _xmlSerializer.CanDeserialize(reader);
+            try
+            {
+                streamWrapper.Position = 0;
+                using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
+                    return _xmlSerializer.CanDeserialize(reader);
+            }
+            catch (XmlException)
+            {
+                return false;
+            }
         }
 
         public GpsData DeSerialize(StreamWrapper streamWrapper)
         {
             streamWrapper.Position = 0;
             T doc;
-            using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
-                doc = (T)_xmlSerializer.Deserialize(reader);
+
+            try
+            {
+                streamWrapper.Position = 0;
+                using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
+                    doc = (T)_xmlSerializer.Deserialize(reader);
+            }
+            catch (XmlException)
+            {
+                return null;
+            }
 
             return DeSerialize(doc);
         }

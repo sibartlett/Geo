@@ -103,6 +103,7 @@
   <ItemGroup>
     <Compile Include="Geo\GeoPointCalculationsTests.cs" />
     <Compile Include="Geo\GeoPointTests.cs" />
+    <Compile Include="Gps\Serialization\GpsDeSerializerTests.cs" />
     <Compile Include="Gps\Serialization\GpxSerializerTests.cs" />
     <Compile Include="Gps\Serialization\IgcDeSerializerTests.cs" />
     <Compile Include="Gps\Serialization\NmeaDeSerializerTests.cs" />
