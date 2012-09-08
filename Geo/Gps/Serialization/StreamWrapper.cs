@@ -4,61 +4,71 @@ namespace Geo.Gps.Serialization
 {
     public class StreamWrapper : Stream
     {
-        private readonly Stream _stream;
+        public Stream UnderlyingStream { get; private set; }
 
         public StreamWrapper(Stream stream)
         {
-            _stream = stream;
+            UnderlyingStream = stream.CanSeek ? stream : ConvertToMemoryStream(stream);
+        }
+
+        private MemoryStream ConvertToMemoryStream(Stream input)
+        {
+            var buffer = new byte[16 * 1024];
+            var ms = new MemoryStream();
+            int read;
+            while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                ms.Write(buffer, 0, read);
+            return ms;
         }
 
         public override void Flush()
         {
-            _stream.Flush();
+            UnderlyingStream.Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return _stream.Read(buffer, offset, count);
+            return UnderlyingStream.Read(buffer, offset, count);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            return _stream.Seek(offset, origin);
+            return UnderlyingStream.Seek(offset, origin);
         }
 
         public override void SetLength(long value)
         {
-            _stream.SetLength(value);
+            UnderlyingStream.SetLength(value);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            _stream.Write(buffer, offset, count);
+            UnderlyingStream.Write(buffer, offset, count);
         }
 
         public override bool CanRead
         {
-            get { return _stream.CanRead; }
+            get { return UnderlyingStream.CanRead; }
         }
 
         public override bool CanSeek
         {
-            get { return _stream.CanSeek; }
+            get { return UnderlyingStream.CanSeek; }
         }
 
         public override bool CanWrite
         {
-            get { return _stream.CanWrite; }
+            get { return UnderlyingStream.CanWrite; }
         }
 
         public override long Length
         {
-            get { return _stream.Length; }
+            get { return UnderlyingStream.Length; }
         }
 
         public override long Position {
-            get { return _stream.Position; }
-            set{ _stream.Position= value; }
+            get { return UnderlyingStream.Position; }
+            set{ UnderlyingStream.Position = value; }
         }
     }
 }
