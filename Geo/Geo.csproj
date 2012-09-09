@@ -70,6 +70,7 @@
     <Compile Include="Gps\Metadata\RouteMetadata.cs" />
     <Compile Include="Gps\Metadata\TrackMetadata.cs" />
     <Compile Include="Gps\Route.cs" />
+    <Compile Include="Gps\Serialization\GarminFlightplanDeSerializer.cs" />
     <Compile Include="Gps\Serialization\PocketFmsFlightplanDeSerializer.cs" />
     <Compile Include="Gps\Serialization\SkyDemonFlightplanDeSerializer.cs" />
     <Compile Include="Gps\Serialization\StreamWrapper.cs" />
@@ -78,6 +79,10 @@
     <Compile Include="Gps\Serialization\IgcDeSerializer.cs" />
     <Compile Include="Gps\Serialization\IGpsFileDeSerializer.cs" />
     <Compile Include="Gps\Serialization\NmeaDeSerializer.cs" />
+    <Compile Include="Gps\Serialization\Xml\Garmin\GarminFlightplan.cs" />
+    <Compile Include="Gps\Serialization\Xml\Garmin\GarminRoute.cs" />
+    <Compile Include="Gps\Serialization\Xml\Garmin\GarminRoutePoint.cs" />
+    <Compile Include="Gps\Serialization\Xml\Garmin\GarminWaypoint.cs" />
     <Compile Include="Gps\Serialization\Xml\GpsXmlDeSerializer.cs" />
     <Compile Include="Gps\Serialization\Xml\GpsXmlSerializer.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxBounds.cs" />

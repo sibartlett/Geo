@@ -23,7 +23,9 @@ namespace Geo.Gps
                     {
                         new IgcDeSerializer(),
                         new NmeaDeSerializer(),
+                        new GarminFlightplanDeSerializer(),
                         new PocketFmsFlightplanDeSerializer(),
+                        new SkyDemonFlightplanDeSerializer(),
                     };
         }
 

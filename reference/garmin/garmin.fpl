@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<flight-plan xmlns="http://www8.garmin.com/xmlschemas/FlightPlan/v1">
+  <created>2012-09-09T20:47:59Z</created>
+  <waypoint-table>
+    <waypoint>
+      <identifier>EGLG</identifier>
+      <type>AIRPORT</type>
+      <country-code>GB</country-code>
+      <lat>51.801944</lat>
+      <lon>-0.158333</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>MISC2</identifier>
+      <type>USER WAYPOINT</type>
+      <country-code>GB</country-code>
+      <lat>51.946125</lat>
+      <lon>-0.018417</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>MISC4</identifier>
+      <type>USER WAYPOINT</type>
+      <country-code>GB</country-code>
+      <lat>52.127403</lat>
+      <lon>0.232722</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>EGSH</identifier>
+      <type>AIRPORT</type>
+      <country-code>GB</country-code>
+      <lat>52.675833</lat>
+      <lon>1.282778</lon>
+      <comment />
+    </waypoint>
+    <waypoint>
+      <identifier>EGSC</identifier>
+      <type>AIRPORT</type>
+      <country-code>GB</country-code>
+      <lat>52.205000</lat>
+      <lon>0.175000</lon>
+      <comment />
+    </waypoint>
+  </waypoint-table>
+  <route>
+    <route-name>Panshanger - Norwich</route-name>
+    <flight-plan-index>1</flight-plan-index>
+    <route-point>
+      <waypoint-identifier>EGLG</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>GB</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>MISC2</waypoint-identifier>
+      <waypoint-type>USER WAYPOINT</waypoint-type>
+      <waypoint-country-code>GB</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>MISC4</waypoint-identifier>
+      <waypoint-type>USER WAYPOINT</waypoint-type>
+      <waypoint-country-code>GB</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>EGSH</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>GB</waypoint-country-code>
+    </route-point>
+    <route-point>
+      <waypoint-identifier>EGSC</waypoint-identifier>
+      <waypoint-type>AIRPORT</waypoint-type>
+      <waypoint-country-code>GB</waypoint-country-code>
+    </route-point>
+  </route>
+</flight-plan>
