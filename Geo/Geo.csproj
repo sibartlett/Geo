@@ -71,6 +71,7 @@
     <Compile Include="Gps\Metadata\TrackMetadata.cs" />
     <Compile Include="Gps\Route.cs" />
     <Compile Include="Gps\Serialization\PocketFmsFlightplanDeSerializer.cs" />
+    <Compile Include="Gps\Serialization\SkyDemonFlightplanDeSerializer.cs" />
     <Compile Include="Gps\Serialization\StreamWrapper.cs" />
     <Compile Include="Gps\Serialization\Gpx10Serializer.cs" />
     <Compile Include="Gps\Serialization\Gpx11Serializer.cs" />
@@ -112,6 +113,10 @@
     <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsPoint.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonAircraft.cs" />
+    <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonRoute.cs" />
+    <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonRhumbLine.cs" />
+    <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonFlightplan.cs" />
     <Compile Include="Gps\Track.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Measure\Distance.cs" />

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DivelementsFlightPlanner>
+  <Aircraft Name="Default Aircraft" Registration="" FuelType="AvGas100LL" FuelMeasurementType="Volume" FuelMeasurementVolumeType="Litres" FuelMeasurementMassType="Kilograms" TaxiFuel="8.000000" LandingFuel="5.000000" MaxFuel="182.000000" EmptyWeight="669.502300" EmptyArmLon="87.42" EmptyArmLat="0.00" Type="" ColourMarkings="" ServiceCeiling="14300" Equipment1="FLOV" Equipment2="S" FuelContingency="0.05" HoldingMinutes="45" HourlyCost="0" HourlyCostIncludesFuel="False" GlideAirspeed="76.00" GlideRatio="12.00" Envelope="83.00,544.310800,83.00,884.505100,87.00,1054.602200,93.00,1054.602200,93.00,544.310800">
+    <ClimbProfile FpmSL="660.000000" FpmSC="100.000000" IndicatedAirspeed="79.000000" FuelBurnSL="40.000000" FuelBurnSC="40.000000" />
+    <DescentProfile Fpm="-1000.000000" IndicatedAirspeed="95.000000" FuelBurn="20.000000" />
+    <CruiseProfiles>
+      <CruiseProfile Name="2400 RPM" FuelBurn="35.000000" IndicatedAirspeed="108.000000" Airspeed="108.000000" AirspeedType="Indicated" />
+    </CruiseProfiles>
+    <LoadingPoints>
+      <FuelLoadingPoint Name="Fuel" LeverArm="95.00" LeverArmLat="0.00" DefaultValue="120.00" Capacity="182.00" />
+      <LoadingPoint Name="Pilot" LeverArm="80.00" LeverArmLat="0.00" DefaultValue="0.00" />
+      <LoadingPoint Name="Front Passenger" LeverArm="80.00" LeverArmLat="0.00" DefaultValue="0.00" />
+      <LoadingPoint Name="Rear Passenger 1" LeverArm="118.10" LeverArmLat="0.00" DefaultValue="0.00" />
+      <LoadingPoint Name="Rear Passenger 2" LeverArm="118.10" LeverArmLat="0.00" DefaultValue="0.00" />
+      <LoadingPoint Name="Baggage" LeverArm="142.80" LeverArmLat="0.00" DefaultValue="0.00" />
+    </LoadingPoints>
+  </Aircraft>
+  <PrimaryRoute Start="N514807.00 W0000930.00" Level="2000" CruiseProfile="2400 RPM" Time="129919284000000000" PlannedFuel="120.000000">
+    <RhumbLineRoute To="N515646.05 W0000106.30" Level="MSL" LevelChange="B" />
+    <RhumbLineRoute To="N520738.65 E0001357.80" Level="4000" LevelChange="F" />
+    <RhumbLineRoute To="N524033.00 E0011658.00" Level="6000" LevelChange="B" />
+    <Alternate To="N521218.00 E0001030.00" Level="6000" LevelChange="B" />
+    <WeightBalance>
+      <LoadingPoint Name="Fuel" Weight="120.00" />
+      <LoadingPoint Name="Pilot" Weight="0.00" />
+      <LoadingPoint Name="Front Passenger" Weight="0.00" />
+      <LoadingPoint Name="Rear Passenger 1" Weight="0.00" />
+      <LoadingPoint Name="Rear Passenger 2" Weight="0.00" />
+      <LoadingPoint Name="Baggage" Weight="0.00" />
+    </WeightBalance>
+  </PrimaryRoute>
+  <WaypointNameHints>
+    <Hint Location="N514807.00 W0000930.00" Name="Panshanger" />
+    <Hint Location="N515646.05 W0000106.30" Name="Buntingford" />
+    <Hint Location="N524033.00 E0011658.00" Name="Norwich" />
+    <Hint Location="N521218.00 E0001030.00" Name="Cambridge" />
+  </WaypointNameHints>
+</DivelementsFlightPlanner>
