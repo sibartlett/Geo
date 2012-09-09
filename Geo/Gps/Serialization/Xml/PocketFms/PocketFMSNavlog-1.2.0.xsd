@@ -1,0 +1,953 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Revised: 20081105 2300Z-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="PocketFMSFlightplan">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="META">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TakeOffDateUTC" type="xs:date"/>
+							<xs:element name="DOF" type="xs:string"/>
+							<xs:element name="TakeOffTimeUTC" type="xs:time"/>
+							<xs:element name="ICAOETD">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:string" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ICAOTOTALEET">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:string" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TOTALEET">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:string" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Departure">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="StringIdent" type="xs:string"/>
+										<xs:element name="Latitude" type="xs:decimal"/>
+										<xs:element name="Longitude" type="xs:decimal"/>
+										<xs:element name="FriendlyShortname" type="xs:string"/>
+										<xs:element name="Fullname" type="xs:string"/>
+										<xs:element name="Elevation" type="xs:string"/>
+										<xs:element name="RNAV1">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="RNAV2">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DetailedObjectInfo">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="AirportData">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Cityname" type="xs:string"/>
+																<xs:element name="type" type="xs:string"/>
+																<xs:element name="agency" type="xs:string"/>
+																<xs:element name="fuel" type="xs:string"/>
+																<xs:element name="oil" type="xs:string"/>
+																<xs:element name="HasPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasNonPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasVFRReportingPointsYN" type="xs:string"/>
+																<xs:element name="LongestHardRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="LongestSoftRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="HasWaterRunwayYN" type="xs:string"/>
+																<xs:element name="IsAbandonedYN" type="xs:string"/>
+																<xs:element name="AllowedAircraftTypes" type="xs:string"/>
+																<xs:element name="HasMetarTafYN" type="xs:string"/>
+																<xs:element name="PPRYN" type="xs:string"/>
+																<xs:element name="EmergencyUseOnlyYN" type="xs:string"/>
+																<xs:element name="VisibleButDestroyedYN" type="xs:string"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Communications">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="COMM" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="Sector" type="xs:string" use="required"/>
+																		<xs:attribute name="OprHrs" type="xs:string" use="required"/>
+																		<xs:attribute name="Freq5" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq4" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq3" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq2" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq1" type="xs:decimal" use="required"/>
+																		<xs:attribute name="CommType" type="xs:string" use="required"/>
+																		<xs:attribute name="CommRemarks" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Remarks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Remark" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="RemarkType" type="xs:string" use="required"/>
+																		<xs:attribute name="RemarkText" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Arrival">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="StringIdent" type="xs:string"/>
+										<xs:element name="Latitude" type="xs:decimal"/>
+										<xs:element name="Longitude" type="xs:decimal"/>
+										<xs:element name="FriendlyShortname" type="xs:string"/>
+										<xs:element name="Fullname" type="xs:string"/>
+										<xs:element name="Elevation" type="xs:string"/>
+										<xs:element name="RNAV1">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="RNAV2">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DetailedObjectInfo">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="AirportData">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Cityname" type="xs:string"/>
+																<xs:element name="type" type="xs:string"/>
+																<xs:element name="agency" type="xs:string"/>
+																<xs:element name="fuel" type="xs:string"/>
+																<xs:element name="oil" type="xs:string"/>
+																<xs:element name="HasPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasNonPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasVFRReportingPointsYN" type="xs:string"/>
+																<xs:element name="LongestHardRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="LongestSoftRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="HasWaterRunwayYN" type="xs:string"/>
+																<xs:element name="IsAbandonedYN" type="xs:string"/>
+																<xs:element name="AllowedAircraftTypes" type="xs:string"/>
+																<xs:element name="HasMetarTafYN" type="xs:string"/>
+																<xs:element name="PPRYN" type="xs:string"/>
+																<xs:element name="EmergencyUseOnlyYN" type="xs:string"/>
+																<xs:element name="VisibleButDestroyedYN" type="xs:string"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Communications">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="COMM" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="Sector" type="xs:string" use="required"/>
+																		<xs:attribute name="OprHrs" type="xs:string" use="required"/>
+																		<xs:attribute name="Freq5" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq4" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq3" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq2" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq1" type="xs:decimal" use="required"/>
+																		<xs:attribute name="CommType" type="xs:string" use="required"/>
+																		<xs:attribute name="CommRemarks" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Remarks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Remark" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="RemarkType" type="xs:string" use="required"/>
+																		<xs:attribute name="RemarkText" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AircraftIdentification" type="xs:string"/>
+							<xs:element name="RoutingString" type="xs:string"/>
+							<xs:element name="FlightRules" type="xs:string"/>
+							<xs:element name="FlightType" type="xs:string"/>
+							<xs:element name="AircraftType" type="xs:string"/>
+							<xs:element name="WakeTurbulence" type="xs:string"/>
+							<xs:element name="Equipment" type="xs:string"/>
+							<xs:element name="Transponder" type="xs:string"/>
+							<xs:element name="AircraftColorAndMarkings" type="xs:string"/>
+							<xs:element name="PilotInCommand" type="xs:string"/>
+							<xs:element name="PilotInCommandCompany" type="xs:string"/>
+							<xs:element name="PilotInCommandMobilePhone" type="xs:string"/>
+							<xs:element name="PilotInCommandPhone" type="xs:string"/>
+							<xs:element name="PilotInCommandFax" type="xs:string"/>
+							<xs:element name="FlightRemarks" type="xs:string"/>
+							<xs:element name="FlightPlanOtherInformation" type="xs:string"/>
+							<xs:element name="ICAOEndurance">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:string" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ICAOCruiseAltitude" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="FUEL">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TotalTripFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TaxiAndDepartureFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ArrivalAndTaxiFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AlternateApproachFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ReserveFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+									<xs:attribute name="DurationUnit" type="xs:string"/>
+									<xs:attribute name="Duration" type="xs:short"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ContingencyFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+									<xs:attribute name="Percentage" type="xs:short"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="LoadedFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TotalFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="LongestAlternateFuel">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="LongestAlternateDistance">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal"/>
+									<xs:attribute name="Unit" type="xs:string"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="SUPPLEMENTARYINFORMATION">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Endurance">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:string" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="POB" type="xs:byte"/>
+							<xs:element name="bRadio" type="xs:byte"/>
+							<xs:element name="bRadioUHF" type="xs:byte"/>
+							<xs:element name="bRadioVHF" type="xs:byte"/>
+							<xs:element name="bRadioELBA" type="xs:byte"/>
+							<xs:element name="bSurvivalEquipment" type="xs:byte"/>
+							<xs:element name="bSurvivalPolar" type="xs:byte"/>
+							<xs:element name="bSurvivalDesert" type="xs:byte"/>
+							<xs:element name="bSurvivalMaritime" type="xs:byte"/>
+							<xs:element name="bSurvivalJungle" type="xs:byte"/>
+							<xs:element name="bJackets" type="xs:byte"/>
+							<xs:element name="bJacketsLights" type="xs:byte"/>
+							<xs:element name="bJacketsFluores" type="xs:byte"/>
+							<xs:element name="bJacketsUHF" type="xs:byte"/>
+							<xs:element name="bJacketsVHF" type="xs:byte"/>
+							<xs:element name="bDinghies" type="xs:byte"/>
+							<xs:element name="DinghiesNumber" type="xs:string"/>
+							<xs:element name="DinghiesCapacity" type="xs:string"/>
+							<xs:element name="bDinghiesCover" type="xs:byte"/>
+							<xs:element name="DinghiesCoverColor" type="xs:string"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="LIB" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="FromPoint">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="StringIdent" type="xs:string"/>
+										<xs:element name="Latitude" type="xs:decimal"/>
+										<xs:element name="Longitude" type="xs:decimal"/>
+										<xs:element name="FriendlyShortname" type="xs:string"/>
+										<xs:element name="Fullname" type="xs:string"/>
+										<xs:element name="Elevation" type="xs:string"/>
+										<xs:element name="RNAV1">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="RNAV2">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DetailedObjectInfo" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="AirportData">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Cityname" type="xs:string"/>
+																<xs:element name="type" type="xs:string"/>
+																<xs:element name="agency" type="xs:string"/>
+																<xs:element name="fuel" type="xs:string"/>
+																<xs:element name="oil" type="xs:string"/>
+																<xs:element name="HasPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasNonPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasVFRReportingPointsYN" type="xs:string"/>
+																<xs:element name="LongestHardRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="LongestSoftRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="HasWaterRunwayYN" type="xs:string"/>
+																<xs:element name="IsAbandonedYN" type="xs:string"/>
+																<xs:element name="AllowedAircraftTypes" type="xs:string"/>
+																<xs:element name="HasMetarTafYN" type="xs:string"/>
+																<xs:element name="PPRYN" type="xs:string"/>
+																<xs:element name="EmergencyUseOnlyYN" type="xs:string"/>
+																<xs:element name="VisibleButDestroyedYN" type="xs:string"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Communications" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="COMM" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="Sector" type="xs:string" use="required"/>
+																		<xs:attribute name="OprHrs" type="xs:string" use="required"/>
+																		<xs:attribute name="Freq5" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq4" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq3" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq2" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq1" type="xs:decimal" use="required"/>
+																		<xs:attribute name="CommType" type="xs:string" use="required"/>
+																		<xs:attribute name="CommRemarks" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Remarks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Remark" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="RemarkType" type="xs:string" use="required"/>
+																		<xs:attribute name="RemarkText" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ToPoint">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="StringIdent" type="xs:string"/>
+										<xs:element name="Latitude" type="xs:decimal"/>
+										<xs:element name="Longitude" type="xs:decimal"/>
+										<xs:element name="FriendlyShortname" type="xs:string"/>
+										<xs:element name="Fullname" type="xs:string"/>
+										<xs:element name="Elevation" type="xs:string"/>
+										<xs:element name="RNAV1">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="RNAV2">
+											<xs:complexType>
+												<xs:attribute name="BEACONRADIAL" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONIDENT" type="xs:string" use="required"/>
+												<xs:attribute name="BEACONFREQUENCY" type="xs:decimal" use="required"/>
+												<xs:attribute name="BEACONDISTANCENM" type="xs:decimal" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DetailedObjectInfo" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="AirportData">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Cityname" type="xs:string"/>
+																<xs:element name="type" type="xs:string"/>
+																<xs:element name="agency" type="xs:string"/>
+																<xs:element name="fuel" type="xs:string"/>
+																<xs:element name="oil" type="xs:string"/>
+																<xs:element name="HasPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasNonPrecisionApproachYN" type="xs:string"/>
+																<xs:element name="HasVFRReportingPointsYN" type="xs:string"/>
+																<xs:element name="LongestHardRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="LongestSoftRunway">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:short" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="HasWaterRunwayYN" type="xs:string"/>
+																<xs:element name="IsAbandonedYN" type="xs:string"/>
+																<xs:element name="AllowedAircraftTypes" type="xs:string"/>
+																<xs:element name="HasMetarTafYN" type="xs:string"/>
+																<xs:element name="PPRYN" type="xs:string"/>
+																<xs:element name="EmergencyUseOnlyYN" type="xs:string"/>
+																<xs:element name="VisibleButDestroyedYN" type="xs:string"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Communications" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="COMM" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="Sector" type="xs:string" use="required"/>
+																		<xs:attribute name="OprHrs" type="xs:string" use="required"/>
+																		<xs:attribute name="Freq5" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq4" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq3" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq2" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Freq1" type="xs:decimal" use="required"/>
+																		<xs:attribute name="CommType" type="xs:string" use="required"/>
+																		<xs:attribute name="CommRemarks" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="Remarks" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Remark" minOccurs="0" maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:attribute name="RemarkType" type="xs:string" use="required"/>
+																		<xs:attribute name="RemarkText" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ETAUTC" type="xs:time"/>
+							<xs:element name="MSA">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="PlannedAltitude">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="OAT">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:byte" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="IAS">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="QNH">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TAS">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ALTERNATEIDENT" type="xs:string"/>
+							<xs:element name="ALTERNATEDISTANCE">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FUEL">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="WINDDIRECTION">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="WINDSPEED">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:byte" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AVARAGEVARIATION" type="xs:byte"/>
+							<xs:element name="ETE">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:time" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="ETECUMMULATIVE">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:time" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="TRUETRACK">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="MAGNETICTRACK">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="WINDCORRECTIONANGLE" type="xs:string"/>
+							<xs:element name="TRUEHEADING">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="MAGNETICHEADING">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="GROUNDSPEED">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="DistanceCummulative">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Distance">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="WXSignificant" type="xs:string"/>
+							<xs:element name="WXMETAR" type="xs:string"/>
+							<xs:element name="WXSHORTTAF" type="xs:string"/>
+							<xs:element name="WXLONGTAF" type="xs:string"/>
+							<xs:element name="WXALLTAF" type="xs:string"/>
+							<xs:element name="AirspacesCrossed">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Airspace" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="AirspaceEntryPoint">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Latitude" type="xs:decimal"/>
+																<xs:element name="Longitude" type="xs:decimal"/>
+																<xs:element name="ETECUMMULATIVE">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:time" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ETAUTC" type="xs:time"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="AirspaceExitPoint" minOccurs="0">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Latitude" type="xs:decimal"/>
+																<xs:element name="Longitude" type="xs:decimal"/>
+																<xs:element name="ETECUMMULATIVE">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:time" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ETAUTC" type="xs:time"/>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="AirspaceName" type="xs:string"/>
+													<xs:element name="AirspaceType" type="xs:string"/>
+													<xs:element name="AirspaceComm1" type="xs:string"/>
+													<xs:element name="AirspaceComm2" type="xs:string"/>
+													<xs:element name="AirspaceCommName" type="xs:string"/>
+													<xs:element name="AirspaceCommAuth" type="xs:string"/>
+													<xs:element name="AirspaceLowerAltFt" type="xs:string"/>
+													<xs:element name="AirspaceUpperAltFt" type="xs:string"/>
+													<xs:element name="AirspaceClass" type="xs:string"/>
+													<xs:element name="AirspaceClassRemarks" type="xs:string"/>
+													<xs:element name="AirspaceSUASIdentifier" type="xs:string"/>
+													<xs:element name="AirspaceRemarks" type="xs:string"/>
+													<xs:element name="AirspaceActivity" type="xs:string"/>
+													<xs:element name="AirspaceActiveFromDateTime" type="xs:string"/>
+													<xs:element name="AirspaceActiveUpToDateTime" type="xs:string"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="LibID" type="xs:byte" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="AIRCRAFT">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="AircraftDescription" type="xs:string"/>
+							<xs:element name="SpeedVx">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SpeedVy">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:byte" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SpeedCruise">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SpeedHolding">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SpeedApproach">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:short" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FuelConsumptionVx">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FuelConsumptionVy">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FuelConsumptionCruise">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FuelConsumptionHolding">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FuelConsumptionApproach">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AvarageRateOfDescend">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="AvarageRateOfClimb">
+								<xs:complexType>
+									<xs:attribute name="Value" type="xs:decimal" use="required"/>
+									<xs:attribute name="Unit" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="SuitableDefinitions">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CivilianAirports" type="xs:byte"/>
+										<xs:element name="MilitaryAirports" type="xs:byte"/>
+										<xs:element name="JoinedAirports" type="xs:byte"/>
+										<xs:element name="ULMAirports" type="xs:byte"/>
+										<xs:element name="GliderAirports" type="xs:byte"/>
+										<xs:element name="HeliAirports" type="xs:byte"/>
+										<xs:element name="WaterAirports" type="xs:byte"/>
+										<xs:element name="MusthavePrecisionApproach" type="xs:byte"/>
+										<xs:element name="MusthaveNonPrecisionApproach" type="xs:byte"/>
+										<xs:element name="MinimumHardRunwayLength">
+											<xs:complexType>
+												<xs:attribute name="Value" type="xs:decimal" use="required"/>
+												<xs:attribute name="Unit" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MinimumSoftRunwayLength">
+											<xs:complexType>
+												<xs:attribute name="Value" type="xs:decimal" use="required"/>
+												<xs:attribute name="Unit" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MinimumCloudbase">
+											<xs:complexType>
+												<xs:attribute name="Value" type="xs:decimal" use="required"/>
+												<xs:attribute name="Unit" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="MaximumCrosswind">
+											<xs:complexType>
+												<xs:attribute name="Value" type="xs:decimal" use="required"/>
+												<xs:attribute name="Unit" type="xs:string" use="required"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="WeightAndBalance">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="WBData" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="WBDataRecord" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Weight">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Arm">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Moment">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="WBDescription" type="xs:string" use="required"/>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="PlaneTotalWeight">
+														<xs:complexType>
+															<xs:attribute name="Value" type="xs:decimal" use="required"/>
+															<xs:attribute name="Unit" type="xs:string" use="required"/>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="PlaneTotalArm">
+														<xs:complexType>
+															<xs:attribute name="Value" type="xs:decimal" use="required"/>
+															<xs:attribute name="Unit" type="xs:string" use="required"/>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="PlaneTotalMoment">
+														<xs:complexType>
+															<xs:attribute name="Value" type="xs:decimal" use="required"/>
+															<xs:attribute name="Unit" type="xs:string" use="required"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="WBMomentLimits" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="WBMomentLimitPoint" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="YValue_Weight">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="XValue_Moment">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="WBCGLimits" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="WBMomentLimitPoint" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="YValue_Weight">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="XValue_CG">
+																	<xs:complexType>
+																		<xs:attribute name="Value" type="xs:decimal" use="required"/>
+																		<xs:attribute name="Unit" type="xs:string" use="required"/>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

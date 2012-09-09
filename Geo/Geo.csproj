@@ -40,6 +40,9 @@
     <None Include="Gps\Serialization\Xml\Gpx11\gpx11.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Gps\Serialization\Xml\PocketFms\PocketFMSNavlog-1.2.0.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Geometries\Bounds.cs" />
@@ -64,6 +67,7 @@
     <Compile Include="Gps\Metadata\RouteMetadata.cs" />
     <Compile Include="Gps\Metadata\TrackMetadata.cs" />
     <Compile Include="Gps\Route.cs" />
+    <Compile Include="Gps\Serialization\PocketFmsFlightplanDeSerializer.cs" />
     <Compile Include="Gps\Serialization\StreamWrapper.cs" />
     <Compile Include="Gps\Serialization\Gpx10Serializer.cs" />
     <Compile Include="Gps\Serialization\Gpx11Serializer.cs" />
@@ -81,6 +85,16 @@
     <Compile Include="Gps\Serialization\Xml\GpxBase\GpxMetadataBase.cs" />
     <Compile Include="Gps\Serialization\Xml\GpxBase\GpxRteTrkBase.cs" />
     <Compile Include="Gps\Serialization\Xml\GpxBase\GpxWaypointBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsFlightplan.cs" />
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsLib.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsMeta.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsPoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Gps\Track.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Measure\Distance.cs" />

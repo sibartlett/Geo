@@ -107,6 +107,7 @@
     <Compile Include="Gps\Serialization\GpxSerializerTests.cs" />
     <Compile Include="Gps\Serialization\IgcDeSerializerTests.cs" />
     <Compile Include="Gps\Serialization\NmeaDeSerializerTests.cs" />
+    <Compile Include="Gps\Serialization\PocketFmsFlightplanDeSerializerTests.cs" />
     <Compile Include="Gps\Serialization\SerializerTestFixtureBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Raven\RavenTestFixtureBase.cs" />
