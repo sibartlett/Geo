@@ -5,6 +5,7 @@ namespace Geo.Gps.Serialization
 {
     public interface IGpsFileDeSerializer
     {
+        GpsFeatures SupportedFeatures { get; }
         string[] FileExtensions { get; }
         Uri FileFormatSpecificationUri { get; }
         bool CanDeSerialize(StreamWrapper streamWrapper);

@@ -62,6 +62,8 @@
     <Compile Include="GeoUtil.cs" />
     <Compile Include="Gps\Fix.cs" />
     <Compile Include="Gps\GpsData.cs" />
+    <Compile Include="Gps\GpsFeatures.cs" />
+    <Compile Include="Gps\GpsFeaturesExtensions.cs" />
     <Compile Include="Gps\Metadata\GpsMetadata.cs" />
     <Compile Include="Gps\Metadata\Metadata.cs" />
     <Compile Include="Gps\Metadata\RouteMetadata.cs" />

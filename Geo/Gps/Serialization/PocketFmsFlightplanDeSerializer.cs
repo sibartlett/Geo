@@ -7,6 +7,11 @@ namespace Geo.Gps.Serialization
 {
     public class PocketFmsFlightplanDeSerializer : GpsXmlDeSerializer<PocketFmsFlightplan>
     {
+        public override GpsFeatures SupportedFeatures
+        {
+            get { return GpsFeatures.Routes; }
+        }
+
         public override string[] FileExtensions
         {
             get { return new[] { "xml"}; }

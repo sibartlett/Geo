@@ -9,6 +9,11 @@ namespace Geo.Gps.Serialization
 {
     public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
     {
+        public override GpsFeatures SupportedFeatures
+        {
+            get { return GpsFeatures.All; }
+        }
+
         public override string[] FileExtensions { get { return new[] { "gpx" }; } }
 
         public override Uri FileFormatSpecificationUri { get { return new Uri("http://www.topografix.com/GPX/1/1/gpx.xsd"); } }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using Geo.Geometries;
 using Geo.Gps.Metadata;
@@ -15,6 +14,8 @@ namespace Geo.Gps.Serialization
         private const string H_CREW1_REGEX = @"^(?:HFPLTPILOT|HFPLTPILOTINCHARGE):(?<value>.+)$";
         private const string H_CREW2_REGEX = @"^HFCM2CREW2:(?<value>.+)$";
         private const string B_LINE_REGEX = @"^B(?<h>\d\d)(?<m>\d\d)(?<s>\d\d)(?<coord>\d\d\d\d\d\d\d[NnSs]\d\d\d\d\d\d\d\d[EeWw])(?<validAlt>[AaVv])(?<presAlt>\d\d\d\d\d)(?<gpsAlt>\d\d\d\d\d)";
+
+        public GpsFeatures SupportedFeatures { get { return GpsFeatures.Tracks;} }
 
         public string[] FileExtensions { get { return new[] { "igc" }; } }
 
