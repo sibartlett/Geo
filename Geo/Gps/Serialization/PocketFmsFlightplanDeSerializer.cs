@@ -5,7 +5,7 @@ using Geo.Gps.Serialization.Xml.PocketFms;
 
 namespace Geo.Gps.Serialization
 {
-    public class PocketFmsFlightplanDeSerializer : GpsXmlSerializer<PocketFmsFlightplan>
+    public class PocketFmsFlightplanDeSerializer : GpsXmlDeSerializer<PocketFmsFlightplan>
     {
         public override string[] FileExtensions
         {
@@ -34,11 +34,6 @@ namespace Geo.Gps.Serialization
             data.Metadata.Attribute(x => x.Vehicle.Model, xml.META.AircraftType);
 
             return data;
-        }
-
-        protected override PocketFmsFlightplan Serialize(GpsData data)
-        {
-            throw new NotImplementedException();
         }
     }
 }

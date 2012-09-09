@@ -34,10 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="Gps\Serialization\Xml\Gpx10\gpx10.xsd">
+    <None Include="Gps\Serialization\Xml\Gpx\Gpx10\gpx10.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Gps\Serialization\Xml\Gpx11\gpx11.xsd">
+    <None Include="Gps\Serialization\Xml\Gpx\Gpx11\gpx11.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Gps\Serialization\Xml\PocketFms\PocketFMSNavlog-1.2.0.xsd">
@@ -74,17 +74,31 @@
     <Compile Include="Gps\Serialization\IgcDeSerializer.cs" />
     <Compile Include="Gps\Serialization\IGpsFileDeSerializer.cs" />
     <Compile Include="Gps\Serialization\NmeaDeSerializer.cs" />
+    <Compile Include="Gps\Serialization\Xml\GpsXmlDeSerializer.cs" />
     <Compile Include="Gps\Serialization\Xml\GpsXmlSerializer.cs" />
-    <Compile Include="Gps\Serialization\Xml\Gpx10\gpx10.cs">
-      <DependentUpon>gpx10.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Gps\Serialization\Xml\Gpx11\gpx11.cs">
-      <DependentUpon>gpx11.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxBoundsBase.cs" />
-    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxMetadataBase.cs" />
-    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxRteTrkBase.cs" />
-    <Compile Include="Gps\Serialization\Xml\GpxBase\GpxWaypointBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxBounds.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxFixType.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxFile.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxPoint.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxRoute.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxTrack.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxTrackPoint.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxBounds.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxCopyright.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxEmail.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxFile.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxFixType.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxLink.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxMetadata.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxPerson.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxRoute.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxTrack.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxTrackSegment.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxWaypoint.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\GpxBoundsBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\GpxMetadataBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\GpxRteTrkBase.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\GpxWaypointBase.cs" />
     <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsFlightplan.cs" />
     <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsLib.cs">
       <SubType>Code</SubType>

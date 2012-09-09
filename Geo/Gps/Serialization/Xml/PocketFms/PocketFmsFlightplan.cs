@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace Geo.Gps.Serialization.Xml.PocketFms
 {
     [XmlType(AnonymousType=true)]
-    [XmlRoot(Namespace = "", IsNullable = false, ElementName = "PocketFMSFlightplan")]
+    [XmlRoot("PocketFMSFlightplan", Namespace = "", IsNullable = false)]
     public class PocketFmsFlightplan {
         [XmlElement(Form=XmlSchemaForm.Unqualified)]
         public PocketFmsMeta META { get; set; }

@@ -23,6 +23,7 @@ namespace Geo.Gps
                     {
                         new IgcDeSerializer(),
                         new NmeaDeSerializer(),
+                        new PocketFmsFlightplanDeSerializer(),
                     };
         }
 
@@ -61,11 +62,5 @@ namespace Geo.Gps
             var parser = FileParsers.FirstOrDefault(x => x.CanDeSerialize(gpsStream));
             return parser == null ? null : parser.DeSerialize(gpsStream);
         }
-
-        //public static GpsData Parse(string path)
-        //{
-        //    using (var stream = new FileStream(path, FileMode.Open))
-        //        return Parse(stream);
-        //}
     }
 }

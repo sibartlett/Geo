@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace Geo.Gps.Serialization.Xml.GpxBase
+namespace Geo.Gps.Serialization.Xml.Gpx
 {
     public abstract class GpxMetadataBase
     {

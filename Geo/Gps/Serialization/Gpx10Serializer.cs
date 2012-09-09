@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
-using Geo.Gps.Serialization.Xml.Gpx10;
+using Geo.Gps.Serialization.Xml.Gpx.Gpx10;
 
 namespace Geo.Gps.Serialization
 {
-    public class Gpx10Serializer : GpsXmlSerializer<gpx>
+    public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
     {
         public override string[] FileExtensions
         {
@@ -19,7 +19,7 @@ namespace Geo.Gps.Serialization
             get { return new Uri("http://www.topografix.com/GPX/1/0/gpx.xsd"); }
         }
 
-        protected override GpsData DeSerialize(gpx xml)
+        protected override GpsData DeSerialize(GpxFile xml)
         {
             var data = new GpsData();
             ParseMetadata(xml, data);
@@ -29,9 +29,9 @@ namespace Geo.Gps.Serialization
             return data;
         }
 
-        protected override gpx Serialize(GpsData data)
+        protected override GpxFile Serialize(GpsData data)
         {
-            var xml = new gpx();
+            var xml = new GpxFile();
             SerializeMetadata(data, xml, x => x.Software, (gpx, s) => gpx.creator = s);
             SerializeMetadata(data, xml, x => x.Name, (gpx, s) => gpx.name = s);
             SerializeMetadata(data, xml, x => x.Description, (gpx, s) => gpx.desc = s);
@@ -47,9 +47,9 @@ namespace Geo.Gps.Serialization
             return xml;
         }
 
-        private IEnumerable<gpxWpt> SerializeWaypoints(GpsData data)
+        private IEnumerable<GpxPoint> SerializeWaypoints(GpsData data)
         {
-            return data.Waypoints.Select(waypoint => new gpxWpt
+            return data.Waypoints.Select(waypoint => new GpxPoint
                 {
                     lat = (decimal)waypoint.Latitude,
                     lon = (decimal)waypoint.Longitude,
@@ -57,24 +57,24 @@ namespace Geo.Gps.Serialization
                 });
         }
 
-        private IEnumerable<gpxTrk> SerializeTracks(GpsData data)
+        private IEnumerable<GpxTrack> SerializeTracks(GpsData data)
         {
             foreach (var track in data.Tracks)
             {
-                var trk = new gpxTrk();
+                var trk = new GpxTrack();
 
                 SerializeTrackMetadata(track, trk, x => x.Name, (gpx, s) => gpx.name = s);
                 SerializeTrackMetadata(track, trk, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeTrackMetadata(track, trk, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                trk.trkseg = new gpxTrkTrksegTrkpt[track.Segments.Count][];
+                trk.trkseg = new GpxTrackPoint[track.Segments.Count][];
                 for (var i = 0; i < track.Segments.Count; i++)
                 {
                     var segment = track.Segments[i];
-                    var pts = new gpxTrkTrksegTrkpt[segment.Points.Count];
+                    var pts = new GpxTrackPoint[segment.Points.Count];
                     for (var j = 0; j < segment.Points.Count; j++)
                     {
-                        pts[j] = new gpxTrkTrksegTrkpt
+                        pts[j] = new GpxTrackPoint
                         {
                             lat = (decimal)segment[j].Latitude,
                             lon = (decimal)segment[j].Longitude,
@@ -88,20 +88,20 @@ namespace Geo.Gps.Serialization
             }
         }
 
-        private IEnumerable<gpxRte> SerializeRoutes(GpsData data)
+        private IEnumerable<GpxRoute> SerializeRoutes(GpsData data)
         {
             foreach (var route in data.Routes)
             {
-                var rte = new gpxRte();
+                var rte = new GpxRoute();
 
                 SerializeRouteMetadata(route, rte, x => x.Name, (gpx, s) => gpx.name = s);
                 SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                rte.rtept = new gpxRteRtept[route.LineString.Points.Count];
+                rte.rtept = new GpxPoint[route.LineString.Points.Count];
                 for (var j = 0; j < route.LineString.Points.Count; j++)
                 {
-                    rte.rtept[j] = new gpxRteRtept
+                    rte.rtept[j] = new GpxPoint
                     {
                         lat = (decimal)route.LineString[j].Latitude,
                         lon = (decimal)route.LineString[j].Longitude,
@@ -113,7 +113,7 @@ namespace Geo.Gps.Serialization
         }
 
 
-        private static void ParseMetadata(gpx xml, GpsData data)
+        private static void ParseMetadata(GpxFile xml, GpsData data)
         {
             data.Metadata.Attribute(x => x.Software, xml.creator);
             data.Metadata.Attribute(x => x.Name, xml.name);
@@ -124,7 +124,7 @@ namespace Geo.Gps.Serialization
             data.Metadata.Attribute(x => x.Author.Email, xml.email);
         }
 
-        private static void ParseTracks(gpx xml, GpsData data)
+        private static void ParseTracks(GpxFile xml, GpsData data)
         {
             if (xml.trk != null)
                 foreach (var trkType in xml.trk)
@@ -149,7 +149,7 @@ namespace Geo.Gps.Serialization
                 }
         }
 
-        private static void ParseRoute(gpx xml, GpsData data)
+        private static void ParseRoute(GpxFile xml, GpsData data)
         {
             if (xml.rte != null)
                 foreach (var rteType in xml.rte)
@@ -169,7 +169,7 @@ namespace Geo.Gps.Serialization
                 }
         }
 
-        private static void ParseWaypoints(gpx xml, GpsData data)
+        private static void ParseWaypoints(GpxFile xml, GpsData data)
         {
             if (xml.wpt != null)
                 foreach (var wptType in xml.wpt)

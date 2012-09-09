@@ -1,50 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
 using Geo.Gps.Metadata;
 
 namespace Geo.Gps.Serialization.Xml
 {
-    public abstract class GpsXmlSerializer<T> : IGpsFileSerializer
+    public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSerializer
     {
-        private readonly XmlSerializer _xmlSerializer = new XmlSerializer(typeof (T));
-        public abstract string[] FileExtensions { get; }
-        public abstract Uri FileFormatSpecificationUri { get; }
-
-        public bool CanDeSerialize(StreamWrapper streamWrapper)
-        {
-            try
-            {
-                streamWrapper.Position = 0;
-                using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
-                    return _xmlSerializer.CanDeserialize(reader);
-            }
-            catch (XmlException)
-            {
-                return false;
-            }
-        }
-
-        public GpsData DeSerialize(StreamWrapper streamWrapper)
-        {
-            streamWrapper.Position = 0;
-            T doc;
-
-            try
-            {
-                streamWrapper.Position = 0;
-                using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
-                    doc = (T)_xmlSerializer.Deserialize(reader);
-            }
-            catch (XmlException)
-            {
-                return null;
-            }
-
-            return DeSerialize(doc);
-        }
-
         public void Serialize(Stream stream, GpsData data)
         {
             _xmlSerializer.Serialize(stream, Serialize(data));
@@ -57,7 +18,6 @@ namespace Geo.Gps.Serialization.Xml
             return textWriter.ToString();
         }
 
-        protected abstract GpsData DeSerialize(T xml);
         protected abstract T Serialize(GpsData data);
 
         protected void SerializeMetadata(GpsData data, T xml, Func<GpsMetadata.MetadataKeys, string> attribute, Action<T, string> action)
