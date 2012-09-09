@@ -10,11 +10,18 @@ namespace Geo.Gps.Serialization
         private const string WPT_SENTENCE = @"^\$GPWPL,(?<lat>(?:\d+\.?\d*|\d*\.?\d+)),(?<latd>[NnSs]),(?<lon>(?:\d+\.?\d*|\d*\.?\d+)),(?<lond>[EeWw]),(?<id>[\d\w]+)\*[\d\w][\d\w]";
         private const string FIX_SENTENCE = @"^\$GPGGA\,(?<h>\d\d)(?<m>\d\d)(?<s>[+-]?(?:\d+\.?\d*|\d*\.?\d+))\,(?<lat>(?:\d+\.?\d*|\d*\.?\d+))\,(?<latd>[NnSs])\,(?<lon>(?:\d+\.?\d*|\d*\.?\d+))\,(?<lond>[EeWw])\,(?<qual>[012])\,(?<sat>\d*)\,(?<hdop>[+-]?(?:\d+\.?\d*|\d*\.?\d+))\,(?<alt>[+-]?(?:\d+\.?\d*|\d*\.?\d+))\,(?<altU>[Mm])\,(?<geoid>[+-]?(?:\d+\.?\d*|\d*\.?\d+))\,(?<geoidU>[Mm])\,(?<last>[+-]?(?:\d+\.?\d*|\d*\.?\d+))\,(?<stat>\d\d\d\d)\*[\d\w][\d\w]$";
 
-        public GpsFeatures SupportedFeatures { get { return GpsFeatures.TracksAndWaypoints;} }
+        public GpsFileFormat[] FileFormats
+        {
+            get
+            {
+                return new[]
+                    {
+                        new GpsFileFormat("nmea", "NMEA"),
+                    };
+            }
+        }
 
-        public string[] FileExtensions { get { return new[] { "nmea" }; } }
-
-        public Uri FileFormatSpecificationUri { get { return null; } }
+        public GpsFeatures SupportedFeatures { get { return GpsFeatures.TracksAndWaypoints; } }
 
         public bool CanDeSerialize(StreamWrapper streamWrapper)
         {

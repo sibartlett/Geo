@@ -51,21 +51,21 @@ namespace Geo.Gps
             return FileSerializers[index].SerializeToString(this);
         }
 
-        public static IEnumerable<string> SupportedGpsFileExtensions()
+        public static IEnumerable<GpsFileFormat> SupportedGpsFileFormats()
         {
             return FileParsers
-                .SelectMany(x => x.FileExtensions)
-                .Distinct()
-                .OrderBy(x => x);
+                .SelectMany(x => x.FileFormats)
+                .OrderBy(x => x.Extension)
+                .ThenBy(x => x.Name);
         }
 
-        public static IEnumerable<string> SupportedGpsFileExtensions(GpsFeatures features)
+        public static IEnumerable<GpsFileFormat> SupportedGpsFileFormats(GpsFeatures features)
         {
             return FileParsers
                 .Where(x => x.SupportedFeatures.Contains(features))
-                .SelectMany(x => x.FileExtensions)
-                .Distinct()
-                .OrderBy(x => x);
+                .SelectMany(x => x.FileFormats)
+                .OrderBy(x => x.Extension)
+                .ThenBy(x => x.Name);
         }
 
         public static GpsData Parse(Stream stream)

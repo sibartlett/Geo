@@ -7,9 +7,9 @@ namespace Geo.Gps.Serialization.Xml
     public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
     {
         protected readonly XmlSerializer _xmlSerializer = new XmlSerializer(typeof (T));
+        
+        public abstract GpsFileFormat[] FileFormats { get; }
         public abstract GpsFeatures SupportedFeatures { get; }
-        public abstract string[] FileExtensions { get; }
-        public abstract Uri FileFormatSpecificationUri { get; }
 
         public bool CanDeSerialize(StreamWrapper streamWrapper)
         {

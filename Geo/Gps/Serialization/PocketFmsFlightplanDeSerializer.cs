@@ -7,19 +7,20 @@ namespace Geo.Gps.Serialization
 {
     public class PocketFmsFlightplanDeSerializer : GpsXmlDeSerializer<PocketFmsFlightplan>
     {
+        public override GpsFileFormat[] FileFormats
+        {
+            get
+            {
+                return new[]
+                    {
+                        new GpsFileFormat("xml", "PocketFMS Flightplan", "http://www.PocketFMS.com/XMLSchema/PocketFMSNavlog-1.2.0.xsd"),
+                    };
+            }
+        }
+
         public override GpsFeatures SupportedFeatures
         {
             get { return GpsFeatures.Routes; }
-        }
-
-        public override string[] FileExtensions
-        {
-            get { return new[] { "xml"}; }
-        }
-
-        public override Uri FileFormatSpecificationUri
-        {
-            get { return new Uri("http://www.PocketFMS.com/XMLSchema/PocketFMSNavlog-1.2.0.xsd"); }
         }
 
         protected override GpsData DeSerialize(PocketFmsFlightplan xml)

@@ -15,11 +15,18 @@ namespace Geo.Gps.Serialization
         private const string H_CREW2_REGEX = @"^HFCM2CREW2:(?<value>.+)$";
         private const string B_LINE_REGEX = @"^B(?<h>\d\d)(?<m>\d\d)(?<s>\d\d)(?<coord>\d\d\d\d\d\d\d[NnSs]\d\d\d\d\d\d\d\d[EeWw])(?<validAlt>[AaVv])(?<presAlt>\d\d\d\d\d)(?<gpsAlt>\d\d\d\d\d)";
 
+        public GpsFileFormat[] FileFormats
+        {
+            get
+            {
+                return new[]
+                    {
+                        new GpsFileFormat("igc", "IGC", "http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/"),
+                    };
+            }
+        }
+
         public GpsFeatures SupportedFeatures { get { return GpsFeatures.Tracks;} }
-
-        public string[] FileExtensions { get { return new[] { "igc" }; } }
-
-        public Uri FileFormatSpecificationUri { get { return new Uri("http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/"); } }
 
         public bool CanDeSerialize(StreamWrapper streamWrapper)
         {
