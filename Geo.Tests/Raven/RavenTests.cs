@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Geo.Geometries;
 using Geo.Raven;
 using NUnit.Framework;
@@ -20,13 +21,13 @@ namespace Geo.Tests.Raven
         [Test]
         public void LineStringTest()
         {
-            IndexPropertyTest(new LineString(new [] { new Point(0, 0), new Point(1, 0), new Point(2, 0)  }));
+            IndexPropertyTest(new LineString(new [] { new Point(0, 0), new Point(1, 0), new Point(0,2)  }));
         }
 
         [Test]
         public void LinearRingTest()
         {
-            IndexPropertyTest(new LinearRing(new [] { new Point(0, 0), new Point(1, 0), new Point(2, 0)  }));
+            IndexPropertyTest(new LinearRing(new [] { new Point(0, 0), new Point(1, 0), new Point(0, 2)  }));
         }
 
         [Test]
@@ -55,6 +56,7 @@ namespace Geo.Tests.Raven
             }
             using (var session = Store.OpenSession())
             {
+                Console.WriteLine(((IWktShape)geometry).ToWktString());
                 var result = session.Query<RavenJObject, TestIndex>()
                     .Customize(x =>
                     {
@@ -62,11 +64,12 @@ namespace Geo.Tests.Raven
                         x.WaitForNonStaleResults();
                     })
                     .Any();
+                //Assert.That(result, Is.True);
 
                 var result2 = session.Query<RavenJObject, TestIndex>()
                     .Customize(x =>
                     {
-                        x.RelatesToShape(new Circle(0, 0, 1000), SpatialRelation.Within);
+                        x.RelatesToShape(new Circle(0, 0, 600000), SpatialRelation.Within);
                         x.WaitForNonStaleResults();
                     })
                     .Any();
@@ -75,7 +78,7 @@ namespace Geo.Tests.Raven
                 var result3 = session.Query<RavenJObject, TestIndex>()
                     .Customize(x =>
                     {
-                        x.RelatesToShape(new Circle(0, 160, 50), SpatialRelation.Within);
+                        x.RelatesToShape(new Circle(0, 160, 600000), SpatialRelation.Within);
                         x.WaitForNonStaleResults();
                     })
                     .Any();
