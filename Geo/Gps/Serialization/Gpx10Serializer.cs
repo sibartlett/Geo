@@ -73,7 +73,7 @@ namespace Geo.Gps.Serialization
                 SerializeTrackMetadata(track, trk, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeTrackMetadata(track, trk, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                trk.trkseg = new GpxTrackPoint[track.Segments.Count][];
+                trk.trkseg = new GpxTrackSegment[track.Segments.Count];
                 for (var i = 0; i < track.Segments.Count; i++)
                 {
                     var segment = track.Segments[i];
@@ -87,7 +87,7 @@ namespace Geo.Gps.Serialization
                             ele = segment[j].Elevation == null ? 0m : (decimal)segment[j].Elevation
                         };
                     }
-                    trk.trkseg[i] = pts;
+                    trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
                 }
 
                 yield return trk;
@@ -144,7 +144,7 @@ namespace Geo.Gps.Serialization
                     foreach (var trksegTrkpt in trkType.trkseg)
                     {
                         var segment = new LineString<Fix>();
-                        foreach (var wptType in trksegTrkpt)
+                        foreach (var wptType in trksegTrkpt.trkpt)
                         {
                             var fix = new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time);
                             segment.Add(fix);

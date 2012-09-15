@@ -92,6 +92,7 @@
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxRoute.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxTrack.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxTrackPoint.cs" />
+    <Compile Include="Gps\Serialization\Xml\Gpx\Gpx10\GpxTrackSegment.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxBounds.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxCopyright.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\Gpx11\GpxEmail.cs" />

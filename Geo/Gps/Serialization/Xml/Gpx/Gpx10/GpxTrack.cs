@@ -13,7 +13,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx10
         //[XmlAnyElement]
         //public XmlElement[] Any { get; set; }
 
-        [XmlArrayItem("trkpt", typeof(GpxTrackPoint[]), IsNullable=false)]
-        public GpxTrackPoint[][] trkseg { get; set; }
+        [XmlElement("trkseg")]
+        public GpxTrackSegment[] trkseg { get; set; }
     }
 }
