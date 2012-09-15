@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Geo.Geometries;
+using Raven.Abstractions.Data;
 using Raven.Abstractions.Indexing;
 using Raven.Client;
 using Raven.Client.Indexes;
@@ -43,7 +44,7 @@ namespace Geo.Raven
 
             return Regex.Replace(value, @"GeoIndex\((?<prop>[\w\d\s\.]+)(?<sep>[,)])", match =>
                        string.Format("SpatialGenerate(\"{0}\", {1}.{2}{3}",
-                       GeoRavenExtensions.DefaultGeoFieldName,
+                       Constants.DefaultSpatialFieldName,
                        match.Groups["prop"].Value,
                        GeoContractResolver.IndexProperty,
                        match.Groups["sep"].Value));

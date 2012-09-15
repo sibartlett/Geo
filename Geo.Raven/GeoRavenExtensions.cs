@@ -1,14 +1,13 @@
 ﻿using Geo.Geometries;
 using Geo.Measure;
 using Geo.Raven;
+using Raven.Abstractions.Data;
 using Raven.Abstractions.Indexing;
 
 namespace Raven.Client
 {
     public static class GeoRavenExtensions
     {
-        public const string DefaultGeoFieldName = "__spatial";
-
         public static IDocumentStore ApplyGeoConventions(this IDocumentStore store)
         {
             store.Conventions.JsonContractResolver = new GeoContractResolver();
@@ -25,9 +24,9 @@ namespace Raven.Client
             return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coord.Latitude, coord.Longitude);
         }
 
-        public static IDocumentQueryBase<T, TSelf> RelatesToShape<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, IGeometry shape, SpatialRelation relation, double distanceErrorPct = 0.025) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQueryBase<T, TSelf> RelatesToShape<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, IGeometry shape, SpatialRelation relation, double distanceErrorPct = Constants.DefaultSpatialDistanceErrorPct) where TSelf : IDocumentQueryBase<T, TSelf>
         {
-            return self.RelatesToShape(DefaultGeoFieldName, new GeoValueProvider().GetValue(shape), relation, distanceErrorPct);
+            return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation, distanceErrorPct);
         }
         
         public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, double radiusKm, ILatLngCoordinate coord)
@@ -42,7 +41,7 @@ namespace Raven.Client
 
         public static IDocumentQueryCustomization RelatesToShape(this IDocumentQueryCustomization self, IGeometry shape, SpatialRelation relation)
         {
-            return self.RelatesToShape(DefaultGeoFieldName, new GeoValueProvider().GetValue(shape), relation);
+            return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation);
         }
     }
 }

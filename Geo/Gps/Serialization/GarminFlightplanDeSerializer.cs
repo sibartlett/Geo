@@ -2,6 +2,7 @@
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.Garmin;
+using Geo.Gps.Serialization.Xml.Garmin.Flightplan;
 
 namespace Geo.Gps.Serialization
 {
