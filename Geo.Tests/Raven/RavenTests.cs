@@ -13,95 +13,58 @@ namespace Geo.Tests.Raven
     public class RavenTests : RavenTestFixtureBase
     {
         [Test]
-        public void PointTest()
+        public void PointTests()
         {
-            IndexPropertyTest(new Point(0, 0));
+            var point = new Point(0, 0);
+            AssertThatIndexPropertyIsGenerated(point);
+            AssertTrue(point, SpatialRelation.Within, new Circle(0, 0, 1));
+            AssertFalse(point, SpatialRelation.Within, new Circle(0, 160, 600000));
+            //AssertThat(point, SpatialRelation.Disjoint, new Point(1, 1));
         }
 
         [Test]
-        public void LineStringTest()
+        public void CircleTests()
         {
-            IndexPropertyTest(new LineString(new [] { new Point(0, 0), new Point(1, 0), new Point(0,2)  }));
+            var circle = new Circle(0, 0, 110000);
+            AssertThatIndexPropertyIsGenerated(circle);
+            AssertTrue(circle, SpatialRelation.Within, new Circle(0, 0, 220000));
+            AssertFalse(circle, SpatialRelation.Within, new Circle(0, 160, 600000));
+            AssertTrue(circle, SpatialRelation.Intersects, new Circle(1, 0, 110000));
+            AssertFalse(circle, SpatialRelation.Intersects, new Circle(2, 0, 110000));
+            //AssertThat(point, SpatialRelation.Disjoint, new Point(1, 1));
         }
 
         [Test]
-        public void LinearRingTest()
+        public void LineStringTests()
         {
-            IndexPropertyTest(new LinearRing(new [] { new Point(0, 0), new Point(1, 0), new Point(0, 2)  }));
+            var lineString = new LineString(new[] { new Point(0, 0), new Point(1, 1), new Point(1, 2) });
+            AssertThatIndexPropertyIsGenerated(lineString);
+            AssertTrue(lineString, SpatialRelation.Within, new Circle(0, 0, 600000));
+            AssertFalse(lineString, SpatialRelation.Within, new Circle(0, 160, 600000));
+            //AssertThat(lineString, SpatialRelation.Disjoint, new Circle(0, 160, 600000));
+            AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Point(1, 0), new Point(0, 1) }));
+            //AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Point(0, 1), new Point(1, 1), new Point(2, 1) }));
         }
 
         [Test]
-        public void PolygonTest()
+        public void LinearRingTests()
         {
-            IndexPropertyTest(new Polygon(new LinearRing(new[] { new Point(0, 0), new Point(5, 0), new Point(0, 5) })));
+            var linearRing = new LinearRing(new[] { new Point(0, 0), new Point(1, 0), new Point(0, 2) });
+            AssertThatIndexPropertyIsGenerated(linearRing);
+            AssertTrue(linearRing, SpatialRelation.Within, new Circle(0, 0, 600000));
+            AssertFalse(linearRing, SpatialRelation.Within, new Circle(0, 160, 600000));
         }
 
-        private void IndexPropertyTest(IGeometry geometry)
+        [Test]
+        public void PolygonTests()
         {
-            InitRaven(new TestIndex());
-            var doc =  new GeoDoc
-                                  {
-                                      Geometry = geometry
-                                  };
-            using (var session = Store.OpenSession())
-            {
-                session.Store(doc);
-                session.SaveChanges();
-            }
-            using (var session = Store.OpenSession())
-            {
-                var json = session.Load<RavenJObject>(doc.Id);
-                var result = json.Value<RavenJObject>("Geometry").ContainsKey(GeoContractResolver.IndexProperty);
-                Assert.That(result, Is.True);
-            }
-            using (var session = Store.OpenSession())
-            {
-                Console.WriteLine(((IWktShape)geometry).ToWktString());
-                var result = session.Query<RavenJObject, TestIndex>()
-                    .Customize(x =>
-                    {
-                        x.RelatesToShape(geometry, SpatialRelation.Within);
-                        x.WaitForNonStaleResults();
-                    })
-                    .Any();
-                //Assert.That(result, Is.True);
-
-                var result2 = session.Query<RavenJObject, TestIndex>()
-                    .Customize(x =>
-                    {
-                        x.RelatesToShape(new Circle(0, 0, 600000), SpatialRelation.Within);
-                        x.WaitForNonStaleResults();
-                    })
-                    .Any();
-                Assert.That(result2, Is.True);
-
-                var result3 = session.Query<RavenJObject, TestIndex>()
-                    .Customize(x =>
-                    {
-                        x.RelatesToShape(new Circle(0, 160, 600000), SpatialRelation.Within);
-                        x.WaitForNonStaleResults();
-                    })
-                    .Any();
-                Assert.That(result3, Is.False);
-            }
-        }
-
-        public class GeoDoc
-        {
-            public string Id { get; set; }
-            public IGeometry Geometry { get; set; }
-        }
-
-        public class TestIndex : GeoIndexCreationTask<GeoDoc>
-        {
-            public TestIndex()
-            {
-                Map = docs => from doc in docs
-                              select new
-                                         {
-                                             _ = GeoIndex(doc.Geometry)
-                                         };
-            }
+            var polygon = new Polygon(new LinearRing(new[] { new Point(0, 0), new Point(5, 0), new Point(0, 5) }));
+            Console.WriteLine(polygon.ToWktString());
+            AssertThatIndexPropertyIsGenerated(polygon);
+            AssertTrue(polygon, SpatialRelation.Within, new Circle(0, 0, 600000));
+            AssertFalse(polygon, SpatialRelation.Within, new Circle(0, 160, 600000));
+            AssertTrue(polygon, SpatialRelation.Intersects, new Circle(0, 0, 110000));
+            AssertFalse(polygon, SpatialRelation.Intersects, new Circle(0, 160, 110000));
         }
     }
 }
