@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using Geo.Measure;
 
 namespace Geo.Geometries
@@ -7,14 +8,17 @@ namespace Geo.Geometries
     {
         protected Polygon()
         {
+            Holes= new List<LinearRing>();
         }
 
-        public Polygon(LinearRing shell)
+        public Polygon(LinearRing shell, params LinearRing[] holes)
         {
             Shell = shell;
+            Holes = new List<LinearRing>(holes ?? new LinearRing[0]);
         }
 
         public LinearRing Shell { get; protected set; }
+        public List<LinearRing> Holes { get; protected set; }
 
         public bool IsEmpty
         {
@@ -43,6 +47,11 @@ namespace Geo.Geometries
             {
                 buf.Append("(");
                 buf.Append(Shell.ToWktPartString());
+                foreach (var hole in Holes)
+                {
+                    buf.Append(", ");
+                    buf.Append(hole.ToWktPartString());
+                }
                 buf.Append(")");
             }
             return buf.ToString();
