@@ -74,10 +74,10 @@ namespace Geo.Geometries
             get { return !IsEmpty && StartPoint == EndPoint; }
         }
 
-        public Bounds GetBounds()
+        public Envelope GetBounds()
         {
             return IsEmpty ? null :
-                new Bounds(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
+                new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
         public string ToWktPartString()

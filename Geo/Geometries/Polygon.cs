@@ -56,5 +56,10 @@ namespace Geo.Geometries
             }
             return buf.ToString();
         }
+
+        public Envelope GetBounds()
+        {
+            return Shell.GetBounds();
+        }
     }
 }

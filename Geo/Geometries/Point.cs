@@ -35,6 +35,11 @@ namespace Geo.Geometries
             return Latitude + ", " + Longitude + ", " + Elevation.Value;
         }
 
+        public Envelope GetBounds()
+        {
+            return new Envelope(Latitude, Longitude, Latitude, Longitude);
+        }
+
         protected bool Equals(Point other)
         {
             return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation);

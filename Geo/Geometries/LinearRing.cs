@@ -65,10 +65,10 @@ namespace Geo.Geometries
             get { return !IsEmpty && Coordinates[0] == Coordinates[Coordinates.Count - 1]; }
         }
 
-        public Bounds GetBounds()
+        public Envelope GetBounds()
         {
             return IsEmpty ? null :
-                new Bounds(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
+                new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
         public string ToWktPartString()

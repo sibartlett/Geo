@@ -9,7 +9,7 @@ namespace Geo.Reference
 {
     public class Ellipsoid
     {
-        private const double NauticalMile = 1852d;
+        internal const double NauticalMile = 1852d;
 
         private static Ellipsoid _current;
         public static Ellipsoid Current

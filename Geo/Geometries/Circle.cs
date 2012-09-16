@@ -20,5 +20,17 @@
 
         public Coordinate Center { get; protected set; }
         public double Radius { get; protected set; }
+
+        public Envelope GetBounds()
+        {
+            var radiusDeg = Radius / (Reference.Ellipsoid.NauticalMile * 60);
+
+            return new Envelope(
+                Center.Latitude - radiusDeg,
+                Center.Longitude - radiusDeg,
+                Center.Latitude + radiusDeg,
+                Center.Longitude + radiusDeg
+            );
+        }
     }
 }

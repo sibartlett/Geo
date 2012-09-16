@@ -19,9 +19,13 @@ namespace Geo.Raven
 
         public string GetValue(IGeometry target)
         {
-            var point = target as ICoordinate;
+            var point = target as IPoint;
             if (point != null)
                 return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", point.Longitude, point.Latitude);
+
+            var envelope = target as Envelope;
+            if (envelope != null)
+                return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6} {2:F6} {3:F6}", envelope.MinLon, envelope.MinLat, envelope.MaxLon, envelope.MaxLat);
 
             var circle = target as Circle;
             if (circle != null)

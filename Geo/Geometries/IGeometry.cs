@@ -2,5 +2,6 @@
 {
     public interface IGeometry
     {
+        Envelope GetBounds();
     }
 }
