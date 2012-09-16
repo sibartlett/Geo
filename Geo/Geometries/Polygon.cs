@@ -18,7 +18,7 @@ namespace Geo.Geometries
 
         public bool IsEmpty
         {
-            get { return Shell.Points.Count < 3; }
+            get { return Shell.Coordinates.Count < 3; }
         }
 
         public Distance CalculatePerimeter()

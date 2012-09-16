@@ -3,30 +3,36 @@ using System.Globalization;
 
 namespace Geo.Geometries
 {
-    public class LatLngCoordinate : ILatLngCoordinate
+    public class Coordinate : ICoordinate
     {
-        protected LatLngCoordinate()
+        protected Coordinate()
         {
         }
 
-        public LatLngCoordinate(double latitude, double longitude)
+        public Coordinate(double latitude, double longitude)
         {
             Validate(latitude, longitude);
             Latitude = latitude;
             Longitude = longitude;
         }
 
+        public Coordinate(double latitude, double longitude, double z) : this(latitude, longitude)
+        {
+            Elevation = z;
+        }
+
         public double Latitude { get; protected set; }
         public double Longitude { get; protected set; }
+        public double? Elevation { get; protected set; }
 
         public override string ToString()
         {
             return Latitude + ", " + Longitude;
         }
 
-        protected bool Equals(LatLngCoordinate other)
+        public string ToWktPartString()
         {
-            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
+            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
         }
 
         internal static void Validate(double latitude, double longitude)
@@ -38,32 +44,30 @@ namespace Geo.Geometries
                 throw new ArgumentOutOfRangeException("longitude");
         }
 
+        protected bool Equals(Coordinate other)
+        {
+            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((LatLngCoordinate) obj);
+            return obj.GetType() == GetType() && Equals((Coordinate)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Latitude.GetHashCode()*397) ^ Longitude.GetHashCode();
+                var hashCode = Latitude.GetHashCode();
+                hashCode = (hashCode * 397) ^ Longitude.GetHashCode();
+                hashCode = (hashCode * 397) ^ Elevation.GetHashCode();
+                return hashCode;
             }
         }
 
-        public string ToWktPartString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
-        }
-
-        public string ToWktString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "POINT ({0})", ToWktPartString());
-        }
-
-        public static LatLngCoordinate Parse(string coordinate)
+        public static Coordinate Parse(string coordinate)
         {
             if (coordinate == null)
                 throw new ArgumentNullException("coordinate");
@@ -71,21 +75,21 @@ namespace Geo.Geometries
             if (coordinate.IsNullOrWhitespace())
                 throw new ArgumentException("Value was empty", "coordinate");
 
-            LatLngCoordinate result;
+            Coordinate result;
             if (!TryParse(coordinate, out result))
                 throw new FormatException("Coordinate (" + coordinate + ") is a not supported format.");
 
             return result;
         }
 
-        public static LatLngCoordinate TryParse(string coordinate)
+        public static Coordinate TryParse(string coordinate)
         {
-            LatLngCoordinate result;
+            Coordinate result;
             TryParse(coordinate, out result);
             return result;
         }
 
-        public static bool TryParse(string coordinate, out LatLngCoordinate result)
+        public static bool TryParse(string coordinate, out Coordinate result)
         {
             var a = GeoUtil.SplitCoordinateString(coordinate);
             if (a != null)
@@ -95,22 +99,17 @@ namespace Geo.Geometries
                 if (GeoUtil.TryParseOrdinateInternal(a[0], GeoUtil.OrdinateType.Latitude, out lat))
                     if (GeoUtil.TryParseOrdinateInternal(a[1], GeoUtil.OrdinateType.Longitude, out lon))
                     {
-                        result = new LatLngCoordinate(lat, lon);
+                        result = new Coordinate(lat, lon);
                         return true;
                     }
             }
-            result = default(LatLngCoordinate);
+            result = default(Coordinate);
             return false;
         }
 
         public Point ToPoint()
         {
             return new Point(this);
-        }
-
-        public Point ToPoint(double z)
-        {
-            return new Point(this, z);
         }
     }
 }

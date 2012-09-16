@@ -14,12 +14,12 @@ namespace Raven.Client
             return store;
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusKm, ILatLngCoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusKm, ICoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
         {
             return self.WithinRadiusOf(radiusKm, coord.Latitude, coord.Longitude);
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, Distance radius, ILatLngCoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, Distance radius, ICoordinate coord) where TSelf : IDocumentQueryBase<T, TSelf>
         {
             return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coord.Latitude, coord.Longitude);
         }
@@ -29,12 +29,12 @@ namespace Raven.Client
             return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation, distanceErrorPct);
         }
         
-        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, double radiusKm, ILatLngCoordinate coord)
+        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, double radiusKm, ICoordinate coord)
         {
             return self.WithinRadiusOf(radiusKm, coord.Latitude, coord.Longitude);
         }
 
-        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, Distance radius, ILatLngCoordinate coord)
+        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, Distance radius, ICoordinate coord)
         {
             return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coord.Latitude, coord.Longitude);
         }

@@ -1,41 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : LineString<Point>
+    public class LineString : LineString<Coordinate>
     {
         public LineString()
         {
         }
 
-        public LineString(IEnumerable<Point> items) : base(items)
+        public LineString(IEnumerable<Coordinate> items) : base(items)
         {
         }
     }
 
-    public class LineString<T> : IGeometry, IWktShape, IWktPart where T : class, IPoint
+    public class LineString<T> : IGeometry, IWktShape, IWktPart where T : class, ICoordinate
     {
         public LineString()
         {
-            Points = new List<T>();
+            Coordinates = new List<T>();
         }
 
         public LineString(IEnumerable<T> items)
         {
-            Points = new List<T>(items);
+            Coordinates = new List<T>(items);
         }
 
-        public List<T> Points { get; protected set; }
+        public List<T> Coordinates { get; protected set; }
 
         public T StartPoint
         {
             get
             {
-                return IsEmpty ? default(T) : Points[0];
+                return IsEmpty ? default(T) : Coordinates[0];
             }
         }
 
@@ -43,7 +42,7 @@ namespace Geo.Geometries
         {
             get
             {
-                return IsEmpty ? default(T) : Points[Points.Count - 1];
+                return IsEmpty ? default(T) : Coordinates[Coordinates.Count - 1];
             }
         }
 
@@ -54,9 +53,9 @@ namespace Geo.Geometries
             if (!IsEmpty)
             {
 
-                for (var i = 1; i < Points.Count; i++)
+                for (var i = 1; i < Coordinates.Count; i++)
                 {
-                    var line = Points[i - 1].CalculateShortestLine(Points[i]);
+                    var line = Coordinates[i - 1].CalculateShortestLine(Coordinates[i]);
                     if(line !=null)
                         distance += line.Distance;
                 }
@@ -67,7 +66,7 @@ namespace Geo.Geometries
 
         public bool IsEmpty
         {
-            get { return Points.Count == 0; }
+            get { return Coordinates.Count == 0; }
         }
 
         public bool IsClosed
@@ -78,7 +77,7 @@ namespace Geo.Geometries
         public Bounds GetBounds()
         {
             return IsEmpty ? null :
-                new Bounds(Points.Min(x => x.Latitude), Points.Min(x => x.Longitude), Points.Max(x => x.Latitude), Points.Max(x => x.Longitude));
+                new Bounds(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
         public string ToWktPartString()
@@ -89,11 +88,11 @@ namespace Geo.Geometries
             else
             {
                 buf.Append("(");
-                for (var i = 0; i < Points.Count; i++)
+                for (var i = 0; i < Coordinates.Count; i++)
                 {
                     if (i > 0)
                         buf.Append(", ");
-                    buf.Append(Points[i].ToWktPartString());
+                    buf.Append(Coordinates[i].ToWktPartString());
                 }
                 buf.Append(")");
             }
@@ -110,12 +109,12 @@ namespace Geo.Geometries
 
         public T this[int index]
         {
-            get { return Points[index]; }
+            get { return Coordinates[index]; }
         }
 
         public void Add(T point)
         {
-            Points.Add(point);
+            Coordinates.Add(point);
         }
     }
 }

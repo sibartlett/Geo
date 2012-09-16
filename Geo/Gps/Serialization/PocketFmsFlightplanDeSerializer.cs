@@ -26,10 +26,10 @@ namespace Geo.Gps.Serialization
         protected override GpsData DeSerialize(PocketFmsFlightplan xml)
         {
             var route = new Route();
-            route.LineString.Points.Add(new Point((double)xml.LIB[0].FromPoint.Latitude, (double)xml.LIB[0].FromPoint.Longitude));
+            route.LineString.Coordinates.Add(new Coordinate((double)xml.LIB[0].FromPoint.Latitude, (double)xml.LIB[0].FromPoint.Longitude));
             foreach (var lib in xml.LIB)
             {
-                route.LineString.Points.Add(new Point((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude));
+                route.LineString.Coordinates.Add(new Coordinate((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude));
             }
 
             var data = new GpsData();

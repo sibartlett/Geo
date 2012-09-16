@@ -50,10 +50,11 @@
     <Compile Include="Geometries\GeodeticCalculations.cs" />
     <Compile Include="Geometries\GeodeticLine.cs" />
     <Compile Include="Geometries\IGeometry.cs" />
-    <Compile Include="Geometries\ILatLngCoordinate.cs" />
+    <Compile Include="Geometries\ICoordinate.cs" />
+    <Compile Include="Geometries\ILatLng.cs" />
     <Compile Include="Geometries\IPoint.cs" />
     <Compile Include="Geometries\IWktShape.cs" />
-    <Compile Include="Geometries\LatLngCoordinate.cs" />
+    <Compile Include="Geometries\Coordinate.cs" />
     <Compile Include="Geometries\LinearRing.cs" />
     <Compile Include="Geometries\LineString.cs" />
     <Compile Include="Geometries\LineStringExtensions.cs" />

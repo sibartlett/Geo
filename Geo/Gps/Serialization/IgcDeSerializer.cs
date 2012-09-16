@@ -125,7 +125,7 @@ namespace Geo.Gps.Serialization
                 string presAlt = match.Groups["presAlt"].Value;
                 string gpsAlt = match.Groups["gpsAlt"].Value;
 
-                var cood = Point.ParseCoordinate(coord);
+                var cood = Coordinate.Parse(coord);
                 var fix = new Fix(cood.Latitude, cood.Longitude, double.Parse(gpsAlt), date.AddHours(int.Parse(h)).AddMinutes(int.Parse(m)).AddSeconds(int.Parse(s)));
 
                 data.Add(fix);

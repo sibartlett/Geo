@@ -156,8 +156,8 @@ namespace Geo.Gps.Serialization
                 for (var i = 0; i < track.Segments.Count; i++)
                 {
                     var segment = track.Segments[i];
-                    var pts = new GpxWaypoint[segment.Points.Count];
-                    for (var j = 0; j < segment.Points.Count; j++)
+                    var pts = new GpxWaypoint[segment.Coordinates.Count];
+                    for (var j = 0; j < segment.Coordinates.Count; j++)
                     {
                         pts[j] = new GpxWaypoint
                         {
@@ -183,8 +183,8 @@ namespace Geo.Gps.Serialization
                 SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                rte.rtept = new GpxWaypoint[route.LineString.Points.Count];
-                for (var j = 0; j < route.LineString.Points.Count; j++)
+                rte.rtept = new GpxWaypoint[route.LineString.Coordinates.Count];
+                for (var j = 0; j < route.LineString.Coordinates.Count; j++)
                 {
                     rte.rtept[j] = new GpxWaypoint
                     {
@@ -262,10 +262,10 @@ namespace Geo.Gps.Serialization
                     route.Metadata.Attribute(x => x.Description, rteType.desc);
                     route.Metadata.Attribute(x => x.Comment, rteType.cmt);
 
-                    route.LineString = new LineString<Point>();
+                    route.LineString = new LineString();
                     foreach (var wptType in rteType.rtept)
                     {
-                        var fix = new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time);
+                        var fix = new Coordinate((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
                         route.LineString.Add(fix);
                     }
                     data.Routes.Add(route);
@@ -277,7 +277,7 @@ namespace Geo.Gps.Serialization
             if (xml.wpt != null)
                 foreach (var wptType in xml.wpt)
                 {
-                    var fix = new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time);
+                    var fix = new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
                     data.Waypoints.Add(fix);
                 }
         }

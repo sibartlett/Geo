@@ -1,6 +1,6 @@
 namespace Geo.Geometries
 {
-    public interface IPoint : ILatLngCoordinate
+    public interface IPoint : IGeometry, ILatLng, IWktShape
     {
         double? Elevation { get; }
     }

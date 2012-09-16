@@ -60,7 +60,7 @@ namespace Geo.Reference
             get { return Math.Abs(EquatorialAxis - PolarAxis) < double.Epsilon; }
         }
 
-        public GeodeticLine CalculateOrthodromicLine(ILatLngCoordinate point1, ILatLngCoordinate point2)
+        public GeodeticLine CalculateOrthodromicLine(ILatLng point1, ILatLng point2)
         {
             return CalculateOrthodromicLine(point1.Latitude, point1.Longitude, point2.Latitude, point2.Longitude);
         }
@@ -135,7 +135,7 @@ namespace Geo.Reference
                     // 'faz' and 'baz' are forward azimuths at both points.
                     faz = Math.Atan2(tu1, tu2);
                     baz = Math.Atan2(cu1 * sx, baz * cx - su1 * cu2) + Math.PI;
-                    return new GeodeticLine(new LatLngCoordinate(lat1, lon1), new LatLngCoordinate(lat2, lon2), s, faz, baz);
+                    return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), s, faz, baz);
                 }
             }
             // No convergence. It may be because coordinate points
@@ -149,13 +149,13 @@ namespace Geo.Reference
             if (Math.Abs(lat1)<=leps && Math.Abs(lat2)<=leps)
             {
                 // Points are on the equator.
-                return new GeodeticLine(new LatLngCoordinate(lat1, lon1), new LatLngCoordinate(lat2, lon2), Math.Abs(lon1 - lon2) * EquatorialAxis, faz, baz);
+                return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), Math.Abs(lon1 - lon2) * EquatorialAxis, faz, baz);
             }
             // Other cases: no solution for this algorithm.
             throw new ArithmeticException();
         }
 
-        public GeodeticLine CalculateLoxodromicLine(ILatLngCoordinate point1, ILatLngCoordinate point2)
+        public GeodeticLine CalculateLoxodromicLine(ILatLng point1, ILatLng point2)
         {
             return CalculateLoxodromicLine(point1.Latitude, point1.Longitude, point2.Latitude, point2.Longitude);
         }
@@ -196,7 +196,7 @@ namespace Geo.Reference
             {
                 distance = Math.Abs(meridionalDistance / Math.Cos(course.ToRadians()));
             }
-            return new GeodeticLine(new LatLngCoordinate(lat1, lon1), new LatLngCoordinate(lat2, lon2), distance, course, course > 180 ? course - 180 : course + 180);
+            return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), distance, course, course > 180 ? course - 180 : course + 180);
         }
 
         private double LoxodromicLineCourse(double lat1, double lon1, double lat2, double lon2)

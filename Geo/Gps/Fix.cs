@@ -3,7 +3,7 @@ using Geo.Geometries;
 
 namespace Geo.Gps
 {
-    public class Fix : Point
+    public class Fix : Coordinate
     {
         protected Fix()
         {

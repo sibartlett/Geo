@@ -4,7 +4,7 @@ namespace Geo.Geometries
 {
     public class GeodeticLine
     {
-        public GeodeticLine(ILatLngCoordinate point1, ILatLngCoordinate point2, double distance, double trueBearing12, double trueBearing21)
+        public GeodeticLine(ICoordinate point1, ICoordinate point2, double distance, double trueBearing12, double trueBearing21)
         {
             Coordinate1 = point1;
             Coordinate2 = point2;
@@ -13,8 +13,8 @@ namespace Geo.Geometries
             Distance = new Distance(distance);
         }
 
-        public ILatLngCoordinate Coordinate1 { get; private set; }
-        public ILatLngCoordinate Coordinate2 { get; private set; }
+        public ICoordinate Coordinate1 { get; private set; }
+        public ICoordinate Coordinate2 { get; private set; }
         public Distance Distance { get; private set; }
         public double TrueBearing12 { get; private set; }
         public double TrueBearing21 { get; private set; }

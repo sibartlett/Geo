@@ -19,7 +19,7 @@ namespace Geo.Raven
 
         public string GetValue(IGeometry target)
         {
-            var point = target as ILatLngCoordinate;
+            var point = target as ICoordinate;
             if (point != null)
                 return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", point.Longitude, point.Latitude);
 

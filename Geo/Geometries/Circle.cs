@@ -6,7 +6,7 @@
         {
         }
 
-        public Circle(Point center, double radius)
+        public Circle(Coordinate center, double radius)
         {
             Center = center;
             Radius = radius;
@@ -14,11 +14,11 @@
 
         public Circle(double latitiude, double longitude, double radius)
         {
-            Center = new Point(latitiude, longitude);
+            Center = new Coordinate(latitiude, longitude);
             Radius = radius;
         }
 
-        public Point Center { get; protected set; }
+        public Coordinate Center { get; protected set; }
         public double Radius { get; protected set; }
     }
 }

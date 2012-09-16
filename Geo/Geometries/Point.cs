@@ -10,27 +10,23 @@ namespace Geo.Geometries
 
         public Point(double latitude, double longitude)
         {
-            LatLngCoordinate.Validate(latitude, longitude);
-            Latitude = latitude;
-            Longitude = longitude;
+            Coordinate=new Coordinate(latitude, longitude);
         }
 
-        public Point(double latitude, double longitude, double z) : this(latitude, longitude)
+        public Point(double latitude, double longitude, double z)
         {
-            Elevation = z;
+            Coordinate = new Coordinate(latitude, longitude, z);
         }
 
-        public Point(ILatLngCoordinate coordinate) : this(coordinate.Latitude, coordinate.Longitude)
+        public Point(Coordinate coordinate)
         {
+            Coordinate = coordinate;
         }
 
-        public Point(ILatLngCoordinate coordinate, double z) : this(coordinate.Latitude, coordinate.Longitude, z)
-        {
-        }
-
-        public double Latitude { get; protected set; }
-        public double Longitude { get; protected set; }
-        public double? Elevation { get; protected set; }
+        public Coordinate Coordinate { get; protected set; }
+        public double Latitude { get { return Coordinate.Latitude; } }
+        public double Longitude { get { return Coordinate.Longitude; } }
+        public double? Elevation { get { return Coordinate.Elevation; } }
 
         public override string ToString()
         {
@@ -62,32 +58,27 @@ namespace Geo.Geometries
             }
         }
 
-        public string ToWktPartString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
-        }
-
         public string ToWktString()
         {
-            return string.Format("POINT ({0})", ToWktPartString());
+            return string.Format("POINT ({0})", Coordinate.ToWktPartString());
         }
 
         public static Point ParseCoordinate(string coordinate)
         {
-            return LatLngCoordinate.Parse(coordinate).ToPoint();
+            return Coordinate.Parse(coordinate).ToPoint();
         }
 
         public static Point TryParseCoordinate(string coordinate)
         {
-            LatLngCoordinate result;
-            var success = LatLngCoordinate.TryParse(coordinate, out result);
+            Coordinate result;
+            var success = Coordinate.TryParse(coordinate, out result);
             return success ? result.ToPoint() : default(Point);
         }
 
         public static bool TryParseCoordinate(string coordinate, out Point result)
         {
-            LatLngCoordinate res;
-            var success = LatLngCoordinate.TryParse(coordinate, out res);
+            Coordinate res;
+            var success = Coordinate.TryParse(coordinate, out res);
             result = success ? res.ToPoint() : default(Point);
             return success;
         }

@@ -8,10 +8,10 @@ namespace Geo.Gps
         public Route()
         {
             Metadata = new RouteMetadata();
-            LineString = new LineString<Point>();
+            LineString = new LineString();
         }
 
         public RouteMetadata Metadata { get; private set; }
-        public LineString<Point> LineString { get; set; }
+        public LineString LineString { get; set; }
     }
 }

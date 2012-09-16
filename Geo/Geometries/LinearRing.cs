@@ -5,31 +5,31 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : LinearRing<Point>
+    public class LinearRing : LinearRing<Coordinate>
     {
         public LinearRing()
         {
         }
 
-        public LinearRing(IEnumerable<Point> items)
+        public LinearRing(IEnumerable<Coordinate> items)
             : base(items)
         {
         }
     }
 
-    public class LinearRing<T> : IGeometry, IWktShape, IWktPart where T : class, IPoint
+    public class LinearRing<T> : IGeometry, IWktShape, IWktPart where T : class, ICoordinate
     {
         public LinearRing()
         {
-            Points = new List<T>();
+            Coordinates = new List<T>();
         }
 
         public LinearRing(IEnumerable<T> items)
         {
-            Points = new List<T>(items);
+            Coordinates = new List<T>(items);
         }
 
-        public List<T> Points { get; protected set; }
+        public List<T> Coordinates { get; protected set; }
 
         public Distance CalculatePerimeter()
         {
@@ -37,15 +37,15 @@ namespace Geo.Geometries
 
             if (!IsEmpty)
             {
-                for (var i = 1; i < Points.Count; i++)
+                for (var i = 1; i < Coordinates.Count; i++)
                 {
-                    var line = Points[i - 1].CalculateShortestLine(Points[i]);
+                    var line = Coordinates[i - 1].CalculateShortestLine(Coordinates[i]);
                     if (line != null)
                         distance += line.Distance;
 
-                    if (i == Points.Count - 1)
+                    if (i == Coordinates.Count - 1)
                     {
-                        line = Points[0].CalculateShortestLine(Points[i - 1]);
+                        line = Coordinates[0].CalculateShortestLine(Coordinates[i - 1]);
                         if (line != null)
                             distance += line.Distance;
                     }
@@ -57,18 +57,18 @@ namespace Geo.Geometries
 
         public bool IsEmpty
         {
-            get { return Points.Count == 0; }
+            get { return Coordinates.Count == 0; }
         }
 
         public bool IsClosed
         {
-            get { return !IsEmpty && Points[0] == Points[Points.Count - 1]; }
+            get { return !IsEmpty && Coordinates[0] == Coordinates[Coordinates.Count - 1]; }
         }
 
         public Bounds GetBounds()
         {
             return IsEmpty ? null :
-                new Bounds(Points.Min(x => x.Latitude), Points.Min(x => x.Longitude), Points.Max(x => x.Latitude), Points.Max(x => x.Longitude));
+                new Bounds(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
         public string ToWktPartString()
@@ -79,16 +79,16 @@ namespace Geo.Geometries
             else
             {
                 buf.Append("(");
-                for (var i = 0; i < Points.Count; i++)
+                for (var i = 0; i < Coordinates.Count; i++)
                 {
                     if (i > 0)
                         buf.Append(", ");
-                    buf.Append(Points[i].ToWktPartString());
+                    buf.Append(Coordinates[i].ToWktPartString());
 
-                    if (i == Points.Count - 1 && Points[0] != Points[Points.Count - 1])
+                    if (i == Coordinates.Count - 1 && Coordinates[0] != Coordinates[Coordinates.Count - 1])
                     {
                         buf.Append(", ");
-                        buf.Append(Points[0].ToWktPartString());
+                        buf.Append(Coordinates[0].ToWktPartString());
                     }
                 }
                 buf.Append(")");
@@ -106,12 +106,12 @@ namespace Geo.Geometries
 
         public T this[int index]
         {
-            get { return Points[index]; }
+            get { return Coordinates[index]; }
         }
 
         public void Add(T point)
         {
-            Points.Add(point);
+            Coordinates.Add(point);
         }
     }
 }

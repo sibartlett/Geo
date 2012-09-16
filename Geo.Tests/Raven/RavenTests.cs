@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Geo.Geometries;
-using Geo.Raven;
 using NUnit.Framework;
 using Raven.Abstractions.Indexing;
-using Raven.Json.Linq;
-using Raven.Client;
 
 namespace Geo.Tests.Raven
 {
@@ -37,19 +33,19 @@ namespace Geo.Tests.Raven
         [Test]
         public void LineStringTests()
         {
-            var lineString = new LineString(new[] { new Point(0, 0), new Point(1, 1), new Point(1, 2) });
+            var lineString = new LineString(new[] { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(1, 2) });
             AssertThatIndexPropertyIsGenerated(lineString);
             AssertTrue(lineString, SpatialRelation.Within, new Circle(0, 0, 600000));
             AssertFalse(lineString, SpatialRelation.Within, new Circle(0, 160, 600000));
             //AssertThat(lineString, SpatialRelation.Disjoint, new Circle(0, 160, 600000));
-            AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Point(1, 0), new Point(0, 1) }));
+            AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Coordinate(1, 0), new Coordinate(0, 1) }));
             //AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Point(0, 1), new Point(1, 1), new Point(2, 1) }));
         }
 
         [Test]
         public void LinearRingTests()
         {
-            var linearRing = new LinearRing(new[] { new Point(0, 0), new Point(1, 0), new Point(0, 2) });
+            var linearRing = new LinearRing(new[] { new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 2) });
             AssertThatIndexPropertyIsGenerated(linearRing);
             AssertTrue(linearRing, SpatialRelation.Within, new Circle(0, 0, 600000));
             AssertFalse(linearRing, SpatialRelation.Within, new Circle(0, 160, 600000));
@@ -58,7 +54,7 @@ namespace Geo.Tests.Raven
         [Test]
         public void PolygonTests()
         {
-            var polygon = new Polygon(new LinearRing(new[] { new Point(0, 0), new Point(5, 0), new Point(0, 5) }));
+            var polygon = new Polygon(new LinearRing(new[] { new Coordinate(0, 0), new Coordinate(5, 0), new Coordinate(0, 5) }));
             Console.WriteLine(polygon.ToWktString());
             AssertThatIndexPropertyIsGenerated(polygon);
             AssertTrue(polygon, SpatialRelation.Within, new Circle(0, 0, 600000));
