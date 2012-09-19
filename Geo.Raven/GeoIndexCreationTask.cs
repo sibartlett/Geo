@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using Geo.Geometries;
 using Raven.Abstractions.Data;
 using Raven.Abstractions.Indexing;
-using Raven.Client;
 using Raven.Client.Indexes;
 
 namespace Geo.Raven
@@ -14,17 +13,17 @@ namespace Geo.Raven
 
     public class GeoIndexCreationTask<TDocument, TReduceResult> : AbstractIndexCreationTask<TDocument, TReduceResult>
     {
-        public object GeoIndex(IGeometry shape)
+        public object GeoIndex(IRavenIndexable shape)
         {
             throw new NotSupportedException("This method is provided solely to allow query translation on the server");
         }
 
-        public object GeoIndex(IGeometry shape, SpatialSearchStrategy strategy)
+        public object GeoIndex(IRavenIndexable shape, SpatialSearchStrategy strategy)
         {
             throw new NotSupportedException("This method is provided solely to allow query translation on the server");
         }
 
-        public object GeoIndex(IGeometry shape, SpatialSearchStrategy strategy, int maxTreeLevel)
+        public object GeoIndex(IRavenIndexable shape, SpatialSearchStrategy strategy, int maxTreeLevel)
         {
             throw new NotSupportedException("This method is provided solely to allow query translation on the server");
         }

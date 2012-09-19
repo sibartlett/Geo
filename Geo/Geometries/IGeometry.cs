@@ -1,6 +1,6 @@
 ﻿namespace Geo.Geometries
 {
-    public interface IGeometry
+    public interface IGeometry : IRavenIndexable
     {
         Envelope GetBounds();
     }

@@ -58,7 +58,7 @@ namespace Geo.Gps.Serialization
         {
             var data = new GpsData();
             DateTime date = default(DateTime);
-            var track = new LineString<Fix>();
+            var trackSegment = new TrackSegment();
 
             streamWrapper.Position = 0;
             using (var reader = new StreamReader(streamWrapper))
@@ -95,21 +95,21 @@ namespace Geo.Gps.Serialization
                     if (ParseMetadata(data, x => x.Vehicle.Crew2, H_CREW2_REGEX, line))
                         continue;
 
-                    if (ParseFix(line, track, date))
+                    if (ParseFix(line, trackSegment, date))
                         continue;
                 }
             }
 
-            if(!track.IsEmpty)
+            if (!trackSegment.IsEmpty())
             {
                 data.Tracks.Add(new Track());
-                data.Tracks[0].Segments.Add(track);
+                data.Tracks[0].Segments.Add(trackSegment);
             }
 
             return data;
         }
 
-        private bool ParseFix(string line, LineString<Fix> data, DateTime date)
+        private bool ParseFix(string line, TrackSegment trackSegment, DateTime date)
         {
             if (line.IsNullOrWhitespace())
                 return false;
@@ -128,7 +128,7 @@ namespace Geo.Gps.Serialization
                 var cood = Coordinate.Parse(coord);
                 var fix = new Fix(cood.Latitude, cood.Longitude, double.Parse(gpsAlt), date.AddHours(int.Parse(h)).AddMinutes(int.Parse(m)).AddSeconds(int.Parse(s)));
 
-                data.Add(fix);
+                trackSegment.Fixes.Add(fix);
                 return true;
             }
             return false;

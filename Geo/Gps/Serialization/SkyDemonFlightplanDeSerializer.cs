@@ -26,10 +26,10 @@ namespace Geo.Gps.Serialization
         private Route ConvertRoute(SkyDemonRoute route)
         {
             var result = new Route();
-            result.LineString.Add(ParseCoordinate(route.Start));
+            result.Coordinates.Add(ParseCoordinate(route.Start));
             foreach (var rhumbLine in route.RhumbLineRoute)
             {
-                result.LineString.Add(ParseCoordinate(rhumbLine.To));
+                result.Coordinates.Add(ParseCoordinate(rhumbLine.To));
             }
             return result;
         }

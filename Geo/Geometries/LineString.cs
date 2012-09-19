@@ -5,85 +5,45 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : LineString<Coordinate>
+    public class LineString : IGeometry, IWktShape, IWktPart
     {
         public LineString()
         {
+            Coordinates = new List<Coordinate>();
         }
 
-        public LineString(IEnumerable<Coordinate> items) : base(items)
+        public LineString(IEnumerable<Coordinate> coordinates)
         {
-        }
-    }
-
-    public class LineString<T> : IGeometry, IWktShape, IWktPart where T : class, ICoordinate
-    {
-        public LineString()
-        {
-            Coordinates = new List<T>();
+            Coordinates = new List<Coordinate>(coordinates);
         }
 
-        public LineString(IEnumerable<T> items)
-        {
-            Coordinates = new List<T>(items);
-        }
-
-        public List<T> Coordinates { get; protected set; }
-
-        public T StartPoint
-        {
-            get
-            {
-                return IsEmpty ? default(T) : Coordinates[0];
-            }
-        }
-
-        public T EndPoint
-        {
-            get
-            {
-                return IsEmpty ? default(T) : Coordinates[Coordinates.Count - 1];
-            }
-        }
+        public List<Coordinate> Coordinates { get; private set; }
 
         public Distance CalculateLength()
         {
-            var distance = new Distance(0);
-
-            if (!IsEmpty)
-            {
-
-                for (var i = 1; i < Coordinates.Count; i++)
-                {
-                    var line = Coordinates[i - 1].CalculateShortestLine(Coordinates[i]);
-                    if(line !=null)
-                        distance += line.Distance;
-                }
-            }
-
-            return distance;
+            return Coordinates.CalculateShortestDistance();
         }
 
-        public bool IsEmpty
+        public bool IsEmpty()
         {
-            get { return Coordinates.Count == 0; }
+            return Coordinates.Count == 0;
         }
 
-        public bool IsClosed
+        public bool IsClosed()
         {
-            get { return !IsEmpty && StartPoint == EndPoint; }
+            return !IsEmpty() && Coordinates[0] == Coordinates[Coordinates.Count - 1];
         }
 
         public Envelope GetBounds()
         {
-            return IsEmpty ? null :
+            return IsEmpty() ? null :
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
         public string ToWktPartString()
         {
             var buf = new StringBuilder();
-            if (IsEmpty)
+            if (IsEmpty())
                 buf.Append("EMPTY");
             else
             {
@@ -107,14 +67,14 @@ namespace Geo.Geometries
             return buf.ToString();
         }
 
-        public T this[int index]
+        public Coordinate this[int index]
         {
             get { return Coordinates[index]; }
         }
 
-        public void Add(T point)
+        public void Add(Coordinate coordinate)
         {
-            Coordinates.Add(point);
+            Coordinates.Add(coordinate);
         }
     }
 }

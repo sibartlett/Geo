@@ -50,14 +50,13 @@
     <Compile Include="Geometries\GeodeticCalculations.cs" />
     <Compile Include="Geometries\GeodeticLine.cs" />
     <Compile Include="Geometries\IGeometry.cs" />
-    <Compile Include="Geometries\ICoordinate.cs" />
     <Compile Include="Geometries\ILatLng.cs" />
     <Compile Include="Geometries\IPoint.cs" />
+    <Compile Include="Geometries\IRavenIndexable.cs" />
     <Compile Include="Geometries\IWktShape.cs" />
     <Compile Include="Geometries\Coordinate.cs" />
     <Compile Include="Geometries\LinearRing.cs" />
     <Compile Include="Geometries\LineString.cs" />
-    <Compile Include="Geometries\LineStringExtensions.cs" />
     <Compile Include="Geometries\Point.cs" />
     <Compile Include="Geometries\Polygon.cs" />
     <Compile Include="GeoUtil.cs" />
@@ -125,7 +124,9 @@
     <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonRhumbLine.cs" />
     <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonFlightplan.cs" />
     <Compile Include="Gps\Track.cs" />
+    <Compile Include="Gps\TrackSegment.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="LatLngBase.cs" />
     <Compile Include="Measure\Distance.cs" />
     <Compile Include="Measure\DistanceUnit.cs" />
     <Compile Include="Measure\DistanceUnitExtensions.cs" />

@@ -12,10 +12,10 @@ namespace Geo.Geometries
             MaxLon = maxLon;
         }
 
-        public double MinLat { get; set; }
-        public double MinLon { get; set; }
-        public double MaxLat { get; set; }
-        public double MaxLon { get; set; }
+        public double MinLat { get; private set; }
+        public double MinLon { get; private set; }
+        public double MaxLat { get; private set; }
+        public double MaxLon { get; private set; }
 
         public Envelope CreateNewEnvelope(Envelope other)
         {

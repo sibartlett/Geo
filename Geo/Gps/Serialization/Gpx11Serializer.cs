@@ -156,14 +156,14 @@ namespace Geo.Gps.Serialization
                 for (var i = 0; i < track.Segments.Count; i++)
                 {
                     var segment = track.Segments[i];
-                    var pts = new GpxWaypoint[segment.Coordinates.Count];
-                    for (var j = 0; j < segment.Coordinates.Count; j++)
+                    var pts = new GpxWaypoint[segment.Fixes.Count];
+                    for (var j = 0; j < segment.Fixes.Count; j++)
                     {
                         pts[j] = new GpxWaypoint
                         {
-                            lat = (decimal)segment[j].Latitude,
-                            lon = (decimal)segment[j].Longitude,
-                            ele = segment[j].Elevation == null ? 0m : (decimal)segment[j].Elevation
+                            lat = (decimal)segment.Fixes[j].Coordinate.Latitude,
+                            lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
+                            ele = segment.Fixes[j].Coordinate.Elevation == null ? 0m : (decimal)segment.Fixes[j].Coordinate.Elevation
                         };
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
@@ -183,14 +183,14 @@ namespace Geo.Gps.Serialization
                 SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                rte.rtept = new GpxWaypoint[route.LineString.Coordinates.Count];
-                for (var j = 0; j < route.LineString.Coordinates.Count; j++)
+                rte.rtept = new GpxWaypoint[route.Coordinates.Count];
+                for (var j = 0; j < route.Coordinates.Count; j++)
                 {
                     rte.rtept[j] = new GpxWaypoint
                     {
-                        lat = (decimal)route.LineString[j].Latitude,
-                        lon = (decimal)route.LineString[j].Longitude,
-                        ele = route.LineString[j].Elevation == null ? 0m : (decimal)route.LineString[j].Elevation
+                        lat = (decimal)route.Coordinates[j].Latitude,
+                        lon = (decimal)route.Coordinates[j].Longitude,
+                        ele = route.Coordinates[j].Elevation == null ? 0m : (decimal)route.Coordinates[j].Elevation
                     };
                 }
                 yield return rte;
@@ -240,11 +240,11 @@ namespace Geo.Gps.Serialization
 
                     foreach (var trksegType in trkType.trkseg)
                     {
-                        var segment = new LineString<Fix>();
+                        var segment = new TrackSegment();
                         foreach (var wptType in trksegType.trkpt)
                         {
                             var fix = new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time);
-                            segment.Add(fix);
+                            segment.Fixes.Add(fix);
                         }
                         track.Segments.Add(segment);
                     }
@@ -262,11 +262,10 @@ namespace Geo.Gps.Serialization
                     route.Metadata.Attribute(x => x.Description, rteType.desc);
                     route.Metadata.Attribute(x => x.Comment, rteType.cmt);
 
-                    route.LineString = new LineString();
                     foreach (var wptType in rteType.rtept)
                     {
                         var fix = new Coordinate((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
-                        route.LineString.Add(fix);
+                        route.Coordinates.Add(fix);
                     }
                     data.Routes.Add(route);
                 }

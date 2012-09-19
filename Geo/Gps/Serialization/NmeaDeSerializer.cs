@@ -39,29 +39,29 @@ namespace Geo.Gps.Serialization
         public GpsData DeSerialize(StreamWrapper streamWrapper)
         {
             var data = new GpsData();
-            var track = new LineString<Fix>();
+            var trackSegment = new TrackSegment();
             streamWrapper.Position = 0;
             using (var reader = new StreamReader(streamWrapper))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (ParseFix(line, track))
+                    if (ParseFix(line, trackSegment))
                         continue;
                     if (ParseWaypoint(line, data))
                         continue;
                 }
             }
 
-            if (!track.IsEmpty)
+            if (!trackSegment.IsEmpty())
             {
                 data.Tracks.Add(new Track());
-                data.Tracks[0].Segments.Add(track);
+                data.Tracks[0].Segments.Add(trackSegment);
             }
             return data;
         }
 
-        private bool ParseFix(string line, LineString<Fix> data)
+        private bool ParseFix(string line, TrackSegment trackSegment)
         {
             if (line.IsNullOrWhitespace())
                 return false;
@@ -77,7 +77,7 @@ namespace Geo.Gps.Serialization
                 double lon = ConvertOrd(match.Groups["lon"].Value, match.Groups["lond"].Value);
 
                 var fix = new Fix(lat, lon, alt, DateTime.MinValue.AddHours(h).AddMinutes(m).AddSeconds(s));
-                data.Add(fix);
+                trackSegment.Fixes.Add(fix);
 
                 return true;
             }

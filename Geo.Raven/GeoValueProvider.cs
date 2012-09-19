@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Geo.Geometries;
+using Geo.Gps;
 using Raven.Imports.Newtonsoft.Json.Serialization;
 
 namespace Geo.Raven
@@ -14,10 +15,10 @@ namespace Geo.Raven
 
         public object GetValue(object target)
         {
-            return GetValue(target as IGeometry);
+            return GetValue(target as IRavenIndexable);
         }
 
-        public string GetValue(IGeometry target)
+        public string GetValue(IRavenIndexable target)
         {
             var point = target as IPoint;
             if (point != null)
@@ -31,11 +32,16 @@ namespace Geo.Raven
             if (circle != null)
                 return string.Format(CultureInfo.InvariantCulture, "CIRCLE({0:F6} {1:F6} d={2:F6})", circle.Center.Longitude, circle.Center.Latitude, circle.Radius / 1000);
 
-            var wkt = target as IWktShape;
-            if (wkt != null)
-                return wkt.ToWktString();
+            var route = target as Route;
+            if (route != null)
+                return route.ToLineString().ToWktString();
 
-            return null;
+            var track = target as Track;
+            if (track != null)
+                return track.ToLineString().ToWktString();
+
+            var wkt = target as IWktShape;
+            return wkt == null ? null : wkt.ToWktString();
         }
     }
 }

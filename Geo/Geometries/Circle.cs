@@ -18,8 +18,8 @@
             Radius = radius;
         }
 
-        public Coordinate Center { get; protected set; }
-        public double Radius { get; protected set; }
+        public Coordinate Center { get; private set; }
+        public double Radius { get; private set; }
 
         public Envelope GetBounds()
         {

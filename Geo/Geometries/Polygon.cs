@@ -8,7 +8,7 @@ namespace Geo.Geometries
     {
         protected Polygon()
         {
-            Holes= new List<LinearRing>();
+            Holes = new List<LinearRing>();
         }
 
         public Polygon(LinearRing shell, params LinearRing[] holes)
@@ -17,12 +17,12 @@ namespace Geo.Geometries
             Holes = new List<LinearRing>(holes ?? new LinearRing[0]);
         }
 
-        public LinearRing Shell { get; protected set; }
-        public List<LinearRing> Holes { get; protected set; }
+        public LinearRing Shell { get; private set; }
+        public List<LinearRing> Holes { get; private set; }
 
-        public bool IsEmpty
+        public bool IsEmpty()
         {
-            get { return Shell.Coordinates.Count < 3; }
+            return Shell.Coordinates.Count < 3;
         }
 
         public Distance CalculatePerimeter()
@@ -41,7 +41,7 @@ namespace Geo.Geometries
         public string ToWktPartString()
         {
             var buf = new StringBuilder();
-            if (IsEmpty)
+            if (IsEmpty())
                 buf.Append("EMPTY");
             else
             {

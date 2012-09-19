@@ -1,38 +1,21 @@
-﻿using System.Globalization;
-
-namespace Geo.Geometries
+﻿namespace Geo.Geometries
 {
-    public class Point : IPoint
+    public class Point : LatLngBase<Point>, IPoint
     {
-        protected Point()
+        protected Point() : base(0, 0)
         {
         }
 
-        public Point(double latitude, double longitude)
+        public Point(double latitude, double longitude) : base(latitude, longitude)
         {
-            Coordinate=new Coordinate(latitude, longitude);
         }
 
-        public Point(double latitude, double longitude, double z)
+        public Point(double latitude, double longitude, double elevation) : base(latitude, longitude, elevation)
         {
-            Coordinate = new Coordinate(latitude, longitude, z);
         }
 
-        public Point(Coordinate coordinate)
+        public Point(Coordinate coordinate) : base(coordinate)
         {
-            Coordinate = coordinate;
-        }
-
-        public Coordinate Coordinate { get; protected set; }
-        public double Latitude { get { return Coordinate.Latitude; } }
-        public double Longitude { get { return Coordinate.Longitude; } }
-        public double? Elevation { get { return Coordinate.Elevation; } }
-
-        public override string ToString()
-        {
-            if(Elevation == null)
-                return Latitude + ", " + Longitude;
-            return Latitude + ", " + Longitude + ", " + Elevation.Value;
         }
 
         public Envelope GetBounds()
@@ -40,32 +23,9 @@ namespace Geo.Geometries
             return new Envelope(Latitude, Longitude, Latitude, Longitude);
         }
 
-        protected bool Equals(Point other)
-        {
-            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Point) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Latitude.GetHashCode();
-                hashCode = (hashCode*397) ^ Longitude.GetHashCode();
-                hashCode = (hashCode*397) ^ Elevation.GetHashCode();
-                return hashCode;
-            }
-        }
-
         public string ToWktString()
         {
-            return string.Format("POINT ({0})", Coordinate.ToWktPartString());
+            return string.Format("POINT ({0})", ToWktPartString());
         }
 
         public static Point ParseCoordinate(string coordinate)
