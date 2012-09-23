@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Geo.Geometries;
+using Geo.Interfaces;
 using Geo.Raven;
 using NUnit.Framework;
 using Raven.Abstractions.Indexing;

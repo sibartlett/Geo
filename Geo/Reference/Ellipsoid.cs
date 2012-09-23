@@ -4,6 +4,7 @@
 
 using System;
 using Geo.Geometries;
+using Geo.Interfaces;
 
 namespace Geo.Reference
 {

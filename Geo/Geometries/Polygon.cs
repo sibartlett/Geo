@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries

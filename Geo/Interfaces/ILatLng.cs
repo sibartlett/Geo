@@ -1,4 +1,4 @@
-namespace Geo.Geometries
+namespace Geo.Interfaces
 {
     public interface ILatLng
     {

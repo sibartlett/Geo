@@ -117,7 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Geo\GeoPointCalculationsTests.cs" />
-    <Compile Include="Geo\GeoPointTests.cs" />
+    <Compile Include="Geo\CoordinateTests.cs" />
     <Compile Include="Gps\Serialization\GarminFlightplanDeSerializerTests.cs" />
     <Compile Include="Gps\Serialization\GpsDeSerializerTests.cs" />
     <Compile Include="Gps\Serialization\GpxSerializerTests.cs" />

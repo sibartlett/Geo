@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Geo.Geometries;
 using Geo.Gps;
+using Geo.Interfaces;
 using Raven.Imports.Newtonsoft.Json.Serialization;
 
 namespace Geo.Raven

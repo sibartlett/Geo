@@ -1,4 +1,5 @@
 ﻿using Geo.Geometries;
+using Geo.Interfaces;
 using Geo.Measure;
 using Geo.Raven;
 using Raven.Abstractions.Data;

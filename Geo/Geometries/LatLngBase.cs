@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using Geo.Geometries;
+using Geo.Interfaces;
 
-namespace Geo
+namespace Geo.Geometries
 {
     public abstract class LatLngBase<T> : ILatLng, IWktPart where T : LatLngBase<T>
     {

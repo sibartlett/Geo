@@ -5,14 +5,14 @@ using System.Reflection;
 
 namespace Geo
 {
-    internal static class Helpers
+    internal static class InternalHelpers
     {
-        internal static double ToRadians(this double degrees)
+        public static double ToRadians(this double degrees)
         {
             return degrees * Math.PI / 180.0;
         }
 
-        internal static double ToDegrees(this double radians)
+        public static double ToDegrees(this double radians)
         {
             return radians*180/Math.PI;
         }

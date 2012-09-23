@@ -1,4 +1,6 @@
-﻿namespace Geo.Geometries
+﻿using Geo.Interfaces;
+
+namespace Geo.Geometries
 {
     public class Circle : IGeometry
     {

@@ -1,4 +1,6 @@
-﻿namespace Geo.Geometries
+﻿using Geo.Geometries;
+
+namespace Geo.Interfaces
 {
     public interface IGeometry : IRavenIndexable
     {

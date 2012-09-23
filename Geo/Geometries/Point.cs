@@ -1,4 +1,6 @@
-﻿namespace Geo.Geometries
+﻿using Geo.Interfaces;
+
+namespace Geo.Geometries
 {
     public class Point : LatLngBase<Point>, IPoint
     {
@@ -18,6 +20,13 @@
         {
         }
 
+        public Coordinate GetCoordinate()
+        {
+            if (Elevation.HasValue)
+                return new Coordinate(Latitude, Longitude, Elevation.Value);
+            return new Coordinate(Latitude, Longitude);
+        }
+
         public Envelope GetBounds()
         {
             return new Envelope(Latitude, Longitude, Latitude, Longitude);
@@ -28,19 +37,19 @@
             return string.Format("POINT ({0})", ToWktPartString());
         }
 
-        public static Point ParseCoordinate(string coordinate)
+        public static Point Parse(string coordinate)
         {
             return Coordinate.Parse(coordinate).ToPoint();
         }
 
-        public static Point TryParseCoordinate(string coordinate)
+        public static Point TryParse(string coordinate)
         {
             Coordinate result;
             var success = Coordinate.TryParse(coordinate, out result);
             return success ? result.ToPoint() : default(Point);
         }
 
-        public static bool TryParseCoordinate(string coordinate, out Point result)
+        public static bool TryParse(string coordinate, out Point result)
         {
             Coordinate res;
             var success = Coordinate.TryParse(coordinate, out res);

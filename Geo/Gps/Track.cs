@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Geo.Geometries;
 using Geo.Gps.Metadata;
+using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Gps
