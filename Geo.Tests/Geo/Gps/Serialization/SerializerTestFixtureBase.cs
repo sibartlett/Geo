@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace Geo.Tests.Gps.Serialization
+namespace Geo.Tests.Geo.Gps.Serialization
 {
     public abstract class SerializerTestFixtureBase
     {

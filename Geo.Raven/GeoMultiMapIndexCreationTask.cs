@@ -6,11 +6,11 @@ using Raven.Client.Indexes;
 
 namespace Geo.Raven
 {
-    public class GeoIndexCreationTask<TDocument> : GeoIndexCreationTask<TDocument, TDocument>
+    public abstract class GeoMultiMapIndexCreationTask : GeoMultiMapIndexCreationTask<object>
     {
     }
 
-    public class GeoIndexCreationTask<TDocument, TReduceResult> : AbstractIndexCreationTask<TDocument, TReduceResult>
+    public class GeoMultiMapIndexCreationTask<TReduceResult> : AbstractMultiMapIndexCreationTask<TReduceResult>
     {
         public object GeoIndex(IRavenIndexable shape)
         {

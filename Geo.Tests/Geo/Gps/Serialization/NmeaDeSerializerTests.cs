@@ -3,19 +3,19 @@ using System.Linq;
 using Geo.Gps.Serialization;
 using NUnit.Framework;
 
-namespace Geo.Tests.Gps.Serialization
+namespace Geo.Tests.Geo.Gps.Serialization
 {
     [TestFixture]
-    public class IgcDeSerializerTests : SerializerTestFixtureBase
+    public class NmeaDeSerializerTests : SerializerTestFixtureBase
     {
         [Test]
-        public void igc2()
+        public void Stockholm_Walk()
         {
-            var file = GetReferenceFileDirectory("igc").GetFiles().First(x => x.Name == "igc2.igc");
+            var file = GetReferenceFileDirectory("nmea").GetFiles().First(x => x.Name == "Stockholm_Walk.nmea");
             using (var stream = new FileStream(file.FullName, FileMode.Open))
             {
                 var streamWrapper = new StreamWrapper(stream);
-                var parser = new IgcDeSerializer();
+                var parser = new NmeaDeSerializer();
                 var canParse = parser.CanDeSerialize(streamWrapper);
                 var result = parser.DeSerialize(streamWrapper);
 
@@ -23,7 +23,7 @@ namespace Geo.Tests.Gps.Serialization
                 Assert.That(result.Waypoints.Count, Is.EqualTo(0));
                 Assert.That(result.Tracks.Count, Is.EqualTo(1));
                 Assert.That(result.Tracks[0].Segments.Count, Is.EqualTo(1));
-                Assert.That(result.Tracks[0].Segments[0].Fixes.Count, Is.EqualTo(9));
+                Assert.That(result.Tracks[0].Segments[0].Fixes.Count, Is.EqualTo(674));
             }
         }
     }

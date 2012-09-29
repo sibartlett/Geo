@@ -13,7 +13,13 @@ __Geo__ - _[NuGet](https://nuget.org/packages/Geo)_
 * Features:
 	* Provides geographic data types (Point, LineString, Polygon, Circle, etc.)
 	* Performs geodesic calculations, such as calculating great circle lines and rhumb lines
-	* Read GPS data from a .NET Stream (GPX, IGC, NMEA)
+	* Read GPS data from a .NET Stream;
+		* GPX
+		* NMEA
+		* IGC
+		* Garmin Flightplan
+		* SkyDemon flightplan
+		* PocketFMS flightplan
 	* Write GPX file to a .NET Stream
 * .NET 4.0+, Windows 8 Store applications, Windows Phone 7.0+, Silverlight 4 & 5
 

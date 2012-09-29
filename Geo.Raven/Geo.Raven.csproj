@@ -46,6 +46,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeoMultiMapIndexCreationTask.cs" />
     <Compile Include="GeoContractResolver.cs" />
     <Compile Include="GeoIndexCreationTask.cs" />
     <Compile Include="GeoRavenExtensions.cs" />

@@ -61,20 +61,113 @@ namespace Geo.Reference
             get { return Math.Abs(EquatorialAxis - PolarAxis) < double.Epsilon; }
         }
 
-        public GeodeticLine CalculateOrthodromicLine(ILatLng point1, ILatLng point2)
+        public GeodeticLine CalculateOrthodromicLine(ILatLng point, double heading, double distance)
         {
-            return CalculateOrthodromicLine(point1.Latitude, point1.Longitude, point2.Latitude, point2.Longitude);
+            var faz = heading.ToRadians();
+            var dc = distance;
+
+            // glat1 initial geodetic latitude in radians N positive 
+            // glon1 initial geodetic longitude in radians E positive 
+            // faz forward azimuth in radians
+            // s distance in units of a (=nm)
+
+            var EPS = 0.00000000005;
+            //var r, tu, sf, cf, b, cu, su, sa, c2a, x, c, d, y, sy, cy, cz, e
+            //            var glat2, glon2, baz, f
+
+            if ((Math.Abs(Math.Cos(point.Latitude)) < EPS) && !(Math.Abs(Math.Sin(faz)) < EPS))
+            {
+                //alert("Only N-S courses are meaningful, starting at a pole!")
+            }
+
+            var a = this.EquatorialAxis; // ????????????
+            var f = 1/this.InverseFlattening;
+            var r = 1 - this.Flattening;
+            var tu = r*Math.Tan(point.Latitude);
+            var sf = Math.Sin(faz);
+            var cf = Math.Cos(faz);
+            double b;
+            if (cf == 0)
+            {
+                b = 0d;
+            }
+            else
+            {
+                b = 2*Math.Atan2(tu, cf);
+            }
+            var cu = 1/Math.Sqrt(1 + tu*tu);
+            var su = tu*cu;
+            var sa = cu*sf;
+            var c2a = 1 - sa*sa;
+            var x = 1 + Math.Sqrt(1 + c2a*(1/(r*r) - 1));
+            x = (x - 2)/x;
+            var c = 1 - x;
+            c = (x*x/4 + 1)/c;
+            var d = (0.375*x*x - 1)*x;
+            tu = dc/(r*a*c);
+            var y = tu;
+            c = y + 1;
+
+            double sy = 0, cy =0, cz = 0, e = 0;
+
+
+            while (Math.Abs(y - c) > EPS)
+            {
+                sy = Math.Sin(y);
+                cy = Math.Cos(y);
+                cz = Math.Cos(b + y);
+                e = 2*cz*cz - 1;
+                c = y;
+                x = e*cy;
+                y = e + e - 1;
+                y = (((sy*sy*4 - 3)*y*cz*d/6 + x)*
+                     d/4 - cz)*sy*d + tu;
+            }
+
+            b = cu*cy*cf - su*sy;
+            c = r*Math.Sqrt(sa*sa + b*b);
+            d = su*cy + cu*sy*cf;
+            var glat2 = modlat(Math.Atan2(d, c));
+            c = cu*cy - su*sy*cf;
+            x = Math.Atan2(sy*sf, c);
+            c = ((-3*c2a + 4)*f + 4)*c2a*f/16;
+            d = ((e*cy*c + cz)*sy*c + y)*sa;
+            var glon2 = modlon((-point.Longitude) + x - (1 - c)*d*f); // fix date line problems 
+            var baz = modcrs(Math.Atan2(sa, b) + Math.PI);
+
+            return new GeodeticLine(new Coordinate(point.Latitude, point.Longitude), new Coordinate(glat2.ToDegrees(), glon2.ToDegrees()),
+                                    distance, heading, baz);
+        }
+        
+        private double mod(double x, double y)
+        {
+            return x - y * Math.Floor(x / y);
         }
 
-        public GeodeticLine CalculateOrthodromicLine(double lat1, double lon1, double lat2, double lon2)
+        private double modlon(double x)
         {
-            if (Math.Abs(lat1 - lat2) < double.Epsilon && Math.Abs(lon1 - lon2) < double.Epsilon)
+            return mod(x + Math.PI, 2 * Math.PI) - Math.PI;
+        }
+
+        private double modcrs(double x)
+        {
+            return mod(x, 2 * Math.PI);
+        }
+
+        private double modlat(double x)
+        {
+            return mod(x + Math.PI / 2, 2 * Math.PI) - Math.PI / 2;
+        }
+
+        public GeodeticLine CalculateOrthodromicLine(ILatLng point1, ILatLng point2)
+        {
+            if (Math.Abs(point1.Latitude - point2.Latitude) < double.Epsilon && Math.Abs(point1.Longitude - point2.Longitude) < double.Epsilon)
                 return null;
 
-            lon1 = lon1.ToRadians();
-            lat1 = lat1.ToRadians();
-            lon2 = lon2.ToRadians();
-            lat2 = lat2.ToRadians();
+            var lon1 = point1.Longitude.ToRadians();
+            var lat1 = point1.Latitude.ToRadians();
+            var lon2 = point2.Longitude.ToRadians();
+            var lat2 = point2.Latitude.ToRadians();
             /*
              * Solution of the geodetic inverse problem after T.Vincenty.
              * Modified Rainsford's method with Helmert's elliptical terms.
@@ -99,11 +192,12 @@ namespace Geo.Reference
             double cu1 = 1 / Math.Sqrt(tu1 * tu1 + 1);
             double cu2 = 1 / Math.Sqrt(tu2 * tu2 + 1);
             double su1 = cu1 * tu1;
-            double s   = cu1 * cu2;
+            double s = cu1 * cu2;
             double baz = s * tu2;
             double faz = baz * tu1;
-            double x   = lon2 - lon1;
-            for (int i = 0; i < maxIterations; i++) {
+            double x = lon2 - lon1;
+            for (int i = 0; i < maxIterations; i++)
+            {
                 double sx = Math.Sin(x);
                 double cx = Math.Cos(x);
                 tu1 = cu2 * sx;
@@ -114,24 +208,25 @@ namespace Geo.Reference
                 double SA = s * sx / sy;
                 double c2a = 1 - SA * SA;
                 double cz = faz + faz;
-                if (c2a > 0) {
+                if (c2a > 0)
+                {
                     cz = -cz / c2a + cy;
                 }
                 double e = cz * cz * 2 - 1;
                 double c = ((-3 * c2a + 4) * Flattening + 4) * c2a * Flattening / 16;
                 double d = x;
-                x = ((e*cy*c+cz)*sy*c+y)*SA;
+                x = ((e * cy * c + cz) * sy * c + y) * SA;
                 x = (1 - c) * x * Flattening + lon2 - lon1;
 
                 if (Math.Abs(d - x) <= eps)
                 {
-                    x = Math.Sqrt((1/(R*R)-1) * c2a + 1)+1;
-                    x = (x-2)/x;
-                    c = 1-x;
-                    c = (x*x/4 + 1)/c;
-                    d = (0.375*x*x - 1)*x;
-                    x = e*cy;
-                    s = 1-2*e;
+                    x = Math.Sqrt((1 / (R * R) - 1) * c2a + 1) + 1;
+                    x = (x - 2) / x;
+                    c = 1 - x;
+                    c = (x * x / 4 + 1) / c;
+                    d = (0.375 * x * x - 1) * x;
+                    x = e * cy;
+                    s = 1 - 2 * e;
                     s = ((((sy * sy * 4 - 3) * s * cz * d / 6 - x) * d / 4 + cz) * sy * d + y) * c * R * EquatorialAxis;
                     // 'faz' and 'baz' are forward azimuths at both points.
                     faz = Math.Atan2(tu1, tu2);
@@ -142,12 +237,12 @@ namespace Geo.Reference
             // No convergence. It may be because coordinate points
             // are equals or because they are at antipodes.
             const double leps = 1E-10;
-            if (Math.Abs(lon1-lon2)<=leps && Math.Abs(lat1-lat2)<=leps)
+            if (Math.Abs(lon1 - lon2) <= leps && Math.Abs(lat1 - lat2) <= leps)
             {
                 // Coordinate points are equals
                 return null;
             }
-            if (Math.Abs(lat1)<=leps && Math.Abs(lat2)<=leps)
+            if (Math.Abs(lat1) <= leps && Math.Abs(lat2) <= leps)
             {
                 // Points are on the equator.
                 return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), Math.Abs(lon1 - lon2) * EquatorialAxis, faz, baz);
@@ -158,11 +253,11 @@ namespace Geo.Reference
 
         public GeodeticLine CalculateLoxodromicLine(ILatLng point1, ILatLng point2)
         {
-            return CalculateLoxodromicLine(point1.Latitude, point1.Longitude, point2.Latitude, point2.Longitude);
-        }
+            var lat1 = point1.Latitude;
+            var lon1 = point1.Longitude;
+            var lat2 = point2.Latitude;
+            var lon2 = point2.Longitude;
 
-        public GeodeticLine CalculateLoxodromicLine(double lat1, double lon1, double lat2, double lon2)
-        {
             if (Math.Abs(lat1 - lat2) < double.Epsilon && Math.Abs(lon1 - lon2) < double.Epsilon)
                 return null;
 

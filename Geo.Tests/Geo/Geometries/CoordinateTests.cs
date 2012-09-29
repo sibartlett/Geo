@@ -1,7 +1,7 @@
 ﻿using Geo.Geometries;
 using NUnit.Framework;
 
-namespace Geo.Tests.Geo
+namespace Geo.Tests.Geo.Geometries
 {
     [TestFixture]
     public class CoordinateTests

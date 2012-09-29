@@ -3,23 +3,23 @@ using System.Linq;
 using Geo.Gps.Serialization;
 using NUnit.Framework;
 
-namespace Geo.Tests.Gps.Serialization
+namespace Geo.Tests.Geo.Gps.Serialization
 {
     [TestFixture]
-    public class GarminFlightplanDeSerializerTests : SerializerTestFixtureBase
+    public class SkyDemonFlightplanDeSerializerTests : SerializerTestFixtureBase
     {
         [Test]
         public void CanParse()
         {
             var fileInfo =
-                GetReferenceFileDirectory("garmin").EnumerateFiles().First(x => x.Name == "garmin.fpl");
+                GetReferenceFileDirectory("skydemon").EnumerateFiles().First(x => x.Name == "skydemon.flightplan");
 
             using (var stream = new FileStream(fileInfo.FullName, FileMode.Open))
             {
-                var file = new GarminFlightplanDeSerializer().DeSerialize(new StreamWrapper(stream));
+                var file = new SkyDemonFlightplanDeSerializer().DeSerialize(new StreamWrapper(stream));
                 Assert.That(file, Is.Not.Null);
                 Assert.That(file.Routes.Count, Is.EqualTo(1));
-                Assert.That(file.Routes[0].Coordinates.Count, Is.EqualTo(5));
+                Assert.That(file.Routes[0].Coordinates.Count, Is.EqualTo(4));
             }
         }
     }

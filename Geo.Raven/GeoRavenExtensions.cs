@@ -1,4 +1,7 @@
-﻿using Geo.Geometries;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Geo.Geometries;
 using Geo.Interfaces;
 using Geo.Measure;
 using Geo.Raven;
@@ -43,6 +46,26 @@ namespace Raven.Client
         public static IDocumentQueryCustomization RelatesToShape(this IDocumentQueryCustomization self, IRavenIndexable shape, SpatialRelation relation)
         {
             return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation);
+        }
+
+        public static IndexDefinition TransformGeoMaps(this IndexDefinition definition)
+        {
+            definition.Maps = new HashSet<string>(definition.Maps.Select(x => TransformGeoIndexes(definition.Map)));
+            definition.Reduce = TransformGeoIndexes(definition.Reduce);
+            return definition;
+        }
+
+        private static string TransformGeoIndexes(string value)
+        {
+            if (value == null)
+                return null;
+
+            return Regex.Replace(value, @"GeoIndex\((?<prop>[\w\d\s\.]+)(?<sep>[,)])", match =>
+                       string.Format("SpatialGenerate(\"{0}\", {1}.{2}{3}",
+                       Constants.DefaultSpatialFieldName,
+                       match.Groups["prop"].Value,
+                       GeoContractResolver.IndexProperty,
+                       match.Groups["sep"].Value));
         }
     }
 }
