@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Geo.Geometries;
+﻿using Geo.Geometries;
 using Geo.Measure;
 using Geo.Reference;
 using NUnit.Framework;
@@ -42,16 +38,26 @@ namespace Geo.Tests.Geo.Reference
         {
             var ellipsoid = Ellipsoid.Wgs84();
             var result = ellipsoid.CalculateLoxodromicLine(new Point(lat1, lon1), new Point(lat2, lon2));
-            Assert.That(result.TrueBearing12, Is.EqualTo(distance));
+            Assert.That(result.Bearing12, Is.EqualTo(distance));
         }
 
-        [TestCase(0, 0, 10, 10, 45.04429310980561)]
-        public void CalculateOrthodromicDestination(double lat1, double lon1, double lat2, double lon2, double distance)
+        [TestCase(0, 0, 10, 10, 44.751910170513703d, 225.62903685894344d)]
+        public void CalculateOrthodromicCourse(double lat1, double lon1, double lat2, double lon2, double c12, double c21)
         {
             var ellipsoid = Ellipsoid.Wgs84();
-            var result = ellipsoid.CalculateOrthodromicLine(new Point(0, 0), 56, new Distance(34, DistanceUnit.Nm).SiValue);
-            Assert.That(result.Coordinate2.Latitude, Is.EqualTo(0.31843626431567573));
-            Assert.That(result.Coordinate2.Longitude, Is.EqualTo(0.46895086740918501));
+            var result = ellipsoid.CalculateOrthodromicLine(new Point(lat1, lon1), new Point(lat2, lon2));
+            Assert.That(result.Bearing12, Is.EqualTo(c12));
+            Assert.That(result.Bearing21, Is.EqualTo(c21));
+        }
+
+        [TestCase(0, 0, 56, 34, 0.318436264, -0.468950867)]
+        [TestCase(-9.443333, 147.216667, 327.91252158264797, 50, -8.7337170359999998, 146.76964429399999d)]
+        public void CalculateOrthodromicDestination(double lat1, double lon1, double angle, double distance, double lat2, double lon2)
+        {
+            var ellipsoid = Ellipsoid.Wgs84();
+            var result = ellipsoid.CalculateOrthodromicLine(new Point(lat1, lon1), angle, new Distance(distance, DistanceUnit.Nm).SiValue);
+            Assert.That(result.Coordinate2.Latitude, Is.EqualTo(lat2));
+            Assert.That(result.Coordinate2.Longitude, Is.EqualTo(lon2));
         }
     }
 }

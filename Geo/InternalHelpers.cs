@@ -17,6 +17,15 @@ namespace Geo
             return radians*180/Math.PI;
         }
 
+        public static double NormalizeDegrees(this double degrees)
+        {
+            while (degrees >= 360)
+                degrees -= 360;
+            while (degrees < 0)
+                degrees += 360;
+            return degrees;
+        }
+
         public static IEnumerable<T> GetEnumValues<T>()
         {
             var type = typeof(T);

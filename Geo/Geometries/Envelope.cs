@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Geo.Interfaces;
 
 namespace Geo.Geometries
@@ -18,12 +20,10 @@ namespace Geo.Geometries
         public double MaxLat { get; private set; }
         public double MaxLon { get; private set; }
 
-        public Envelope CreateNewEnvelope(Envelope other)
+        public Envelope Combine(Envelope other)
         {
             if (other == null)
-            {
-                return new Envelope(MinLat, MinLon, MaxLat, MaxLon);
-            }
+                return this;
 
             return new Envelope(
                 Math.Min(MinLat, other.MinLat),
@@ -38,22 +38,84 @@ namespace Geo.Geometries
             return this;
         }
 
+        public bool Intersects(Envelope envelope)
+        {
+            return envelope.GetExtremeCoordinates().Any(Contains)
+                || GetExtremeCoordinates().Any(envelope.Contains);
+        }
+
+        public bool Contains(Envelope envelope)
+        {
+            return envelope != null
+                && envelope.MinLat > MinLat
+                && envelope.MaxLat < MaxLat
+                && envelope.MinLon > MinLon
+                && envelope.MaxLat < MaxLat;
+        }
+
+        public bool Contains(Coordinate coordinate)
+        {
+            return coordinate.Latitude > MinLat
+                && coordinate.Latitude < MaxLat
+                && coordinate.Longitude > MinLon
+                && coordinate.Longitude < MaxLat;
+        }
+
+        public bool Contains(IGeometry geometry)
+        {
+            return geometry != null && Contains(geometry.GetBounds());
+        }
+
+        private IEnumerable<Coordinate> GetExtremeCoordinates()
+        {
+            return new[] {
+                new Coordinate(MinLat, MinLon),
+                new Coordinate(MaxLat, MinLon),
+                new Coordinate(MaxLat, MaxLon),
+                new Coordinate(MinLat, MaxLon),
+                new Coordinate(MinLat, MinLon)
+            };
+        }
+
         public Polygon ToPolygon()
         {
-            return new Polygon(
-                new LinearRing(new [] {
-                    new Coordinate(MinLat, MinLon), 
-                    new Coordinate(MaxLat, MinLon), 
-                    new Coordinate(MaxLat, MaxLon), 
-                    new Coordinate(MinLat, MaxLon),
-                    new Coordinate(MinLat, MinLon),
-                })
-            );
+            return new Polygon(new LinearRing(GetExtremeCoordinates()));
         }
 
         public string ToWktString()
         {
             return ToPolygon().ToWktString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            var other = (Envelope) obj;
+            return MinLat.Equals(other.MinLat) && MinLon.Equals(other.MinLon) && MaxLat.Equals(other.MaxLat) && MaxLon.Equals(other.MaxLon);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = MinLat.GetHashCode();
+                hashCode = (hashCode*397) ^ MinLon.GetHashCode();
+                hashCode = (hashCode*397) ^ MaxLat.GetHashCode();
+                hashCode = (hashCode*397) ^ MaxLon.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(Envelope left, Envelope right)
+        {
+            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+        }
+
+        public static bool operator !=(Envelope left, Envelope right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
         }
     }
 }

@@ -63,8 +63,9 @@ namespace Geo.Reference
 
         public GeodeticLine CalculateOrthodromicLine(ILatLng point, double heading, double distance)
         {
+            var lat1 = point.Latitude.ToRadians();
+            var lon1 = point.Longitude.ToRadians();
             var faz = heading.ToRadians();
-            var dc = distance;
 
             // glat1 initial geodetic latitude in radians N positive 
             // glon1 initial geodetic longitude in radians E positive 
@@ -75,15 +76,13 @@ namespace Geo.Reference
             //var r, tu, sf, cf, b, cu, su, sa, c2a, x, c, d, y, sy, cy, cz, e
             //            var glat2, glon2, baz, f
 
-            if ((Math.Abs(Math.Cos(point.Latitude)) < EPS) && !(Math.Abs(Math.Sin(faz)) < EPS))
+            if ((Math.Abs(Math.Cos(lat1)) < EPS) && !(Math.Abs(Math.Sin(faz)) < EPS))
             {
                 //alert("Only N-S courses are meaningful, starting at a pole!")
             }
 
-            var a = this.EquatorialAxis; // ????????????
-            var f = 1/this.InverseFlattening;
             var r = 1 - this.Flattening;
-            var tu = r*Math.Tan(point.Latitude);
+            var tu = r*Math.Tan(lat1);
             var sf = Math.Sin(faz);
             var cf = Math.Cos(faz);
             double b;
@@ -104,7 +103,7 @@ namespace Geo.Reference
             var c = 1 - x;
             c = (x*x/4 + 1)/c;
             var d = (0.375*x*x - 1)*x;
-            tu = dc/(r*a*c);
+            tu = distance / (r * EquatorialAxis * c);
             var y = tu;
             c = y + 1;
 
@@ -123,16 +122,16 @@ namespace Geo.Reference
                 y = (((sy*sy*4 - 3)*y*cz*d/6 + x)*
                      d/4 - cz)*sy*d + tu;
             }
-
+            
             b = cu*cy*cf - su*sy;
             c = r*Math.Sqrt(sa*sa + b*b);
             d = su*cy + cu*sy*cf;
             var glat2 = modlat(Math.Atan2(d, c));
             c = cu*cy - su*sy*cf;
             x = Math.Atan2(sy*sf, c);
-            c = ((-3*c2a + 4)*f + 4)*c2a*f/16;
+            c = ((-3 * c2a + 4) * Flattening + 4) * c2a * Flattening / 16;
             d = ((e*cy*c + cz)*sy*c + y)*sa;
-            var glon2 = modlon((-point.Longitude) + x - (1 - c)*d*f); // fix date line problems 
+            var glon2 = modlon(lon1 + x - (1 - c)*d*Flattening); // fix date line problems 
             var baz = modcrs(Math.Atan2(sa, b) + Math.PI);
 
             return new GeodeticLine(new Coordinate(point.Latitude, point.Longitude), new Coordinate(glat2.ToDegrees(), glon2.ToDegrees()),
@@ -231,7 +230,7 @@ namespace Geo.Reference
                     // 'faz' and 'baz' are forward azimuths at both points.
                     faz = Math.Atan2(tu1, tu2);
                     baz = Math.Atan2(cu1 * sx, baz * cx - su1 * cu2) + Math.PI;
-                    return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), s, faz, baz);
+                    return new GeodeticLine(new Coordinate(point1.Latitude, point1.Longitude), new Coordinate(point2.Latitude, point2.Longitude), s, faz.ToDegrees(), baz.ToDegrees());
                 }
             }
             // No convergence. It may be because coordinate points
@@ -245,7 +244,7 @@ namespace Geo.Reference
             if (Math.Abs(lat1) <= leps && Math.Abs(lat2) <= leps)
             {
                 // Points are on the equator.
-                return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), Math.Abs(lon1 - lon2) * EquatorialAxis, faz, baz);
+                return new GeodeticLine(new Coordinate(point1.Latitude, point1.Longitude), new Coordinate(point2.Latitude, point2.Longitude), Math.Abs(lon1 - lon2) * EquatorialAxis, faz.ToDegrees(), baz.ToDegrees());
             }
             // Other cases: no solution for this algorithm.
             throw new ArithmeticException();

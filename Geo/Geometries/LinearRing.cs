@@ -10,24 +10,22 @@ namespace Geo.Geometries
     {
         public LinearRing()
         {
-            Coordinates = new List<Coordinate>();
+            Coordinates = new CoordinateSequence();
         }
 
         public LinearRing(IEnumerable<Coordinate> items)
         {
-            Coordinates = new List<Coordinate>(items);
+            Coordinates = new CoordinateSequence(items);
         }
 
-        public List<Coordinate> Coordinates { get; private set; }
+        public CoordinateSequence Coordinates { get; private set; }
 
-        private List<Coordinate> ClosedCoordinates()
+        private CoordinateSequence ClosedCoordinates()
         {
-            if(IsEmpty() || Coordinates[0] == Coordinates[Coordinates.Count - 1])
+            if (IsEmpty() || Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]))
                 return Coordinates;
 
-            var coordinates = Coordinates.ToList();
-            coordinates.Add(Coordinates[0]);
-            return coordinates;
+            return new CoordinateSequence(Coordinates) { Coordinates[0] };
         }
 
         public Distance CalculatePerimeter()
@@ -53,22 +51,7 @@ namespace Geo.Geometries
 
         public string ToWktPartString()
         {
-            var buf = new StringBuilder();
-            if (IsEmpty())
-                buf.Append("EMPTY");
-            else
-            {
-                buf.Append("(");
-                var coordinates = ClosedCoordinates();
-                for (var i = 0; i < coordinates.Count; i++)
-                {
-                    if (i > 0)
-                        buf.Append(", ");
-                    buf.Append(coordinates[i].ToWktPartString());
-                }
-                buf.Append(")");
-            }
-            return buf.ToString();
+            return Coordinates.ToWktPartString();
         }
 
         public string ToWktString()
@@ -87,6 +70,34 @@ namespace Geo.Geometries
         public void Add(Coordinate coordinates)
         {
             Coordinates.Add(coordinates);
+        }
+
+        protected bool Equals(LinearRing other)
+        {
+            return Equals(Coordinates, other.Coordinates);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((LinearRing) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Coordinates != null ? Coordinates.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(LinearRing left, LinearRing right)
+        {
+            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+        }
+
+        public static bool operator !=(LinearRing left, LinearRing right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
         }
     }
 }

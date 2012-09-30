@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Geo.Interfaces;
 using Geo.Measure;
@@ -61,6 +62,43 @@ namespace Geo.Geometries
         public Envelope GetBounds()
         {
             return Shell.GetBounds();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            var other = (Polygon) obj;
+
+            if (Holes.Count != other.Holes.Count)
+                return false;
+
+            if (Holes.Where((t, i) => !t.Equals(other.Holes[i])).Any())
+                return false;
+
+            return Equals(Shell, other.Shell);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Shell != null ? Shell.GetHashCode() : 0;
+                return Holes
+                    .Select(x => x.GetHashCode())
+                    .Aggregate(hashCode, (current, result) => (current * 397) ^ result);
+            }
+        }
+
+        public static bool operator ==(Polygon left, Polygon right)
+        {
+            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+        }
+
+        public static bool operator !=(Polygon left, Polygon right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
         }
     }
 }

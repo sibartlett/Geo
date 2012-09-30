@@ -195,5 +195,15 @@ namespace Geo.Geometries
         {
             return point.GetCoordinate();
         }
+
+        public static bool operator ==(Coordinate left, Coordinate right)
+        {
+            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+        }
+
+        public static bool operator !=(Coordinate left, Coordinate right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
+        }
     }
 }

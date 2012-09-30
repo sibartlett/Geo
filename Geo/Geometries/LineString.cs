@@ -10,15 +10,15 @@ namespace Geo.Geometries
     {
         public LineString()
         {
-            Coordinates = new List<Coordinate>();
+            Coordinates = new CoordinateSequence();
         }
 
         public LineString(IEnumerable<Coordinate> coordinates)
         {
-            Coordinates = new List<Coordinate>(coordinates);
+            Coordinates = new CoordinateSequence(coordinates);
         }
 
-        public List<Coordinate> Coordinates { get; private set; }
+        public CoordinateSequence Coordinates { get; private set; }
 
         public Distance CalculateLength()
         {
@@ -32,7 +32,7 @@ namespace Geo.Geometries
 
         public bool IsClosed()
         {
-            return !IsEmpty() && Coordinates[0] == Coordinates[Coordinates.Count - 1];
+            return !IsEmpty() && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
         }
 
         public Envelope GetBounds()
@@ -43,21 +43,7 @@ namespace Geo.Geometries
 
         public string ToWktPartString()
         {
-            var buf = new StringBuilder();
-            if (IsEmpty())
-                buf.Append("EMPTY");
-            else
-            {
-                buf.Append("(");
-                for (var i = 0; i < Coordinates.Count; i++)
-                {
-                    if (i > 0)
-                        buf.Append(", ");
-                    buf.Append(Coordinates[i].ToWktPartString());
-                }
-                buf.Append(")");
-            }
-            return buf.ToString();
+            return Coordinates.ToWktPartString();
         }
 
         public string ToWktString()
@@ -76,6 +62,34 @@ namespace Geo.Geometries
         public void Add(Coordinate coordinate)
         {
             Coordinates.Add(coordinate);
+        }
+
+        protected bool Equals(LineString other)
+        {
+            return Equals(Coordinates, other.Coordinates);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((LineString) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Coordinates != null ? Coordinates.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(LineString left, LineString right)
+        {
+            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+        }
+
+        public static bool operator !=(LineString left, LineString right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
         }
     }
 }

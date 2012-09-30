@@ -4,6 +4,11 @@ namespace Geo.Geometries
 {
     public class Point : LatLngBase<Point>, IPoint
     {
+        public override int GetHashCode()
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected Point() : base(0, 0)
         {
         }
@@ -25,11 +30,6 @@ namespace Geo.Geometries
             if (Elevation.HasValue)
                 return new Coordinate(Latitude, Longitude, Elevation.Value);
             return new Coordinate(Latitude, Longitude);
-        }
-
-        public Envelope GetBounds()
-        {
-            return new Envelope(Latitude, Longitude, Latitude, Longitude);
         }
 
         public string ToWktString()
@@ -55,6 +55,21 @@ namespace Geo.Geometries
             var success = Coordinate.TryParse(coordinate, out res);
             result = success ? res.ToPoint() : default(Point);
             return success;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public static bool operator ==(Point left, Point right)
+        {
+            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+        }
+
+        public static bool operator !=(Point left, Point right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
         }
     }
 }
