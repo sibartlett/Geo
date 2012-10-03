@@ -1,4 +1,6 @@
-﻿using Geo.Interfaces;
+﻿using System.Globalization;
+using Geo.Interfaces;
+using Geo.Measure;
 
 namespace Geo.Geometries
 {
@@ -33,6 +35,11 @@ namespace Geo.Geometries
                 Center.Latitude + radiusDeg,
                 Center.Longitude + radiusDeg
             );
+        }
+
+        string IRavenIndexable.GetIndexString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "CIRCLE({0:F6} {1:F6} d={2:F6})", Center.Longitude, Center.Latitude, Radius.ConvertTo(DistanceUnit.Km));
         }
 
         public override bool Equals(object obj)

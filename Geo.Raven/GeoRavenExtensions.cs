@@ -50,7 +50,7 @@ namespace Raven.Client
 
         public static IndexDefinition TransformGeoMaps(this IndexDefinition definition)
         {
-            definition.Maps = new HashSet<string>(definition.Maps.Select(x => TransformGeoIndexes(definition.Map)));
+            definition.Maps = new HashSet<string>(definition.Maps.Select(TransformGeoIndexes));
             definition.Reduce = TransformGeoIndexes(definition.Reduce);
             return definition;
         }

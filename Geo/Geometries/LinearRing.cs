@@ -62,6 +62,11 @@ namespace Geo.Geometries
             return buf.ToString();
         }
 
+        string IRavenIndexable.GetIndexString()
+        {
+            return ToWktString();
+        }
+
         public Coordinate this[int index]
         {
             get { return Coordinates[index]; }

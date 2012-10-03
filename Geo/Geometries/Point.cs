@@ -1,4 +1,5 @@
-﻿using Geo.Interfaces;
+﻿using System.Globalization;
+using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
@@ -35,6 +36,11 @@ namespace Geo.Geometries
         public string ToWktString()
         {
             return string.Format("POINT ({0})", ToWktPartString());
+        }
+
+        string IRavenIndexable.GetIndexString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
         }
 
         public static Point Parse(string coordinate)

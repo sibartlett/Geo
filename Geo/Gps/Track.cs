@@ -71,5 +71,10 @@ namespace Geo.Gps
             foreach (var segment in Segments)
                 segment.Quantize(seconds);
         }
+
+        string IRavenIndexable.GetIndexString()
+        {
+            return ToLineString().ToWktString();
+        }
     }
 }

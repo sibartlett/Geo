@@ -5,5 +5,6 @@
     /// </summary>
     public interface IRavenIndexable
     {
+        string GetIndexString();
     }
 }

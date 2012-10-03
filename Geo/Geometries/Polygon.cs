@@ -32,6 +32,11 @@ namespace Geo.Geometries
             return Shell.CalculatePerimeter();
         }
 
+        string IRavenIndexable.GetIndexString()
+        {
+            return ToWktString();
+        }
+
         public string ToWktString()
         {
             var buf = new StringBuilder();

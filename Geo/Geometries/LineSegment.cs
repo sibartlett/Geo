@@ -1,9 +1,8 @@
 ﻿using System;
-using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class LineSegment : IGeometry
+    public class LineSegment
     {
         public LineSegment(Coordinate coordinate1, Coordinate coordinate2)
         {

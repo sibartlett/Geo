@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Geo.Interfaces;
 
@@ -36,6 +37,11 @@ namespace Geo.Geometries
         public Envelope GetBounds()
         {
             return this;
+        }
+
+        string IRavenIndexable.GetIndexString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6} {2:F6} {3:F6}", MinLon, MinLat, MaxLon, MaxLat);
         }
 
         public bool Intersects(Envelope envelope)

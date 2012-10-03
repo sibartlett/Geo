@@ -26,5 +26,10 @@ namespace Geo.Gps
         {
             return Coordinates.CalculateShortestDistance();
         }
+        
+        string IRavenIndexable.GetIndexString()
+        {
+            return ToLineString().ToWktString();
+        }
     }
 }
