@@ -61,12 +61,14 @@ namespace Geo.Geometries
 
         public static bool operator ==(Circle left, Circle right)
         {
+            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+                return true;
             return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
         }
 
         public static bool operator !=(Circle left, Circle right)
         {
-            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
+            return !(left == right);
         }
     }
 }

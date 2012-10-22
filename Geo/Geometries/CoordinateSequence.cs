@@ -136,12 +136,14 @@ namespace Geo.Geometries
 
         public static bool operator ==(CoordinateSequence left, CoordinateSequence right)
         {
+            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+                return true;
             return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
         }
 
         public static bool operator !=(CoordinateSequence left, CoordinateSequence right)
         {
-            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
+            return !(left == right);
         }
     }
 }

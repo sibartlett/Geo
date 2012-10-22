@@ -97,12 +97,14 @@ namespace Geo.Geometries
 
         public static bool operator ==(LinearRing left, LinearRing right)
         {
+            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+                return true;
             return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
         }
 
         public static bool operator !=(LinearRing left, LinearRing right)
         {
-            return ReferenceEquals(left, null) || ReferenceEquals(right, null) || !left.Equals(right);
+            return !(left == right);
         }
     }
 }
