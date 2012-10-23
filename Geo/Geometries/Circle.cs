@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Geo.Interfaces;
 using Geo.Measure;
+using Geo.Reference;
 
 namespace Geo.Geometries
 {
@@ -69,6 +71,22 @@ namespace Geo.Geometries
         public static bool operator !=(Circle left, Circle right)
         {
             return !(left == right);
+        }
+
+        public Polygon ToPolygon(int sides = 36)
+        {
+            var angle = 360d/sides;
+            var coords= new List<Coordinate>();
+            Coordinate first = null;
+            for (var i = 0; i < sides; i++)
+            {
+                var coord = Ellipsoid.Current.CalculateOrthodromicLine(Center, angle * i, Radius).Coordinate2;
+                if (i == 0)
+                    first = coord;
+                coords.Add(coord);
+            }
+            coords.Add(first);
+            return new Polygon(new LinearRing(coords));
         }
     }
 }
