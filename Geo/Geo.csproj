@@ -50,6 +50,7 @@
     <Compile Include="Geometries\Circle.cs" />
     <Compile Include="Geometries\GeodeticCalculations.cs" />
     <Compile Include="Geometries\GeodeticLine.cs" />
+    <Compile Include="Geometries\GeometryCollection.cs" />
     <Compile Include="Geometries\LineSegment.cs" />
     <Compile Include="Interfaces\IGeometry.cs" />
     <Compile Include="Interfaces\ILatLng.cs" />
