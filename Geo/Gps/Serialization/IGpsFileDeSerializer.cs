@@ -12,7 +12,7 @@ namespace Geo.Gps.Serialization
 
     public interface IGpsFileSerializer : IGpsFileDeSerializer
     {
-        void Serialize(Stream stream, GpsData data);
-        string SerializeToString(GpsData data);
+        string Serialize(GpsData data);
+        void Serialize(GpsData data, Stream stream);
     }
 }

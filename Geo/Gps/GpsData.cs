@@ -44,13 +44,13 @@ namespace Geo.Gps
 
         public string ToGpx()
         {
-            return FileSerializers[1].SerializeToString(this);
+            return FileSerializers[1].Serialize(this);
         }
 
         public string ToGpx(decimal version)
         {
             var index = version == 1m ? 0 : 1;
-            return FileSerializers[index].SerializeToString(this);
+            return FileSerializers[index].Serialize(this);
         }
 
         public static IEnumerable<GpsFileFormat> SupportedGpsFileFormats()

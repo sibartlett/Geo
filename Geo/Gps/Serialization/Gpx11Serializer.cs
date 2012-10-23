@@ -35,7 +35,7 @@ namespace Geo.Gps.Serialization
             return data;
         }
 
-        protected override GpxFile Serialize(GpsData data)
+        protected override GpxFile SerializeInternal(GpsData data)
         {
             var xml = new GpxFile();
             SerializeMetadata(data, xml, x => x.Software, (gpx, s) => gpx.creator = s);

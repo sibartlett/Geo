@@ -6,19 +6,19 @@ namespace Geo.Gps.Serialization.Xml
 {
     public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSerializer
     {
-        public void Serialize(Stream stream, GpsData data)
+        public void Serialize(GpsData data, Stream stream)
         {
-            _xmlSerializer.Serialize(stream, Serialize(data));
+            _xmlSerializer.Serialize(stream, SerializeInternal(data));
         }
 
-        public string SerializeToString(GpsData data)
+        public string Serialize(GpsData data)
         {
             var textWriter = new StringWriter();
-            _xmlSerializer.Serialize(textWriter, Serialize(data));
+            _xmlSerializer.Serialize(textWriter, SerializeInternal(data));
             return textWriter.ToString();
         }
 
-        protected abstract T Serialize(GpsData data);
+        protected abstract T SerializeInternal(GpsData data);
 
         protected void SerializeMetadata(GpsData data, T xml, Func<GpsMetadata.MetadataKeys, string> attribute, Action<T, string> action)
         {
