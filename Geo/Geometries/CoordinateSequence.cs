@@ -88,7 +88,7 @@ namespace Geo.Geometries
                 .Aggregate(0, (current, result) => (current * 397) ^ result);
         }
 
-        public string ToWktPartString()
+        string IWktPart.ToWktPartString()
         {
             var buf = new StringBuilder();
             if (IsEmpty)
@@ -96,7 +96,7 @@ namespace Geo.Geometries
             else
             {
                 buf.Append("(");
-                var parts = _coordinates.Select(x => x.ToWktPartString()).ToList();
+                var parts = _coordinates.Cast<IWktPart>().Select(x => x.ToWktPartString()).ToList();
                 string last = null;
                 foreach (var part in parts)
                 {

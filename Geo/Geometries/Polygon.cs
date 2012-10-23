@@ -53,8 +53,8 @@ namespace Geo.Geometries
             else
             {
                 buf.Append("(");
-                buf.Append(Shell.ToWktPartString());
-                foreach (var hole in Holes)
+                buf.Append(((IWktPart) Shell).ToWktPartString());
+                foreach (var hole in Holes.Cast<IWktPart>())
                 {
                     buf.Append(", ");
                     buf.Append(hole.ToWktPartString());

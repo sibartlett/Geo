@@ -40,7 +40,7 @@ namespace Geo.Geometries
             return result;
         }
 
-        public string ToWktPartString()
+        string IWktPart.ToWktPartString()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
         }

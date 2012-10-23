@@ -41,16 +41,16 @@ namespace Geo.Geometries
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
-        public string ToWktPartString()
+        string IWktPart.ToWktPartString()
         {
-            return Coordinates.ToWktPartString();
+            return ((IWktPart) Coordinates).ToWktPartString();
         }
 
         public string ToWktString()
         {
             var buf = new StringBuilder();
             buf.Append("LINESTRING ");
-            buf.Append(ToWktPartString());
+            buf.Append(((IWktPart) this).ToWktPartString());
             return buf.ToString();
         }
 

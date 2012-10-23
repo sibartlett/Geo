@@ -35,7 +35,7 @@ namespace Geo.Geometries
 
         public string ToWktString()
         {
-            return string.Format("POINT ({0})", ToWktPartString());
+            return string.Format("POINT ({0})", ((IWktPart) this).ToWktPartString());
         }
 
         string IRavenIndexable.GetIndexString()
