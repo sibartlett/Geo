@@ -13,6 +13,7 @@ __Geo__ - _[NuGet](https://nuget.org/packages/Geo)_
 * Features:
 	* Provides geographic data types (Point, LineString, Polygon, Circle, etc.)
 	* Performs geodesic calculations, such as calculating great circle lines and rhumb lines
+	* Serialize and deserialize GeoJSON
 	* Read GPS data from a .NET Stream;
 		* GPX
 		* NMEA

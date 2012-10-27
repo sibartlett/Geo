@@ -23,6 +23,13 @@ namespace Geo.Geometries
             return Coordinate1.GetBounds().Combine(Coordinate2.GetBounds());
         }
 
+        public LineString ToLineString()
+        {
+            return new LineString(Coordinate1, Coordinate2);
+        }
+
+        #region Equality methods
+
         protected bool Equals(LineSegment other)
         {
             return Equals(Coordinate1, other.Coordinate1) && Equals(Coordinate2, other.Coordinate2);
@@ -55,5 +62,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

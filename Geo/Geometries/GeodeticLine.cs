@@ -19,6 +19,8 @@ namespace Geo.Geometries
         public double Bearing12 { get; private set; }
         public double Bearing21 { get; private set; }
 
+        #region Equality methods
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -52,5 +54,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

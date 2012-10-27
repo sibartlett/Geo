@@ -14,6 +14,8 @@
     <TargetFrameworkProfile>Profile2</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +45,7 @@
     <None Include="Gps\Serialization\Xml\PocketFms\PocketFMSNavlog-1.2.0.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Geometries\CoordinateSequence.cs" />
@@ -51,7 +54,14 @@
     <Compile Include="Geometries\GeodeticCalculations.cs" />
     <Compile Include="Geometries\GeodeticLine.cs" />
     <Compile Include="Geometries\GeometryCollection.cs" />
+    <Compile Include="Geometries\GeometryCollectionBase.cs" />
+    <Compile Include="Geometries\GeometrySequence.cs" />
     <Compile Include="Geometries\LineSegment.cs" />
+    <Compile Include="Geometries\MultiLineString.cs" />
+    <Compile Include="Geometries\MultiPoint.cs" />
+    <Compile Include="Geometries\MultiPolygon.cs" />
+    <Compile Include="Interfaces\IGeoJsonGeometry.cs" />
+    <Compile Include="Interfaces\IGeoJsonObject.cs" />
     <Compile Include="Interfaces\IGeometry.cs" />
     <Compile Include="Interfaces\ILatLng.cs" />
     <Compile Include="Interfaces\IPoint.cs" />
@@ -130,6 +140,10 @@
     <Compile Include="Gps\TrackSegment.cs" />
     <Compile Include="InternalHelpers.cs" />
     <Compile Include="Geometries\LatLngBase.cs" />
+    <Compile Include="Json\Feature.cs" />
+    <Compile Include="Json\FeatureCollection.cs" />
+    <Compile Include="Json\GeoJson.cs" />
+    <Compile Include="Json\GeoJsonExtensions.cs" />
     <Compile Include="Measure\Distance.cs" />
     <Compile Include="Measure\DistanceUnit.cs" />
     <Compile Include="Measure\DistanceUnitExtensions.cs" />
@@ -140,8 +154,10 @@
     <Compile Include="Measure\UnitMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reference\Ellipsoid.cs" />
+    <Compile Include="SimpleJson.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

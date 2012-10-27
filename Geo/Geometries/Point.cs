@@ -1,15 +1,12 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using Geo.Interfaces;
+using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class Point : LatLngBase<Point>, IPoint
+    public class Point : LatLngBase<Point>, IPoint, IGeoJsonGeometry
     {
-        public override int GetHashCode()
-        {
-            throw new System.NotImplementedException();
-        }
-
         protected Point() : base(0, 0)
         {
         }
@@ -63,9 +60,30 @@ namespace Geo.Geometries
             return success;
         }
 
+        public string ToGeoJson()
+        {
+            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
+        }
+
+        public object ToGeoJsonObject()
+        {
+            return new Dictionary<string, object>
+            {
+                { "type", "Point" },
+                { "coordinates", this.ToCoordinateArray() }
+            };
+        }
+
+        #region Equality methods
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         public static bool operator ==(Point left, Point right)
@@ -79,5 +97,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

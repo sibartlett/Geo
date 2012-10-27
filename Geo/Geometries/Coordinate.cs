@@ -196,6 +196,18 @@ namespace Geo.Geometries
             return point.GetCoordinate();
         }
 
+        #region Equality methods
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public static bool operator ==(Coordinate left, Coordinate right)
         {
             if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
@@ -207,5 +219,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

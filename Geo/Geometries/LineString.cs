@@ -2,20 +2,29 @@
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
+using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : IGeometry, IWktShape, IWktPart
+    public class LineString : IGeometry, IWktShape, IWktPart, IGeoJsonGeometry
     {
         public LineString()
         {
             Coordinates = new CoordinateSequence();
         }
 
-        public LineString(IEnumerable<Coordinate> coordinates)
+        public LineString(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
         {
-            Coordinates = new CoordinateSequence(coordinates);
+        }
+
+        public LineString(params Coordinate[] coordinates) : this(new CoordinateSequence(coordinates))
+        {
+        }
+
+        public LineString(CoordinateSequence coordinates)
+        {
+            Coordinates = coordinates;
         }
 
         public CoordinateSequence Coordinates { get; private set; }
@@ -64,10 +73,21 @@ namespace Geo.Geometries
             get { return Coordinates[index]; }
         }
 
-        public void Add(Coordinate coordinate)
+        public string ToGeoJson()
         {
-            Coordinates.Add(coordinate);
+            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
         }
+
+        public object ToGeoJsonObject()
+        {
+            return new Dictionary<string, object>
+            {
+                { "type", "LineString" },
+                { "coordinates", Coordinates.ToCoordinateArray() }
+            };
+        }
+
+        #region Equality methods
 
         protected bool Equals(LineString other)
         {
@@ -98,5 +118,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

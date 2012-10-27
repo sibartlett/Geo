@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : GeometryCollectionBase<IGeometry>, IGeoJsonGeometry
+    public class MultiPolygon : GeometryCollectionBase<Polygon>, IGeoJsonGeometry
     {
-        public GeometryCollection()
+        public MultiPolygon()
         {
         }
 
-        public GeometryCollection(IEnumerable<IGeometry> geometries) : base(geometries)
+        public MultiPolygon(IEnumerable<Polygon> polygons) : base(polygons)
         {
         }
 
-        public GeometryCollection(params IGeometry[] geometries) : base(geometries)
+        public MultiPolygon(params Polygon[] polygons) : base(polygons)
         {
         }
 
         public override string ToWktString()
         {
-            return BuildWktString<IWktShape>("GEOMETRYCOLLECTION", geometry => geometry.ToWktString());
+            return BuildWktString<IWktPart>("MULTIPOLYGON", geometry => geometry.ToWktPartString());
         }
 
         public string ToGeoJson()
@@ -33,8 +33,8 @@ namespace Geo.Geometries
         {
             return new Dictionary<string, object>
             {
-                { "type", "GeometryCollection" },
-                { "geometries", Geometries.Cast<IGeoJsonGeometry>().Select(x => x.ToGeoJsonObject()).ToArray() }
+                { "type", "MultiPolygon" },
+                { "coordinates", Geometries.Select(x => x.ToCoordinateArray()).ToArray() }
             };
         }
 
@@ -50,14 +50,14 @@ namespace Geo.Geometries
             return base.GetHashCode();
         }
 
-        public static bool operator ==(GeometryCollection left, GeometryCollection right)
+        public static bool operator ==(MultiPolygon left, MultiPolygon right)
         {
             if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
                 return true;
             return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
         }
 
-        public static bool operator !=(GeometryCollection left, GeometryCollection right)
+        public static bool operator !=(MultiPolygon left, MultiPolygon right)
         {
             return !(left == right);
         }

@@ -50,6 +50,8 @@ namespace Geo.Geometries
             return new Envelope(Latitude, Longitude, Latitude, Longitude);
         }
 
+        #region Equality methods
+
         protected bool Equals(LatLngBase<T> other)
         {
             return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation);
@@ -86,5 +88,7 @@ namespace Geo.Geometries
                 return hashCode;
             }
         }
+
+        #endregion
     }
 }

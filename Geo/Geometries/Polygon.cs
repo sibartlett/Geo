@@ -2,25 +2,32 @@
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
+using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : IGeometry, IWktShape, IWktPart
+    public class Polygon : IGeometry, IWktShape, IWktPart, IGeoJsonGeometry
     {
         protected Polygon()
         {
-            Holes = new List<LinearRing>();
+            Holes = new GeometrySequence<LinearRing>();
+        }
+
+        public Polygon(LinearRing shell, IEnumerable<LinearRing> holes)
+        {
+            Shell = shell;
+            Holes = new GeometrySequence<LinearRing>(holes ?? new LinearRing[0]);
         }
 
         public Polygon(LinearRing shell, params LinearRing[] holes)
         {
             Shell = shell;
-            Holes = new List<LinearRing>(holes ?? new LinearRing[0]);
+            Holes = new GeometrySequence<LinearRing>(holes ?? new LinearRing[0]);
         }
 
         public LinearRing Shell { get; private set; }
-        public List<LinearRing> Holes { get; private set; }
+        public GeometrySequence<LinearRing> Holes { get; private set; }
 
         public bool IsEmpty()
         {
@@ -69,30 +76,40 @@ namespace Geo.Geometries
             return Shell.GetBounds();
         }
 
+        public string ToGeoJson()
+        {
+            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
+        }
+
+        public object ToGeoJsonObject()
+        {
+            return new Dictionary<string, object>
+            {
+                { "type", "Polygon" },
+                { "coordinates", this.ToCoordinateArray() }
+            };
+        }
+
+        #region Equality methods
+
+        protected bool Equals(Polygon other)
+        {
+            return Equals(Shell, other.Shell) && Equals(Holes, other.Holes);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            var other = (Polygon) obj;
-
-            if (Holes.Count != other.Holes.Count)
-                return false;
-
-            if (Holes.Where((t, i) => !t.Equals(other.Holes[i])).Any())
-                return false;
-
-            return Equals(Shell, other.Shell);
+            return Equals((Polygon) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = Shell != null ? Shell.GetHashCode() : 0;
-                return Holes
-                    .Select(x => x.GetHashCode())
-                    .Aggregate(hashCode, (current, result) => (current * 397) ^ result);
+                return ((Shell != null ? Shell.GetHashCode() : 0)*397) ^ (Holes != null ? Holes.GetHashCode() : 0);
             }
         }
 
@@ -107,5 +124,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

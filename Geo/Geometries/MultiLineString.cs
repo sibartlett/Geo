@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : GeometryCollectionBase<IGeometry>, IGeoJsonGeometry
+    public class MultiLineString : GeometryCollectionBase<LineString>, IGeoJsonGeometry
     {
-        public GeometryCollection()
+        public MultiLineString()
         {
         }
 
-        public GeometryCollection(IEnumerable<IGeometry> geometries) : base(geometries)
+        public MultiLineString(IEnumerable<LineString> lineStrings) : base(lineStrings)
         {
         }
 
-        public GeometryCollection(params IGeometry[] geometries) : base(geometries)
+        public MultiLineString(params LineString[] lineStrings) : base(lineStrings)
         {
         }
 
         public override string ToWktString()
         {
-            return BuildWktString<IWktShape>("GEOMETRYCOLLECTION", geometry => geometry.ToWktString());
+            return BuildWktString<IWktPart>("MULTILINESTRING", geometry => geometry.ToWktPartString());
         }
 
         public string ToGeoJson()
@@ -33,8 +33,8 @@ namespace Geo.Geometries
         {
             return new Dictionary<string, object>
             {
-                { "type", "GeometryCollection" },
-                { "geometries", Geometries.Cast<IGeoJsonGeometry>().Select(x => x.ToGeoJsonObject()).ToArray() }
+                { "type", "MultiLineString" },
+                { "coordinates", Geometries.Select(x => x.Coordinates.ToCoordinateArray()).ToArray() }
             };
         }
 
@@ -50,14 +50,14 @@ namespace Geo.Geometries
             return base.GetHashCode();
         }
 
-        public static bool operator ==(GeometryCollection left, GeometryCollection right)
+        public static bool operator ==(MultiLineString left, MultiLineString right)
         {
             if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
                 return true;
             return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
         }
 
-        public static bool operator !=(GeometryCollection left, GeometryCollection right)
+        public static bool operator !=(MultiLineString left, MultiLineString right)
         {
             return !(left == right);
         }

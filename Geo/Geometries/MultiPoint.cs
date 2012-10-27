@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : GeometryCollectionBase<IGeometry>, IGeoJsonGeometry
+    public class MultiPoint : GeometryCollectionBase<Point>, IGeoJsonGeometry
     {
-        public GeometryCollection()
+        public MultiPoint()
         {
         }
 
-        public GeometryCollection(IEnumerable<IGeometry> geometries) : base(geometries)
+        public MultiPoint(IEnumerable<Point> points) : base(points)
         {
         }
 
-        public GeometryCollection(params IGeometry[] geometries) : base(geometries)
+        public MultiPoint(params Point[] points) : base(points)
         {
         }
 
         public override string ToWktString()
         {
-            return BuildWktString<IWktShape>("GEOMETRYCOLLECTION", geometry => geometry.ToWktString());
+            return BuildWktString<IWktPart>("MULTIPOINT", geometry => geometry.ToWktPartString());
         }
 
         public string ToGeoJson()
@@ -33,11 +33,11 @@ namespace Geo.Geometries
         {
             return new Dictionary<string, object>
             {
-                { "type", "GeometryCollection" },
-                { "geometries", Geometries.Cast<IGeoJsonGeometry>().Select(x => x.ToGeoJsonObject()).ToArray() }
+                { "type", "MultiPoint" },
+                { "coordinates", Geometries.Select(x => x.ToCoordinateArray()).ToArray() }
             };
         }
-
+        
         #region Equality methods
 
         public override bool Equals(object obj)
@@ -50,14 +50,14 @@ namespace Geo.Geometries
             return base.GetHashCode();
         }
 
-        public static bool operator ==(GeometryCollection left, GeometryCollection right)
+        public static bool operator ==(MultiPoint left, MultiPoint right)
         {
             if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
                 return true;
             return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
         }
 
-        public static bool operator !=(GeometryCollection left, GeometryCollection right)
+        public static bool operator !=(MultiPoint left, MultiPoint right)
         {
             return !(left == right);
         }

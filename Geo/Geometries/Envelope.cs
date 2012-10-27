@@ -6,7 +6,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class Envelope : IGeometry, IWktShape
+    public class Envelope : IGeometry
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -88,10 +88,7 @@ namespace Geo.Geometries
             return new Polygon(new LinearRing(GetExtremeCoordinates()));
         }
 
-        public string ToWktString()
-        {
-            return ToPolygon().ToWktString();
-        }
+        #region Equality methods
 
         public override bool Equals(object obj)
         {
@@ -125,5 +122,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }

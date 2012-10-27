@@ -29,7 +29,7 @@ namespace Geo.Geometries
 
         public Envelope GetBounds()
         {
-            var radiusDeg = Radius / (Reference.Ellipsoid.NauticalMile * 60);
+            var radiusDeg = Radius / (Ellipsoid.NauticalMile * 60);
 
             return new Envelope(
                 Center.Latitude - radiusDeg,
@@ -43,6 +43,24 @@ namespace Geo.Geometries
         {
             return string.Format(CultureInfo.InvariantCulture, "CIRCLE({0:F6} {1:F6} d={2:F6})", Center.Longitude, Center.Latitude, Radius.ConvertTo(DistanceUnit.Km));
         }
+
+        public Polygon ToPolygon(int sides = 36)
+        {
+            var angle = 360d / sides;
+            var coords = new List<Coordinate>();
+            Coordinate first = null;
+            for (var i = 0; i < sides; i++)
+            {
+                var coord = Ellipsoid.Current.CalculateOrthodromicLine(Center, angle * i, Radius).Coordinate2;
+                if (i == 0)
+                    first = coord;
+                coords.Add(coord);
+            }
+            coords.Add(first);
+            return new Polygon(new LinearRing(coords));
+        }
+
+        #region Equality methods
 
         public override bool Equals(object obj)
         {
@@ -73,20 +91,6 @@ namespace Geo.Geometries
             return !(left == right);
         }
 
-        public Polygon ToPolygon(int sides = 36)
-        {
-            var angle = 360d/sides;
-            var coords= new List<Coordinate>();
-            Coordinate first = null;
-            for (var i = 0; i < sides; i++)
-            {
-                var coord = Ellipsoid.Current.CalculateOrthodromicLine(Center, angle * i, Radius).Coordinate2;
-                if (i == 0)
-                    first = coord;
-                coords.Add(coord);
-            }
-            coords.Add(first);
-            return new Polygon(new LinearRing(coords));
-        }
+        #endregion
     }
 }

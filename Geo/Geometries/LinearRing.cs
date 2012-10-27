@@ -1,36 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
+using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktShape, IWktPart
+    public class LinearRing : IGeometry, IWktShape, IWktPart, IGeoJsonGeometry
     {
         public LinearRing()
         {
             Coordinates = new CoordinateSequence();
         }
 
-        public LinearRing(IEnumerable<Coordinate> items)
+        public LinearRing(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
         {
-            Coordinates = new CoordinateSequence(items);
+        }
+
+        public LinearRing(params Coordinate[] coordinates) : this(new CoordinateSequence(coordinates))
+        {
+        }
+
+        public LinearRing(CoordinateSequence coordinates)
+        {
+            if (!coordinates.IsClosed)
+                throw new ArgumentException("The Coordinate Sequence must be closed to form a Linear Ring");
+
+            Coordinates = coordinates;
         }
 
         public CoordinateSequence Coordinates { get; private set; }
 
-        private CoordinateSequence ClosedCoordinates()
-        {
-            if (IsEmpty() || Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]))
-                return Coordinates;
-
-            return new CoordinateSequence(Coordinates) { Coordinates[0] };
-        }
-
         public Distance CalculatePerimeter()
         {
-            return ClosedCoordinates().CalculateShortestDistance();
+            return Coordinates.CalculateShortestDistance();
         } 
 
         public bool IsEmpty()
@@ -72,10 +77,21 @@ namespace Geo.Geometries
             get { return Coordinates[index]; }
         }
 
-        public void Add(Coordinate coordinates)
+        public string ToGeoJson()
         {
-            Coordinates.Add(coordinates);
+            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
         }
+
+        public object ToGeoJsonObject()
+        {
+            return new Dictionary<string, object>
+            {
+                { "type", "LineString" },
+                { "coordinates", Coordinates.ToCoordinateArray() }
+            };
+        }
+
+        #region Equality methods
 
         protected bool Equals(LinearRing other)
         {
@@ -106,5 +122,7 @@ namespace Geo.Geometries
         {
             return !(left == right);
         }
+
+        #endregion
     }
 }
