@@ -69,7 +69,7 @@
     <Compile Include="Interfaces\IPoint.cs" />
     <Compile Include="Interfaces\IRavenIndexable.cs" />
     <Compile Include="Interfaces\IWktPart.cs" />
-    <Compile Include="Interfaces\IWktShape.cs" />
+    <Compile Include="Interfaces\IWktGeometry.cs" />
     <Compile Include="Geometries\Coordinate.cs" />
     <Compile Include="Geometries\LinearRing.cs" />
     <Compile Include="Geometries\LineString.cs" />

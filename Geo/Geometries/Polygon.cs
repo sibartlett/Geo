@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : IGeometry, IWktShape, IWktPart, IGeoJsonGeometry
+    public class Polygon : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
     {
         protected Polygon()
         {

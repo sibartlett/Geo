@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Envelope : IGeometry
+    public class Envelope : IRavenIndexable
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -35,14 +35,9 @@ namespace Geo.Geometries
             );
         }
 
-        public Envelope GetBounds()
-        {
-            return this;
-        }
-
         public Area GetArea()
         {
-            return GeoContext.Current.GeodeticCalculator.CalculateArea(GetExtremeCoordinates());
+            return GeoContext.Current.GeodeticCalculator.CalculateArea(this);
         }
 
         string IRavenIndexable.GetIndexString()
@@ -87,11 +82,6 @@ namespace Geo.Geometries
                 new Coordinate(MinLat, MaxLon),
                 new Coordinate(MinLat, MinLon)
             };
-        }
-
-        public Polygon ToPolygon()
-        {
-            return new Polygon(new LinearRing(GetExtremeCoordinates()));
         }
 
         #region Equality methods

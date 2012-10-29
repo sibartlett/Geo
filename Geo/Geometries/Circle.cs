@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : IGeometry
+    public class Circle : IGeometry, IWktGeometry
     {
         protected Circle()
         {
@@ -40,7 +42,26 @@ namespace Geo.Geometries
 
         public Area GetArea()
         {
-            return GeoContext.Current.GeodeticCalculator.CalculateArea(Center, Radius);
+            return GeoContext.Current.GeodeticCalculator.CalculateArea(this);
+        }
+
+        public string ToWktString()
+        {
+            var buf = new StringBuilder();
+            buf.Append("CIRCULARSTRING (");
+            string first = null;
+            for (var i = 0; i < 4; i++)
+            {
+                IWktPart coord = GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(Center, 90 * i, Radius).Coordinate2;
+                if (i == 0)
+                    first = coord.ToWktPartString();
+                else
+                    buf.Append(", ");
+                buf.Append(coord.ToWktPartString());
+            }
+            buf.Append(first);
+            buf.Append(")");
+            return buf.ToString();
         }
 
         string IRavenIndexable.GetIndexString()
@@ -50,7 +71,10 @@ namespace Geo.Geometries
 
         public Polygon ToPolygon(int sides = 36)
         {
-            var angle = 360d / sides;
+            if (sides < 3)
+                throw new ArgumentOutOfRangeException("sides", "Must be greater than 2.");
+
+            var angle = -360d / sides;
             var coords = new List<Coordinate>();
             Coordinate first = null;
             for (var i = 0; i < sides; i++)

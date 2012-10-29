@@ -339,14 +339,19 @@ namespace Geo.Reference
             return dist * EquatorialAxis;
         }
 
-        public Area CalculateArea(IEnumerable<Coordinate> coordinates)
+        public Area CalculateArea(CoordinateSequence coordinates)
         {
             return _sphereCalculator.CalculateArea(coordinates);
         }
 
-        public Area CalculateArea(ILatLng point, double radius)
+        public Area CalculateArea(Circle circle)
         {
-            return _sphereCalculator.CalculateArea(point, radius);
+            return _sphereCalculator.CalculateArea(circle);
+        }
+
+        public Area CalculateArea(Envelope envelope)
+        {
+            return _sphereCalculator.CalculateArea(envelope);
         }
     }
 }

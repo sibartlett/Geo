@@ -1,6 +1,6 @@
 ﻿namespace Geo.Interfaces
 {
-    public interface IWktShape : IGeometry
+    public interface IWktGeometry : IGeometry
     {
         string ToWktString();
     }

@@ -21,7 +21,7 @@ namespace Geo.Geometries
 
         public override string ToWktString()
         {
-            return BuildWktString<IWktShape>("GEOMETRYCOLLECTION", geometry => geometry.ToWktString());
+            return BuildWktString<IWktGeometry>("GEOMETRYCOLLECTION", geometry => geometry.ToWktString());
         }
 
         public string ToGeoJson()

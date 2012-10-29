@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : IGeometry, IWktShape, IWktPart, IGeoJsonGeometry
+    public class LineString : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
     {
         public LineString()
         {

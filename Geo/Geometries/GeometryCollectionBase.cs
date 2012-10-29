@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public abstract class GeometryCollectionBase<T> : IGeometry, IWktShape where T : class, IGeometry
+    public abstract class GeometryCollectionBase<T> : IGeometry, IWktGeometry where T : class, IGeometry
     {
         protected GeometryCollectionBase()
         {

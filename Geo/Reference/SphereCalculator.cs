@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Geo.Geometries;
 using Geo.Interfaces;
 using Geo.Measure;
@@ -36,16 +34,15 @@ namespace Geo.Reference
             throw new NotImplementedException();
         }
 
-        public Area CalculateArea(IEnumerable<Coordinate> coordinates)
+        public Area CalculateArea(CoordinateSequence coordinates)
         {
-            var points = coordinates as List<Coordinate> ?? coordinates.ToList();
             var area = 0.0;
-            if (points.Count > 3 && points[0] == points[points.Count - 1])
+            if (coordinates.Count > 3 && coordinates.IsClosed)
             {
-                for (var i = 0; i < points.Count - 1; i++)
+                for (var i = 0; i < coordinates.Count - 1; i++)
                 {
-                    var p1 = points[i];
-                    var p2 = points[i + 1];
+                    var p1 = coordinates[i];
+                    var p2 = coordinates[i + 1];
                     area += (p2.Longitude - p1.Longitude).ToRadians() *
                             (2 + Math.Sin(p1.Latitude.ToRadians()) +
                              Math.Sin(p2.Latitude.ToRadians()));
@@ -55,15 +52,24 @@ namespace Geo.Reference
             return new Area(area);
         }
 
-        public Area CalculateArea(ILatLng point, double radius)
+        public Area CalculateArea(Circle circle)
         {
-            if (radius <= 0)
+            if (circle.Radius <= 0)
                 return new Area(0d);
 
-            if (radius > Math.PI * Radius)
+            if (circle.Radius > Math.PI * Radius)
                 return new Area(0d);
 
-            return new Area(2 * Math.PI * Radius * Radius * (1 - Math.Cos(radius / Radius)));
+            return new Area(2 * Math.PI * Radius * Radius * (1 - Math.Cos(circle.Radius / Radius)));
+        }
+
+        public Area CalculateArea(Envelope envelope)
+        {
+            var h1 = Radius * (1 - Math.Cos(envelope.MaxLat.ToRadians()));
+            var h2 = Radius * (1 - Math.Cos(envelope.MinLat.ToRadians()));
+            var zoneArea = 2 * Math.PI * Radius * (h2 - h1);
+            var lonPercentage = (envelope.MaxLon - envelope.MinLon) / 360;
+            return new Area(zoneArea * lonPercentage);
         }
 
         public double CalculateMeridionalParts(double latitude)

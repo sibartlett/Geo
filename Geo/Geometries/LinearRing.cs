@@ -8,7 +8,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktShape, IWktPart, IGeoJsonGeometry
+    public class LinearRing : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
     {
         public LinearRing()
         {
