@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Geo.Interfaces;
+using Geo.Measure;
 
 namespace Geo.Geometries
 {
@@ -37,6 +38,11 @@ namespace Geo.Geometries
         public Envelope GetBounds()
         {
             return this;
+        }
+
+        public Area GetArea()
+        {
+            return GeoContext.Current.GeodeticCalculator.CalculateArea(GetExtremeCoordinates());
         }
 
         string IRavenIndexable.GetIndexString()

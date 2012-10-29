@@ -1,17 +1,17 @@
-﻿namespace Geo.Measure
+namespace Geo.Measure
 {
-    public struct Distance
+    public struct Area
     {
         private readonly double _siValue;
         private readonly DistanceUnit _unit;
 
-        public Distance(double metres)
+        public Area(double metres)
         {
             _siValue = metres;
             _unit = DistanceUnit.M;
         }
 
-        public Distance(double value, DistanceUnit unit)
+        public Area(double value, DistanceUnit unit)
         {
             _siValue = value.ConvertFrom(unit).To(DistanceUnit.M);
             _unit = unit;
@@ -39,7 +39,7 @@
         //TODO
         //http://confluence.jetbrains.net/display/ReSharper/Compare+of+float+numbers+by+equality+operator
 
-        public bool Equals(Distance other)
+        public bool Equals(Area other)
         {
             return _siValue.Equals(other._siValue);
         }
@@ -55,74 +55,69 @@
             return _siValue.GetHashCode();
         }
 
-        public static explicit operator Distance(int metersPerSecond)
+        public static explicit operator Area(int metersPerSecond)
         {
-            return new Distance(metersPerSecond);
+            return new Area(metersPerSecond);
         }
 
-        public static explicit operator Distance(long metersPerSecond)
+        public static explicit operator Area(long metersPerSecond)
         {
-            return new Distance(metersPerSecond);
+            return new Area(metersPerSecond);
         }
 
-        public static explicit operator Distance(double metersPerSecond)
+        public static explicit operator Area(double metersPerSecond)
         {
-            return new Distance(metersPerSecond);
+            return new Area(metersPerSecond);
         }
 
-        public static explicit operator Distance(float metersPerSecond)
+        public static explicit operator Area(float metersPerSecond)
         {
-            return new Distance(metersPerSecond);
+            return new Area(metersPerSecond);
         }
 
-        public static explicit operator Distance(decimal metersPerSecond)
+        public static explicit operator Area(decimal metersPerSecond)
         {
-            return new Distance((double)metersPerSecond);
+            return new Area((double)metersPerSecond);
         }
 
-        public static bool operator ==(Distance left, Distance right)
+        public static bool operator ==(Area left, Area right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(Distance left, Distance right)
+        public static bool operator !=(Area left, Area right)
         {
             return !left.Equals(right);
         }
 
-        public static bool operator <(Distance left, Distance right)
+        public static bool operator <(Area left, Area right)
         {
             return left._siValue < right._siValue;
         }
 
-        public static bool operator >(Distance left, Distance right)
+        public static bool operator >(Area left, Area right)
         {
             return left._siValue > right._siValue;
         }
 
-        public static bool operator <=(Distance left, Distance right)
+        public static bool operator <=(Area left, Area right)
         {
             return left._siValue <= right._siValue;
         }
 
-        public static bool operator >=(Distance left, Distance right)
+        public static bool operator >=(Area left, Area right)
         {
             return left._siValue >= right._siValue;
         }
 
-        public static Distance operator +(Distance left, Distance right)
+        public static Area operator +(Area left, Area right)
         {
-            return new Distance(left._siValue + right._siValue);
+            return new Area(left._siValue + right._siValue);
         }
 
-        public static Distance operator -(Distance left, Distance right)
+        public static Area operator -(Area left, Area right)
         {
-            return new Distance(left._siValue - right._siValue);
-        }
-
-        public static Area operator *(Distance left, Distance right)
-        {
-            return new Area(left._siValue * right._siValue);
+            return new Area(left._siValue - right._siValue);
         }
     }
 }

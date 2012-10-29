@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
+using Geo.Measure;
 
 namespace Geo.Geometries
 {
@@ -31,6 +32,11 @@ namespace Geo.Geometries
                     envelope.Combine(geometry.GetBounds());
             }
             return envelope;
+        }
+
+        public Area GetArea()
+        {
+            return new Area(Geometries.Sum(geometry => geometry.GetArea().SiValue));
         }
 
         public abstract string ToWktString();

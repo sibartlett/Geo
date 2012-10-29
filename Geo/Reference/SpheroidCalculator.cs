@@ -3,43 +3,38 @@
 // https://github.com/geotools/geotools/blob/master/modules/library/referencing/src/main/java/org/geotools/referencing/datum/DefaultEllipsoid.java
 
 using System;
+using System.Collections.Generic;
 using Geo.Geometries;
 using Geo.Interfaces;
+using Geo.Measure;
 
 namespace Geo.Reference
 {
-    public class Ellipsoid
+    public class SpheroidCalculator : IGeodeticCalculator
     {
-        internal const double NauticalMile = 1852d;
+        private readonly SphereCalculator _sphereCalculator = new SphereCalculator();
 
-        private static Ellipsoid _current;
-        public static Ellipsoid Current
+        public static SpheroidCalculator Wgs84()
         {
-            get { return _current ?? (_current = Wgs84()); }
-            set { _current = value; }
+            return new SpheroidCalculator("WGS84", 6378137d, 298.257223563d);
         }
 
-        public static Ellipsoid Wgs84()
+        public static SpheroidCalculator Grs80()
         {
-            return new Ellipsoid("WGS84", 6378137d, 298.257223563d);
+            return new SpheroidCalculator("GRS80", 6378137d, 298.257222101);
         }
 
-        public static Ellipsoid Grs80()
+        public static SpheroidCalculator International1924()
         {
-            return new Ellipsoid("GRS80", 6378137d, 298.257222101);
+            return new SpheroidCalculator("International 1924", 6378388d, 297d);
         }
 
-        public static Ellipsoid International1924()
+        public static SpheroidCalculator Clarke1866()
         {
-            return new Ellipsoid("International 1924", 6378388d, 297d);
+            return new SpheroidCalculator("Clarke 1866", 6378206.4, 294.9786982);
         }
 
-        public static Ellipsoid Clarke1866()
-        {
-            return new Ellipsoid("Clarke 1866", 6378206.4, 294.9786982);
-        }
-
-        public Ellipsoid(string name, double equatorialAxis, double inverseFlattening)
+        public SpheroidCalculator(string name, double equatorialAxis, double inverseFlattening)
         {
             Name = name;
             InverseFlattening = inverseFlattening;
@@ -307,7 +302,7 @@ namespace Geo.Reference
             var lonDeltaRad = lonDelta.ToRadians();
 
             // Calculate course and distance
-            var course = Math.Atan(EquatorialAxis / NauticalMile * lonDeltaRad / mpDelta);
+            var course = Math.Atan(EquatorialAxis / Constants.NauticalMile * lonDeltaRad / mpDelta);
             var courseDeg = course.ToDegrees();
 
             if (latDelta >= 0)
@@ -324,7 +319,7 @@ namespace Geo.Reference
             var lat = latitude.ToRadians();
             var a = EquatorialAxis * (Math.Log(Math.Tan(0.5 * lat + Math.PI / 4.0)) +
                              (Eccentricity / 2.0) * Math.Log((1 - Eccentricity * Math.Sin(lat)) / (1 + Eccentricity * Math.Sin(lat))));
-            return a / NauticalMile;
+            return a / Constants.NauticalMile;
         }
 
         public double CalculateMeridionalDistance(double latitude)
@@ -342,6 +337,16 @@ namespace Geo.Reference
                                                e2 * (b6 * Math.Sin(6 * lat) +
                                                            e2 * (b8 * Math.Sin(8 * lat)))));
             return dist * EquatorialAxis;
+        }
+
+        public Area CalculateArea(IEnumerable<Coordinate> coordinates)
+        {
+            return _sphereCalculator.CalculateArea(coordinates);
+        }
+
+        public Area CalculateArea(ILatLng point, double radius)
+        {
+            return _sphereCalculator.CalculateArea(point, radius);
         }
     }
 }

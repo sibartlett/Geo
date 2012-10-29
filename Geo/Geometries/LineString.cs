@@ -50,6 +50,11 @@ namespace Geo.Geometries
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
+        public Area GetArea()
+        {
+            return GeoContext.Current.GeodeticCalculator.CalculateArea(Coordinates);
+        }
+
         string IWktPart.ToWktPartString()
         {
             return ((IWktPart) Coordinates).ToWktPartString();

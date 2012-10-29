@@ -2,7 +2,6 @@
 using System.Globalization;
 using Geo.Interfaces;
 using Geo.Measure;
-using Geo.Reference;
 
 namespace Geo.Geometries
 {
@@ -29,7 +28,7 @@ namespace Geo.Geometries
 
         public Envelope GetBounds()
         {
-            var radiusDeg = Radius / (Ellipsoid.NauticalMile * 60);
+            var radiusDeg = Radius / (Constants.NauticalMile * 60);
 
             return new Envelope(
                 Center.Latitude - radiusDeg,
@@ -37,6 +36,11 @@ namespace Geo.Geometries
                 Center.Latitude + radiusDeg,
                 Center.Longitude + radiusDeg
             );
+        }
+
+        public Area GetArea()
+        {
+            return GeoContext.Current.GeodeticCalculator.CalculateArea(Center, Radius);
         }
 
         string IRavenIndexable.GetIndexString()
@@ -51,7 +55,7 @@ namespace Geo.Geometries
             Coordinate first = null;
             for (var i = 0; i < sides; i++)
             {
-                var coord = Ellipsoid.Current.CalculateOrthodromicLine(Center, angle * i, Radius).Coordinate2;
+                var coord = GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(Center, angle * i, Radius).Coordinate2;
                 if (i == 0)
                     first = coord;
                 coords.Add(coord);

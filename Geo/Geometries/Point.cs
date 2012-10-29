@@ -2,6 +2,7 @@
 using System.Globalization;
 using Geo.Interfaces;
 using Geo.Json;
+using Geo.Measure;
 
 namespace Geo.Geometries
 {
@@ -72,6 +73,11 @@ namespace Geo.Geometries
                 { "type", "Point" },
                 { "coordinates", this.ToCoordinateArray() }
             };
+        }
+
+        public Area GetArea()
+        {
+            return new Area(0d);
         }
 
         #region Equality methods

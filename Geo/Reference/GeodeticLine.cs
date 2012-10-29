@@ -1,20 +1,17 @@
-﻿using Geo.Measure;
+﻿using Geo.Geometries;
+using Geo.Measure;
 
-namespace Geo.Geometries
+namespace Geo.Reference
 {
-    public class GeodeticLine
+    public class GeodeticLine : LineSegment
     {
-        public GeodeticLine(Coordinate coordinate1, Coordinate coordinate2, double distance, double bearing12, double bearing21)
+        public GeodeticLine(Coordinate coordinate1, Coordinate coordinate2, double distance, double bearing12, double bearing21) : base(coordinate1, coordinate2)
         {
-            Coordinate1 = coordinate1;
-            Coordinate2 = coordinate2;
             Bearing12 = bearing12.NormalizeDegrees();
             Bearing21 = bearing21.NormalizeDegrees();
             Distance = new Distance(distance);
         }
 
-        public Coordinate Coordinate1 { get; private set; }
-        public Coordinate Coordinate2 { get; private set; }
         public Distance Distance { get; private set; }
         public double Bearing12 { get; private set; }
         public double Bearing21 { get; private set; }

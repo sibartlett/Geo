@@ -76,6 +76,11 @@ namespace Geo.Geometries
             return Shell.GetBounds();
         }
 
+        public Area GetArea()
+        {
+            return Shell.GetArea() -  new Area(Holes.Sum(x => x.GetArea().SiValue));
+        }
+
         public string ToGeoJson()
         {
             return SimpleJson.SerializeObject(this.ToGeoJsonObject());

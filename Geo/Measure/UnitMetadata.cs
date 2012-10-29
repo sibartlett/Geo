@@ -8,13 +8,20 @@ namespace Geo.Measure
 {
     public class UnitMetadata
     {
+        private static readonly Dictionary<AreaUnit, UnitAttribute> AreaCache;
         private static readonly Dictionary<DistanceUnit, UnitAttribute> DistanceCache;
         private static readonly Dictionary<SpeedUnit, UnitAttribute> SpeedCache;
 
         static UnitMetadata()
         {
+            AreaCache = Init<AreaUnit>();
             DistanceCache = Init<DistanceUnit>();
             SpeedCache = Init<SpeedUnit>();
+        }
+
+        internal static UnitAttribute For(AreaUnit unit)
+        {
+            return AreaCache[unit];
         }
 
         internal static UnitAttribute For(DistanceUnit unit)
@@ -47,6 +54,4 @@ namespace Geo.Measure
             return new Dictionary<T, UnitAttribute>(a);
         }
     }
-
-
 }
