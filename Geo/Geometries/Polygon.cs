@@ -9,8 +9,9 @@ namespace Geo.Geometries
 {
     public class Polygon : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
     {
-        protected Polygon()
+        public Polygon()
         {
+            Shell = new LinearRing();
             Holes = new GeometrySequence<LinearRing>();
         }
 
@@ -29,10 +30,9 @@ namespace Geo.Geometries
         public LinearRing Shell { get; private set; }
         public GeometrySequence<LinearRing> Holes { get; private set; }
 
-        public bool IsEmpty()
-        {
-            return Shell.Coordinates.Count < 3;
-        }
+        public bool IsEmpty { get { return Shell.Coordinates.Count == 0; } }
+        public bool HasElevation { get { return Shell.Coordinates.HasElevation; } }
+        public bool HasM { get { return Shell.Coordinates.HasM; } }
 
         public Distance CalculatePerimeter()
         {
@@ -55,7 +55,7 @@ namespace Geo.Geometries
         public string ToWktPartString()
         {
             var buf = new StringBuilder();
-            if (IsEmpty())
+            if (IsEmpty)
                 buf.Append("EMPTY");
             else
             {

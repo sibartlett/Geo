@@ -136,9 +136,9 @@ namespace Geo.Gps.Serialization
         {
             return data.Waypoints.Select(waypoint => new GpxWaypoint
             {
-                lat = (decimal)waypoint.Latitude,
-                lon = (decimal)waypoint.Longitude,
-                ele = waypoint.Elevation == null ? 0m : (decimal)waypoint.Elevation
+                lat = (decimal)waypoint.Coordinate.Latitude,
+                lon = (decimal)waypoint.Coordinate.Longitude,
+                ele = waypoint.Coordinate.HasElevation ? 0m : (decimal)waypoint.Coordinate.Elevation
             });
         }
 

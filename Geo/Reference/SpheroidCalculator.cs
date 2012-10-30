@@ -56,10 +56,10 @@ namespace Geo.Reference
             get { return Math.Abs(EquatorialAxis - PolarAxis) < double.Epsilon; }
         }
 
-        public GeodeticLine CalculateOrthodromicLine(ILatLng point, double heading, double distance)
+        public GeodeticLine CalculateOrthodromicLine(IPosition point, double heading, double distance)
         {
-            var lat1 = point.Latitude.ToRadians();
-            var lon1 = point.Longitude.ToRadians();
+            var lat1 = point.GetCoordinate().Latitude.ToRadians();
+            var lon1 = point.GetCoordinate().Longitude.ToRadians();
             var faz = heading.ToRadians();
 
             // glat1 initial geodetic latitude in radians N positive 
@@ -129,7 +129,7 @@ namespace Geo.Reference
             var glon2 = modlon(lon1 + x - (1 - c)*d*Flattening); // fix date line problems 
             var baz = modcrs(Math.Atan2(sa, b) + Math.PI);
 
-            return new GeodeticLine(new Coordinate(point.Latitude, point.Longitude), new Coordinate(glat2.ToDegrees(), glon2.ToDegrees()),
+            return new GeodeticLine(new Coordinate(point.GetCoordinate().Latitude, point.GetCoordinate().Longitude), new Coordinate(glat2.ToDegrees(), glon2.ToDegrees()),
                                     distance, heading, baz);
         }
         
@@ -153,8 +153,11 @@ namespace Geo.Reference
             return mod(x + Math.PI / 2, 2 * Math.PI) - Math.PI / 2;
         }
 
-        public GeodeticLine CalculateOrthodromicLine(ILatLng point1, ILatLng point2)
+        public GeodeticLine CalculateOrthodromicLine(IPosition position1, IPosition position2)
         {
+            var point1 = position1.GetCoordinate();
+            var point2 = position2.GetCoordinate();
+
             if (Math.Abs(point1.Latitude - point2.Latitude) < double.Epsilon && Math.Abs(point1.Longitude - point2.Longitude) < double.Epsilon)
                 return null;
 
@@ -245,8 +248,10 @@ namespace Geo.Reference
             throw new ArithmeticException();
         }
 
-        public GeodeticLine CalculateLoxodromicLine(ILatLng point1, ILatLng point2)
+        public GeodeticLine CalculateLoxodromicLine(IPosition position1, IPosition position2)
         {
+            var point1 = position1.GetCoordinate();
+            var point2 = position2.GetCoordinate();
             var lat1 = point1.Latitude;
             var lon1 = point1.Longitude;
             var lat2 = point2.Latitude;

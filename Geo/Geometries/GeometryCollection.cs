@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Geo.Interfaces;
-using Geo.Json;
 
 namespace Geo.Geometries
 {

@@ -19,17 +19,17 @@ namespace Geo.Reference
         public double Radius { get; protected set; }
 
 
-        public GeodeticLine CalculateOrthodromicLine(ILatLng point, double heading, double distance)
+        public GeodeticLine CalculateOrthodromicLine(IPosition point, double heading, double distance)
         {
             throw new NotImplementedException();
         }
 
-        public GeodeticLine CalculateOrthodromicLine(ILatLng point1, ILatLng point2)
+        public GeodeticLine CalculateOrthodromicLine(IPosition point1, IPosition point2)
         {
             throw new NotImplementedException();
         }
 
-        public GeodeticLine CalculateLoxodromicLine(ILatLng point1, ILatLng point2)
+        public GeodeticLine CalculateLoxodromicLine(IPosition point1, IPosition point2)
         {
             throw new NotImplementedException();
         }

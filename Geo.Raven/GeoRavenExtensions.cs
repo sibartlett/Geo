@@ -18,14 +18,16 @@ namespace Raven.Client
             return store;
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusKm, ILatLng coord) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusKm, IPosition position) where TSelf : IDocumentQueryBase<T, TSelf>
         {
-            return self.WithinRadiusOf(radiusKm, coord.Latitude, coord.Longitude);
+            var coordinate = position.GetCoordinate();
+            return self.WithinRadiusOf(radiusKm, coordinate.Latitude, coordinate.Longitude);
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, Distance radius, ILatLng coord) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, Distance radius, IPosition position) where TSelf : IDocumentQueryBase<T, TSelf>
         {
-            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coord.Latitude, coord.Longitude);
+            var coordinate = position.GetCoordinate();
+            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coordinate.Latitude, coordinate.Longitude);
         }
 
         public static IDocumentQueryBase<T, TSelf> RelatesToShape<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, IRavenIndexable shape, SpatialRelation relation, double distanceErrorPct = Constants.DefaultSpatialDistanceErrorPct) where TSelf : IDocumentQueryBase<T, TSelf>
@@ -33,14 +35,16 @@ namespace Raven.Client
             return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation, distanceErrorPct);
         }
 
-        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, double radiusKm, ILatLng coord)
+        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, double radiusKm, IPosition position)
         {
-            return self.WithinRadiusOf(radiusKm, coord.Latitude, coord.Longitude);
+            var coordinate = position.GetCoordinate();
+            return self.WithinRadiusOf(radiusKm, coordinate.Latitude, coordinate.Longitude);
         }
 
-        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, Distance radius, ILatLng coord)
+        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, Distance radius, IPosition position)
         {
-            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coord.Latitude, coord.Longitude);
+            var coordinate = position.GetCoordinate();
+            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coordinate.Latitude, coordinate.Longitude);
         }
 
         public static IDocumentQueryCustomization RelatesToShape(this IDocumentQueryCustomization self, IRavenIndexable shape, SpatialRelation relation)

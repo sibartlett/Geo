@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,9 +16,8 @@ namespace Geo.Geometries
             _coordinates = new List<Coordinate>();
         }
 
-        public CoordinateSequence(IEnumerable<Coordinate> coordinates)
+        public CoordinateSequence(IEnumerable<Coordinate> coordinates) :this(coordinates.ToArray())
         {
-            _coordinates = new List<Coordinate>(coordinates);
         }
 
         public CoordinateSequence(params Coordinate[] coordinates)
@@ -43,6 +43,15 @@ namespace Geo.Geometries
         public bool IsEmpty
         {
             get { return _coordinates.Count == 0; }
+        }
+
+        public bool HasElevation
+        {
+            get { return _coordinates.Any(x => x.HasElevation); }
+        }
+        public bool HasM
+        {
+            get { return _coordinates.Any(x => x.HasM); }
         }
 
         public int Count

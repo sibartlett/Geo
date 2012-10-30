@@ -2,9 +2,8 @@ using Geo.Geometries;
 
 namespace Geo.Interfaces
 {
-    public interface IPoint : IGeometry, ILatLng, IWktGeometry
+    public interface IPosition
     {
-        double? Elevation { get; }
         Coordinate GetCoordinate();
     }
 }

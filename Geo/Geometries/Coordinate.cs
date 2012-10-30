@@ -1,20 +1,76 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
+using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class Coordinate : LatLngBase<Coordinate>
+    public class Coordinate : IWktPart, IPosition
     {
-        protected Coordinate() : base(0, 0)
+        public Coordinate()
         {
+            Latitude = double.NaN;
+            Longitude = double.NaN;
+            Elevation = double.NaN;
+            M = double.NaN;
         }
 
-        public Coordinate(double latitude, double longitude) : base(latitude, longitude)
+        public Coordinate(double latitude, double longitude)
         {
+            if (latitude > 90 || latitude < -90)
+                throw new ArgumentOutOfRangeException("latitude");
+
+            if (longitude > 180 || longitude < -180)
+                throw new ArgumentOutOfRangeException("longitude");
+
+            Latitude = latitude;
+            Longitude = longitude;
+            Elevation = double.NaN;
+            M = double.NaN;
         }
 
-        public Coordinate(double latitude, double longitude, double elevation) : base(latitude, longitude, elevation)
+        public Coordinate(double latitude, double longitude, double elevation) : this(latitude, longitude)
         {
+            Elevation = elevation;
+        }
+
+        public Coordinate(double latitude, double longitude, double elevation, double m) : this(latitude, longitude, elevation)
+        {
+            M = m;
+        }
+
+        public double Latitude { get; private set; }
+        public double Longitude { get; private set; }
+        public double Elevation { get; private set; }
+        public double M { get; private set; }
+
+        public bool HasElevation { get { return !double.IsNaN(Elevation); } }
+        public bool HasM { get { return !double.IsNaN(M); } }
+
+        public override string ToString()
+        {
+            var result = Latitude + ", " + Longitude;
+            if (!double.IsNaN(Elevation))
+                result += ", " + Elevation;
+            if (!double.IsNaN(M))
+                result += ", " + M;
+            return result;
+        }
+
+        Coordinate IPosition.GetCoordinate()
+        {
+            return this;
+        }
+
+        string IWktPart.ToWktPartString()
+        {
+            var format = double.IsNaN(Elevation) ? "{0:F6} {1:F6}" : "{0:F6} {1:F6} {2:F6}";
+            return string.Format(CultureInfo.InvariantCulture, format, Longitude, Latitude, Elevation, M);
+        }
+
+        public Envelope GetBounds()
+        {
+            return new Envelope(Latitude, Longitude, Latitude, Longitude);
         }
 
         private const string OrdRegex = @"^(?<Deg>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir>[NnSsEeWw])?$";
@@ -193,19 +249,34 @@ namespace Geo.Geometries
 
         public static implicit operator Coordinate(Point point)
         {
-            return point.GetCoordinate();
+            return ((IPosition)point).GetCoordinate();
         }
 
         #region Equality methods
 
+        protected bool Equals(Coordinate other)
+        {
+            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation) && M.Equals(other.M);
+        }
+
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Coordinate) obj);
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            unchecked
+            {
+                int hashCode = Latitude.GetHashCode();
+                hashCode = (hashCode*397) ^ Longitude.GetHashCode();
+                hashCode = (hashCode*397) ^ Elevation.GetHashCode();
+                hashCode = (hashCode*397) ^ M.GetHashCode();
+                return hashCode;
+            }
         }
 
         public static bool operator ==(Coordinate left, Coordinate right)

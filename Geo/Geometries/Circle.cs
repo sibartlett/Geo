@@ -9,7 +9,7 @@ namespace Geo.Geometries
 {
     public class Circle : IGeometry, IWktGeometry
     {
-        protected Circle()
+        public Circle()
         {
         }
 
@@ -22,6 +22,18 @@ namespace Geo.Geometries
         public Circle(double latitiude, double longitude, double radius)
         {
             Center = new Coordinate(latitiude, longitude);
+            Radius = radius;
+        }
+
+        public Circle(double latitiude, double longitude, double elevation, double radius)
+        {
+            Center = new Coordinate(latitiude, longitude, elevation);
+            Radius = radius;
+        }
+
+        public Circle(double latitiude, double longitude, double elevation, double m, double radius)
+        {
+            Center = new Coordinate(latitiude, longitude, m, elevation);
             Radius = radius;
         }
 
@@ -44,6 +56,10 @@ namespace Geo.Geometries
         {
             return GeoContext.Current.GeodeticCalculator.CalculateArea(this);
         }
+
+        public bool IsEmpty { get { return Center != null && !double.IsNaN(Radius); } }
+        public bool HasElevation { get { return Center != null && Center.HasElevation; } }
+        public bool HasM { get { return Center != null && Center.HasM; } }
 
         public string ToWktString()
         {

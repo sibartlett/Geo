@@ -258,8 +258,10 @@ namespace Geo.Json
 
             if (coordinates.Count == 2)
                 result = new Point(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]));
-            else
+            else if (coordinates.Count == 3)
                 result = new Point(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]));
+            else
+                result = new Point(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]), Convert.ToDouble(coordinates[3]));
             return true;
         }
 
@@ -325,12 +327,15 @@ namespace Geo.Json
 
         public static object SantizeJsonObjects(object obj)
         {
-            if (obj is JsonArray)
-                return ((JsonArray) obj).Select(SantizeJsonObjects).ToArray();
-            else if (obj is JsonObject)
-                return ((JsonObject) obj).ToDictionary(x => x.Key, x => SantizeJsonObjects(x));
-            else
-                return obj;
+            var jsonArray = obj as JsonArray;
+            if (jsonArray != null)
+                return jsonArray.Select(SantizeJsonObjects).ToArray();
+
+            var jsonObject = obj as JsonObject;
+            if (jsonObject != null)
+                return jsonObject.ToDictionary(x => x.Key, x => SantizeJsonObjects(x));
+
+            return obj;
         }
     }
 }

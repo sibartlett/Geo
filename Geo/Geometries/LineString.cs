@@ -34,21 +34,20 @@ namespace Geo.Geometries
             return Coordinates.CalculateShortestDistance();
         }
 
-        public bool IsEmpty()
-        {
-            return Coordinates.Count == 0;
-        }
-
         public bool IsClosed()
         {
-            return !IsEmpty() && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
+            return !IsEmpty && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
         }
 
         public Envelope GetBounds()
         {
-            return IsEmpty() ? null :
+            return IsEmpty ? null :
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
+
+        public bool IsEmpty { get { return Coordinates.Count == 0; } }
+        public bool HasElevation { get { return Coordinates.HasElevation; } }
+        public bool HasM { get { return Coordinates.HasM; } }
 
         public Area GetArea()
         {

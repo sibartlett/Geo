@@ -7,9 +7,9 @@ namespace Geo.Interfaces
 {
     public interface IGeodeticCalculator
     {
-        GeodeticLine CalculateOrthodromicLine(ILatLng point, double heading, double distance);
-        GeodeticLine CalculateOrthodromicLine(ILatLng point1, ILatLng point2);
-        GeodeticLine CalculateLoxodromicLine(ILatLng point1, ILatLng point2);
+        GeodeticLine CalculateOrthodromicLine(IPosition point, double heading, double distance);
+        GeodeticLine CalculateOrthodromicLine(IPosition point1, IPosition point2);
+        GeodeticLine CalculateLoxodromicLine(IPosition point1, IPosition point2);
         Area CalculateArea(CoordinateSequence coordinates);
         Area CalculateArea(Circle circle);
         Area CalculateArea(Envelope envelope);

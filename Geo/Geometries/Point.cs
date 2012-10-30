@@ -6,59 +6,47 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Point : LatLngBase<Point>, IPoint, IGeoJsonGeometry
+    public class Point : IPosition, IGeoJsonGeometry, IWktGeometry
     {
-        protected Point() : base(0, 0)
+        public Point()
         {
         }
 
-        public Point(double latitude, double longitude) : base(latitude, longitude)
+        public Point(double latitude, double longitude)
         {
+            Coordinate = new Coordinate(latitude, longitude);
         }
 
-        public Point(double latitude, double longitude, double elevation) : base(latitude, longitude, elevation)
+        public Point(double latitude, double longitude, double elevation)
         {
+            Coordinate = new Coordinate(latitude, longitude, elevation);
         }
 
-        public Point(Coordinate coordinate) : base(coordinate)
+        public Point(double latitude, double longitude, double elevation, double m)
         {
+            Coordinate = new Coordinate(latitude, longitude, elevation, m);
         }
 
-        public Coordinate GetCoordinate()
+        public Point(Coordinate coordinate)
         {
-            if (Elevation.HasValue)
-                return new Coordinate(Latitude, Longitude, Elevation.Value);
-            return new Coordinate(Latitude, Longitude);
+            Coordinate = coordinate;
+        }
+
+        public Coordinate Coordinate { get; set; }
+
+        Coordinate IPosition.GetCoordinate()
+        {
+            return Coordinate;
         }
 
         public string ToWktString()
         {
-            return string.Format("POINT ({0})", ((IWktPart) this).ToWktPartString());
+            return string.Format("POINT ({0})", ((IWktPart) Coordinate).ToWktPartString());
         }
 
         string IRavenIndexable.GetIndexString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Longitude, Latitude);
-        }
-
-        public static Point Parse(string coordinate)
-        {
-            return Coordinate.Parse(coordinate).ToPoint();
-        }
-
-        public static Point TryParse(string coordinate)
-        {
-            Coordinate result;
-            var success = Coordinate.TryParse(coordinate, out result);
-            return success ? result.ToPoint() : default(Point);
-        }
-
-        public static bool TryParse(string coordinate, out Point result)
-        {
-            Coordinate res;
-            var success = Coordinate.TryParse(coordinate, out res);
-            result = success ? res.ToPoint() : default(Point);
-            return success;
+            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Coordinate.Longitude, Coordinate.Latitude);
         }
 
         public string ToGeoJson()
@@ -75,6 +63,15 @@ namespace Geo.Geometries
             };
         }
 
+        public bool IsEmpty { get { return Coordinate == null; } }
+        public bool HasElevation { get { return Coordinate != null && Coordinate.HasElevation; } }
+        public bool HasM { get { return Coordinate != null && Coordinate.HasM; } }
+
+        public Envelope GetBounds()
+        {
+            return Coordinate.GetBounds();
+        }
+
         public Area GetArea()
         {
             return new Area(0d);
@@ -82,14 +79,22 @@ namespace Geo.Geometries
 
         #region Equality methods
 
+        protected bool Equals(Point other)
+        {
+            return Equals(Coordinate, other.Coordinate);
+        }
+
         public override bool Equals(object obj)
         {
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Point) obj);
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return (Coordinate != null ? Coordinate.GetHashCode() : 0);
         }
 
         public static bool operator ==(Point left, Point right)

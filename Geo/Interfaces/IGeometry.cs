@@ -7,5 +7,9 @@ namespace Geo.Interfaces
     {
         Envelope GetBounds();
         Area GetArea();
+
+        bool IsEmpty { get; }
+        bool HasElevation { get; }
+        bool HasM { get; }
     }
 }

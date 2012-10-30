@@ -1,16 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using Geo.Geometries;
+using Geo.Interfaces;
 
 namespace Geo.Json
 {
     public static class GeoJsonExtensions
     {
-        internal static double[] ToCoordinateArray<T>(this LatLngBase<T> point) where T : LatLngBase<T>
+        internal static double[] ToCoordinateArray(this IPosition position)
         {
-            return point.Elevation.HasValue
-                ? new[] { point.Longitude, point.Latitude, point.Elevation.Value }
-                : new[] { point.Longitude, point.Latitude };
+            var point = position.GetCoordinate();
+            if (point.HasElevation && point.HasM)
+                return new[] {point.Longitude, point.Latitude, point.Elevation, point.M};
+            if (point.HasElevation)
+                return new[] {point.Longitude, point.Latitude, point.Elevation};
+            if (point.HasM)
+                return new[] {point.Longitude, point.Latitude, point.M};
+            return new[] {point.Longitude, point.Latitude};
         }
 
         internal static IEnumerable<double[]> ToCoordinateArray(this CoordinateSequence sequence)

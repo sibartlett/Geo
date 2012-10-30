@@ -1,9 +1,10 @@
 ﻿using System;
 using Geo.Geometries;
+using Geo.Interfaces;
 
 namespace Geo.Gps
 {
-    public class Fix
+    public class Fix : IPosition
     {
         protected Fix()
         {
@@ -43,6 +44,11 @@ namespace Geo.Gps
             {
                 return ((Coordinate != null ? Coordinate.GetHashCode() : 0)*397) ^ TimeUtc.GetHashCode();
             }
+        }
+
+        Coordinate IPosition.GetCoordinate()
+        {
+            return Coordinate;
         }
     }
 }

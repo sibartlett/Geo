@@ -65,8 +65,7 @@
     <Compile Include="Interfaces\IGeoJsonGeometry.cs" />
     <Compile Include="Interfaces\IGeoJsonObject.cs" />
     <Compile Include="Interfaces\IGeometry.cs" />
-    <Compile Include="Interfaces\ILatLng.cs" />
-    <Compile Include="Interfaces\IPoint.cs" />
+    <Compile Include="Interfaces\IPosition.cs" />
     <Compile Include="Interfaces\IRavenIndexable.cs" />
     <Compile Include="Interfaces\IWktPart.cs" />
     <Compile Include="Interfaces\IWktGeometry.cs" />
@@ -141,7 +140,6 @@
     <Compile Include="Gps\Track.cs" />
     <Compile Include="Gps\TrackSegment.cs" />
     <Compile Include="InternalHelpers.cs" />
-    <Compile Include="Geometries\LatLngBase.cs" />
     <Compile Include="Json\Feature.cs" />
     <Compile Include="Json\FeatureCollection.cs" />
     <Compile Include="Json\GeoJson.cs" />

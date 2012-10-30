@@ -36,21 +36,16 @@ namespace Geo.Geometries
         public Distance CalculatePerimeter()
         {
             return Coordinates.CalculateShortestDistance();
-        } 
-
-        public bool IsEmpty()
-        {
-            return Coordinates.Count == 0;
         }
 
         public bool IsClosed()
         {
-            return !IsEmpty();
+            return !IsEmpty;
         }
 
         public Envelope GetBounds()
         {
-            return IsEmpty() ? null :
+            return IsEmpty ? null :
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
@@ -58,6 +53,10 @@ namespace Geo.Geometries
         {
             return GeoContext.Current.GeodeticCalculator.CalculateArea(Coordinates);
         }
+
+        public bool IsEmpty { get { return Coordinates.Count == 0; } }
+        public bool HasElevation { get { return Coordinates.HasElevation; } }
+        public bool HasM { get { return Coordinates.HasM; } }
 
         string IWktPart.ToWktPartString()
         {

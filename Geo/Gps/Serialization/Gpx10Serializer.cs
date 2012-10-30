@@ -57,9 +57,9 @@ namespace Geo.Gps.Serialization
         {
             return data.Waypoints.Select(waypoint => new GpxPoint
                 {
-                    lat = (decimal)waypoint.Latitude,
-                    lon = (decimal)waypoint.Longitude,
-                    ele = waypoint.Elevation == null ? 0m : (decimal)waypoint.Elevation
+                    lat = (decimal)waypoint.Coordinate.Latitude,
+                    lon = (decimal)waypoint.Coordinate.Longitude,
+                    ele = waypoint.Coordinate.HasElevation ? 0m : (decimal)waypoint.Coordinate.Elevation
                 });
         }
 
@@ -84,7 +84,7 @@ namespace Geo.Gps.Serialization
                         {
                             lat = (decimal)segment.Fixes[j].Coordinate.Latitude,
                             lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
-                            ele = segment.Fixes[j].Coordinate.Elevation == null ? 0m : (decimal)segment.Fixes[j].Coordinate.Elevation
+                            ele = segment.Fixes[j].Coordinate.HasElevation ? 0m : (decimal)segment.Fixes[j].Coordinate.Elevation
                         };
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
@@ -111,7 +111,7 @@ namespace Geo.Gps.Serialization
                     {
                         lat = (decimal)route.Coordinates[j].Latitude,
                         lon = (decimal)route.Coordinates[j].Longitude,
-                        ele = route.Coordinates[j].Elevation == null ? 0m : (decimal)route.Coordinates[j].Elevation
+                        ele = route.Coordinates[j].HasElevation ? 0m : (decimal)route.Coordinates[j].Elevation
                     };
                 }
                 yield return rte;
