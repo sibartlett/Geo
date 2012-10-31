@@ -3,7 +3,6 @@
 // https://github.com/geotools/geotools/blob/master/modules/library/referencing/src/main/java/org/geotools/referencing/datum/DefaultEllipsoid.java
 
 using System;
-using System.Collections.Generic;
 using Geo.Geometries;
 using Geo.Interfaces;
 using Geo.Measure;

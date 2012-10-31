@@ -75,8 +75,8 @@
     <Compile Include="Geo\Gps\Serialization\PocketFmsFlightplanDeSerializerTests.cs" />
     <Compile Include="Geo\Gps\Serialization\SerializerTestFixtureBase.cs" />
     <Compile Include="Geo\Gps\Serialization\SkyDemonFlightplanDeSerializerTests.cs" />
-    <Compile Include="Geo\Reference\EllipsoidCalculatorTests.cs" />
-    <Compile Include="Json\JsonTests.cs" />
+    <Compile Include="Geo\Reference\SpheroidCalculatorTests.cs" />
+    <Compile Include="Geo\Json\JsonTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Raven\RavenTestFixtureBase.cs" />
     <Compile Include="Raven\RavenTests.cs" />

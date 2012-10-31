@@ -124,15 +124,9 @@
     <Compile Include="Gps\Serialization\Xml\Gpx\GpxRteTrkBase.cs" />
     <Compile Include="Gps\Serialization\Xml\Gpx\GpxWaypointBase.cs" />
     <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsFlightplan.cs" />
-    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsLib.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsMeta.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsPoint.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsLib.cs" />
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsMeta.cs" />
+    <Compile Include="Gps\Serialization\Xml\PocketFms\PocketFmsPoint.cs" />
     <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonAircraft.cs" />
     <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonRoute.cs" />
     <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonRhumbLine.cs" />
@@ -143,7 +137,8 @@
     <Compile Include="Json\Feature.cs" />
     <Compile Include="Json\FeatureCollection.cs" />
     <Compile Include="Json\GeoJson.cs" />
-    <Compile Include="Json\GeoJsonExtensions.cs" />
+    <Compile Include="Json\GeoJsonReader.cs" />
+    <Compile Include="Json\GeoJsonWriter.cs" />
     <Compile Include="Measure\Area.cs" />
     <Compile Include="Measure\AreaUnit.cs" />
     <Compile Include="Measure\AreaUnitExtensions.cs" />

@@ -26,16 +26,7 @@ namespace Geo.Geometries
 
         public string ToGeoJson()
         {
-            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
-        }
-
-        public object ToGeoJsonObject()
-        {
-            return new Dictionary<string, object>
-            {
-                { "type", "MultiLineString" },
-                { "coordinates", Geometries.Select(x => x.Coordinates.ToCoordinateArray()).ToArray() }
-            };
+            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

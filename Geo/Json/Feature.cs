@@ -17,24 +17,7 @@ namespace Geo.Json
 
         public string ToGeoJson()
         {
-            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
-        }
-
-        internal object ToGeoJsonObject()
-        {
-            var result = new Dictionary<string, object>
-            {
-                { "type", "Feature" },
-                { "geometry", Geometry.ToGeoJsonObject() }
-            };
-
-            if (Properties != null && Properties.Count > 0)
-                result.Add("properties", Properties);
-
-            if (Id != null)
-                result.Add("id", Id);
-
-            return result;
+            return new GeoJsonWriter().Write(this);
         }
     }
 }

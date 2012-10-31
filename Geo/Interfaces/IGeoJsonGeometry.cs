@@ -2,6 +2,5 @@
 {
     public interface IGeoJsonGeometry : IGeoJsonObject, IGeometry
     {
-        object ToGeoJsonObject();
     }
 }

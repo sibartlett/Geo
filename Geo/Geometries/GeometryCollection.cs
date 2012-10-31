@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Geo.Interfaces;
+using Geo.Json;
 
 namespace Geo.Geometries
 {
@@ -25,16 +26,7 @@ namespace Geo.Geometries
 
         public string ToGeoJson()
         {
-            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
-        }
-
-        public object ToGeoJsonObject()
-        {
-            return new Dictionary<string, object>
-            {
-                { "type", "GeometryCollection" },
-                { "geometries", Geometries.Cast<IGeoJsonGeometry>().Select(x => x.ToGeoJsonObject()).ToArray() }
-            };
+            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

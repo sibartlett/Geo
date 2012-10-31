@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Geo.Interfaces;
 
 namespace Geo.Json
@@ -25,16 +24,7 @@ namespace Geo.Json
 
         public string ToGeoJson()
         {
-            return SimpleJson.SerializeObject(ToGeoJsonObject());
-        }
-
-        internal object ToGeoJsonObject()
-        {
-            return new Dictionary<string, object>
-            {
-                { "type", "FeatureCollection" },
-                { "features", Features.Select(x => x.ToGeoJsonObject()).ToArray() }
-            };
+            return new GeoJsonWriter().Write(this);
         }
     }
 }

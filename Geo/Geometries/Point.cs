@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using Geo.Interfaces;
 using Geo.Json;
 using Geo.Measure;
@@ -51,16 +50,7 @@ namespace Geo.Geometries
 
         public string ToGeoJson()
         {
-            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
-        }
-
-        public object ToGeoJsonObject()
-        {
-            return new Dictionary<string, object>
-            {
-                { "type", "Point" },
-                { "coordinates", this.ToCoordinateArray() }
-            };
+            return GeoJson.Serialize(this);
         }
 
         public bool IsEmpty { get { return Coordinate == null; } }

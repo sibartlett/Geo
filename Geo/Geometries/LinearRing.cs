@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
-using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
+    public class LinearRing : IGeometry, IWktGeometry, IWktPart
     {
         public LinearRing()
         {
@@ -79,20 +78,6 @@ namespace Geo.Geometries
         public Coordinate this[int index]
         {
             get { return Coordinates[index]; }
-        }
-
-        public string ToGeoJson()
-        {
-            return SimpleJson.SerializeObject(this.ToGeoJsonObject());
-        }
-
-        public object ToGeoJsonObject()
-        {
-            return new Dictionary<string, object>
-            {
-                { "type", "LineString" },
-                { "coordinates", Coordinates.ToCoordinateArray() }
-            };
         }
 
         #region Equality methods
