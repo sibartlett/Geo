@@ -163,7 +163,7 @@ namespace Geo.Gps.Serialization
                         {
                             lat = (decimal)segment.Fixes[j].Coordinate.Latitude,
                             lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
-                            ele = segment.Fixes[j].Coordinate.Elevation == null ? 0m : (decimal)segment.Fixes[j].Coordinate.Elevation
+                            ele = segment.Fixes[j].Coordinate.HasElevation ? (decimal)segment.Fixes[j].Coordinate.Elevation : 0m
                         };
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
@@ -190,7 +190,7 @@ namespace Geo.Gps.Serialization
                     {
                         lat = (decimal)route.Coordinates[j].Latitude,
                         lon = (decimal)route.Coordinates[j].Longitude,
-                        ele = route.Coordinates[j].Elevation == null ? 0m : (decimal)route.Coordinates[j].Elevation
+                        ele = route.Coordinates[j].HasElevation ? (decimal)route.Coordinates[j].Elevation : 0m
                     };
                 }
                 yield return rte;
