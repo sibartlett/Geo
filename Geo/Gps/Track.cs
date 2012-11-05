@@ -8,7 +8,7 @@ using Geo.Measure;
 
 namespace Geo.Gps
 {
-    public class Track : IRavenIndexable
+    public class Track : IRavenIndexable, IHasLength
     {
         public Track()
         {
@@ -75,6 +75,11 @@ namespace Geo.Gps
         string IRavenIndexable.GetIndexString()
         {
             return ToLineString().ToWktString();
+        }
+
+        public Distance GetLength()
+        {
+            return GetAllFixes().CalculateShortestDistance();
         }
     }
 }

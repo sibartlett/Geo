@@ -29,11 +29,6 @@ namespace Geo.Geometries
 
         public CoordinateSequence Coordinates { get; private set; }
 
-        public Distance CalculateLength()
-        {
-            return Coordinates.CalculateShortestDistance();
-        }
-
         public bool IsClosed()
         {
             return !IsEmpty && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
@@ -52,6 +47,11 @@ namespace Geo.Geometries
         public Area GetArea()
         {
             return GeoContext.Current.GeodeticCalculator.CalculateArea(Coordinates);
+        }
+
+        public Distance GetLength()
+        {
+            return Coordinates.CalculateShortestDistance();
         }
 
         string IWktPart.ToWktPartString()

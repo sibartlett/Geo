@@ -1,6 +1,8 @@
-﻿namespace Geo.Measure
+﻿using Geo.Interfaces;
+
+namespace Geo.Measure
 {
-    public struct Distance
+    public struct Distance : IMeasure
     {
         private readonly double _siValue;
         private readonly DistanceUnit _unit;

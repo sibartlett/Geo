@@ -39,6 +39,11 @@ namespace Geo.Geometries
             return new Area(Geometries.Sum(geometry => geometry.GetArea().SiValue));
         }
 
+        public Distance GetLength()
+        {
+            return new Distance(Geometries.Sum(geometry => geometry.GetLength().SiValue));
+        }
+
         public bool IsEmpty { get { return Geometries.Count == 0; } }
         public bool HasElevation { get { return Geometries.Any(x => x.HasElevation); } }
         public bool HasM { get { return Geometries.Any(x => x.HasM); } }

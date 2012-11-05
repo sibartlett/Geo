@@ -1,8 +1,9 @@
 ﻿using System;
+using Geo.Interfaces;
 
 namespace Geo.Measure
 {
-    public struct Speed
+    public struct Speed : IMeasure
     {
         private readonly double _siValue;
         private readonly SpeedUnit _unit;

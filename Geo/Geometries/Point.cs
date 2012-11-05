@@ -64,7 +64,12 @@ namespace Geo.Geometries
 
         public Area GetArea()
         {
-            return new Area(0d);
+            return new Area(0);
+        }
+
+        public Distance GetLength()
+        {
+            return new Distance(0);
         }
 
         #region Equality methods

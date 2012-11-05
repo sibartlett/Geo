@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Envelope : IRavenIndexable
+    public class Envelope : IRavenIndexable, IHasArea
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {

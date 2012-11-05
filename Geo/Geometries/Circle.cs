@@ -57,6 +57,12 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateArea(this);
         }
 
+        public Distance GetLength()
+        {
+            // TODO: Do a proper calculation
+            return ToPolygon().GetLength();
+        }
+
         public bool IsEmpty { get { return Center != null && !double.IsNaN(Radius); } }
         public bool HasElevation { get { return Center != null && Center.HasElevation; } }
         public bool HasM { get { return Center != null && Center.HasM; } }

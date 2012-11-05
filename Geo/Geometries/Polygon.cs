@@ -34,9 +34,9 @@ namespace Geo.Geometries
         public bool HasElevation { get { return Shell.Coordinates.HasElevation; } }
         public bool HasM { get { return Shell.Coordinates.HasM; } }
 
-        public Distance CalculatePerimeter()
+        public Distance GetLength()
         {
-            return Shell.CalculatePerimeter();
+            return Shell.GetLength();
         }
 
         string IRavenIndexable.GetIndexString()

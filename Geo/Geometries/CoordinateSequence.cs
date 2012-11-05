@@ -8,15 +8,15 @@ namespace Geo.Geometries
 {
     public class CoordinateSequence : ReadOnlyCollection<Coordinate>, IWktPart
     {
-        public CoordinateSequence() : base(new Coordinate[0])
+        public CoordinateSequence() : base(new List<Coordinate>())
         {
         }
 
-        public CoordinateSequence(IEnumerable<Coordinate> coordinates) :base(coordinates.ToList())
+        public CoordinateSequence(IEnumerable<Coordinate> coordinates) : base(coordinates.ToList())
         {
         }
 
-        public CoordinateSequence(params Coordinate[] coordinates) : base(coordinates)
+        public CoordinateSequence(params Coordinate[] coordinates) : base(coordinates.ToList())
         {
         }
 

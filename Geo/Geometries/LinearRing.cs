@@ -32,7 +32,7 @@ namespace Geo.Geometries
 
         public CoordinateSequence Coordinates { get; private set; }
 
-        public Distance CalculatePerimeter()
+        public Distance GetLength()
         {
             return Coordinates.CalculateShortestDistance();
         }

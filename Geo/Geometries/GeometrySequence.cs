@@ -1,52 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class GeometrySequence<T> : IEnumerable<T> where T : IGeometry
+    public class GeometrySequence<T> : ReadOnlyCollection<T> where T : IGeometry
     {
-        private readonly List<T> _geometries;
-
-        public GeometrySequence()
+        public GeometrySequence() : base(new List<T>())
         {
-            _geometries = new List<T>();
         }
 
-        public GeometrySequence(IEnumerable<T> geometries)
+        public GeometrySequence(IEnumerable<T> geometries) :base(geometries.ToList())
         {
-            _geometries = new List<T>(geometries);
         }
 
-        public GeometrySequence(params T[] geometries)
+        public GeometrySequence(params T[] geometries) : base(geometries.ToList())
         {
-            _geometries = new List<T>(geometries);
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _geometries.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public T this[int index]
-        {
-            get { return _geometries[index]; }
         }
 
         public bool IsEmpty
         {
-            get { return _geometries.Count == 0; }
-        }
-
-        public int Count
-        {
-            get { return _geometries.Count; }
+            get { return Count == 0; }
         }
 
         #region Equality methods
@@ -56,11 +31,11 @@ namespace Geo.Geometries
             if (other == null)
                 return false;
 
-            if (_geometries.Count != other._geometries.Count)
+            if (Count != other.Count)
                 return false;
 
-            return !_geometries
-                .Where((t, i) => !t.Equals(other._geometries[i]))
+            return !this
+                .Where((t, i) => !t.Equals(other[i]))
                 .Any();
         }
 
@@ -74,7 +49,7 @@ namespace Geo.Geometries
 
         public override int GetHashCode()
         {
-            return _geometries
+            return this
                 .Select(x => x.GetHashCode())
                 .Aggregate(0, (current, result) => (current * 397) ^ result);
         }

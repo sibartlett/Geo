@@ -6,7 +6,7 @@ using Geo.Measure;
 
 namespace Geo.Gps
 {
-    public class Route : IRavenIndexable
+    public class Route : IRavenIndexable, IHasLength
     {
         public Route()
         {
@@ -30,6 +30,11 @@ namespace Geo.Gps
         string IRavenIndexable.GetIndexString()
         {
             return ToLineString().ToWktString();
+        }
+
+        public Distance GetLength()
+        {
+            return Coordinates.CalculateShortestDistance();
         }
     }
 }
