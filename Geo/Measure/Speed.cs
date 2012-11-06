@@ -3,7 +3,7 @@ using Geo.Interfaces;
 
 namespace Geo.Measure
 {
-    public struct Speed : IMeasure
+    public struct Speed : IMeasure, IEquatable<Speed>, IComparable<Speed>
     {
         private readonly double _siValue;
         private readonly SpeedUnit _unit;
@@ -50,6 +50,13 @@ namespace Geo.Measure
         public string ToString(SpeedUnit unit)
         {
             return ConvertTo(unit).ToString();
+        }
+
+        public int CompareTo(Speed other)
+        {
+            if (Equals(other))
+                return 0;
+            return SiValue < other.SiValue ? -1 : 1;
         }
 
         //TODO

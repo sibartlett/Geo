@@ -5,7 +5,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class Coordinate : IWktPart, IPosition
+    public class Coordinate : IWktPart, IPosition, IEquatable<Coordinate>
     {
         public Coordinate()
         {
@@ -254,9 +254,9 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(Coordinate other)
+        public bool Equals(Coordinate other)
         {
-            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation) && M.Equals(other.M);
+            return !ReferenceEquals(null, other) && Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation) && M.Equals(other.M);
         }
 
         public override bool Equals(object obj)

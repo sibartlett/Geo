@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class MultiLineString : GeometryCollectionBase<LineString>, IGeoJsonGeometry
+    public class MultiLineString : GeometryCollectionBase<MultiLineString, LineString>, IGeoJsonGeometry
     {
         public MultiLineString()
         {

@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktGeometry, IWktPart
+    public class LinearRing : IGeometry, IWktGeometry, IWktPart, IEquatable<LinearRing>
     {
         public LinearRing()
         {
@@ -82,9 +82,9 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(LinearRing other)
+        public bool Equals(LinearRing other)
         {
-            return Equals(Coordinates, other.Coordinates);
+            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates);
         }
 
         public override bool Equals(object obj)

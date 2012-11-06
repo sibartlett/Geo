@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : GeometryCollectionBase<IGeometry>, IGeoJsonGeometry
+    public class GeometryCollection : GeometryCollectionBase<GeometryCollection, IGeometry>, IGeoJsonGeometry
     {
         public GeometryCollection()
         {

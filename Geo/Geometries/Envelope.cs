@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Envelope : IRavenIndexable, IHasArea
+    public class Envelope : IRavenIndexable, IHasArea, IEquatable<Envelope>
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -86,13 +86,17 @@ namespace Geo.Geometries
 
         #region Equality methods
 
+        public bool Equals(Envelope other)
+        {
+            return !ReferenceEquals(null, other) && MinLat.Equals(other.MinLat) && MinLon.Equals(other.MinLon) && MaxLat.Equals(other.MaxLat) && MaxLon.Equals(other.MaxLon);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            var other = (Envelope) obj;
-            return MinLat.Equals(other.MinLat) && MinLon.Equals(other.MinLon) && MaxLat.Equals(other.MaxLat) && MaxLon.Equals(other.MaxLon);
+            return Equals((Envelope) obj);
         }
 
         public override int GetHashCode()

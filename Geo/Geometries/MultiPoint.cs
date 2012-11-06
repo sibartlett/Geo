@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class MultiPoint : GeometryCollectionBase<Point>, IGeoJsonGeometry
+    public class MultiPoint : GeometryCollectionBase<MultiPoint, Point>, IGeoJsonGeometry
     {
         public MultiPoint()
         {

@@ -7,19 +7,21 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public abstract class GeometryCollectionBase<T> : IGeometry, IWktGeometry where T : class, IGeometry
+    public abstract class GeometryCollectionBase<TCollection, TElement> : IGeometry, IWktGeometry, IEquatable<TCollection>
+        where TCollection : GeometryCollectionBase<TCollection, TElement>
+        where TElement : class, IGeometry
     {
         protected GeometryCollectionBase()
         {
-            Geometries = new List<T>();
+            Geometries = new List<TElement>();
         }
 
-        protected GeometryCollectionBase(IEnumerable<T> lineStrings)
+        protected GeometryCollectionBase(IEnumerable<TElement> lineStrings)
         {
-            Geometries = new List<T>(lineStrings);
+            Geometries = new List<TElement>(lineStrings);
         }
         
-        public List<T> Geometries { get; set; }
+        public List<TElement> Geometries { get; set; }
 
         public Envelope GetBounds()
         {
@@ -87,9 +89,9 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(GeometryCollectionBase<T> other)
+        public bool Equals(TCollection other)
         {
-            if (other == null)
+            if (ReferenceEquals(null, other))
                 return false;
 
             if (Geometries.Count != other.Geometries.Count)
@@ -105,7 +107,7 @@ namespace Geo.Geometries
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((GeometryCollectionBase<T>) obj);
+            return Equals((TCollection) obj);
         }
 
         public override int GetHashCode()

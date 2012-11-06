@@ -1,11 +1,12 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Geo.Interfaces;
 using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Point : IPosition, IGeoJsonGeometry, IWktGeometry
+    public class Point : IPosition, IGeoJsonGeometry, IWktGeometry, IEquatable<Point>
     {
         public Point()
         {
@@ -74,16 +75,16 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(Point other)
+        public bool Equals(Point other)
         {
-            return Equals(Coordinate, other.Coordinate);
+            return !ReferenceEquals(null, other) && Equals(Coordinate, other.Coordinate);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Point) obj);
         }
 

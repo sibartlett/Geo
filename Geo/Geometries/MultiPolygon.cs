@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using Geo.Interfaces;
 using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class MultiPolygon : GeometryCollectionBase<Polygon>, IGeoJsonGeometry
+    public class MultiPolygon : GeometryCollectionBase<MultiPolygon, Polygon>, IGeoJsonGeometry
     {
         public MultiPolygon()
         {

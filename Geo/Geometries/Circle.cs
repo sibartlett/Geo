@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : IGeometry, IWktGeometry
+    public class Circle : IGeometry, IWktGeometry, IEquatable<Circle>
     {
         public Circle()
         {
@@ -112,13 +112,17 @@ namespace Geo.Geometries
 
         #region Equality methods
 
+        public bool Equals(Circle other)
+        {
+            return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && Equals(Center, other.Center);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            var other = (Circle) obj;
-            return Radius.Equals(other.Radius) && Equals(Center, other.Center);
+            return Equals((Circle) obj);
         }
 
         public override int GetHashCode()

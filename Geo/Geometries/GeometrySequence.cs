@@ -28,7 +28,7 @@ namespace Geo.Geometries
 
         protected bool Equals(GeometrySequence<T> other)
         {
-            if (other == null)
+            if (ReferenceEquals(null, other))
                 return false;
 
             if (Count != other.Count)

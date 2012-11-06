@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class CoordinateSequence : ReadOnlyCollection<Coordinate>, IWktPart
+    public class CoordinateSequence : ReadOnlyCollection<Coordinate>, IWktPart, IEquatable<CoordinateSequence>
     {
         public CoordinateSequence() : base(new List<Coordinate>())
         {
@@ -91,9 +92,9 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(CoordinateSequence other)
+        public bool Equals(CoordinateSequence other)
         {
-            if (other == null)
+            if (ReferenceEquals(null, other))
                 return false;
 
             if (Count != other.Count)

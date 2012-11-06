@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
@@ -7,7 +8,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
+    public class LineString : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry, IEquatable<LineString>
     {
         public LineString()
         {
@@ -84,9 +85,9 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(LineString other)
+        public bool Equals(LineString other)
         {
-            return Equals(Coordinates, other.Coordinates);
+            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates);
         }
 
         public override bool Equals(object obj)

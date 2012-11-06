@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Geo.Interfaces;
@@ -7,7 +8,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry
+    public class Polygon : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry, IEquatable<Polygon>
     {
         public Polygon()
         {
@@ -88,9 +89,9 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(Polygon other)
+        public bool Equals(Polygon other)
         {
-            return Equals(Shell, other.Shell) && Equals(Holes, other.Holes);
+            return !ReferenceEquals(null, other) && Equals(Shell, other.Shell) && Equals(Holes, other.Holes);
         }
 
         public override bool Equals(object obj)

@@ -1,8 +1,9 @@
-﻿using Geo.Interfaces;
+﻿using System;
+using Geo.Interfaces;
 
 namespace Geo.Measure
 {
-    public struct Distance : IMeasure
+    public struct Distance : IMeasure, IEquatable<Distance>, IComparable<Distance>
     {
         private readonly double _siValue;
         private readonly DistanceUnit _unit;
@@ -36,6 +37,13 @@ namespace Geo.Measure
         public string ToString(DistanceUnit unit)
         {
             return ConvertTo(unit).ToString();
+        }
+
+        public int CompareTo(Distance other)
+        {
+            if (Equals(other))
+                return 0;
+            return SiValue < other.SiValue ? -1 : 1;
         }
 
         //TODO
