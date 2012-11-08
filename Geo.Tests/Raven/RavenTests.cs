@@ -15,7 +15,7 @@ namespace Geo.Tests.Raven
             AssertThatIndexPropertyIsGenerated(point);
             AssertTrue(point, SpatialRelation.Within, new Circle(0, 0, 1));
             AssertFalse(point, SpatialRelation.Within, new Circle(0, 160, 600000));
-            //AssertThat(point, SpatialRelation.Disjoint, new Point(1, 1));
+            //AssertTrue(point, SpatialRelation.Disjoint, new Point(1, 1));
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace Geo.Tests.Raven
             AssertFalse(circle, SpatialRelation.Within, new Circle(0, 160, 600000));
             AssertTrue(circle, SpatialRelation.Intersects, new Circle(1, 0, 110000));
             AssertFalse(circle, SpatialRelation.Intersects, new Circle(2, 0, 110000));
-            //AssertThat(point, SpatialRelation.Disjoint, new Point(1, 1));
+            //AssertTrue(point, SpatialRelation.Disjoint, new Point(1, 1));
         }
 
         [Test]
@@ -37,9 +37,9 @@ namespace Geo.Tests.Raven
             AssertThatIndexPropertyIsGenerated(lineString);
             AssertTrue(lineString, SpatialRelation.Within, new Circle(0, 0, 600000));
             AssertFalse(lineString, SpatialRelation.Within, new Circle(0, 160, 600000));
-            //AssertThat(lineString, SpatialRelation.Disjoint, new Circle(0, 160, 600000));
+            //AssertTrue(lineString, SpatialRelation.Disjoint, new Circle(0, 160, 600000));
             AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Coordinate(1, 0), new Coordinate(0, 1) }));
-            //AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(2, 1) }));
+            AssertTrue(lineString, SpatialRelation.Intersects, new LineString(new[] { new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(2, 1) }));
         }
 
         [Test]
