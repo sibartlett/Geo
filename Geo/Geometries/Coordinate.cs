@@ -256,14 +256,38 @@ namespace Geo.Geometries
 
         public bool Equals(Coordinate other)
         {
-            return !ReferenceEquals(null, other) && Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude) && Elevation.Equals(other.Elevation) && M.Equals(other.M);
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (!Elevation.Equals(other.Elevation))
+                return false;
+
+            if (!M.Equals(other.M))
+                return false;
+
+            if (Latitude.Equals(other.Latitude))
+            {
+                if (Latitude.Equals(90d) || Latitude.Equals(-90d))
+                    return true;
+
+                if (Longitude.Equals(other.Longitude))
+                    return true;
+
+                if (Longitude.Equals(180) && other.Longitude.Equals(-180))
+                    return true;
+
+                if (Longitude.Equals(-180) && other.Longitude.Equals(180))
+                    return true;
+            }
+
+            return false;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Coordinate) obj);
         }
 
@@ -271,8 +295,20 @@ namespace Geo.Geometries
         {
             unchecked
             {
-                int hashCode = Latitude.GetHashCode();
-                hashCode = (hashCode*397) ^ Longitude.GetHashCode();
+                int hashCode;
+
+                if (Latitude.Equals(90) || Latitude.Equals(-90))
+                    hashCode = 90d.GetHashCode();
+                else
+                {
+                    hashCode = Latitude.GetHashCode();
+
+                    if (Longitude.Equals(180) || Longitude.Equals(-180))
+                        hashCode = (hashCode * 397) ^ 180d.GetHashCode();
+                    else
+                        hashCode = (hashCode * 397) ^ Longitude.GetHashCode();
+                }
+
                 hashCode = (hashCode*397) ^ Elevation.GetHashCode();
                 hashCode = (hashCode*397) ^ M.GetHashCode();
                 return hashCode;

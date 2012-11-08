@@ -22,5 +22,23 @@ namespace Geo.Tests.Geo.Geometries
             Assert.That(result.Latitude, Is.EqualTo(latitude));
             Assert.That(result.Longitude, Is.EqualTo(longitude));
         }
+
+        [Test]
+        public void PoleCoordinatesAreEqual()
+        {
+            Assert.AreEqual(new Coordinate(90, 90), new Coordinate(90, -170));
+            Assert.AreEqual(new Coordinate(90, 90).GetHashCode(), new Coordinate(90, -170).GetHashCode());
+            Assert.AreEqual(new Coordinate(-90, 0), new Coordinate(-90, -10));
+            Assert.AreEqual(new Coordinate(-90, 0).GetHashCode(), new Coordinate(-90, -10).GetHashCode());
+        }
+
+        [Test]
+        public void DateLineCoordinatesAreEqual()
+        {
+            Assert.AreEqual(new Coordinate(0, 180), new Coordinate(0, -180));
+            Assert.AreEqual(new Coordinate(0, 180).GetHashCode(), new Coordinate(0, -180).GetHashCode());
+            Assert.AreEqual(new Coordinate(30, 180), new Coordinate(30, -180));
+            Assert.AreEqual(new Coordinate(30, 180).GetHashCode(), new Coordinate(30, -180).GetHashCode());
+        }
     }
 }
