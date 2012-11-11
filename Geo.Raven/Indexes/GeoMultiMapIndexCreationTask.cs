@@ -1,10 +1,9 @@
 ﻿using System;
 using Geo.Interfaces;
 using Raven.Abstractions.Indexing;
-using Raven.Client;
 using Raven.Client.Indexes;
 
-namespace Geo.Raven
+namespace Geo.Raven.Indexes
 {
     public abstract class GeoMultiMapIndexCreationTask : GeoMultiMapIndexCreationTask<object>
     {
@@ -29,7 +28,7 @@ namespace Geo.Raven
 
         public override IndexDefinition CreateIndexDefinition()
         {
-            return base.CreateIndexDefinition().TransformGeoMaps();
+            return GeoIndexTranformer.Transform(base.CreateIndexDefinition(), Conventions);
         }
     }
 }

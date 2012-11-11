@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Geo.Geometries;
+﻿using System;
+using System.Linq.Expressions;
 using Geo.Interfaces;
-using Geo.Measure;
-using Geo.Raven;
-using Raven.Abstractions.Data;
-using Raven.Abstractions.Indexing;
+using Geo.Raven.Json;
+using Geo.Raven.Query;
+using Raven.Client;
+using Raven.Client.Linq;
 
-namespace Raven.Client
+namespace Geo.Raven
 {
     public static class GeoRavenExtensions
     {
@@ -18,58 +16,14 @@ namespace Raven.Client
             return store;
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, double radiusKm, IPosition position) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IRavenQueryable<T> Geo<T>(this IRavenQueryable<T> source, Expression<Func<T, IRavenIndexable>> property, Func<LinqWhereClause<T>, IRavenQueryable<T>> clause)
         {
-            var coordinate = position.GetCoordinate();
-            return self.WithinRadiusOf(radiusKm, coordinate.Latitude, coordinate.Longitude);
+            return clause(new LinqWhereClause<T>(source, property));
         }
 
-        public static IDocumentQueryBase<T, TSelf> WithinRadiusOf<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, Distance radius, IPosition position) where TSelf : IDocumentQueryBase<T, TSelf>
+        public static IDocumentQuery<T> Geo<T>(this IDocumentQuery<T> query, Expression<Func<T, IRavenIndexable>> propertySelector, Func<LuceneWhereClause<T>, IDocumentQuery<T>> clause)
         {
-            var coordinate = position.GetCoordinate();
-            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coordinate.Latitude, coordinate.Longitude);
-        }
-
-        public static IDocumentQueryBase<T, TSelf> RelatesToShape<T, TSelf>(this IDocumentQueryBase<T, TSelf> self, IRavenIndexable shape, SpatialRelation relation, double distanceErrorPct = Constants.DefaultSpatialDistanceErrorPct) where TSelf : IDocumentQueryBase<T, TSelf>
-        {
-            return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation, distanceErrorPct);
-        }
-
-        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, double radiusKm, IPosition position)
-        {
-            var coordinate = position.GetCoordinate();
-            return self.WithinRadiusOf(radiusKm, coordinate.Latitude, coordinate.Longitude);
-        }
-
-        public static IDocumentQueryCustomization WithinRadiusOf(this IDocumentQueryCustomization self, Distance radius, IPosition position)
-        {
-            var coordinate = position.GetCoordinate();
-            return self.WithinRadiusOf(radius.ConvertTo(DistanceUnit.Km).Value, coordinate.Latitude, coordinate.Longitude);
-        }
-
-        public static IDocumentQueryCustomization RelatesToShape(this IDocumentQueryCustomization self, IRavenIndexable shape, SpatialRelation relation)
-        {
-            return self.RelatesToShape(Constants.DefaultSpatialFieldName, new GeoValueProvider().GetValue(shape), relation);
-        }
-
-        public static IndexDefinition TransformGeoMaps(this IndexDefinition definition)
-        {
-            definition.Maps = new HashSet<string>(definition.Maps.Select(TransformGeoIndexes));
-            definition.Reduce = TransformGeoIndexes(definition.Reduce);
-            return definition;
-        }
-
-        private static string TransformGeoIndexes(string value)
-        {
-            if (value == null)
-                return null;
-
-            return Regex.Replace(value, @"GeoIndex\((?<prop>[\w\d\s\.]+)(?<sep>[,)])", match =>
-                       string.Format("SpatialGenerate(\"{0}\", {1}.{2}{3}",
-                       Constants.DefaultSpatialFieldName,
-                       match.Groups["prop"].Value,
-                       GeoContractResolver.IndexProperty,
-                       match.Groups["sep"].Value));
+            return clause(new LuceneWhereClause<T>(query, propertySelector));
         }
     }
 }

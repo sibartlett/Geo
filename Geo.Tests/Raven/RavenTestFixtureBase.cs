@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Geo.Geometries;
 using Geo.Interfaces;
 using Geo.Raven;
+using Geo.Raven.Indexes;
 using NUnit.Framework;
 using Raven.Abstractions.Indexing;
 using Raven.Client;
@@ -20,6 +20,7 @@ namespace Geo.Tests.Raven
         {
             if (Store != null)
                 Store.Dispose();
+
             Store = new EmbeddableDocumentStore { RunInMemory = true }.ApplyGeoConventions().Initialize();
             foreach (var index in indexes)
                 Store.ExecuteIndex(index);
@@ -37,6 +38,9 @@ namespace Geo.Tests.Raven
         {
             public string Id { get; set; }
             public IGeometry Geometry { get; set; }
+            public string Data1 { get; set; }
+            public string Data2 { get; set; }
+            public string Data3 { get; set; }
         }
 
         public class TestIndex : GeoIndexCreationTask<GeoDoc>
@@ -46,6 +50,9 @@ namespace Geo.Tests.Raven
                 Map = docs => from doc in docs
                               select new
                               {
+                                  doc.Data1,
+                                  doc.Data2,
+                                  doc.Data3,
                                   _ = GeoIndex(doc.Geometry)
                               };
             }
@@ -66,7 +73,7 @@ namespace Geo.Tests.Raven
             using (var session = Store.OpenSession())
             {
                 var json = session.Load<RavenJObject>(doc.Id);
-                var result = json.Value<RavenJObject>("Geometry").ContainsKey(GeoContractResolver.IndexProperty);
+                var result = json.Value<RavenJObject>("Geometry").ContainsKey("__spatial");
                 Assert.That(result, Is.True);
             }
         }
@@ -81,7 +88,7 @@ namespace Geo.Tests.Raven
             AssertThat(geometry, relation, geometry2, false);
         }
 
-        private void AssertThat(IGeometry geometry, SpatialRelation relation, IGeometry geometry2, bool expected)
+        private void AssertThat(IGeometry geometry, SpatialRelation relation, IRavenIndexable geometry2, bool expected)
         {
             InitRaven(new TestIndex());
             var doc = new GeoDoc
@@ -95,12 +102,9 @@ namespace Geo.Tests.Raven
             }
             using (var session = Store.OpenSession())
             {
-                var result = session.Query<RavenJObject, TestIndex>()
-                    .Customize(x =>
-                    {
-                        x.RelatesToShape(geometry2, relation);
-                        x.WaitForNonStaleResults();
-                    })
+                var result = session.Query<GeoDoc, TestIndex>()
+                    .Geo(x => x.Geometry, x => x.RelatesToShape(geometry2, relation))
+                    .Customize(x => x.WaitForNonStaleResults())
                     .Any();
 
                 var relationString = relation.ToString().ToLowerInvariant();
@@ -111,10 +115,7 @@ namespace Geo.Tests.Raven
                     relationString = relationString.Substring(0, relationString.Length - 1);
                 }
 
-                var msg = string.Format("Geometry {0}{1} {2} {3}", s? "does" : "is", result? "" : " not", relationString, new GeoValueProvider().GetValue(geometry2));
-
-                Console.WriteLine(msg);
-
+                var msg = string.Format("Geometry {0}{1} {2} {3}", s ? "does" : "is", result ? "" : " not", relationString, geometry2.GetIndexString());
 
                 Assert.That(result, Is.EqualTo(expected), msg);
             }

@@ -4,18 +4,17 @@ using Geo.Geometries;
 using Geo.Interfaces;
 using Raven.Imports.Newtonsoft.Json.Serialization;
 
-namespace Geo.Raven
+namespace Geo.Raven.Json
 {
     public class GeoContractResolver : DefaultContractResolver
     {
         private readonly Assembly _assembly = typeof(Coordinate).Assembly;
-        public const string IndexProperty = "__geo";
 
         protected override JsonProperty CreateProperty(MemberInfo member, global::Raven.Imports.Newtonsoft.Json.MemberSerialization memberSerialization)
         {
             var prop = base.CreateProperty(member, memberSerialization);
 
-            if(member.DeclaringType !=null)
+            if(member.DeclaringType != null)
             {
                 if (member.DeclaringType.Assembly == _assembly)
                 {
@@ -43,10 +42,10 @@ namespace Geo.Raven
                 {
                     Readable = true,
                     ShouldSerialize = value => true,
-                    PropertyName = IndexProperty,
+                    PropertyName = SpatialField.Name,
                     PropertyType = typeof(string),
                     Converter = ResolveContractConverter(typeof(string)),
-                    ValueProvider = new GeoValueProvider()
+                    ValueProvider = new GeoValueProvider<IRavenIndexable, string>(x => x.GetIndexString())
                 });
             }
 

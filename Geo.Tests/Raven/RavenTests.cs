@@ -33,7 +33,7 @@ namespace Geo.Tests.Raven
         [Test]
         public void LineStringTests()
         {
-            var lineString = new LineString(new[] { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(0, 0) });
+            var lineString = new LineString(new[] { new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(1, 2) });
             AssertThatIndexPropertyIsGenerated(lineString);
             AssertTrue(lineString, SpatialRelation.Within, new Circle(0, 0, 600000));
             AssertFalse(lineString, SpatialRelation.Within, new Circle(0, 160, 600000));

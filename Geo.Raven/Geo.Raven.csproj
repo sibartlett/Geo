@@ -42,15 +42,19 @@
       <HintPath>..\packages\RavenDB.Client.1.2.2138-Unstable\lib\net40\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeoMultiMapIndexCreationTask.cs" />
-    <Compile Include="GeoContractResolver.cs" />
-    <Compile Include="GeoIndexCreationTask.cs" />
+    <Compile Include="Indexes\GeoIndexTranformer.cs" />
+    <Compile Include="Json\GeoValueProvider.cs" />
+    <Compile Include="SpatialField.cs" />
+    <Compile Include="Indexes\GeoMultiMapIndexCreationTask.cs" />
+    <Compile Include="Json\GeoContractResolver.cs" />
+    <Compile Include="Indexes\GeoIndexCreationTask.cs" />
     <Compile Include="GeoRavenExtensions.cs" />
-    <Compile Include="GeoValueProvider.cs" />
+    <Compile Include="Query\AbstractWhereClause.cs" />
+    <Compile Include="Query\LinqWhereClause.cs" />
+    <Compile Include="Query\LuceneWhereClause.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
