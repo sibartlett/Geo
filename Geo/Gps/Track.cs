@@ -53,17 +53,12 @@ namespace Geo.Gps
 
         public Speed GetAverageSpeed()
         {
-            return new Speed(CalculateLength().SiValue, GetDuration());
+            return new Speed(GetLength().SiValue, GetDuration());
         }
 
         public TimeSpan GetDuration()
         {
             return GetLastFix().TimeUtc - GetFirstFix().TimeUtc;
-        }
-
-        public Distance CalculateLength()
-        {
-            return Segments.SelectMany(x => x.Fixes).Select(x => x.Coordinate).CalculateShortestDistance();
         }
 
         public void Quantize(double seconds = 0)
@@ -79,7 +74,7 @@ namespace Geo.Gps
 
         public Distance GetLength()
         {
-            return GetAllFixes().CalculateShortestDistance();
+            return ToLineString().GetLength();
         }
     }
 }

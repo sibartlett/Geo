@@ -34,6 +34,38 @@ namespace Geo.Reference
             throw new NotImplementedException();
         }
 
+        public Distance CalculateLength(Circle circle)
+        {
+            var h = Radius * (1 - Math.Cos(circle.Radius / Radius));
+            var circumference = 2*Math.PI*Math.Sqrt(h*(2*Radius - h));
+            return new Distance(circumference);
+        }
+
+        public Distance CalculateLength(CoordinateSequence coordinates)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Distance CalculateLength(Envelope envelope)
+        {
+            var lat = 180 / envelope.MaxLat - envelope.MinLat;
+            var lon = 360 / envelope.MaxLon - envelope.MinLon;
+            if (envelope.MinLon > envelope.MaxLon)
+                lon = 1 - lon;
+
+            var h1 = Radius * (1 - Math.Cos(envelope.MaxLat.ToRadians()));
+            var h2 = Radius * (1 - Math.Cos(envelope.MinLat.ToRadians()));
+
+            var r1 = Math.Sqrt(h1*(2*Radius - h1));
+            var r2 = Math.Sqrt(h2*(2*Radius - h2));
+
+            var c1 = 2 * Math.PI * r1 * lon;
+            var c2 = 2 * Math.PI * r2 * lon;
+            var c3 = 2 * Math.PI * Radius * lat * 2;
+
+            return new Distance(c1 + c2 + c3);
+        }
+
         public Area CalculateArea(CoordinateSequence coordinates)
         {
             var area = 0.0;
@@ -60,7 +92,9 @@ namespace Geo.Reference
             if (circle.Radius > Math.PI * Radius)
                 return new Area(0d);
 
-            return new Area(2 * Math.PI * Radius * Radius * (1 - Math.Cos(circle.Radius / Radius)));
+            var h = Radius * (1 - Math.Cos(circle.Radius / Radius));
+            var area = 2 * Math.PI * Radius * h;
+            return new Area(area);
         }
 
         public Area CalculateArea(Envelope envelope)

@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Envelope : IRavenIndexable, IHasArea, IEquatable<Envelope>
+    public class Envelope : IRavenIndexable, IHasArea, IHasLength, IEquatable<Envelope>
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -38,6 +38,11 @@ namespace Geo.Geometries
         public Area GetArea()
         {
             return GeoContext.Current.GeodeticCalculator.CalculateArea(this);
+        }
+
+        public Distance GetLength()
+        {
+            return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
         }
 
         string IRavenIndexable.GetIndexString()

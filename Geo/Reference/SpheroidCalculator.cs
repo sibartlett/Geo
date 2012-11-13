@@ -154,6 +154,14 @@ namespace Geo.Reference
 
         public GeodeticLine CalculateOrthodromicLine(IPosition position1, IPosition position2)
         {
+            var result = CalculateOrthodromicLineInternal(position1, position2);
+            if (result == null)
+                return null;
+            return new GeodeticLine(position1.GetCoordinate(), position2.GetCoordinate(), result[0], result[1], result[2]);
+        }
+
+        private double[] CalculateOrthodromicLineInternal(IPosition position1, IPosition position2)
+        {
             var point1 = position1.GetCoordinate();
             var point2 = position2.GetCoordinate();
 
@@ -227,7 +235,7 @@ namespace Geo.Reference
                     // 'faz' and 'baz' are forward azimuths at both points.
                     faz = Math.Atan2(tu1, tu2);
                     baz = Math.Atan2(cu1 * sx, baz * cx - su1 * cu2) + Math.PI;
-                    return new GeodeticLine(new Coordinate(point1.Latitude, point1.Longitude), new Coordinate(point2.Latitude, point2.Longitude), s, faz.ToDegrees(), baz.ToDegrees());
+                    return new[] { s, faz.ToDegrees(), baz.ToDegrees() };
                 }
             }
             // No convergence. It may be because coordinate points
@@ -241,7 +249,7 @@ namespace Geo.Reference
             if (Math.Abs(lat1) <= leps && Math.Abs(lat2) <= leps)
             {
                 // Points are on the equator.
-                return new GeodeticLine(new Coordinate(point1.Latitude, point1.Longitude), new Coordinate(point2.Latitude, point2.Longitude), Math.Abs(lon1 - lon2) * EquatorialAxis, faz.ToDegrees(), baz.ToDegrees());
+                return new[] { Math.Abs(lon1 - lon2) * EquatorialAxis, faz.ToDegrees(), baz.ToDegrees() };
             }
             // Other cases: no solution for this algorithm.
             throw new ArithmeticException();
@@ -291,6 +299,28 @@ namespace Geo.Reference
                 distance = Math.Abs(meridionalDistance / Math.Cos(course.ToRadians()));
             }
             return new GeodeticLine(new Coordinate(lat1, lon1), new Coordinate(lat2, lon2), distance, course, course > 180 ? course - 180 : course + 180);
+        }
+
+        public Distance CalculateLength(Circle circle)
+        {
+            return _sphereCalculator.CalculateLength(circle);
+        }
+
+        public Distance CalculateLength(CoordinateSequence coordinates)
+        {
+            var distance = 0d;
+            for (var i = 1; i < coordinates.Count; i++)
+            {
+                var result = CalculateOrthodromicLineInternal(coordinates[i - 1], coordinates[i]);
+                if (result != null)
+                    distance += result[0];
+            }
+            return new Distance(distance);
+        }
+
+        public Distance CalculateLength(Envelope envelope)
+        {
+            return _sphereCalculator.CalculateLength(envelope);
         }
 
         private double LoxodromicLineCourse(double lat1, double lon1, double lat2, double lon2)

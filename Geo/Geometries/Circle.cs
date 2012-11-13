@@ -59,8 +59,7 @@ namespace Geo.Geometries
 
         public Distance GetLength()
         {
-            // TODO: Do a proper calculation
-            return ToPolygon().GetLength();
+            return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
         }
 
         public bool IsEmpty { get { return Center != null && !double.IsNaN(Radius); } }

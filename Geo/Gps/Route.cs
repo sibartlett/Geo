@@ -21,11 +21,6 @@ namespace Geo.Gps
         {
             return new LineString(Coordinates);
         }
-
-        public Distance CalculateLength()
-        {
-            return Coordinates.CalculateShortestDistance();
-        }
         
         string IRavenIndexable.GetIndexString()
         {
@@ -34,7 +29,7 @@ namespace Geo.Gps
 
         public Distance GetLength()
         {
-            return Coordinates.CalculateShortestDistance();
+            return ToLineString().GetLength();
         }
     }
 }

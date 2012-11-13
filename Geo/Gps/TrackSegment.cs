@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Geo.Geometries;
+using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Gps
 {
-    public class TrackSegment
+    public class TrackSegment : IHasLength
     {
         public TrackSegment()
         {
@@ -37,7 +38,7 @@ namespace Geo.Gps
 
         public Speed GetAverageSpeed()
         {
-            return new Speed(CalculateLength().SiValue, GetDuration());
+            return new Speed(GetLength().SiValue, GetDuration());
         }
 
         public TimeSpan GetDuration()
@@ -45,9 +46,9 @@ namespace Geo.Gps
             return GetLastFix().TimeUtc - GetFirstFix().TimeUtc;
         }
 
-        public Distance CalculateLength()
+        public Distance GetLength()
         {
-            return Fixes.Select(x => x.Coordinate).CalculateShortestDistance();
+            return ToLineString().GetLength();
         }
 
         public void Quantize(double seconds = 0)

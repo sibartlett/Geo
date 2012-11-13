@@ -34,7 +34,7 @@ namespace Geo.Geometries
 
         public Distance GetLength()
         {
-            return Coordinates.CalculateShortestDistance();
+            return GeoContext.Current.GeodeticCalculator.CalculateLength(Coordinates);
         }
 
         public bool IsClosed()
