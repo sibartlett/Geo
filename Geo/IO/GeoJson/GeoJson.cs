@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Geo.Interfaces;
 
-namespace Geo.Json
+namespace Geo.IO.GeoJson
 {
     public static class GeoJson
     {

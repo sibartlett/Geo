@@ -78,7 +78,7 @@
     <Compile Include="Geo\IO\Wkt\WktWriterTests.cs" />
     <Compile Include="Geo\IO\Wkt\WktReaderTests.cs" />
     <Compile Include="Geo\Reference\SpheroidCalculatorTests.cs" />
-    <Compile Include="Geo\Json\JsonTests.cs" />
+    <Compile Include="Geo\IO\GeoJson\GeoJsonTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Raven\RavenTestFixtureBase.cs" />
     <Compile Include="Raven\RavenTests.cs" />

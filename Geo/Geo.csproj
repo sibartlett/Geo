@@ -143,11 +143,11 @@
     <Compile Include="Gps\Track.cs" />
     <Compile Include="Gps\TrackSegment.cs" />
     <Compile Include="InternalHelpers.cs" />
-    <Compile Include="Json\Feature.cs" />
-    <Compile Include="Json\FeatureCollection.cs" />
-    <Compile Include="Json\GeoJson.cs" />
-    <Compile Include="Json\GeoJsonReader.cs" />
-    <Compile Include="Json\GeoJsonWriter.cs" />
+    <Compile Include="IO\GeoJson\Feature.cs" />
+    <Compile Include="IO\GeoJson\FeatureCollection.cs" />
+    <Compile Include="IO\GeoJson\GeoJson.cs" />
+    <Compile Include="IO\GeoJson\GeoJsonReader.cs" />
+    <Compile Include="IO\GeoJson\GeoJsonWriter.cs" />
     <Compile Include="Measure\Area.cs" />
     <Compile Include="Measure\AreaUnit.cs" />
     <Compile Include="Measure\AreaUnitExtensions.cs" />

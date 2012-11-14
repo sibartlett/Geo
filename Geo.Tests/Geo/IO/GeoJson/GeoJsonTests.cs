@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Geo.Json;
+using Geo.IO.GeoJson;
 using NUnit.Framework;
 using Geo.Geometries;
 
-namespace Geo.Tests.Geo.Json
+namespace Geo.Tests.Geo.IO.GeoJson
 {
     [TestFixture]
-    public class JsonTests
+    public class GeoJsonTests
     {
         [Test]
         public void Point()

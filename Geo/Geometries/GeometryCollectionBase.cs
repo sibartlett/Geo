@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
 using Geo.Interfaces;
-using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries

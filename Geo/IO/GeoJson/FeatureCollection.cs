@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Geo.Interfaces;
 
-namespace Geo.Json
+namespace Geo.IO.GeoJson
 {
     public class FeatureCollection : IGeoJsonObject
     {
