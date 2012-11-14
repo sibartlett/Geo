@@ -9,9 +9,7 @@ namespace Geo.Geometries
 {
     public class Circle : IGeometry, IWktGeometry, IEquatable<Circle>
     {
-        public Circle()
-        {
-        }
+        public static readonly Circle Empty = new Circle(null, 0);
 
         public Circle(Coordinate center, double radius)
         {
@@ -62,7 +60,7 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
         }
 
-        public bool IsEmpty { get { return Center != null && !double.IsNaN(Radius); } }
+        public bool IsEmpty { get { return Center == null; } }
         public bool HasElevation { get { return Center != null && Center.HasElevation; } }
         public bool HasM { get { return Center != null && Center.HasM; } }
 

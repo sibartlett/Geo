@@ -9,6 +9,8 @@ namespace Geo.Geometries
 {
     public class LinearRing : IGeometry, IWktGeometry, IWktPart, IEquatable<LinearRing>
     {
+        public static readonly LinearRing Empty = new LinearRing();
+
         public LinearRing()
         {
             Coordinates = new CoordinateSequence();

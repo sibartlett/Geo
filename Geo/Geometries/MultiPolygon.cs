@@ -6,9 +6,7 @@ namespace Geo.Geometries
 {
     public class MultiPolygon : GeometryCollectionBase<MultiPolygon, Polygon>, IGeoJsonGeometry
     {
-        public MultiPolygon()
-        {
-        }
+        public static readonly MultiPolygon Empty = new MultiPolygon();
 
         public MultiPolygon(IEnumerable<Polygon> polygons) : base(polygons)
         {

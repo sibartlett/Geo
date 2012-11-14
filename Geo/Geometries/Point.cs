@@ -8,9 +8,7 @@ namespace Geo.Geometries
 {
     public class Point : IPosition, IGeoJsonGeometry, IWktGeometry, IEquatable<Point>
     {
-        public Point()
-        {
-        }
+        public static readonly Point Empty = new Point(null);
 
         public Point(double latitude, double longitude)
         {

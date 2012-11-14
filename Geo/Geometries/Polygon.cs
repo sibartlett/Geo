@@ -10,11 +10,7 @@ namespace Geo.Geometries
 {
     public class Polygon : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry, IEquatable<Polygon>
     {
-        public Polygon()
-        {
-            Shell = new LinearRing();
-            Holes = new GeometrySequence<LinearRing>();
-        }
+        public static readonly Polygon Empty = new Polygon(new LinearRing());
 
         public Polygon(LinearRing shell, IEnumerable<LinearRing> holes)
         {
@@ -31,9 +27,9 @@ namespace Geo.Geometries
         public LinearRing Shell { get; private set; }
         public GeometrySequence<LinearRing> Holes { get; private set; }
 
-        public bool IsEmpty { get { return Shell.Coordinates.Count == 0; } }
-        public bool HasElevation { get { return Shell.Coordinates.HasElevation; } }
-        public bool HasM { get { return Shell.Coordinates.HasM; } }
+        public bool IsEmpty { get { return Shell.IsEmpty; } }
+        public bool HasElevation { get { return Shell.HasElevation; } }
+        public bool HasM { get { return Shell.HasM; } }
 
         public Distance GetLength()
         {

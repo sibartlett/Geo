@@ -10,10 +10,7 @@ namespace Geo.Geometries
 {
     public class LineString : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry, IEquatable<LineString>
     {
-        public LineString()
-        {
-            Coordinates = new CoordinateSequence();
-        }
+        public static readonly LineString Empty = new LineString();
 
         public LineString(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
         {

@@ -6,9 +6,7 @@ namespace Geo.Geometries
 {
     public class MultiPoint : GeometryCollectionBase<MultiPoint, Point>, IGeoJsonGeometry
     {
-        public MultiPoint()
-        {
-        }
+        public static readonly MultiPoint Empty = new MultiPoint();
 
         public MultiPoint(IEnumerable<Point> points) : base(points)
         {

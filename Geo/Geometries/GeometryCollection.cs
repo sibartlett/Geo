@@ -6,9 +6,7 @@ namespace Geo.Geometries
 {
     public class GeometryCollection : GeometryCollectionBase<GeometryCollection, IGeometry>, IGeoJsonGeometry
     {
-        public GeometryCollection()
-        {
-        }
+        public static readonly GeometryCollection Empty = new GeometryCollection();
 
         public GeometryCollection(IEnumerable<IGeometry> geometries) : base(geometries)
         {

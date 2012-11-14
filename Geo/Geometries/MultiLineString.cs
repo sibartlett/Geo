@@ -6,9 +6,7 @@ namespace Geo.Geometries
 {
     public class MultiLineString : GeometryCollectionBase<MultiLineString, LineString>, IGeoJsonGeometry
     {
-        public MultiLineString()
-        {
-        }
+        public static readonly MultiLineString Empty = new MultiLineString();
 
         public MultiLineString(IEnumerable<LineString> lineStrings) : base(lineStrings)
         {

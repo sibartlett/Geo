@@ -11,14 +11,9 @@ namespace Geo.Geometries
         where TCollection : GeometryCollectionBase<TCollection, TElement>
         where TElement : class, IGeometry
     {
-        protected GeometryCollectionBase()
-        {
-            Geometries = new List<TElement>();
-        }
-
         protected GeometryCollectionBase(IEnumerable<TElement> lineStrings)
         {
-            Geometries = new List<TElement>(lineStrings);
+            Geometries = new List<TElement>(lineStrings ?? new TElement[0]);
         }
         
         public List<TElement> Geometries { get; set; }
