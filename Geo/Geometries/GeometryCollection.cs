@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Geo.Interfaces;
-using Geo.Json;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : GeometryCollectionBase<GeometryCollection, IGeometry>, IGeoJsonGeometry
+    public class GeometryCollection : GeometryCollectionBase<GeometryCollection, IGeometry>
     {
         public static readonly GeometryCollection Empty = new GeometryCollection();
 
@@ -14,16 +13,6 @@ namespace Geo.Geometries
 
         public GeometryCollection(params IGeometry[] geometries) : base(geometries)
         {
-        }
-
-        public override string ToWktString()
-        {
-            return BuildWktString<IWktGeometry>("GEOMETRYCOLLECTION", geometry => geometry.ToWktString());
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

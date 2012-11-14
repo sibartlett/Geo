@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Geo.IO.Wkt;
 using Geo.Interfaces;
 using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry, IEquatable<Polygon>
+    public class Polygon : IGeometry, IWktGeometry, IGeoJsonGeometry, IEquatable<Polygon>
     {
         public static readonly Polygon Empty = new Polygon(new LinearRing());
 
@@ -43,29 +43,7 @@ namespace Geo.Geometries
 
         public string ToWktString()
         {
-            var buf = new StringBuilder();
-            buf.Append("POLYGON ");
-            buf.Append(ToWktPartString());
-            return buf.ToString();
-        }
-
-        public string ToWktPartString()
-        {
-            var buf = new StringBuilder();
-            if (IsEmpty)
-                buf.Append("EMPTY");
-            else
-            {
-                buf.Append("(");
-                buf.Append(((IWktPart) Shell).ToWktPartString());
-                foreach (var hole in Holes.Cast<IWktPart>())
-                {
-                    buf.Append(", ");
-                    buf.Append(hole.ToWktPartString());
-                }
-                buf.Append(")");
-            }
-            return buf.ToString();
+            return new WktWriter().Write(this);
         }
 
         public Envelope GetBounds()

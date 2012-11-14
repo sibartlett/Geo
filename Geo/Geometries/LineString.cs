@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Geo.IO.Wkt;
 using Geo.Interfaces;
 using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : IGeometry, IWktGeometry, IWktPart, IGeoJsonGeometry, IEquatable<LineString>
+    public class LineString : IGeometry, IWktGeometry, IGeoJsonGeometry, IEquatable<LineString>
     {
         public static readonly LineString Empty = new LineString();
 
@@ -52,17 +52,9 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateLength(Coordinates);
         }
 
-        string IWktPart.ToWktPartString()
-        {
-            return ((IWktPart) Coordinates).ToWktPartString();
-        }
-
         public string ToWktString()
         {
-            var buf = new StringBuilder();
-            buf.Append("LINESTRING ");
-            buf.Append(((IWktPart) this).ToWktPartString());
-            return buf.ToString();
+            return new WktWriter().Write(this);
         }
 
         string IRavenIndexable.GetIndexString()

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class CoordinateSequence : ReadOnlyCollection<Coordinate>, IWktPart, IEquatable<CoordinateSequence>
+    public class CoordinateSequence : ReadOnlyCollection<Coordinate>, IEquatable<CoordinateSequence>
     {
         public CoordinateSequence() : base(new List<Coordinate>())
         {
@@ -42,31 +40,6 @@ namespace Geo.Geometries
             {
                 return Count > 1 && this[0].Equals(this[Count - 1]);
             }
-        }
-
-        string IWktPart.ToWktPartString()
-        {
-            var buf = new StringBuilder();
-            if (IsEmpty)
-                buf.Append("EMPTY");
-            else
-            {
-                buf.Append("(");
-                var parts = this.Cast<IWktPart>().Select(x => x.ToWktPartString()).ToList();
-                string last = null;
-                foreach (var part in parts)
-                {
-                    if (last == null || part != last)
-                    {
-                        if (last !=null)
-                            buf.Append(", ");
-                        last = part;
-                        buf.Append(part);
-                    }
-                }
-                buf.Append(")");
-            }
-            return buf.ToString();
         }
 
         public IEnumerable<LineSegment> ToLineSegments()

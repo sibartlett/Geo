@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Geo.Interfaces;
-using Geo.Json;
 
 namespace Geo.Geometries
 {
@@ -14,16 +13,6 @@ namespace Geo.Geometries
 
         public MultiPoint(params Point[] points) : base(points)
         {
-        }
-
-        public override string ToWktString()
-        {
-            return BuildWktString<IWktPart>("MULTIPOINT", geometry => geometry.ToWktPartString());
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
         
         #region Equality methods

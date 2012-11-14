@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Geo.Interfaces;
-using Geo.Json;
 
 namespace Geo.Geometries
 {
@@ -14,16 +13,6 @@ namespace Geo.Geometries
 
         public MultiPolygon(params Polygon[] polygons) : base(polygons)
         {
-        }
-
-        public override string ToWktString()
-        {
-            return BuildWktString<IWktPart>("MULTIPOLYGON", geometry => geometry.ToWktPartString());
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

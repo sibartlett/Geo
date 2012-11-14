@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Geo.Interfaces;
-using Geo.Json;
 
 namespace Geo.Geometries
 {
@@ -14,16 +13,6 @@ namespace Geo.Geometries
 
         public MultiLineString(params LineString[] lineStrings) : base(lineStrings)
         {
-        }
-
-        public override string ToWktString()
-        {
-            return BuildWktString<IWktPart>("MULTILINESTRING", geometry => geometry.ToWktPartString());
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

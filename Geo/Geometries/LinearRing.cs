@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Geo.IO.Wkt;
 using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktGeometry, IWktPart, IEquatable<LinearRing>
+    public class LinearRing : IGeometry, IWktGeometry, IEquatable<LinearRing>
     {
         public static readonly LinearRing Empty = new LinearRing();
 
@@ -59,17 +59,9 @@ namespace Geo.Geometries
         public bool HasElevation { get { return Coordinates.HasElevation; } }
         public bool HasM { get { return Coordinates.HasM; } }
 
-        string IWktPart.ToWktPartString()
-        {
-            return ((IWktPart) Coordinates).ToWktPartString();
-        }
-
         public string ToWktString()
         {
-            var buf = new StringBuilder();
-            buf.Append("LINEARRING ");
-            buf.Append(((IWktPart) this).ToWktPartString());
-            return buf.ToString();
+            return new WktWriter().Write(this);
         }
 
         string IRavenIndexable.GetIndexString()

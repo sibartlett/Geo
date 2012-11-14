@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : IGeometry, IWktGeometry, IEquatable<Circle>
+    public class Circle : IGeometry, IEquatable<Circle>
     {
         public static readonly Circle Empty = new Circle(null, 0);
 
@@ -63,25 +62,6 @@ namespace Geo.Geometries
         public bool IsEmpty { get { return Center == null; } }
         public bool HasElevation { get { return Center != null && Center.HasElevation; } }
         public bool HasM { get { return Center != null && Center.HasM; } }
-
-        public string ToWktString()
-        {
-            var buf = new StringBuilder();
-            buf.Append("CIRCULARSTRING (");
-            string first = null;
-            for (var i = 0; i < 4; i++)
-            {
-                IWktPart coord = GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(Center, 90 * i, Radius).Coordinate2;
-                if (i == 0)
-                    first = coord.ToWktPartString();
-                else
-                    buf.Append(", ");
-                buf.Append(coord.ToWktPartString());
-            }
-            buf.Append(first);
-            buf.Append(")");
-            return buf.ToString();
-        }
 
         string IRavenIndexable.GetIndexString()
         {

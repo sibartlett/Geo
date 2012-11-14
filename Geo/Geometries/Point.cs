@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Geo.IO.Wkt;
 using Geo.Interfaces;
 using Geo.Json;
 using Geo.Measure;
@@ -39,7 +40,7 @@ namespace Geo.Geometries
 
         public string ToWktString()
         {
-            return string.Format("POINT ({0})", ((IWktPart) Coordinate).ToWktPartString());
+            return new WktWriter().Write(this);
         }
 
         string IRavenIndexable.GetIndexString()

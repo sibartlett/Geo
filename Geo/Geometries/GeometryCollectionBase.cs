@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Geo.IO.Wkt;
 using Geo.Interfaces;
+using Geo.Json;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public abstract class GeometryCollectionBase<TCollection, TElement> : IGeometry, IWktGeometry, IEquatable<TCollection>
+    public abstract class GeometryCollectionBase<TCollection, TElement> : IGeometry, IWktGeometry, IGeoJsonGeometry, IEquatable<TCollection>
         where TCollection : GeometryCollectionBase<TCollection, TElement>
         where TElement : class, IGeometry
     {
-        protected GeometryCollectionBase(IEnumerable<TElement> lineStrings)
+        internal GeometryCollectionBase(IEnumerable<TElement> lineStrings)
         {
             Geometries = new List<TElement>(lineStrings ?? new TElement[0]);
         }
@@ -45,41 +46,19 @@ namespace Geo.Geometries
         public bool HasElevation { get { return Geometries.Any(x => x.HasElevation); } }
         public bool HasM { get { return Geometries.Any(x => x.HasM); } }
 
-        public abstract string ToWktString();
+        public string ToGeoJson()
+        {
+            return GeoJson.Serialize(this);
+        }
+
+        public string ToWktString()
+        {
+            return new WktWriter().Write(this);
+        }
 
         string IRavenIndexable.GetIndexString()
         {
             return ToWktString();
-        }
-
-        protected string BuildWktString<TWktInterface>(string wktType, Func<TWktInterface, string> func)
-        {
-            var buf = new StringBuilder();
-            buf.Append(wktType);
-            buf.Append(" ");
-            if (Geometries.Count == 0)
-                buf.Append("EMPTY");
-            else
-            {
-                buf.Append("(");
-                for (int index = 0; index < Geometries.Count; index++)
-                {
-                    var geometry = Geometries[index];
-
-                    if (geometry is TWktInterface)
-                    {
-                        if (index > 0)
-                            buf.Append(",");
-                        buf.Append(func((TWktInterface) (object) geometry));
-                    }
-                    else
-                    {
-                        throw new NotSupportedException("Geometry of type '" + geometry.GetType().Name + "' does not support WKT.");
-                    }
-                }
-                buf.Append(")");
-            }
-            return buf.ToString();
         }
 
         #region Equality methods

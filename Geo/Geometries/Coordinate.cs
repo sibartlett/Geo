@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class Coordinate : IWktPart, IPosition, IEquatable<Coordinate>
+    public class Coordinate : IPosition, IEquatable<Coordinate>
     {
         public Coordinate() : this(0, 0)
         {
@@ -64,12 +63,6 @@ namespace Geo.Geometries
         Coordinate IPosition.GetCoordinate()
         {
             return this;
-        }
-
-        string IWktPart.ToWktPartString()
-        {
-            var format = double.IsNaN(Elevation) ? "{0:F6} {1:F6}" : "{0:F6} {1:F6} {2:F6}";
-            return string.Format(CultureInfo.InvariantCulture, format, Longitude, Latitude, Elevation, M);
         }
 
         public Envelope GetBounds()

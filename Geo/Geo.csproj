@@ -57,6 +57,13 @@
     <Compile Include="Interfaces\IHasArea.cs" />
     <Compile Include="Interfaces\IHasLength.cs" />
     <Compile Include="Interfaces\IMeasure.cs" />
+    <Compile Include="IO\Wkt\WktTokenType.cs" />
+    <Compile Include="IO\Wkt\WktDimensions.cs" />
+    <Compile Include="IO\Wkt\WktReader.cs" />
+    <Compile Include="IO\Wkt\WktToken.cs" />
+    <Compile Include="IO\Wkt\WktTokenizer.cs" />
+    <Compile Include="IO\Wkt\WktTokenQueue.cs" />
+    <Compile Include="IO\Wkt\WktWriter.cs" />
     <Compile Include="Reference\GeodeticLine.cs" />
     <Compile Include="Geometries\GeometryCollection.cs" />
     <Compile Include="Geometries\GeometryCollectionBase.cs" />
@@ -70,7 +77,6 @@
     <Compile Include="Interfaces\IGeometry.cs" />
     <Compile Include="Interfaces\IPosition.cs" />
     <Compile Include="Interfaces\IRavenIndexable.cs" />
-    <Compile Include="Interfaces\IWktPart.cs" />
     <Compile Include="Interfaces\IWktGeometry.cs" />
     <Compile Include="Geometries\Coordinate.cs" />
     <Compile Include="Geometries\LinearRing.cs" />
