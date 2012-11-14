@@ -154,10 +154,10 @@ namespace Geo.Json
             if (coordinates == null || coordinates.Count < 2)
                 return false;
 
-            Coordinate value;
-            if (TryParseCoordinate(coordinates, out value))
+            Coordinate coordinate;
+            if (TryParseCoordinate(coordinates, out coordinate))
             {
-                result = value.ToPoint();
+                result = new Point(coordinate);
                 return true;
             }
             return false;
@@ -196,7 +196,7 @@ namespace Geo.Json
             Coordinate[] co;
             if (coordinates != null && TryParseCoordinateArray(coordinates, out co))
             {
-                result = new MultiPoint(co.Select(x => x.ToPoint()));
+                result = new MultiPoint(co.Select(x => new Point(x)));
                 return true;
             }
             result = null;
@@ -262,11 +262,11 @@ namespace Geo.Json
                 return false;
 
             if (coordinates.Count == 2)
-                result = new Point(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]));
+                result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]));
             else if (coordinates.Count == 3)
-                result = new Point(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]));
+                result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]));
             else
-                result = new Point(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]), Convert.ToDouble(coordinates[3]));
+                result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]), Convert.ToDouble(coordinates[3]));
             return true;
         }
 

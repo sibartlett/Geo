@@ -7,18 +7,22 @@ namespace Geo.Geometries
 {
     public class Coordinate : IWktPart, IPosition, IEquatable<Coordinate>
     {
-        public Coordinate()
+        public Coordinate() : this(0, 0)
         {
-            Latitude = double.NaN;
-            Longitude = double.NaN;
-            Elevation = double.NaN;
-            M = double.NaN;
         }
 
         public Coordinate(double latitude, double longitude)
         {
             if (latitude > 90 || latitude < -90)
                 throw new ArgumentOutOfRangeException("latitude");
+
+            if (GeoContext.Current.LongitudeWrapping)
+            {
+                while (longitude > 180)
+                    longitude -= 360;
+                while (longitude < -180)
+                    longitude += 360;
+            }
 
             if (longitude > 180 || longitude < -180)
                 throw new ArgumentOutOfRangeException("longitude");
@@ -240,16 +244,6 @@ namespace Geo.Geometries
             }
             result = default(Coordinate);
             return false;
-        }
-
-        public Point ToPoint()
-        {
-            return new Point(this);
-        }
-
-        public static implicit operator Coordinate(Point point)
-        {
-            return ((IPosition)point).GetCoordinate();
         }
 
         #region Equality methods

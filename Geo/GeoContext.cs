@@ -16,8 +16,10 @@ namespace Geo
         public GeoContext()
         {
             GeodeticCalculator = SpheroidCalculator.Wgs84();
+            LongitudeWrapping = false;
         }
 
         public IGeodeticCalculator GeodeticCalculator { get; set; }
+        public bool LongitudeWrapping { get; set; }
     }
 }
