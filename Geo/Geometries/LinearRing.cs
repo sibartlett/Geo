@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktGeometry, IEquatable<LinearRing>
+    public class LinearRing : IGeometry, IWktGeometry, ISpatialEquatable<LinearRing>
     {
         public static readonly LinearRing Empty = new LinearRing();
 
@@ -76,17 +76,27 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(LinearRing other)
+        public bool Equals(LinearRing other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates);
+            return !ReferenceEquals(null, other) && CoordinateSequence.Equals(Coordinates, other.Coordinates);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(LinearRing other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((LinearRing) obj);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class CoordinateSequence : ReadOnlyCollection<Coordinate>, IEquatable<CoordinateSequence>
+    public class CoordinateSequence : ReadOnlyCollection<Coordinate>, ISpatialEquatable<CoordinateSequence>
     {
         public CoordinateSequence() : base(new List<Coordinate>())
         {
@@ -65,7 +65,7 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(CoordinateSequence other)
+        public bool Equals(CoordinateSequence other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -74,16 +74,26 @@ namespace Geo.Geometries
                 return false;
 
             return !this
-                .Where((t, i) => !t.Equals(other[i]))
+                .Where((t, i) => !SpatialEquality.Equals(t, other[i], options))
                 .Any();
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(CoordinateSequence other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((CoordinateSequence)obj);
+            return Equals((CoordinateSequence)obj, options);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

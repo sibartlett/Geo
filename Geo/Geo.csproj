@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="SpatialEquality.cs" />
+    <Compile Include="SpatialEqualityOptions.cs" />
     <Compile Include="GeoContext.cs" />
     <Compile Include="Geometries\CoordinateSequence.cs" />
     <Compile Include="Geometries\Envelope.cs" />
@@ -57,6 +59,7 @@
     <Compile Include="Interfaces\IHasArea.cs" />
     <Compile Include="Interfaces\IHasLength.cs" />
     <Compile Include="Interfaces\IMeasure.cs" />
+    <Compile Include="Interfaces\ISpatialEquatable.cs" />
     <Compile Include="IO\Wkt\WktTokenType.cs" />
     <Compile Include="IO\Wkt\WktDimensions.cs" />
     <Compile Include="IO\Wkt\WktReader.cs" />

@@ -6,7 +6,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : IGeometry, IEquatable<Circle>
+    public class Circle : IGeometry, ISpatialEquatable<Circle>
     {
         public static readonly Circle Empty = new Circle(null, 0);
 
@@ -89,17 +89,27 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Circle other)
+        public bool Equals(Circle other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && Equals(Center, other.Center);
+            return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && SpatialEquality.Equals(Center, other.Center, options);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Circle other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Circle) obj);
+            return Equals((Circle) obj, options);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

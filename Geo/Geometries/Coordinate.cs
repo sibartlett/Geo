@@ -4,7 +4,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class Coordinate : IPosition, IEquatable<Coordinate>
+    public class Coordinate : IPosition, ISpatialEquatable<Coordinate>
     {
         public Coordinate() : this(0, 0)
         {
@@ -209,7 +209,7 @@ namespace Geo.Geometries
 
             Coordinate result;
             if (!TryParse(coordinate, out result))
-                throw new FormatException("Coordinate (" + coordinate + ") is a not supported format.");
+                throw new FormatException("Coordinate (" + coordinate + ") is not a supported format.");
 
             return result;
         }
@@ -241,63 +241,74 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Coordinate other)
+        public bool Equals(Coordinate other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
 
-            if (!Elevation.Equals(other.Elevation))
+            if (options.UseElevation && !Elevation.Equals(other.Elevation))
                 return false;
 
-            if (!M.Equals(other.M))
+            if (options.UseM && !M.Equals(other.M))
                 return false;
 
             if (Latitude.Equals(other.Latitude))
             {
-                if (Latitude.Equals(90d) || Latitude.Equals(-90d))
+                if (options.PoleCoordiantesAreEqual && Latitude.Equals(90d) || Latitude.Equals(-90d))
                     return true;
 
                 if (Longitude.Equals(other.Longitude))
                     return true;
 
-                if (Longitude.Equals(180) && other.Longitude.Equals(-180))
-                    return true;
-
-                if (Longitude.Equals(-180) && other.Longitude.Equals(180))
-                    return true;
+                if (options.AntiMeridianCoordinatesAreEqual)
+                {
+                    if (Longitude.Equals(180) && other.Longitude.Equals(-180) ||
+                        Longitude.Equals(-180) && other.Longitude.Equals(180))
+                        return true;
+                }
             }
 
             return false;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Coordinate other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Coordinate) obj);
+            return Equals((Coordinate) obj,options);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int hashCode;
+                var options = GeoContext.Current.EqualityOptions;
 
-                if (Latitude.Equals(90) || Latitude.Equals(-90))
-                    hashCode = 90d.GetHashCode();
-                else
-                {
-                    hashCode = Latitude.GetHashCode();
+                var latitude = Latitude;
+                var longitude = Longitude;
 
-                    if (Longitude.Equals(180) || Longitude.Equals(-180))
-                        hashCode = (hashCode * 397) ^ 180d.GetHashCode();
-                    else
-                        hashCode = (hashCode * 397) ^ Longitude.GetHashCode();
-                }
+                if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90) || Latitude.Equals(-90)))
+                    longitude = 0;
+                else if (options.AntiMeridianCoordinatesAreEqual && Longitude.Equals(-180))
+                    longitude = 180;
 
-                hashCode = (hashCode*397) ^ Elevation.GetHashCode();
-                hashCode = (hashCode*397) ^ M.GetHashCode();
+                var hashCode = latitude.GetHashCode();
+                hashCode = (hashCode * 397) ^ longitude.GetHashCode();
+                if (options.UseElevation)
+                    hashCode = (hashCode * 397) ^ Elevation.GetHashCode();
+                if (options.UseM)
+                    hashCode = (hashCode*397) ^ M.GetHashCode();
                 return hashCode;
             }
         }

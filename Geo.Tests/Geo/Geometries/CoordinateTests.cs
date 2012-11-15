@@ -24,21 +24,33 @@ namespace Geo.Tests.Geo.Geometries
         }
 
         [Test]
-        public void PoleCoordinatesAreEqual()
+        public void Equality_Elevation()
         {
-            Assert.AreEqual(new Coordinate(90, 90), new Coordinate(90, -170));
-            Assert.AreEqual(new Coordinate(90, 90).GetHashCode(), new Coordinate(90, -170).GetHashCode());
-            Assert.AreEqual(new Coordinate(-90, 0), new Coordinate(-90, -10));
-            Assert.AreEqual(new Coordinate(-90, 0).GetHashCode(), new Coordinate(-90, -10).GetHashCode());
+            Assert.True(new Coordinate(0, 0, 0).Equals(new Coordinate(0, 0, 0), new SpatialEqualityOptions{ UseElevation = true }));
+            Assert.False(new Coordinate(0, 0, 0).Equals(new Coordinate(0, 0, 10), new SpatialEqualityOptions{ UseElevation = true }));
+            Assert.True(new Coordinate(0, 0, 0).Equals(new Coordinate(0, 0, 10), new SpatialEqualityOptions{ UseElevation = false }));
         }
 
         [Test]
-        public void DateLineCoordinatesAreEqual()
+        public void Equality_M()
         {
-            Assert.AreEqual(new Coordinate(0, 180), new Coordinate(0, -180));
-            Assert.AreEqual(new Coordinate(0, 180).GetHashCode(), new Coordinate(0, -180).GetHashCode());
-            Assert.AreEqual(new Coordinate(30, 180), new Coordinate(30, -180));
-            Assert.AreEqual(new Coordinate(30, 180).GetHashCode(), new Coordinate(30, -180).GetHashCode());
+            Assert.True(new Coordinate(0, 0, 0, 0).Equals(new Coordinate(0, 0, 0, 0), new SpatialEqualityOptions{ UseM = true }));
+            Assert.False(new Coordinate(0, 0, 0, 0).Equals(new Coordinate(0, 0, 0, 10), new SpatialEqualityOptions{ UseM = true }));
+            Assert.True(new Coordinate(0, 0, 0, 0).Equals(new Coordinate(0, 0, 0, 10), new SpatialEqualityOptions { UseM = false }));
+        }
+
+        [Test]
+        public void Equality_PoleCoordinates()
+        {
+            Assert.True(new Coordinate(90, 0, 0, 0).Equals(new Coordinate(90, 180, 0, 0), new SpatialEqualityOptions{ PoleCoordiantesAreEqual = true }));
+            Assert.False(new Coordinate(90, 0, 0, 0).Equals(new Coordinate(90, 180, 0, 0), new SpatialEqualityOptions{ PoleCoordiantesAreEqual = false }));
+        }
+
+        [Test]
+        public void Equality_AntiMeridianCoordinates()
+        {
+            Assert.True(new Coordinate(4, 180).Equals(new Coordinate(4, -180), new SpatialEqualityOptions{ AntiMeridianCoordinatesAreEqual = true }));
+            Assert.False(new Coordinate(4, 180).Equals(new Coordinate(4, -180), new SpatialEqualityOptions{ AntiMeridianCoordinatesAreEqual = false }));
         }
     }
 }

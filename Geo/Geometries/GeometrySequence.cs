@@ -5,7 +5,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class GeometrySequence<T> : ReadOnlyCollection<T> where T : IGeometry
+    public class GeometrySequence<T> : ReadOnlyCollection<T>, ISpatialEquatable<GeometrySequence<T>> where T : IGeometry, ISpatialEquatable<T>
     {
         public GeometrySequence() : base(new List<T>())
         {
@@ -26,7 +26,7 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        protected bool Equals(GeometrySequence<T> other)
+        public bool Equals(GeometrySequence<T> other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -35,16 +35,26 @@ namespace Geo.Geometries
                 return false;
 
             return !this
-                .Where((t, i) => !t.Equals(other[i]))
+                .Where((t, i) => !t.Equals(other[i], options))
                 .Any();
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(GeometrySequence<T> other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((GeometrySequence<T>)obj);
+            return Equals((GeometrySequence<T>)obj, options);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

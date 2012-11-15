@@ -2,7 +2,7 @@
 
 namespace Geo.Interfaces
 {
-    public interface IGeometry : IRavenIndexable, IHasArea, IHasLength
+    public interface IGeometry : IRavenIndexable, IHasArea, IHasLength, ISpatialEquatable
     {
         Envelope GetBounds();
 

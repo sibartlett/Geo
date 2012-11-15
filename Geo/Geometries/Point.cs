@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Point : IPosition, IGeoJsonGeometry, IWktGeometry, IEquatable<Point>
+    public class Point : IPosition, IGeoJsonGeometry, IWktGeometry, ISpatialEquatable<Point>
     {
         public static readonly Point Empty = new Point(null);
 
@@ -74,17 +74,27 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Point other)
+        public bool Equals(Point other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Equals(Coordinate, other.Coordinate);
+            return !ReferenceEquals(null, other) && Coordinate.Equals(Coordinate, other.Coordinate);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Point other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
             return Equals((Point) obj);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

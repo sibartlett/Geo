@@ -8,9 +8,9 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public abstract class GeometryCollectionBase<TCollection, TElement> : IGeometry, IWktGeometry, IGeoJsonGeometry, IEquatable<TCollection>
+    public abstract class GeometryCollectionBase<TCollection, TElement> : IGeometry, IWktGeometry, IGeoJsonGeometry, ISpatialEquatable<TCollection>
         where TCollection : GeometryCollectionBase<TCollection, TElement>
-        where TElement : class, IGeometry
+        where TElement : class, IGeometry, ISpatialEquatable
     {
         internal GeometryCollectionBase(IEnumerable<TElement> lineStrings)
         {
@@ -63,7 +63,7 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(TCollection other)
+        public bool Equals(TCollection other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -72,16 +72,26 @@ namespace Geo.Geometries
                 return false;
 
             return !Geometries
-                .Where((t, i) => !t.Equals(other.Geometries[i]))
+                .Where((t, i) => !t.Equals(other.Geometries[i], options))
                 .Any();
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(TCollection other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((TCollection) obj);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

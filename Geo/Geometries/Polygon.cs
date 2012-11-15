@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
@@ -8,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : IGeometry, IWktGeometry, IGeoJsonGeometry, IEquatable<Polygon>
+    public class Polygon : IGeometry, IWktGeometry, IGeoJsonGeometry, ISpatialEquatable<Polygon>
     {
         public static readonly Polygon Empty = new Polygon(new LinearRing());
 
@@ -63,17 +62,33 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Polygon other)
+        public bool Equals(Polygon other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Equals(Shell, other.Shell) && Equals(Holes, other.Holes);
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (IsEmpty && other.IsEmpty)
+                return true;
+
+            return Shell.Equals(other.Shell, options) && SpatialEquality.Equals(Holes, other.Holes, options);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Polygon other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Polygon) obj);
+            return Equals((Polygon) obj, options);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

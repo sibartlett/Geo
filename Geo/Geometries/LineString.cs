@@ -8,7 +8,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : IGeometry, IWktGeometry, IGeoJsonGeometry, IEquatable<LineString>
+    public class LineString : IGeometry, IWktGeometry, IGeoJsonGeometry, ISpatialEquatable<LineString>
     {
         public static readonly LineString Empty = new LineString();
 
@@ -74,17 +74,27 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(LineString other)
+        public bool Equals(LineString other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates);
+            return !ReferenceEquals(null, other) && SpatialEquality.Equals(Coordinates, other.Coordinates, options);
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(LineString other)
+        {
+            return Equals(other, GeoContext.Current.EqualityOptions);
+        }
+
+        public bool Equals(object obj, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((LineString) obj);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj, GeoContext.Current.EqualityOptions);
         }
 
         public override int GetHashCode()

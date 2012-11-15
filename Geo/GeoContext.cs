@@ -16,10 +16,12 @@ namespace Geo
         public GeoContext()
         {
             GeodeticCalculator = SpheroidCalculator.Wgs84();
+            EqualityOptions = new SpatialEqualityOptions();
             LongitudeWrapping = false;
         }
 
         public IGeodeticCalculator GeodeticCalculator { get; set; }
+        public SpatialEqualityOptions EqualityOptions { get; set; }
         public bool LongitudeWrapping { get; set; }
     }
 }
