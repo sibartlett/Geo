@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
@@ -8,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : IGeometry, IWktGeometry, IGeoJsonGeometry, ISpatialEquatable<LineString>
+    public class LineString : SpatialObject<LineString>, IGeometry, IWktGeometry, IGeoJsonGeometry
     {
         public static readonly LineString Empty = new LineString();
 
@@ -27,20 +26,34 @@ namespace Geo.Geometries
 
         public CoordinateSequence Coordinates { get; private set; }
 
-        public bool IsClosed()
-        {
-            return !IsEmpty && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
-        }
-
         public Envelope GetBounds()
         {
             return IsEmpty ? null :
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
-        public bool IsEmpty { get { return Coordinates.Count == 0; } }
-        public bool HasElevation { get { return Coordinates.HasElevation; } }
-        public bool HasM { get { return Coordinates.HasM; } }
+        public bool IsEmpty
+        {
+            get { return Coordinates.IsEmpty; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Coordinates.HasElevation; }
+        }
+
+        public bool HasM
+        {
+            get { return Coordinates.HasM; }
+        }
+
+        public bool IsClosed
+        {
+            get
+            {
+                return !IsEmpty && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
+            }
+        }
 
         public Area GetArea()
         {
@@ -74,32 +87,24 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(LineString other, SpatialEqualityOptions options)
+        public override bool Equals(LineString other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && SpatialEquality.Equals(Coordinates, other.Coordinates, options);
-        }
-
-        public bool Equals(LineString other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LineString) obj);
+            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates, options);
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
-            return (Coordinates != null ? Coordinates.GetHashCode() : 0);
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
+            return (Coordinates != null ? Coordinates.GetHashCode(options) : 0);
         }
 
         public static bool operator ==(LineString left, LineString right)

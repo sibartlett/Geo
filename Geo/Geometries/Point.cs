@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Point : IPosition, IGeoJsonGeometry, IWktGeometry, ISpatialEquatable<Point>
+    public class Point : SpatialObject<Point>, IGeometry, IPosition, IGeoJsonGeometry, IWktGeometry
     {
         public static readonly Point Empty = new Point(null);
 
@@ -53,9 +53,20 @@ namespace Geo.Geometries
             return GeoJson.Serialize(this);
         }
 
-        public bool IsEmpty { get { return Coordinate == null; } }
-        public bool HasElevation { get { return Coordinate != null && Coordinate.HasElevation; } }
-        public bool HasM { get { return Coordinate != null && Coordinate.HasM; } }
+        public bool IsEmpty
+        {
+            get { return Coordinate == null; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Coordinate != null && Coordinate.HasElevation; }
+        }
+
+        public bool HasM
+        {
+            get { return Coordinate != null && Coordinate.HasM; }
+        }
 
         public Envelope GetBounds()
         {
@@ -74,32 +85,24 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Point other, SpatialEqualityOptions options)
+        public override bool Equals(Point other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Coordinate.Equals(Coordinate, other.Coordinate);
-        }
-
-        public bool Equals(Point other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Point) obj);
+            return !ReferenceEquals(null, other) && Equals(Coordinate, other.Coordinate, options);
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
-            return (Coordinate != null ? Coordinate.GetHashCode() : 0);
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
+            return (Coordinate != null ? Coordinate.GetHashCode(options) : 0);
         }
 
         public static bool operator ==(Point left, Point right)

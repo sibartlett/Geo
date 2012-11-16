@@ -4,7 +4,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class Coordinate : IPosition, ISpatialEquatable<Coordinate>
+    public class Coordinate : SpatialObject<Coordinate>, IPosition
     {
         public Coordinate() : this(0, 0)
         {
@@ -47,8 +47,15 @@ namespace Geo.Geometries
         public double Elevation { get; private set; }
         public double M { get; private set; }
 
-        public bool HasElevation { get { return !double.IsNaN(Elevation); } }
-        public bool HasM { get { return !double.IsNaN(M); } }
+        public bool HasElevation
+        {
+            get { return !double.IsNaN(Elevation); }
+        }
+
+        public bool HasM
+        {
+            get { return !double.IsNaN(M); }
+        }
 
         public override string ToString()
         {
@@ -241,7 +248,7 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Coordinate other, SpatialEqualityOptions options)
+        public override bool Equals(Coordinate other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -271,19 +278,6 @@ namespace Geo.Geometries
             return false;
         }
 
-        public bool Equals(Coordinate other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Coordinate) obj,options);
-        }
-
         public override bool Equals(object obj)
         {
             return Equals(obj, GeoContext.Current.EqualityOptions);
@@ -291,10 +285,13 @@ namespace Geo.Geometries
 
         public override int GetHashCode()
         {
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
             unchecked
             {
-                var options = GeoContext.Current.EqualityOptions;
-
                 var latitude = Latitude;
                 var longitude = Longitude;
 

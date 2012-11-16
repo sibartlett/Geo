@@ -3,7 +3,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class MultiPoint : GeometryCollectionBase<MultiPoint, Point>, IGeoJsonGeometry
+    public class MultiPoint : GeometryCollectionBase<MultiPoint, Point>
     {
         public static readonly MultiPoint Empty = new MultiPoint();
 

@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : IGeometry, IWktGeometry, ISpatialEquatable<LinearRing>
+    public class LinearRing : SpatialObject<LinearRing>, IGeometry, IWktGeometry
     {
         public static readonly LinearRing Empty = new LinearRing();
 
@@ -39,11 +39,6 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateLength(Coordinates);
         }
 
-        public bool IsClosed()
-        {
-            return !IsEmpty;
-        }
-
         public Envelope GetBounds()
         {
             return IsEmpty ? null :
@@ -55,9 +50,25 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateArea(Coordinates);
         }
 
-        public bool IsEmpty { get { return Coordinates.Count == 0; } }
-        public bool HasElevation { get { return Coordinates.HasElevation; } }
-        public bool HasM { get { return Coordinates.HasM; } }
+        public bool IsEmpty
+        {
+            get { return Coordinates.IsEmpty; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Coordinates.HasElevation; }
+        }
+
+        public bool HasM
+        {
+            get { return Coordinates.HasM; }
+        }
+
+        public bool IsClosed
+        {
+            get { return !IsEmpty; }
+        }
 
         public string ToWktString()
         {
@@ -76,32 +87,24 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(LinearRing other, SpatialEqualityOptions options)
+        public override bool Equals(LinearRing other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && CoordinateSequence.Equals(Coordinates, other.Coordinates);
-        }
-
-        public bool Equals(LinearRing other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LinearRing) obj);
+            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates, options);
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
-            return (Coordinates != null ? Coordinates.GetHashCode() : 0);
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
+            return (Coordinates != null ? Coordinates.GetHashCode(options) : 0);
         }
 
         public static bool operator ==(LinearRing left, LinearRing right)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Geo.IO.GeoJson;
@@ -8,9 +7,10 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public abstract class GeometryCollectionBase<TCollection, TElement> : IGeometry, IWktGeometry, IGeoJsonGeometry, ISpatialEquatable<TCollection>
+    public abstract class GeometryCollectionBase<TCollection, TElement>
+        : SpatialObject<TCollection>, IGeometry, IWktGeometry, IGeoJsonGeometry
         where TCollection : GeometryCollectionBase<TCollection, TElement>
-        where TElement : class, IGeometry, ISpatialEquatable
+        where TElement : class, IGeometry
     {
         internal GeometryCollectionBase(IEnumerable<TElement> lineStrings)
         {
@@ -42,9 +42,20 @@ namespace Geo.Geometries
             return new Distance(Geometries.Sum(geometry => geometry.GetLength().SiValue));
         }
 
-        public bool IsEmpty { get { return Geometries.Count == 0; } }
-        public bool HasElevation { get { return Geometries.Any(x => x.HasElevation); } }
-        public bool HasM { get { return Geometries.Any(x => x.HasM); } }
+        public bool IsEmpty
+        {
+            get { return Geometries.Count == 0; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Geometries.Any(x => x.HasElevation); }
+        }
+
+        public bool HasM
+        {
+            get { return Geometries.Any(x => x.HasM); }
+        }
 
         public string ToGeoJson()
         {
@@ -63,7 +74,7 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(TCollection other, SpatialEqualityOptions options)
+        public override bool Equals(TCollection other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -76,28 +87,20 @@ namespace Geo.Geometries
                 .Any();
         }
 
-        public bool Equals(TCollection other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((TCollection) obj);
-        }
-
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
             return Geometries
-                .Select(x => x.GetHashCode())
+                .Select(x => x.GetHashCode(options))
                 .Aggregate(0, (current, result) => (current * 397) ^ result);
         }
 

@@ -3,7 +3,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class MultiPolygon : GeometryCollectionBase<MultiPolygon, Polygon>, IGeoJsonGeometry
+    public class MultiPolygon : GeometryCollectionBase<MultiPolygon, Polygon>
     {
         public static readonly MultiPolygon Empty = new MultiPolygon();
 

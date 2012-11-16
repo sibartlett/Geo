@@ -49,6 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Geometries\Spatial2DComparer.cs" />
+    <Compile Include="Geometries\Spatial3DComparer.cs" />
+    <Compile Include="Geometries\SpatialObject.cs" />
+    <Compile Include="Geometries\SpatialReadOnlyCollection.cs" />
     <Compile Include="SpatialEquality.cs" />
     <Compile Include="SpatialEqualityOptions.cs" />
     <Compile Include="GeoContext.cs" />

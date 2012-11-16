@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class GeometrySequence<T> : ReadOnlyCollection<T>, ISpatialEquatable<GeometrySequence<T>> where T : IGeometry, ISpatialEquatable<T>
+    public class GeometrySequence<T> : SpatialReadOnlyCollection<GeometrySequence<T>, T> where T : IGeometry, ISpatialEquatable<T>
     {
         public GeometrySequence() : base(new List<T>())
         {
         }
 
-        public GeometrySequence(IEnumerable<T> geometries) :base(geometries.ToList())
+        public GeometrySequence(IEnumerable<T> geometries) : base(geometries.ToList())
         {
         }
 
@@ -19,14 +18,9 @@ namespace Geo.Geometries
         {
         }
 
-        public bool IsEmpty
-        {
-            get { return Count == 0; }
-        }
-
         #region Equality methods
 
-        public bool Equals(GeometrySequence<T> other, SpatialEqualityOptions options)
+        public override bool Equals(GeometrySequence<T> other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -39,29 +33,14 @@ namespace Geo.Geometries
                 .Any();
         }
 
-        public bool Equals(GeometrySequence<T> other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((GeometrySequence<T>)obj, options);
-        }
-
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
-            return this
-                .Select(x => x.GetHashCode())
-                .Aggregate(0, (current, result) => (current * 397) ^ result);
+            return base.GetHashCode();
         }
 
         public static bool operator ==(GeometrySequence<T> left, GeometrySequence<T> right)

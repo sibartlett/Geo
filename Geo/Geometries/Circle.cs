@@ -6,7 +6,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : IGeometry, ISpatialEquatable<Circle>
+    public class Circle : SpatialObject<Circle>, IGeometry
     {
         public static readonly Circle Empty = new Circle(null, 0);
 
@@ -59,9 +59,20 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
         }
 
-        public bool IsEmpty { get { return Center == null; } }
-        public bool HasElevation { get { return Center != null && Center.HasElevation; } }
-        public bool HasM { get { return Center != null && Center.HasM; } }
+        public bool IsEmpty
+        {
+            get { return Center == null; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Center != null && Center.HasElevation; }
+        }
+
+        public bool HasM
+        {
+            get { return Center != null && Center.HasM; }
+        }
 
         string IRavenIndexable.GetIndexString()
         {
@@ -89,34 +100,26 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Circle other, SpatialEqualityOptions options)
+        public override bool Equals(Circle other, SpatialEqualityOptions options)
         {
-            return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && SpatialEquality.Equals(Center, other.Center, options);
-        }
-
-        public bool Equals(Circle other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Circle) obj, options);
+            return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && Equals(Center, other.Center, options);
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
             unchecked
             {
-                return (Radius.GetHashCode()*397) ^ (Center != null ? Center.GetHashCode() : 0);
+                return (Radius.GetHashCode() * 397) ^ (Center != null ? Center.GetHashCode(options) : 0);
             }
         }
 

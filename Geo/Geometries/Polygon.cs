@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : IGeometry, IWktGeometry, IGeoJsonGeometry, ISpatialEquatable<Polygon>
+    public class Polygon : SpatialObject<Polygon>, IGeometry, IWktGeometry, IGeoJsonGeometry
     {
         public static readonly Polygon Empty = new Polygon(new LinearRing());
 
@@ -17,18 +17,27 @@ namespace Geo.Geometries
             Holes = new GeometrySequence<LinearRing>(holes ?? new LinearRing[0]);
         }
 
-        public Polygon(LinearRing shell, params LinearRing[] holes)
+        public Polygon(LinearRing shell, params LinearRing[] holes) : this(shell, (IEnumerable<LinearRing>) holes)
         {
-            Shell = shell;
-            Holes = new GeometrySequence<LinearRing>(holes ?? new LinearRing[0]);
         }
 
         public LinearRing Shell { get; private set; }
         public GeometrySequence<LinearRing> Holes { get; private set; }
 
-        public bool IsEmpty { get { return Shell.IsEmpty; } }
-        public bool HasElevation { get { return Shell.HasElevation; } }
-        public bool HasM { get { return Shell.HasM; } }
+        public bool IsEmpty
+        {
+            get { return Shell.IsEmpty; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Shell.HasElevation; }
+        }
+
+        public bool HasM
+        {
+            get { return Shell.HasM; }
+        }
 
         public Distance GetLength()
         {
@@ -62,7 +71,7 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public bool Equals(Polygon other, SpatialEqualityOptions options)
+        public override bool Equals(Polygon other, SpatialEqualityOptions options)
         {
             if (ReferenceEquals(null, other))
                 return false;
@@ -70,32 +79,24 @@ namespace Geo.Geometries
             if (IsEmpty && other.IsEmpty)
                 return true;
 
-            return Shell.Equals(other.Shell, options) && SpatialEquality.Equals(Holes, other.Holes, options);
-        }
-
-        public bool Equals(Polygon other)
-        {
-            return Equals(other, GeoContext.Current.EqualityOptions);
-        }
-
-        public bool Equals(object obj, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Polygon) obj, options);
+            return Shell.Equals(other.Shell, options) && Equals(Holes, other.Holes, options);
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj, GeoContext.Current.EqualityOptions);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
+            return base.GetHashCode();
+        }
+
+        public override int GetHashCode(SpatialEqualityOptions options)
+        {
             unchecked
             {
-                return ((Shell != null ? Shell.GetHashCode() : 0)*397) ^ (Holes != null ? Holes.GetHashCode() : 0);
+                return ((Shell != null ? Shell.GetHashCode(options) : 0)*397) ^ (Holes != null ? Holes.GetHashCode(options) : 0);
             }
         }
 

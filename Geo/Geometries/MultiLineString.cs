@@ -3,7 +3,7 @@ using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
-    public class MultiLineString : GeometryCollectionBase<MultiLineString, LineString>, IGeoJsonGeometry
+    public class MultiLineString : GeometryCollectionBase<MultiLineString, LineString>
     {
         public static readonly MultiLineString Empty = new MultiLineString();
 
