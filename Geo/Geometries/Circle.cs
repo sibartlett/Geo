@@ -8,7 +8,13 @@ namespace Geo.Geometries
 {
     public class Circle : SpatialObject<Circle>, IGeometry
     {
-        public static readonly Circle Empty = new Circle(null, 0);
+        public static readonly Circle Empty = new Circle();
+
+        public Circle()
+        {
+            Center = null;
+            Radius = 0;
+        }
 
         public Circle(Coordinate center, double radius)
         {

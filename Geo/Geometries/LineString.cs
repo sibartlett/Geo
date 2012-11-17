@@ -7,9 +7,13 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : SpatialObject<LineString>, IGeometry, IWktGeometry, IGeoJsonGeometry
+    public class LineString : SpatialObject<LineString>, IGeometry, IOgcGeometry, IGeoJsonGeometry
     {
         public static readonly LineString Empty = new LineString();
+
+        public LineString() : this(new CoordinateSequence())
+        {
+        }
 
         public LineString(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
         {
@@ -21,7 +25,7 @@ namespace Geo.Geometries
 
         public LineString(CoordinateSequence coordinates)
         {
-            Coordinates = coordinates;
+            Coordinates = coordinates ?? new CoordinateSequence();
         }
 
         public CoordinateSequence Coordinates { get; private set; }

@@ -7,9 +7,13 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : SpatialObject<Polygon>, IGeometry, IWktGeometry, IGeoJsonGeometry
+    public class Polygon : SpatialObject<Polygon>, IGeometry, IOgcGeometry, IGeoJsonGeometry
     {
         public static readonly Polygon Empty = new Polygon(new LinearRing());
+
+        public Polygon() : this(null)
+        {
+        }
 
         public Polygon(LinearRing shell, IEnumerable<LinearRing> holes)
         {

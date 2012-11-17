@@ -8,7 +8,7 @@ using Geo.Measure;
 namespace Geo.Geometries
 {
     public abstract class GeometryCollectionBase<TCollection, TElement>
-        : SpatialObject<TCollection>, IGeometry, IWktGeometry, IGeoJsonGeometry
+        : SpatialObject<TCollection>, IGeometry, IOgcGeometry, IGeoJsonGeometry
         where TCollection : GeometryCollectionBase<TCollection, TElement>
         where TElement : class, IGeometry
     {

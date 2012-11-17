@@ -85,7 +85,7 @@
     <Compile Include="Interfaces\IGeometry.cs" />
     <Compile Include="Interfaces\IPosition.cs" />
     <Compile Include="Interfaces\IRavenIndexable.cs" />
-    <Compile Include="Interfaces\IWktGeometry.cs" />
+    <Compile Include="Interfaces\IOgcGeometry.cs" />
     <Compile Include="Geometries\Coordinate.cs" />
     <Compile Include="Geometries\LinearRing.cs" />
     <Compile Include="Geometries\LineString.cs" />

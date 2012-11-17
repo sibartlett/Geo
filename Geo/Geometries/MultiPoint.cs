@@ -1,11 +1,14 @@
 using System.Collections.Generic;
-using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
     public class MultiPoint : GeometryCollectionBase<MultiPoint, Point>
     {
         public static readonly MultiPoint Empty = new MultiPoint();
+
+        public MultiPoint() : base(new Point[0])
+        {
+        }
 
         public MultiPoint(IEnumerable<Point> points) : base(points)
         {

@@ -7,13 +7,12 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : SpatialObject<LinearRing>, IGeometry, IWktGeometry
+    public class LinearRing : SpatialObject<LinearRing>, IGeometry, IOgcGeometry
     {
         public static readonly LinearRing Empty = new LinearRing();
 
-        public LinearRing()
+        public LinearRing() : this(new CoordinateSequence())
         {
-            Coordinates = new CoordinateSequence();
         }
 
         public LinearRing(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
@@ -26,10 +25,10 @@ namespace Geo.Geometries
 
         public LinearRing(CoordinateSequence coordinates)
         {
-            if (!coordinates.IsClosed)
+            if (coordinates != null && !coordinates.IsEmpty && !coordinates.IsClosed)
                 throw new ArgumentException("The Coordinate Sequence must be closed to form a Linear Ring");
 
-            Coordinates = coordinates;
+            Coordinates = coordinates ?? new CoordinateSequence();
         }
 
         public CoordinateSequence Coordinates { get; private set; }

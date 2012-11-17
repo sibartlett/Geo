@@ -1,11 +1,14 @@
 using System.Collections.Generic;
-using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
     public class MultiPolygon : GeometryCollectionBase<MultiPolygon, Polygon>
     {
         public static readonly MultiPolygon Empty = new MultiPolygon();
+
+        public MultiPolygon() : base(new Polygon[0])
+        {
+        }
 
         public MultiPolygon(IEnumerable<Polygon> polygons) : base(polygons)
         {

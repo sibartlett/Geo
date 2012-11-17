@@ -7,6 +7,10 @@ namespace Geo.Geometries
     {
         public static readonly GeometryCollection Empty = new GeometryCollection();
 
+        public GeometryCollection() : base(new IGeometry[0])
+        {
+        }
+
         public GeometryCollection(IEnumerable<IGeometry> geometries) : base(geometries)
         {
         }

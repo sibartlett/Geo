@@ -13,7 +13,7 @@ namespace Geo.IO.Wkt
     {
         private readonly WktTokenizer _wktTokenizer = new WktTokenizer();
 
-        public IWktGeometry Read(string wkt)
+        public IOgcGeometry Read(string wkt)
         {
             if (wkt == null)
                 throw new ArgumentNullException("wkt");
@@ -22,7 +22,7 @@ namespace Geo.IO.Wkt
 			return ParseGeometry(tokens);
 		}
 
-        public IWktGeometry Read(Stream stream)
+        public IOgcGeometry Read(Stream stream)
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
@@ -34,7 +34,7 @@ namespace Geo.IO.Wkt
             }
 		}
 
-		private static IWktGeometry ParseGeometry(WktTokenQueue tokens)
+		private static IOgcGeometry ParseGeometry(WktTokenQueue tokens)
         {
             if (tokens.Count == 0)
                 return null;

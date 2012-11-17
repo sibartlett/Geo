@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
 using Geo.Interfaces;
@@ -7,9 +6,13 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Point : SpatialObject<Point>, IGeometry, IPosition, IGeoJsonGeometry, IWktGeometry
+    public class Point : SpatialObject<Point>, IGeometry, IPosition, IGeoJsonGeometry, IOgcGeometry
     {
-        public static readonly Point Empty = new Point(null);
+        public static readonly Point Empty = new Point();
+
+        public Point() : this(null)
+        {
+        }
 
         public Point(double latitude, double longitude)
         {

@@ -1,11 +1,14 @@
 using System.Collections.Generic;
-using Geo.Interfaces;
 
 namespace Geo.Geometries
 {
     public class MultiLineString : GeometryCollectionBase<MultiLineString, LineString>
     {
         public static readonly MultiLineString Empty = new MultiLineString();
+
+        public MultiLineString() : base(new LineString[0])
+        {
+        }
 
         public MultiLineString(IEnumerable<LineString> lineStrings) : base(lineStrings)
         {
