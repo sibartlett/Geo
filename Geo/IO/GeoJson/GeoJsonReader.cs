@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
-using Geo.Interfaces;
 
 namespace Geo.IO.GeoJson
 {

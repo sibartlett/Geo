@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
-using Geo.Interfaces;
 
 namespace Geo.IO.GeoJson
 {
@@ -105,7 +105,7 @@ namespace Geo.IO.GeoJson
             return new Dictionary<string, object>
             {
                 { "type", "MultiPoint" },
-                { "coordinates", multiPoint.Geometries.Select(WriteCoordinate).ToArray() }
+                { "coordinates", multiPoint.Geometries.Cast<Point>().Select(WriteCoordinate).ToArray() }
             };
         }
 
@@ -114,7 +114,7 @@ namespace Geo.IO.GeoJson
             return new Dictionary<string, object>
             {
                 { "type", "MultiLineString" },
-                { "coordinates", multiLineString.Geometries.Select(x=> WriteCoordinates(x.Coordinates)).ToArray() }
+                { "coordinates", multiLineString.Geometries.Cast<LineString>().Select(x=> WriteCoordinates(x.Coordinates)).ToArray() }
             };
         }
 
@@ -123,7 +123,7 @@ namespace Geo.IO.GeoJson
             return new Dictionary<string, object>
             {
                 { "type", "MultiPolygon" },
-                { "coordinates", multiPolygon.Geometries.Select(WriteCoordinates).ToArray() }
+                { "coordinates", multiPolygon.Geometries.Cast<Polygon>().Select(WriteCoordinates).ToArray() }
             };
         }
 

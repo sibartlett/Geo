@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Geo.Interfaces;
+using Geo.Abstractions.Interfaces;
 using Geo.Raven.Json;
 using Geo.Raven.Query;
 using Raven.Client;

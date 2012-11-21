@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Geo.Interfaces;
+using Geo.Abstractions.Interfaces;
 using Geo.Raven;
 using Geo.Raven.Indexes;
 using NUnit.Framework;

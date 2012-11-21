@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Geo.Geometries;
-using Geo.Interfaces;
+using Geo.Abstractions.Interfaces;
 using Raven.Imports.Newtonsoft.Json.Serialization;
 
 namespace Geo.Raven.Json

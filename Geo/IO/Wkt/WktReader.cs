@@ -4,8 +4,8 @@ using System.Linq;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
-using Geo.Interfaces;
 
 namespace Geo.IO.Wkt
 {
@@ -52,6 +52,8 @@ namespace Geo.IO.Wkt
 			        return ParseLinearRing(tokens);
                 if (value == "POLYGON")
 			        return ParsePolygon(tokens);
+                if (value == "TRIANGLE")
+			        return ParseTriangle(tokens);
                 if (value == "MULTIPOINT")
 			        return ParseMultiPoint(tokens);
                 if (value == "MULTILINESTRING")
@@ -94,7 +96,7 @@ namespace Geo.IO.Wkt
 		    return coords == null ? LineString.Empty : new LineString(coords);
         }
 
-        private static LinearRing ParseLinearRing(WktTokenQueue tokens)
+        private static LineString ParseLinearRing(WktTokenQueue tokens)
         {
             tokens.Dequeue("LINEARRING");
             var dimensions = ParseDimensions(tokens);
@@ -105,6 +107,13 @@ namespace Geo.IO.Wkt
 		private static Polygon ParsePolygon(WktTokenQueue tokens)
         {
 			tokens.Dequeue("POLYGON");
+		    var dimensions = ParseDimensions(tokens);
+			return ParsePolygonInner(tokens, dimensions);
+		}
+
+		private static Polygon ParseTriangle(WktTokenQueue tokens)
+        {
+			tokens.Dequeue("TRIANGLE");
 		    var dimensions = ParseDimensions(tokens);
 			return ParsePolygonInner(tokens, dimensions);
 		}
@@ -238,18 +247,18 @@ namespace Geo.IO.Wkt
 
 			tokens.Dequeue(WktTokenType.LeftParenthesis);
 
-			var result = new GeometryCollection();
-			result.Geometries.Add(ParseGeometry(tokens));
+		    var geometries = new List<IGeometry>();
+            geometries.Add(ParseGeometry(tokens));
 
 			while (tokens.NextTokenIs(WktTokenType.Comma))
             {
                 tokens.Dequeue();
-				result.Geometries.Add(ParseGeometry(tokens));
+                geometries.Add(ParseGeometry(tokens));
 			}
 
 		    tokens.Dequeue(WktTokenType.RightParenthesis);
 
-			return result;
+            return new GeometryCollection(geometries);
         }
 
         private static Coordinate ParseCoordinate(WktTokenQueue tokens, WktDimensions dimensions)

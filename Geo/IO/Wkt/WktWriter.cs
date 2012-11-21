@@ -1,12 +1,24 @@
 ﻿using System.Runtime.Serialization;
 using System.Text;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
-using Geo.Interfaces;
 
 namespace Geo.IO.Wkt
 {
     public class WktWriter
     {
+        private readonly WktWriterSettings _settings;
+
+        public WktWriter()
+        {
+            _settings = new WktWriterSettings();
+        }
+
+        public WktWriter(WktWriterSettings settings)
+        {
+            _settings = settings;
+        }
+
         public string Write(IGeometry geometry)
         {
             var builder = new StringBuilder();
@@ -23,6 +35,16 @@ namespace Geo.IO.Wkt
                 return;
             }
 
+            if (_settings.LinearRing)
+            {
+                var linearRing = geometry as LinearRing;
+                if (linearRing != null)
+                {
+                    AppendLinearRing(builder, linearRing);
+                    return;
+                }
+            }
+
             var lineString = geometry as LineString;
             if (lineString != null)
             {
@@ -30,11 +52,14 @@ namespace Geo.IO.Wkt
                 return;
             }
 
-            var linearRing = geometry as LinearRing;
-            if (linearRing != null)
+            if (_settings.Triangle)
             {
-                AppendLinearRing(builder, linearRing);
-                return;
+                var triangle = geometry as Triangle;
+                if (triangle != null)
+                {
+                    AppendTriangle(builder, triangle);
+                    return;
+                }
             }
 
             var polygon = geometry as Polygon;
@@ -105,6 +130,14 @@ namespace Geo.IO.Wkt
             AppendLineStringInner(builder, lineString.Coordinates);
         }
 
+        private void AppendLinearRing(StringBuilder builder, LinearRing linearRing)
+        {
+            builder.Append("LINEARRING");
+            AppendDimensions(builder, linearRing);
+            builder.Append(" ");
+            AppendLineStringInner(builder, linearRing.Coordinates);
+        }
+
         private void AppendLineStringInner(StringBuilder builder, CoordinateSequence lineString)
         {
             if (lineString.IsEmpty)
@@ -118,17 +151,17 @@ namespace Geo.IO.Wkt
             builder.Append(")");
         }
 
-        private void AppendLinearRing(StringBuilder builder, LinearRing linearRing)
-        {
-            builder.Append("LINEARRING");
-            AppendDimensions(builder, linearRing);
-            builder.Append(" ");
-            AppendLineStringInner(builder, linearRing.Coordinates);
-        }
-
         private void AppendPolygon(StringBuilder builder, Polygon polygon)
         {
             builder.Append("POLYGON");
+            AppendDimensions(builder, polygon);
+            builder.Append(" ");
+            AppendPolygonInner(builder, polygon);
+        }
+
+        private void AppendTriangle(StringBuilder builder, Triangle polygon)
+        {
+            builder.Append("TRIANGLE");
             AppendDimensions(builder, polygon);
             builder.Append(" ");
             AppendPolygonInner(builder, polygon);
@@ -167,7 +200,7 @@ namespace Geo.IO.Wkt
             {
                 if (i > 0)
                     builder.Append(", ");
-                AppendPointInner(builder, multiPoint.Geometries[i]);
+                AppendPointInner(builder, (Point) multiPoint.Geometries[i]);
             }
             builder.Append(")");
         }
@@ -187,7 +220,7 @@ namespace Geo.IO.Wkt
             {
                 if (i > 0)
                     builder.Append(", ");
-                AppendLineStringInner(builder, multiLineString.Geometries[i].Coordinates);
+                AppendLineStringInner(builder, ((LineString)multiLineString.Geometries[i]).Coordinates);
             }
             builder.Append(")");
         }
@@ -207,7 +240,7 @@ namespace Geo.IO.Wkt
             {
                 if (i > 0)
                     builder.Append(", ");
-                AppendPolygonInner(builder, multiPolygon.Geometries[i]);
+                AppendPolygonInner(builder, (Polygon)multiPolygon.Geometries[i]);
             }
             builder.Append(")");
         }

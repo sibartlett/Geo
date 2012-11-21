@@ -1,47 +1,32 @@
 using System.Collections.Generic;
+using System.Linq;
+using Geo.Abstractions.Interfaces;
+using Geo.Linq;
+using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class MultiPolygon : GeometryCollectionBase<MultiPolygon, Polygon>
+    public class MultiPolygon : GeometryCollection, IMultiSurface
     {
-        public static readonly MultiPolygon Empty = new MultiPolygon();
+        public new static readonly MultiPolygon Empty = new MultiPolygon();
 
-        public MultiPolygon() : base(new Polygon[0])
+        public MultiPolygon()
         {
         }
 
-        public MultiPolygon(IEnumerable<Polygon> polygons) : base(polygons)
+        public MultiPolygon(IEnumerable<Polygon> polygons)
+            : base(polygons.Cast<IGeometry>())
         {
         }
 
-        public MultiPolygon(params Polygon[] polygons) : base(polygons)
+        public MultiPolygon(params Polygon[] polygons)
+            : base(polygons.Cast<IGeometry>())
         {
         }
 
-        #region Equality methods
-
-        public override bool Equals(object obj)
+        public Area GetArea()
         {
-            return base.Equals(obj);
+            return Geometries.Cast<Polygon>().Sum(x => x.GetArea());
         }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public static bool operator ==(MultiPolygon left, MultiPolygon right)
-        {
-            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
-                return true;
-            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
-        }
-
-        public static bool operator !=(MultiPolygon left, MultiPolygon right)
-        {
-            return !(left == right);
-        }
-
-        #endregion
     }
 }

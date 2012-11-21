@@ -43,15 +43,6 @@ namespace Geo.Tests.Raven
         }
 
         [Test]
-        public void LinearRingTests()
-        {
-            var linearRing = new LinearRing(new[] { new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 2), new Coordinate(0, 0) });
-            AssertThatIndexPropertyIsGenerated(linearRing);
-            AssertTrue(linearRing, SpatialRelation.Within, new Circle(0, 0, 600000));
-            AssertFalse(linearRing, SpatialRelation.Within, new Circle(0, 160, 600000));
-        }
-
-        [Test]
         public void PolygonTests()
         {
             var polygon = new Polygon(new LinearRing(new[] { new Coordinate(0, 0), new Coordinate(5, 0), new Coordinate(0, 5), new Coordinate(0, 0) }));

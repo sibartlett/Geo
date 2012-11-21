@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Geo.IO.Wkt;
-using Geo.Interfaces;
-using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LinearRing : SpatialObject<LinearRing>, IGeometry, IOgcGeometry
+    public class LinearRing : LineString
     {
-        public static readonly LinearRing Empty = new LinearRing();
+        public new static readonly LinearRing Empty = new LinearRing();
 
         public LinearRing() : this(new CoordinateSequence())
         {
@@ -23,101 +19,10 @@ namespace Geo.Geometries
         {
         }
 
-        public LinearRing(CoordinateSequence coordinates)
+        public LinearRing(CoordinateSequence coordinates) : base(coordinates)
         {
             if (coordinates != null && !coordinates.IsEmpty && !coordinates.IsClosed)
                 throw new ArgumentException("The Coordinate Sequence must be closed to form a Linear Ring");
-
-            Coordinates = coordinates ?? new CoordinateSequence();
         }
-
-        public CoordinateSequence Coordinates { get; private set; }
-
-        public Distance GetLength()
-        {
-            return GeoContext.Current.GeodeticCalculator.CalculateLength(Coordinates);
-        }
-
-        public Envelope GetBounds()
-        {
-            return IsEmpty ? null :
-                new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
-        }
-
-        public Area GetArea()
-        {
-            return GeoContext.Current.GeodeticCalculator.CalculateArea(Coordinates);
-        }
-
-        public bool IsEmpty
-        {
-            get { return Coordinates.IsEmpty; }
-        }
-
-        public bool HasElevation
-        {
-            get { return Coordinates.HasElevation; }
-        }
-
-        public bool HasM
-        {
-            get { return Coordinates.HasM; }
-        }
-
-        public bool IsClosed
-        {
-            get { return !IsEmpty; }
-        }
-
-        public string ToWktString()
-        {
-            return new WktWriter().Write(this);
-        }
-
-        string IRavenIndexable.GetIndexString()
-        {
-            return ToWktString();
-        }
-
-        public Coordinate this[int index]
-        {
-            get { return Coordinates[index]; }
-        }
-
-        #region Equality methods
-
-        public override bool Equals(LinearRing other, SpatialEqualityOptions options)
-        {
-            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates, options);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override int GetHashCode(SpatialEqualityOptions options)
-        {
-            return (Coordinates != null ? Coordinates.GetHashCode(options) : 0);
-        }
-
-        public static bool operator ==(LinearRing left, LinearRing right)
-        {
-            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
-                return true;
-            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
-        }
-
-        public static bool operator !=(LinearRing left, LinearRing right)
-        {
-            return !(left == right);
-        }
-
-        #endregion
     }
 }

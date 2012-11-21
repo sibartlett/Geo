@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Geo.Interfaces;
+using Geo.Abstractions;
+using Geo.Abstractions.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : SpatialObject<Circle>, IGeometry
+    public class Circle : SpatialObject, ISurface
     {
         public static readonly Circle Empty = new Circle();
 
@@ -91,23 +92,24 @@ namespace Geo.Geometries
                 throw new ArgumentOutOfRangeException("sides", "Must be greater than 2.");
 
             var angle = -360d / sides;
-            var coords = new List<Coordinate>();
+            var coordinates = new List<Coordinate>();
             Coordinate first = null;
             for (var i = 0; i < sides; i++)
             {
                 var coord = GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(Center, angle * i, Radius).Coordinate2;
                 if (i == 0)
                     first = coord;
-                coords.Add(coord);
+                coordinates.Add(coord);
             }
-            coords.Add(first);
-            return new Polygon(new LinearRing(coords));
+            coordinates.Add(first);
+            return new Polygon(new LinearRing(coordinates));
         }
 
         #region Equality methods
 
-        public override bool Equals(Circle other, SpatialEqualityOptions options)
+        public override bool Equals(object obj, SpatialEqualityOptions options)
         {
+            var other = obj as Circle;
             return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && Equals(Center, other.Center, options);
         }
 

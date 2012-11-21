@@ -1,5 +1,5 @@
-﻿using Geo.Interfaces;
-using Geo.Reference;
+﻿using Geo.Abstractions.Interfaces;
+using Geo.Geodesy;
 
 namespace Geo
 {

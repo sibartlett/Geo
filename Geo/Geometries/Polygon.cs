@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Geo.Abstractions;
+using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
-using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : SpatialObject<Polygon>, IGeometry, IOgcGeometry, IGeoJsonGeometry
+    public class Polygon : SpatialObject, ISurface, IOgcGeometry, IGeoJsonGeometry
     {
-        public static readonly Polygon Empty = new Polygon(new LinearRing());
+        public static readonly Polygon Empty = new Polygon();
 
         public Polygon() : this(null)
         {
@@ -18,7 +19,7 @@ namespace Geo.Geometries
         public Polygon(LinearRing shell, IEnumerable<LinearRing> holes)
         {
             Shell = shell;
-            Holes = new GeometrySequence<LinearRing>(holes ?? new LinearRing[0]);
+            Holes = new SpatialReadOnlyCollection<LinearRing>(holes ?? new LinearRing[0]);
         }
 
         public Polygon(LinearRing shell, params LinearRing[] holes) : this(shell, (IEnumerable<LinearRing>) holes)
@@ -26,26 +27,21 @@ namespace Geo.Geometries
         }
 
         public LinearRing Shell { get; private set; }
-        public GeometrySequence<LinearRing> Holes { get; private set; }
+        public SpatialReadOnlyCollection<LinearRing> Holes { get; private set; }
 
         public bool IsEmpty
         {
-            get { return Shell.IsEmpty; }
+            get { return Shell == null || Shell.IsEmpty; }
         }
 
         public bool HasElevation
         {
-            get { return Shell.HasElevation; }
+            get { return !IsEmpty && Shell.HasElevation; }
         }
 
         public bool HasM
         {
-            get { return Shell.HasM; }
-        }
-
-        public Distance GetLength()
-        {
-            return Shell.GetLength();
+            get { return !IsEmpty && Shell.HasM; }
         }
 
         string IRavenIndexable.GetIndexString()
@@ -58,6 +54,11 @@ namespace Geo.Geometries
             return new WktWriter().Write(this);
         }
 
+        public string ToWktString(WktWriterSettings settings)
+        {
+            return new WktWriter(settings).Write(this);
+        }
+
         public Envelope GetBounds()
         {
             return Shell.GetBounds();
@@ -65,7 +66,9 @@ namespace Geo.Geometries
 
         public Area GetArea()
         {
-            return Shell.GetArea() -  new Area(Holes.Sum(x => x.GetArea().SiValue));
+            var calculator = GeoContext.Current.GeodeticCalculator;
+            var area = calculator.CalculateArea(Shell.Coordinates);
+            return Holes.Aggregate(area, (current, hole) => current - calculator.CalculateArea(hole.Coordinates));
         }
 
         public string ToGeoJson()
@@ -75,17 +78,6 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public override bool Equals(Polygon other, SpatialEqualityOptions options)
-        {
-            if (ReferenceEquals(null, other))
-                return false;
-
-            if (IsEmpty && other.IsEmpty)
-                return true;
-
-            return Shell.Equals(other.Shell, options) && Equals(Holes, other.Holes, options);
-        }
-
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -94,6 +86,23 @@ namespace Geo.Geometries
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override bool Equals(object obj, SpatialEqualityOptions options)
+        {
+            var other = obj as Polygon;
+
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (IsEmpty && other.IsEmpty)
+                return true;
+
+            return Shell.Equals(other.Shell, options)
+                && Holes.Count == other.Holes.Count
+                && !Holes
+                .Where((t, i) => !t.Equals(other.Holes[i], options))
+                .Any();
         }
 
         public override int GetHashCode(SpatialEqualityOptions options)

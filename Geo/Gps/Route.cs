@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Gps.Metadata;
-using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Gps

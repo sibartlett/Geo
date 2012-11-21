@@ -1,25 +1,98 @@
 ﻿using System.Collections.Generic;
-using Geo.Interfaces;
+using System.Linq;
+using Geo.Abstractions;
+using Geo.Abstractions.Interfaces;
+using Geo.IO.GeoJson;
+using Geo.IO.Wkt;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : GeometryCollectionBase<GeometryCollection, IGeometry>
+    public class GeometryCollection : SpatialObject, IGeometry, IOgcGeometry, IGeoJsonGeometry
     {
         public static readonly GeometryCollection Empty = new GeometryCollection();
 
-        public GeometryCollection() : base(new IGeometry[0])
+        public GeometryCollection()
+        {
+            Geometries = new SpatialReadOnlyCollection<IGeometry>(new IGeometry[0]);
+        }
+
+        public GeometryCollection(IEnumerable<IGeometry> geometries)
+        {
+            var items = (geometries ?? new IGeometry[0]).ToList();
+            Geometries = new SpatialReadOnlyCollection<IGeometry>(items);
+        }
+
+        public GeometryCollection(params IGeometry[] geometries)
+            : this((IEnumerable<IGeometry>)geometries)
         {
         }
 
-        public GeometryCollection(IEnumerable<IGeometry> geometries) : base(geometries)
+        public SpatialReadOnlyCollection<IGeometry> Geometries { get; private set; }
+
+        public Envelope GetBounds()
         {
+            Envelope envelope = null;
+            foreach (var geometry in Geometries)
+            {
+                if (envelope == null)
+                    envelope = geometry.GetBounds();
+                else
+                    envelope.Combine(geometry.GetBounds());
+            }
+            return envelope;
         }
 
-        public GeometryCollection(params IGeometry[] geometries) : base(geometries)
+        public bool IsEmpty
         {
+            get { return Geometries.Count == 0; }
+        }
+
+        public bool HasElevation
+        {
+            get { return Geometries.Any(x => x.HasElevation); }
+        }
+
+        public bool HasM
+        {
+            get { return Geometries.Any(x => x.HasM); }
+        }
+
+        public string ToGeoJson()
+        {
+            return GeoJson.Serialize(this);
+        }
+
+        public string ToWktString()
+        {
+            return new WktWriter().Write(this);
+        }
+
+        public string ToWktString(WktWriterSettings settings)
+        {
+            return new WktWriter(settings).Write(this);
+        }
+
+        string IRavenIndexable.GetIndexString()
+        {
+            return ToWktString();
         }
 
         #region Equality methods
+
+        public override bool Equals(object obj, SpatialEqualityOptions options)
+        {
+            var other = obj as GeometryCollection;
+
+            if (ReferenceEquals(null, other))
+                return false;
+
+            if (Geometries.Count != other.Geometries.Count)
+                return false;
+
+            return !Geometries
+                .Where((t, i) => !t.Equals(other.Geometries[i], options))
+                .Any();
+        }
 
         public override bool Equals(object obj)
         {
@@ -31,16 +104,11 @@ namespace Geo.Geometries
             return base.GetHashCode();
         }
 
-        public static bool operator ==(GeometryCollection left, GeometryCollection right)
+        public override int GetHashCode(SpatialEqualityOptions options)
         {
-            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
-                return true;
-            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
-        }
-
-        public static bool operator !=(GeometryCollection left, GeometryCollection right)
-        {
-            return !(left == right);
+            return Geometries
+                .Select(x => x.GetHashCode(options))
+                .Aggregate(0, (current, result) => (current * 397) ^ result);
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Geo.Interfaces;
+using Geo.Abstractions.Interfaces;
 
 namespace Geo.IO.GeoJson
 {

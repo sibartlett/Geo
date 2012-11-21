@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Geo.Interfaces;
+using Geo.Abstractions.Interfaces;
 
 namespace Geo.IO.GeoJson
 {

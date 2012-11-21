@@ -1,6 +1,6 @@
 ﻿using System;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
-using Geo.Interfaces;
 
 namespace Geo.Gps
 {

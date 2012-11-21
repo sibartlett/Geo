@@ -1,5 +1,5 @@
 ﻿using System;
-using Geo.Interfaces;
+using Geo.Abstractions.Interfaces;
 
 namespace Geo.Measure
 {

@@ -1,4 +1,4 @@
-﻿using Geo.Interfaces;
+﻿using Geo.Abstractions.Interfaces;
 using Geo.Measure;
 using Raven.Abstractions.Indexing;
 

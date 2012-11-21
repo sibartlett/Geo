@@ -1,47 +1,32 @@
 using System.Collections.Generic;
+using System.Linq;
+using Geo.Abstractions.Interfaces;
+using Geo.Linq;
+using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class MultiLineString : GeometryCollectionBase<MultiLineString, LineString>
+    public class MultiLineString : GeometryCollection, IMultiCurve
     {
-        public static readonly MultiLineString Empty = new MultiLineString();
+        public new static readonly MultiLineString Empty = new MultiLineString();
 
-        public MultiLineString() : base(new LineString[0])
+        public MultiLineString()
         {
         }
 
-        public MultiLineString(IEnumerable<LineString> lineStrings) : base(lineStrings)
+        public MultiLineString(IEnumerable<LineString> lineStrings) 
+            : base(lineStrings.Cast<IGeometry>())
         {
         }
 
-        public MultiLineString(params LineString[] lineStrings) : base(lineStrings)
+        public MultiLineString(params LineString[] lineStrings)
+            : base(lineStrings.Cast<IGeometry>())
         {
         }
 
-        #region Equality methods
-
-        public override bool Equals(object obj)
+        public Distance GetLength()
         {
-            return base.Equals(obj);
+            return Geometries.Cast<LineString>().Sum(x => x.GetLength());
         }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public static bool operator ==(MultiLineString left, MultiLineString right)
-        {
-            if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
-                return true;
-            return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
-        }
-
-        public static bool operator !=(MultiLineString left, MultiLineString right)
-        {
-            return !(left == right);
-        }
-
-        #endregion
     }
 }

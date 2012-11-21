@@ -1,12 +1,12 @@
 ﻿using System.Globalization;
+using Geo.Abstractions;
+using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
-using Geo.Interfaces;
-using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Point : SpatialObject<Point>, IGeometry, IPosition, IGeoJsonGeometry, IOgcGeometry
+    public class Point : SpatialObject, IGeometry, IPosition, IGeoJsonGeometry, IOgcGeometry
     {
         public static readonly Point Empty = new Point();
 
@@ -46,6 +46,11 @@ namespace Geo.Geometries
             return new WktWriter().Write(this);
         }
 
+        public string ToWktString(WktWriterSettings settings)
+        {
+            return new WktWriter(settings).Write(this);
+        }
+
         string IRavenIndexable.GetIndexString()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Coordinate.Longitude, Coordinate.Latitude);
@@ -76,22 +81,7 @@ namespace Geo.Geometries
             return Coordinate.GetBounds();
         }
 
-        public Area GetArea()
-        {
-            return new Area(0);
-        }
-
-        public Distance GetLength()
-        {
-            return new Distance(0);
-        }
-
         #region Equality methods
-
-        public override bool Equals(Point other, SpatialEqualityOptions options)
-        {
-            return !ReferenceEquals(null, other) && Equals(Coordinate, other.Coordinate, options);
-        }
 
         public override bool Equals(object obj)
         {
@@ -101,6 +91,12 @@ namespace Geo.Geometries
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override bool Equals(object obj, SpatialEqualityOptions options)
+        {
+            var other = obj as Point;
+            return !ReferenceEquals(null, other) && Equals(Coordinate, other.Coordinate, options);
         }
 
         public override int GetHashCode(SpatialEqualityOptions options)

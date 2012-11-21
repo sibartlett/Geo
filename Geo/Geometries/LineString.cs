@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Geo.Abstractions;
+using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
-using Geo.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : SpatialObject<LineString>, IGeometry, IOgcGeometry, IGeoJsonGeometry
+    public class LineString : SpatialObject, ICurve, IOgcGeometry, IGeoJsonGeometry
     {
         public static readonly LineString Empty = new LineString();
 
@@ -59,11 +60,6 @@ namespace Geo.Geometries
             }
         }
 
-        public Area GetArea()
-        {
-            return GeoContext.Current.GeodeticCalculator.CalculateArea(Coordinates);
-        }
-
         public Distance GetLength()
         {
             return GeoContext.Current.GeodeticCalculator.CalculateLength(Coordinates);
@@ -72,6 +68,11 @@ namespace Geo.Geometries
         public string ToWktString()
         {
             return new WktWriter().Write(this);
+        }
+
+        public string ToWktString(WktWriterSettings settings)
+        {
+            return new WktWriter(settings).Write(this);
         }
 
         string IRavenIndexable.GetIndexString()
@@ -91,11 +92,6 @@ namespace Geo.Geometries
 
         #region Equality methods
 
-        public override bool Equals(LineString other, SpatialEqualityOptions options)
-        {
-            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates, options);
-        }
-
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -104,6 +100,12 @@ namespace Geo.Geometries
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override bool Equals(object obj, SpatialEqualityOptions options)
+        {
+            var other = obj as LineString;
+            return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates, options);
         }
 
         public override int GetHashCode(SpatialEqualityOptions options)
