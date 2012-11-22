@@ -11,29 +11,41 @@ Geo is a spatial library that:
 
 #### NuGet Packages
 
-__Geo__ - _[NuGet](https://nuget.org/packages/Geo)_
+__Geo__ - _[NuGet](https://nuget.org/packages/Geo) (.NET 4.0+, Windows 8 Store applications, Windows Phone 7.0+, Silverlight 4 & 5)_
 
-* Features:
-	* Provides geographic data types (Point, LineString, Polygon, Circle, etc.)
-	* Performs geodesic calculations, such as calculating great circle lines and rhumb lines
-	* Serialize and deserialize GeoJSON
-	* GPS File data types (GpsData, Route, Track, TrackSegment)
-	* Deserialize a GPS file to a GpsData object. GPS files formats supported:
-		* GPX
-		* NMEA
-		* IGC
-		* Garmin Flightplan
-		* SkyDemon flightplan
-		* PocketFMS flightplan
-	* Serialize a GpsData object to GPX format
-* .NET 4.0+, Windows 8 Store applications, Windows Phone 7.0+, Silverlight 4 & 5
+Features include:
+* Geographic geometry types:
+	* Point
+	* LineString
+	* Polygon, Triangle
+	* Circle
+	* GeometryCollection, MultiPoint, MultiLineString, and MultiPolygon
+* GPS types:
+	* GPSData
+	* Route
+	* Track
+* Serialize and deserialize geometries:
+	* Well-Known text
+	* GeoJSON
+	* Spatial4n/Spatial4j shape strings
+* Serialize and deserialize GPS files:
+	* GPX
+	* NMEA (deserialize only)
+	* IGC (deserialize only)
+	* Garmin Flightplan (deserialize only)
+	* SkyDemon flightplan (deserialize only)
+	* PocketFMS flightplan (deserialize only)
+* Geographic calculations
+	* Distance
+	* Area
+	* Greate circle lines
+	* Rhumb lines
 
-__Geo.Raven__ - _[NuGet](https://nuget.org/packages/Geo.Raven)_
+__Geo.Raven__ - _[NuGet](https://nuget.org/packages/Geo.Raven) (.NET 4.0+, Silverlight 4 & 5)_
 
-* Features:
-	* Define RavenDB indexes against Geo geometries
-	* Use Geo geometries in RavenDB spatial queries
-* .NET 4.0+, Silverlight 4 & 5
+Features include:
+* Define RavenDB indexes against Geo geometries
+* Use Geo geometries in RavenDB spatial queries
 
 #### Useful Information
 
