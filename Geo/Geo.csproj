@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Abstractions\Interfaces\IRavenIndexable.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Geodesy\GeodeticCalculations.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />
     <Compile Include="IO\Wkt\WktWriterSettings.cs" />
