@@ -1,6 +1,6 @@
 ﻿namespace Geo.Abstractions.Interfaces
 {
-    public interface IGeometry : IRavenIndexable, ISpatialEquatable
+    public interface IGeometry : IRavenIndexable, ISpatial4nShape, ISpatialEquatable
     {
         Envelope GetBounds();
 

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Geo.Abstractions.Interfaces;
+using Geo.IO.Spatial4n;
 using Geo.Measure;
 
 namespace Geo
 {
-    public class Envelope : IRavenIndexable, IHasArea, IHasLength, IEquatable<Envelope>
+    public class Envelope : ISpatial4nShape, IHasArea, IHasLength, IEquatable<Envelope>
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -45,9 +46,9 @@ namespace Geo
             return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
         }
 
-        string IRavenIndexable.GetIndexString()
+        string ISpatial4nShape.ToSpatial4nString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6} {2:F6} {3:F6}", MinLon, MinLat, MaxLon, MaxLat);
+            return new Spatial4nWriter().Write(this);
         }
 
         public bool Intersects(Envelope envelope)

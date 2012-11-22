@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
+using Geo.IO.Spatial4n;
 using Geo.Measure;
 
 namespace Geo.Geometries
@@ -81,9 +81,14 @@ namespace Geo.Geometries
             get { return Center != null && Center.HasM; }
         }
 
-        string IRavenIndexable.GetIndexString()
+        string ISpatial4nShape.ToSpatial4nString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "CIRCLE({0:F6} {1:F6} d={2:F6})", Center.Longitude, Center.Latitude, Radius.ConvertTo(DistanceUnit.Km));
+            return new Spatial4nWriter().Write(this);
+        }
+
+        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
+        {
+            return this;
         }
 
         public Polygon ToPolygon(int sides = 36)

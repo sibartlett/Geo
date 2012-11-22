@@ -35,7 +35,7 @@ namespace Geo.Raven.Json
         {
             var contract = base.CreateObjectContract(objectType);
 
-            if (typeof(IRavenIndexable).IsAssignableFrom(objectType))
+            if (typeof(ISpatial4nShape).IsAssignableFrom(objectType))
             {
                 contract.Properties.Add(new JsonProperty
                 {
@@ -44,7 +44,7 @@ namespace Geo.Raven.Json
                     PropertyName = SpatialField.Name,
                     PropertyType = typeof(string),
                     Converter = ResolveContractConverter(typeof(string)),
-                    ValueProvider = new GeoValueProvider<IRavenIndexable, string>(x => x.GetIndexString())
+                    ValueProvider = new RavenIndexStringProvider()
                 });
             }
 

@@ -2,6 +2,6 @@
 {
     public interface IRavenIndexable
     {
-        string GetIndexString();
+        ISpatial4nShape GetSpatial4nShape();
     }
 }

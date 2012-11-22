@@ -1,7 +1,7 @@
-﻿using System.Globalization;
-using Geo.Abstractions;
+﻿using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
+using Geo.IO.Spatial4n;
 using Geo.IO.Wkt;
 
 namespace Geo.Geometries
@@ -51,9 +51,14 @@ namespace Geo.Geometries
             return new WktWriter(settings).Write(this);
         }
 
-        string IRavenIndexable.GetIndexString()
+        string ISpatial4nShape.ToSpatial4nString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", Coordinate.Longitude, Coordinate.Latitude);
+            return new Spatial4nWriter().Write(this);
+        }
+
+        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
+        {
+            return this;
         }
 
         public string ToGeoJson()

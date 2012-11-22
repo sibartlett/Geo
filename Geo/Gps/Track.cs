@@ -67,9 +67,9 @@ namespace Geo.Gps
                 segment.Quantize(seconds);
         }
 
-        string IRavenIndexable.GetIndexString()
+        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
         {
-            return ToLineString().ToWktString();
+            return ToLineString();
         }
 
         public Distance GetLength()

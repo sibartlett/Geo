@@ -78,8 +78,11 @@
     <Compile Include="..\Geo.Raven\Json\GeoContractResolver.cs">
       <Link>GeoContractResolver.cs</Link>
     </Compile>
-    <Compile Include="..\Geo.Raven\Json\GeoValueProvider.cs">
-      <Link>GeoValueProvider.cs</Link>
+    <Compile Include="..\Geo.Raven\Json\RavenIndexStringProvider.cs">
+      <Link>RavenIndexStringProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Geo.Raven\Json\RavenIndexStringWriter.cs">
+      <Link>RavenIndexStringWriter.cs</Link>
     </Compile>
     <Compile Include="..\Geo.Raven\Query\AbstractWhereClause.cs">
       <Link>AbstractWhereClause.cs</Link>

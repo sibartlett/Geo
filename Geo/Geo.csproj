@@ -48,7 +48,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\Interfaces\IRavenIndexable.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
+    <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />
     <Compile Include="IO\Wkt\WktWriterSettings.cs" />
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Linq\Spatial2DComparer.cs" />
@@ -83,7 +86,7 @@
     <Compile Include="Abstractions\Interfaces\IGeoJsonObject.cs" />
     <Compile Include="Abstractions\Interfaces\IGeometry.cs" />
     <Compile Include="Abstractions\Interfaces\IPosition.cs" />
-    <Compile Include="Abstractions\Interfaces\IRavenIndexable.cs" />
+    <Compile Include="Abstractions\Interfaces\ISpatial4nShape.cs" />
     <Compile Include="Abstractions\Interfaces\IOgcGeometry.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="Geometries\LineString.cs" />

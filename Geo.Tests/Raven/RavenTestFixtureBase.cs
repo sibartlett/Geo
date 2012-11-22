@@ -3,6 +3,7 @@ using System.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Raven;
 using Geo.Raven.Indexes;
+using Geo.Raven.Json;
 using NUnit.Framework;
 using Raven.Abstractions.Indexing;
 using Raven.Client;
@@ -14,6 +15,7 @@ namespace Geo.Tests.Raven
 {
     public abstract class RavenTestFixtureBase : IDisposable
     {
+        private RavenIndexStringWriter _writer = new RavenIndexStringWriter();
         public IDocumentStore Store { get; private set; }
 
         public void InitRaven(params AbstractIndexCreationTask[] indexes)
@@ -74,6 +76,7 @@ namespace Geo.Tests.Raven
             {
                 var json = session.Load<RavenJObject>(doc.Id);
                 var result = json.Value<RavenJObject>("Geometry").ContainsKey("__spatial");
+                Console.WriteLine(json.Value<RavenJObject>("Geometry").Value<string>("__spatial"));
                 Assert.That(result, Is.True);
             }
         }
@@ -115,7 +118,7 @@ namespace Geo.Tests.Raven
                     relationString = relationString.Substring(0, relationString.Length - 1);
                 }
 
-                var msg = string.Format("Geometry {0}{1} {2} {3}", s ? "does" : "is", result ? "" : " not", relationString, geometry2.GetIndexString());
+                var msg = string.Format("Geometry {0}{1} {2} {3}", s ? "does" : "is", result ? "" : " not", relationString, _writer.Write(geometry2.GetSpatial4nShape()));
 
                 Assert.That(result, Is.EqualTo(expected), msg);
             }

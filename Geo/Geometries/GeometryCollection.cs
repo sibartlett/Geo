@@ -3,6 +3,7 @@ using System.Linq;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
+using Geo.IO.Spatial4n;
 using Geo.IO.Wkt;
 
 namespace Geo.Geometries
@@ -72,9 +73,14 @@ namespace Geo.Geometries
             return new WktWriter(settings).Write(this);
         }
 
-        string IRavenIndexable.GetIndexString()
+        string ISpatial4nShape.ToSpatial4nString()
         {
-            return ToWktString();
+            return new Spatial4nWriter().Write(this);
+        }
+
+        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
+        {
+            return this;
         }
 
         #region Equality methods
