@@ -4,13 +4,13 @@ using System.IO;
 
 namespace Geo.IO.Wkt
 {
-	internal class WktTokenizer
+    internal class WktTokenizer
     {
         public WktTokenQueue Tokenize(string text)
         {
             using (var reader = new StringReader(text))
-			    return Tokenize(reader);
-		}
+                return Tokenize(reader);
+        }
 
         public WktTokenQueue Tokenize(TextReader reader)
         {
@@ -26,7 +26,7 @@ namespace Geo.IO.Wkt
                 nextCh = reader.Peek();
                 var nextType = WktTokenType.None;
                 if (nextCh != -1)
-                    nextType = GetTokenType((char) nextCh);
+                    nextType = GetTokenType((char)nextCh);
 
                 if (type != WktTokenType.Whitespace)
                 {
@@ -43,23 +43,23 @@ namespace Geo.IO.Wkt
                 }
             }
             return queue;
-		}
+        }
 
-		private static WktTokenType GetTokenType(char ch)
+        private static WktTokenType GetTokenType(char ch)
         {
             if (char.IsWhiteSpace(ch))
                 return WktTokenType.Whitespace;
-		    if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z')
+            if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z')
                 return WktTokenType.String;
             if (ch == '-' || ch == '.' || ch >= '0' && ch <= '9')
                 return WktTokenType.Number;
-		    if (ch == ',')
-		        return WktTokenType.Comma;
-		    if (ch == '(')
-		        return WktTokenType.LeftParenthesis;
-		    if (ch == ')')
-		        return WktTokenType.RightParenthesis;
-		    throw new SerializationException("Invalid WKT string.");
-		}
-	}
+            if (ch == ',')
+                return WktTokenType.Comma;
+            if (ch == '(')
+                return WktTokenType.LeftParenthesis;
+            if (ch == ')')
+                return WktTokenType.RightParenthesis;
+            throw new SerializationException("Invalid WKT string.");
+        }
+    }
 }

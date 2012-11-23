@@ -19,8 +19,8 @@ namespace Geo.IO.Wkt
                 throw new ArgumentNullException("wkt");
 
             var tokens = new WktTokenQueue(_wktTokenizer.Tokenize(wkt));
-			return ParseGeometry(tokens);
-		}
+            return ParseGeometry(tokens);
+        }
 
         public IOgcGeometry Read(Stream stream)
         {
@@ -32,71 +32,71 @@ namespace Geo.IO.Wkt
                 var tokens = new WktTokenQueue(_wktTokenizer.Tokenize(reader));
                 return ParseGeometry(tokens);
             }
-		}
+        }
 
-		private static IOgcGeometry ParseGeometry(WktTokenQueue tokens)
+        private IOgcGeometry ParseGeometry(WktTokenQueue tokens)
         {
             if (tokens.Count == 0)
                 return null;
 
             var token = tokens.Peek();
 
-			if (token.Type == WktTokenType.String)
-			{
-			    var value = token.Value.ToUpperInvariant();
+            if (token.Type == WktTokenType.String)
+            {
+                var value = token.Value.ToUpperInvariant();
                 if (value == "POINT")
-			        return ParsePoint(tokens);
+                    return ParsePoint(tokens);
                 if (value == "LINESTRING")
-			        return ParseLineString(tokens);
+                    return ParseLineString(tokens);
                 if (value == "LINEARRING")
-			        return ParseLinearRing(tokens);
+                    return ParseLinearRing(tokens);
                 if (value == "POLYGON")
-			        return ParsePolygon(tokens);
+                    return ParsePolygon(tokens);
                 if (value == "TRIANGLE")
-			        return ParseTriangle(tokens);
+                    return ParseTriangle(tokens);
                 if (value == "MULTIPOINT")
-			        return ParseMultiPoint(tokens);
+                    return ParseMultiPoint(tokens);
                 if (value == "MULTILINESTRING")
-			        return ParseMultiLineString(tokens);
+                    return ParseMultiLineString(tokens);
                 if (value == "MULTIPOLYGON")
-			        return ParseMultiPolygon(tokens);
+                    return ParseMultiPolygon(tokens);
                 if (value == "GEOMETRYCOLLECTION")
-			        return ParseGeometryCollection(tokens);
+                    return ParseGeometryCollection(tokens);
             }
             throw new SerializationException("WKT type '" + token.Value + "' not supported.");
-		}
+        }
 
-		private static Point ParsePoint(WktTokenQueue tokens)
+        private Point ParsePoint(WktTokenQueue tokens)
         {
-			tokens.Dequeue("POINT");
-		    var dimensions = ParseDimensions(tokens);
+            tokens.Dequeue("POINT");
+            var dimensions = ParseDimensions(tokens);
 
             if (tokens.NextTokenIs("EMPTY"))
             {
-				tokens.Dequeue();
-				return Point.Empty;
-			}
+                tokens.Dequeue();
+                return Point.Empty;
+            }
 
-			tokens.Dequeue(WktTokenType.LeftParenthesis);
+            tokens.Dequeue(WktTokenType.LeftParenthesis);
             var coordinate = ParseCoordinate(tokens, dimensions);
-			tokens.Dequeue(WktTokenType.RightParenthesis);
-			return new Point(coordinate);
-		}
-
-		private static LineString ParseLineString(WktTokenQueue tokens)
-        {
-			tokens.Dequeue("LINESTRING");
-		    var dimensions = ParseDimensions(tokens);
-			return ParseLineStringInner(tokens, dimensions);
-		}
-
-		private static LineString ParseLineStringInner(WktTokenQueue tokens, WktDimensions dimensions)
-        {
-			var coords = ParseCoordinateSequence(tokens, dimensions);
-		    return coords == null ? LineString.Empty : new LineString(coords);
+            tokens.Dequeue(WktTokenType.RightParenthesis);
+            return new Point(coordinate);
         }
 
-        private static LineString ParseLinearRing(WktTokenQueue tokens)
+        private LineString ParseLineString(WktTokenQueue tokens)
+        {
+            tokens.Dequeue("LINESTRING");
+            var dimensions = ParseDimensions(tokens);
+            return ParseLineStringInner(tokens, dimensions);
+        }
+
+        private LineString ParseLineStringInner(WktTokenQueue tokens, WktDimensions dimensions)
+        {
+            var coords = ParseCoordinateSequence(tokens, dimensions);
+            return coords == null ? LineString.Empty : new LineString(coords);
+        }
+
+        private LineString ParseLinearRing(WktTokenQueue tokens)
         {
             tokens.Dequeue("LINEARRING");
             var dimensions = ParseDimensions(tokens);
@@ -104,35 +104,35 @@ namespace Geo.IO.Wkt
             return coords == null ? LinearRing.Empty : new LinearRing(coords);
         }
 
-		private static Polygon ParsePolygon(WktTokenQueue tokens)
+        private Polygon ParsePolygon(WktTokenQueue tokens)
         {
-			tokens.Dequeue("POLYGON");
-		    var dimensions = ParseDimensions(tokens);
-			return ParsePolygonInner(tokens, dimensions);
-		}
+            tokens.Dequeue("POLYGON");
+            var dimensions = ParseDimensions(tokens);
+            return ParsePolygonInner(tokens, dimensions);
+        }
 
-		private static Polygon ParseTriangle(WktTokenQueue tokens)
+        private Polygon ParseTriangle(WktTokenQueue tokens)
         {
-			tokens.Dequeue("TRIANGLE");
-		    var dimensions = ParseDimensions(tokens);
-			return ParsePolygonInner(tokens, dimensions);
-		}
+            tokens.Dequeue("TRIANGLE");
+            var dimensions = ParseDimensions(tokens);
+            return ParsePolygonInner(tokens, dimensions);
+        }
 
-		private static Polygon ParsePolygonInner(WktTokenQueue tokens, WktDimensions dimensions) 
+        private Polygon ParsePolygonInner(WktTokenQueue tokens, WktDimensions dimensions)
         {
-			if (tokens.NextTokenIs("EMPTY"))
+            if (tokens.NextTokenIs("EMPTY"))
             {
-				tokens.Dequeue();
-				return Polygon.Empty;
-			}
+                tokens.Dequeue();
+                return Polygon.Empty;
+            }
 
-			tokens.Dequeue(WktTokenType.LeftParenthesis);
+            tokens.Dequeue(WktTokenType.LeftParenthesis);
             var linestrings = ParseLineStrings(tokens, dimensions);
             tokens.Dequeue(WktTokenType.RightParenthesis);
             return new Polygon(new LinearRing(linestrings.First().Coordinates), linestrings.Skip(1).Select(x => new LinearRing(x.Coordinates)));
-		}
+        }
 
-        private static List<LineString> ParseLineStrings(WktTokenQueue tokens, WktDimensions dimensions)
+        private List<LineString> ParseLineStrings(WktTokenQueue tokens, WktDimensions dimensions)
         {
             var lineStrings = new List<LineString> { ParseLineStringInner(tokens, dimensions) };
 
@@ -145,7 +145,7 @@ namespace Geo.IO.Wkt
             return lineStrings;
         }
 
-        private static MultiPoint ParseMultiPoint(WktTokenQueue tokens)
+        private MultiPoint ParseMultiPoint(WktTokenQueue tokens)
         {
             tokens.Dequeue("MULTIPOINT");
             var dimensions = ParseDimensions(tokens);
@@ -171,7 +171,7 @@ namespace Geo.IO.Wkt
             return new MultiPoint(points);
         }
 
-        private static Point ParseMultiPointCoordinate(WktTokenQueue tokens, WktDimensions dimensions)
+        private Point ParseMultiPointCoordinate(WktTokenQueue tokens, WktDimensions dimensions)
         {
             if (tokens.NextTokenIs("EMPTY"))
             {
@@ -192,76 +192,76 @@ namespace Geo.IO.Wkt
             return new Point(coordinate);
         }
 
-		private static MultiLineString ParseMultiLineString(WktTokenQueue tokens)
+        private MultiLineString ParseMultiLineString(WktTokenQueue tokens)
         {
-			tokens.Dequeue("multilinestring");
-		    var dimensions = ParseDimensions(tokens);
+            tokens.Dequeue("multilinestring");
+            var dimensions = ParseDimensions(tokens);
 
             if (tokens.NextTokenIs("EMPTY"))
             {
-				tokens.Dequeue();
-				return MultiLineString.Empty;
-			}
+                tokens.Dequeue();
+                return MultiLineString.Empty;
+            }
 
-			tokens.Dequeue(WktTokenType.LeftParenthesis);
-		    var lineStrings = ParseLineStrings(tokens, dimensions);
-			tokens.Dequeue(WktTokenType.RightParenthesis);
+            tokens.Dequeue(WktTokenType.LeftParenthesis);
+            var lineStrings = ParseLineStrings(tokens, dimensions);
+            tokens.Dequeue(WktTokenType.RightParenthesis);
 
-			return new MultiLineString(lineStrings);
-		}
+            return new MultiLineString(lineStrings);
+        }
 
-		private static MultiPolygon ParseMultiPolygon(WktTokenQueue tokens)
+        private MultiPolygon ParseMultiPolygon(WktTokenQueue tokens)
         {
-			tokens.Dequeue("MULTIPOLYGON");
-		    var dimensions = ParseDimensions(tokens);
+            tokens.Dequeue("MULTIPOLYGON");
+            var dimensions = ParseDimensions(tokens);
 
             if (tokens.NextTokenIs("EMPTY"))
             {
-				tokens.Dequeue();
-				return MultiPolygon.Empty;
-			}
+                tokens.Dequeue();
+                return MultiPolygon.Empty;
+            }
 
             tokens.Dequeue(WktTokenType.LeftParenthesis);
             var polygons = new List<Polygon> { ParsePolygonInner(tokens, dimensions) };
-		    while (tokens.NextTokenIs(WktTokenType.Comma))
+            while (tokens.NextTokenIs(WktTokenType.Comma))
             {
                 tokens.Dequeue();
                 polygons.Add(ParsePolygonInner(tokens, dimensions));
             }
-			tokens.Dequeue(WktTokenType.RightParenthesis);
+            tokens.Dequeue(WktTokenType.RightParenthesis);
 
-			return new MultiPolygon(polygons);
-		}
+            return new MultiPolygon(polygons);
+        }
 
-		private static GeometryCollection ParseGeometryCollection(WktTokenQueue tokens)
+        private GeometryCollection ParseGeometryCollection(WktTokenQueue tokens)
         {
-			tokens.Dequeue("GEOMETRYCOLLECTION");
+            tokens.Dequeue("GEOMETRYCOLLECTION");
 
-		    ParseDimensions(tokens);
+            ParseDimensions(tokens);
 
             if (tokens.NextTokenIs("EMPTY"))
             {
                 tokens.Dequeue();
-				return GeometryCollection.Empty;
-			}
+                return GeometryCollection.Empty;
+            }
 
-			tokens.Dequeue(WktTokenType.LeftParenthesis);
+            tokens.Dequeue(WktTokenType.LeftParenthesis);
 
-		    var geometries = new List<IGeometry>();
+            var geometries = new List<IGeometry>();
             geometries.Add(ParseGeometry(tokens));
 
-			while (tokens.NextTokenIs(WktTokenType.Comma))
+            while (tokens.NextTokenIs(WktTokenType.Comma))
             {
                 tokens.Dequeue();
                 geometries.Add(ParseGeometry(tokens));
-			}
+            }
 
-		    tokens.Dequeue(WktTokenType.RightParenthesis);
+            tokens.Dequeue(WktTokenType.RightParenthesis);
 
             return new GeometryCollection(geometries);
         }
 
-        private static Coordinate ParseCoordinate(WktTokenQueue tokens, WktDimensions dimensions)
+        private Coordinate ParseCoordinate(WktTokenQueue tokens, WktDimensions dimensions)
         {
             var token = tokens.Dequeue(WktTokenType.Number);
             var x = double.Parse(token.Value, CultureInfo.InvariantCulture);
@@ -292,7 +292,7 @@ namespace Geo.IO.Wkt
             return new Coordinate(y, x, z, m);
         }
 
-        private static CoordinateSequence ParseCoordinateSequence(WktTokenQueue tokens, WktDimensions dimensions)
+        private CoordinateSequence ParseCoordinateSequence(WktTokenQueue tokens, WktDimensions dimensions)
         {
             if (tokens.NextTokenIs("EMPTY"))
             {
@@ -314,7 +314,7 @@ namespace Geo.IO.Wkt
             return new CoordinateSequence(coordinates);
         }
 
-        private static WktDimensions ParseDimensions(WktTokenQueue tokens)
+        private WktDimensions ParseDimensions(WktTokenQueue tokens)
         {
             var token = tokens.Peek();
             if (token.Type == WktTokenType.String)
@@ -338,5 +338,5 @@ namespace Geo.IO.Wkt
             }
             return WktDimensions.XY;
         }
-	}
+    }
 }

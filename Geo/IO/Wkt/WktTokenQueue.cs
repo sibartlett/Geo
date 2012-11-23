@@ -4,15 +4,15 @@ using System.Runtime.Serialization;
 
 namespace Geo.IO.Wkt
 {
-	internal class WktTokenQueue : Queue<WktToken>
+    internal class WktTokenQueue : Queue<WktToken>
     {
-		public WktTokenQueue()
+        public WktTokenQueue()
         {
-		}
+        }
 
-		public WktTokenQueue(IEnumerable<WktToken> tokens) : base(tokens)
+        public WktTokenQueue(IEnumerable<WktToken> tokens) : base(tokens)
         {
-		}
+        }
 
         public bool NextTokenIs(WktTokenType type)
         {
@@ -45,5 +45,5 @@ namespace Geo.IO.Wkt
                 throw new SerializationException("Invalid WKT string.");
             return token;
         }
-	}
+    }
 }

@@ -98,7 +98,7 @@ namespace Geo.IO.Wkt
             }
 
             throw new SerializationException("Geometry of type '" + geometry.GetType().Name + "' is not supported");
-        
+
         }
 
         private void AppendPoint(StringBuilder builder, Point point)
@@ -118,7 +118,7 @@ namespace Geo.IO.Wkt
             }
 
             builder.Append("(");
-            AppendCoordinate(builder,point.Coordinate);
+            AppendCoordinate(builder, point.Coordinate);
             builder.Append(")");
         }
 
@@ -200,7 +200,7 @@ namespace Geo.IO.Wkt
             {
                 if (i > 0)
                     builder.Append(", ");
-                AppendPointInner(builder, (Point) multiPoint.Geometries[i]);
+                AppendPointInner(builder, (Point)multiPoint.Geometries[i]);
             }
             builder.Append(")");
         }
