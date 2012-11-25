@@ -2,6 +2,7 @@
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
 using Geo.IO.Spatial4n;
+using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 
 namespace Geo.Geometries
@@ -49,6 +50,16 @@ namespace Geo.Geometries
         public string ToWktString(WktWriterSettings settings)
         {
             return new WktWriter(settings).Write(this);
+        }
+
+        public byte[] ToWkbBinary()
+        {
+            return new WkbWriter().Write(this);
+        }
+
+        public byte[] ToWkbBinary(WkbWriterSettings settings)
+        {
+            return new WkbWriter(settings).Write(this);
         }
 
         string ISpatial4nShape.ToSpatial4nString()

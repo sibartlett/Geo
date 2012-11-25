@@ -1,4 +1,5 @@
-﻿using Geo.IO.Wkt;
+﻿using Geo.IO.Wkb;
+using Geo.IO.Wkt;
 
 namespace Geo.Abstractions.Interfaces
 {
@@ -6,5 +7,7 @@ namespace Geo.Abstractions.Interfaces
     {
         string ToWktString();
         string ToWktString(WktWriterSettings settings);
+        byte[] ToWkbBinary();
+        byte[] ToWkbBinary(WkbWriterSettings settings);
     }
 }

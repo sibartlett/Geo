@@ -53,6 +53,14 @@
     <Compile Include="Geodesy\GeodeticCalculations.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />
+    <Compile Include="IO\Wkb\WkbBinaryReader.cs" />
+    <Compile Include="IO\Wkb\WkbBinaryWriter.cs" />
+    <Compile Include="IO\Wkb\WkbDimensions.cs" />
+    <Compile Include="IO\Wkb\WkbEncoding.cs" />
+    <Compile Include="IO\Wkb\WkbGeometryType.cs" />
+    <Compile Include="IO\Wkb\WkbReader.cs" />
+    <Compile Include="IO\Wkb\WkbWriter.cs" />
+    <Compile Include="IO\Wkb\WkbWriterSettings.cs" />
     <Compile Include="IO\Wkt\WktWriterSettings.cs" />
     <Compile Include="Linq\EnumerableExtensions.cs" />
     <Compile Include="Linq\Spatial2DComparer.cs" />
