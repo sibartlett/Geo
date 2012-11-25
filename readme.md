@@ -25,7 +25,8 @@ Features include:
 	* Route
 	* Track
 * Serialize and deserialize geometries:
-	* Well-Known text
+	* WKT (Well-known text)
+	* WKB (Well-known binary)
 	* GeoJSON
 	* Spatial4n/Spatial4j shape strings
 * Serialize and deserialize GPS files:
