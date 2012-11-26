@@ -146,8 +146,9 @@ namespace Geo.IO.Wkb
         private void WriteMultiPoint(MultiPoint multipoint, WkbBinaryWriter writer)
         {
             WriteGeometryType(multipoint, WkbGeometryType.MultiPoint, writer);
-            writer.Write((uint)multipoint.Geometries.Count);
-            foreach (var point in multipoint.Geometries.Cast<Point>())
+            var points = multipoint.Geometries.Cast<Point>().Where(x => !x.IsEmpty).ToList();
+            writer.Write((uint)points.Count);
+            foreach (var point in points)
                 WriteCoordinate(point.Coordinate, writer);
         }
 
@@ -170,8 +171,9 @@ namespace Geo.IO.Wkb
         private void WriteGeometryCollection(GeometryCollection collection, WkbBinaryWriter writer)
         {
             WriteGeometryType(collection, WkbGeometryType.GeometryCollection, writer);
-            writer.Write((uint)collection.Geometries.Count);
-            foreach (var geometry in collection.Geometries)
+            var geometries = collection.Geometries.Where(x => !(x is Point) || !x.IsEmpty).ToList();
+            writer.Write((uint)geometries.Count);
+            foreach (var geometry in geometries)
                 Write(geometry, writer);
         }
 
