@@ -36,14 +36,14 @@ namespace Geo.Geometries
             get { return Shell == null || Shell.IsEmpty; }
         }
 
-        public bool HasElevation
+        public bool Is3D
         {
-            get { return !IsEmpty && Shell.HasElevation; }
+            get { return !IsEmpty && Shell.Is3D; }
         }
 
-        public bool HasM
+        public bool IsMeasured
         {
-            get { return !IsEmpty && Shell.HasM; }
+            get { return !IsEmpty && Shell.IsMeasured; }
         }
 
         string ISpatial4nShape.ToSpatial4nString()

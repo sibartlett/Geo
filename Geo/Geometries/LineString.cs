@@ -44,12 +44,12 @@ namespace Geo.Geometries
             get { return Coordinates.IsEmpty; }
         }
 
-        public bool HasElevation
+        public bool Is3D
         {
             get { return Coordinates.HasElevation; }
         }
 
-        public bool HasM
+        public bool IsMeasured
         {
             get { return Coordinates.HasM; }
         }

@@ -48,12 +48,12 @@ namespace Geo
         public double Elevation { get; private set; }
         public double M { get; private set; }
 
-        public bool HasElevation
+        public bool Is3D
         {
             get { return !double.IsNaN(Elevation); }
         }
 
-        public bool HasM
+        public bool IsMeasured
         {
             get { return !double.IsNaN(M); }
         }

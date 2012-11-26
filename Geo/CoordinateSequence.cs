@@ -20,12 +20,12 @@ namespace Geo
 
         public bool HasElevation
         {
-            get { return this.Any(x => x.HasElevation); }
+            get { return this.Any(x => x.Is3D); }
         }
 
         public bool HasM
         {
-            get { return this.Any(x => x.HasM); }
+            get { return this.Any(x => x.IsMeasured); }
         }
 
         public bool IsClosed

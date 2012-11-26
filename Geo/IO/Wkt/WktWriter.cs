@@ -267,13 +267,13 @@ namespace Geo.IO.Wkt
 
         private void AppendDimensions(StringBuilder builder, IGeometry geometry)
         {
-            if (geometry.HasElevation || geometry.HasM)
+            if (geometry.Is3D || geometry.IsMeasured)
                 builder.Append(" ");
 
-            if (geometry.HasElevation)
+            if (geometry.Is3D)
                 builder.Append("Z");
 
-            if (geometry.HasM)
+            if (geometry.IsMeasured)
                 builder.Append("M");
         }
 
@@ -293,13 +293,13 @@ namespace Geo.IO.Wkt
             builder.Append(" ");
             builder.Append(coordinate.Latitude);
 
-            if (coordinate.HasElevation)
+            if (coordinate.Is3D)
             {
                 builder.Append(" ");
                 builder.Append(coordinate.Elevation);
             }
 
-            if (coordinate.HasM)
+            if (coordinate.IsMeasured)
             {
                 builder.Append(" ");
                 builder.Append(coordinate.M);

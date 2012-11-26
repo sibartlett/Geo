@@ -49,14 +49,14 @@ namespace Geo.Geometries
             get { return Geometries.Count == 0; }
         }
 
-        public bool HasElevation
+        public bool Is3D
         {
-            get { return Geometries.Any(x => x.HasElevation); }
+            get { return Geometries.Any(x => x.Is3D); }
         }
 
-        public bool HasM
+        public bool IsMeasured
         {
-            get { return Geometries.Any(x => x.HasM); }
+            get { return Geometries.Any(x => x.IsMeasured); }
         }
 
         public string ToGeoJson()

@@ -168,11 +168,11 @@ namespace Geo.IO.GeoJson
         private double[] WriteCoordinate(IPosition position)
         {
             var point = position.GetCoordinate();
-            if (point.HasElevation && point.HasM)
+            if (point.Is3D && point.IsMeasured)
                 return new[] { point.Longitude, point.Latitude, point.Elevation, point.M };
-            if (point.HasElevation)
+            if (point.Is3D)
                 return new[] { point.Longitude, point.Latitude, point.Elevation };
-            if (point.HasM)
+            if (point.IsMeasured)
                 return new[] { point.Longitude, point.Latitude, point.M };
             return new[] { point.Longitude, point.Latitude };
         }

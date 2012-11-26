@@ -82,14 +82,14 @@ namespace Geo.Geometries
             get { return Coordinate == null; }
         }
 
-        public bool HasElevation
+        public bool Is3D
         {
-            get { return Coordinate != null && Coordinate.HasElevation; }
+            get { return Coordinate != null && Coordinate.Is3D; }
         }
 
-        public bool HasM
+        public bool IsMeasured
         {
-            get { return Coordinate != null && Coordinate.HasM; }
+            get { return Coordinate != null && Coordinate.IsMeasured; }
         }
 
         public Envelope GetBounds()

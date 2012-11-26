@@ -5,8 +5,8 @@
         Envelope GetBounds();
 
         bool IsEmpty { get; }
-        bool HasElevation { get; }
-        bool HasM { get; }
+        bool Is3D { get; }
+        bool IsMeasured { get; }
     }
 
     public interface ICurve : IGeometry, IHasLength

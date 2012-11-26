@@ -71,14 +71,14 @@ namespace Geo.Geometries
             get { return Center == null; }
         }
 
-        public bool HasElevation
+        public bool Is3D
         {
-            get { return Center != null && Center.HasElevation; }
+            get { return Center != null && Center.Is3D; }
         }
 
-        public bool HasM
+        public bool IsMeasured
         {
-            get { return Center != null && Center.HasM; }
+            get { return Center != null && Center.IsMeasured; }
         }
 
         string ISpatial4nShape.ToSpatial4nString()
