@@ -85,10 +85,10 @@ namespace Geo.IO.Wkb
             writer.Write(coordinate.Longitude);
             writer.Write(coordinate.Latitude);
 
-            if (coordinate.Is3D)
+            if (coordinate.Is3D && _settings.MaxDimesions > 2)
                 writer.Write(coordinate.Elevation);
 
-            if (coordinate.IsMeasured)
+            if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 writer.Write(coordinate.M);
         }
 
@@ -187,10 +187,10 @@ namespace Geo.IO.Wkb
             {
                 var typeCode = (uint)baseType;
 
-                if (geometry.Is3D)
+                if (geometry.Is3D && _settings.MaxDimesions > 2)
                     typeCode += 1000;
 
-                if (geometry.IsMeasured)
+                if (geometry.IsMeasured && _settings.MaxDimesions > 3)
                     typeCode += 2000;
 
                 writer.Write(typeCode);

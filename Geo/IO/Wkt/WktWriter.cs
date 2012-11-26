@@ -267,14 +267,17 @@ namespace Geo.IO.Wkt
 
         private void AppendDimensions(StringBuilder builder, IGeometry geometry)
         {
-            if (geometry.Is3D || geometry.IsMeasured)
-                builder.Append(" ");
+            if (_settings.DimensionFlag && _settings.MaxDimesions > 2)
+            {
+                if (geometry.Is3D || geometry.IsMeasured)
+                    builder.Append(" ");
 
-            if (geometry.Is3D)
-                builder.Append("Z");
+                if (geometry.Is3D && _settings.MaxDimesions > 2)
+                    builder.Append("Z");
 
-            if (geometry.IsMeasured)
-                builder.Append("M");
+                if (geometry.IsMeasured && _settings.MaxDimesions > 3)
+                    builder.Append("M");
+            }
         }
 
         private void AppendCoordinates(StringBuilder builder, CoordinateSequence coordinates)
@@ -293,16 +296,38 @@ namespace Geo.IO.Wkt
             builder.Append(" ");
             builder.Append(coordinate.Latitude);
 
-            if (coordinate.Is3D)
+            if (_settings.DimensionFlag)
             {
-                builder.Append(" ");
-                builder.Append(coordinate.Elevation);
-            }
+                if (coordinate.Is3D && _settings.MaxDimesions > 2)
+                {
+                    builder.Append(" ");
+                    builder.Append(coordinate.Elevation);
+                }
 
-            if (coordinate.IsMeasured)
+                if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
+                {
+                    builder.Append(" ");
+                    builder.Append(coordinate.M);
+                }
+            }
+            else
             {
-                builder.Append(" ");
-                builder.Append(coordinate.M);
+                if (coordinate.Is3D && _settings.MaxDimesions > 2)
+                {
+                    builder.Append(" ");
+                    builder.Append(coordinate.Elevation);
+                }
+                else if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
+                {
+                    builder.Append(" ");
+                    builder.Append(_settings.NullOrdinate);
+                }
+
+                if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
+                {
+                    builder.Append(" ");
+                    builder.Append(coordinate.M);
+                }
             }
         }
     }

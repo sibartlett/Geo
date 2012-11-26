@@ -272,24 +272,48 @@ namespace Geo.IO.Wkt
             var z = double.NaN;
             var m = double.NaN;
 
-            if (tokens.NextTokenIs(WktTokenType.Number))
-            {
-                token = tokens.Dequeue(WktTokenType.Number);
-                var value = double.Parse(token.Value, CultureInfo.InvariantCulture);
-                if (dimensions == WktDimensions.XYM)
-                    m = value;
-                else
-                    z = value;
+            var optional = ParseOptionalOrdinates(tokens);
 
-                if (tokens.NextTokenIs(WktTokenType.Number))
+            if (optional.Count > 0)
+            {
+                if (dimensions == WktDimensions.XYM)
                 {
-                    token = tokens.Dequeue(WktTokenType.Number);
-                    if (dimensions != WktDimensions.XYM)
-                        m = double.Parse(token.Value, CultureInfo.InvariantCulture);
+                    m = optional[0];
+                }
+                else
+                {
+                    z = optional[0];
+                    if (optional.Count > 1)
+                        m = optional[1];
                 }
             }
 
             return new Coordinate(y, x, z, m);
+        }
+
+        private List<double> ParseOptionalOrdinates(WktTokenQueue tokens)
+        {
+            var attempt = true;
+            var doubles = new List<double>();
+
+            while (attempt)
+            {
+                if (tokens.NextTokenIs(WktTokenType.Number))
+                {
+                    var token = tokens.Dequeue(WktTokenType.Number);
+                    doubles.Add(double.Parse(token.Value, CultureInfo.InvariantCulture));
+                }
+                else if (tokens.NextTokenIs(double.NaN.ToString(CultureInfo.InvariantCulture)))
+                {
+                    tokens.Dequeue(WktTokenType.String);
+                    doubles.Add(double.NaN);
+                }
+                else
+                {
+                    attempt = false;
+                }
+            }
+            return doubles;
         }
 
         private CoordinateSequence ParseCoordinateSequence(WktTokenQueue tokens, WktDimensions dimensions)
