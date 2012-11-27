@@ -7,6 +7,8 @@ namespace Geo
 {
     public class Coordinate : SpatialObject, IPosition
     {
+        public static double NullOrdinate { get { return double.NaN; } }
+
         public Coordinate() : this(0, 0)
         {
         }
@@ -29,8 +31,8 @@ namespace Geo
 
             Latitude = latitude;
             Longitude = longitude;
-            Elevation = double.NaN;
-            M = double.NaN;
+            Elevation = NullOrdinate;
+            M = NullOrdinate;
         }
 
         public Coordinate(double latitude, double longitude, double elevation) : this(latitude, longitude)

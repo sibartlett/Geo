@@ -44,8 +44,8 @@ namespace Geo.IO.Wkb
         {
             var x = reader.ReadDouble();
             var y = reader.ReadDouble();
-            var z = dimensions == WkbDimensions.XYZ || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : double.NaN;
-            var m = dimensions == WkbDimensions.XYM || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : double.NaN;
+            var z = dimensions == WkbDimensions.XYZ || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : Coordinate.NullOrdinate;
+            var m = dimensions == WkbDimensions.XYM || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : Coordinate.NullOrdinate;
 
             return new Coordinate(y, x, z, m);
         }
