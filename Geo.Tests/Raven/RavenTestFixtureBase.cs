@@ -81,6 +81,27 @@ namespace Geo.Tests.Raven
             }
         }
 
+        public void AssertThatEntityDeserializes(IGeometry geometry)
+        {
+            InitRaven(new TestIndex());
+            string docId;
+            using (var session = Store.OpenSession())
+            {
+                var doc = new GeoDoc
+                {
+                    Geometry = geometry
+                };
+                session.Store(doc);
+                session.SaveChanges();
+                docId = doc.Id;
+            }
+            using (var session = Store.OpenSession())
+            {
+                var doc = session.Load<GeoDoc>(docId);
+                Assert.AreEqual(geometry, doc.Geometry);
+            }
+        }
+
         public void AssertTrue(IGeometry geometry, SpatialRelation relation, IGeometry geometry2)
         {
             AssertThat(geometry, relation, geometry2, true);

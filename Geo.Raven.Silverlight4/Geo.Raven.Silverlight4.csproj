@@ -75,6 +75,9 @@
     <Compile Include="..\Geo.Raven\Indexes\GeoMultiMapIndexCreationTask.cs">
       <Link>GeoMultiMapIndexCreationTask.cs</Link>
     </Compile>
+    <Compile Include="..\Geo.Raven\Json\CoordinateConverter.cs">
+      <Link>CoordinateConverter.cs</Link>
+    </Compile>
     <Compile Include="..\Geo.Raven\Json\GeoContractResolver.cs">
       <Link>GeoContractResolver.cs</Link>
     </Compile>

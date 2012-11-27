@@ -13,6 +13,7 @@ namespace Geo.Raven
         public static IDocumentStore ApplyGeoConventions(this IDocumentStore store)
         {
             store.Conventions.JsonContractResolver = new GeoContractResolver();
+            store.Conventions.CustomizeJsonSerializer = x => x.Converters.Add(new CoordinateConverter());
             return store;
         }
 

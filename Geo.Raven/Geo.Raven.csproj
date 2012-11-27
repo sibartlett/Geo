@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Indexes\GeoIndexTranformer.cs" />
+    <Compile Include="Json\CoordinateConverter.cs" />
     <Compile Include="Json\RavenIndexStringProvider.cs" />
     <Compile Include="Json\RavenIndexStringWriter.cs" />
     <Compile Include="SpatialField.cs" />
