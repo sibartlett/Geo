@@ -1,13 +1,6 @@
-### UNSTABLE 0.x VERSION
-Anything may change at any time. The public API should not be considered stable. (http://semver.org/)
+# Geo - a geospatial library for .NET
 
-# Geo - a simple geospatial library for .NET
-
-Geo is a spatial library that:
-
-* is made specfically for geographic data
-* uses geographic terminology
-* is simple
+Geo is a spatial library that is made specfically for geographic data.
 
 #### NuGet Packages
 
@@ -52,6 +45,7 @@ Features include:
 
 * All ordinates are in degress, unless specified otherwise
 * All measurements are in S.I. units (metres, seconds, etc.), unless specified otherwise
+* The coordinate reference system kis assumed to be WGS-84
 
 #### License
 
