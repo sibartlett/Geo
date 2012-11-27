@@ -8,12 +8,23 @@ namespace Geo.IO.Spatial4n
 {
     public class Spatial4nWriter
     {
+        private readonly WktWriterSettings _wktWriterSettings;
+
+        public Spatial4nWriter()
+        {
+            _wktWriterSettings = WktWriterSettings.NtsCompatible;
+            _wktWriterSettings.MaxDimesions = 2;
+        }
+
         public string Write(ISpatial4nShape geometry)
         {
             if (ReferenceEquals(null, geometry))
                 return null;
 
             string result;
+
+            if (TryWritePoint(geometry, out result))
+                return result;
 
             if (TryWriteCircle(geometry, out result))
                 return result;
@@ -23,7 +34,7 @@ namespace Geo.IO.Spatial4n
 
             var wkt = geometry as IOgcGeometry;
             if (wkt != null)
-                return wkt.ToWktString(WktWriterSettings.NtsCompatible);
+                return wkt.ToWktString(_wktWriterSettings);
 
             throw new SerializationException("Object of type " + geometry.GetType().Name + " is not supported by Spatial4n.");
         }
@@ -33,17 +44,30 @@ namespace Geo.IO.Spatial4n
             return (radius/Constants.EarthMeanRadius).ToDegrees();
         }
 
+        private bool TryWritePoint(ISpatial4nShape shape, out string result)
+        {
+            var point = shape as Point;
+            if (point != null)
+            {
+                if (point.IsEmpty)
+                    result = default(string);
+                else
+                    result = string.Format(CultureInfo.InvariantCulture, "{0:F6} {1:F6}", point.Coordinate.Longitude, point.Coordinate.Latitude);
+                return true;
+            }
+            result = default(string);
+            return false;
+        }
+
         private bool TryWriteCircle(ISpatial4nShape shape, out string result)
         {
             var circle = shape as Circle;
-            if (circle != null && !circle.IsEmpty)
+            if (circle != null)
             {
-                result = string.Format(CultureInfo.InvariantCulture, "CIRCLE({0:F6} {1:F6} d={2:F6})", circle.Center.Longitude, circle.Center.Latitude, ConvertCircleRadius(circle.Radius));
-                return true;
-            }
-            else if (circle != null)
-            {
-                result = default(string);
+                if (circle.IsEmpty)
+                    result = default(string);
+                else
+                    result = string.Format(CultureInfo.InvariantCulture, "CIRCLE({0:F6} {1:F6} d={2:F6})", circle.Center.Longitude, circle.Center.Latitude, ConvertCircleRadius(circle.Radius));
                 return true;
             }
             result = default(string);

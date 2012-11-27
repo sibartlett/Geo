@@ -11,10 +11,10 @@ namespace Geo.Tests.Raven
         [Test]
         public void PointTests()
         {
-            var point = new Point(0, 0);
+            var point = new Point(45.7, 0.45, 88.9, 433.4);
             AssertThatIndexPropertyIsGenerated(point);
-            AssertTrue(point, SpatialRelation.Within, new Circle(0, 0, 1));
-            AssertFalse(point, SpatialRelation.Within, new Circle(0, 160, 600000));
+            AssertTrue(point, SpatialRelation.Within, new Circle(45.7, 0.45, 110));
+            AssertFalse(point, SpatialRelation.Within, new Circle(45.7, 160.45, 600000));
             //AssertTrue(point, SpatialRelation.Disjoint, new Point(1, 1));
         }
 
