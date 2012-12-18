@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\Interfaces\IRavenIndexable.cs" />
+    <Compile Include="Abstractions\OgcGeometry.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Geodesy\GeodeticCalculations.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />

@@ -1,13 +1,10 @@
 ﻿using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
-using Geo.IO.Spatial4n;
-using Geo.IO.Wkb;
-using Geo.IO.Wkt;
 
 namespace Geo.Geometries
 {
-    public class Point : SpatialObject, IGeometry, IPosition, IGeoJsonGeometry, IOgcGeometry
+    public class Point : OgcGeometry, IPosition, IGeoJsonGeometry
     {
         public static readonly Point Empty = new Point();
 
@@ -42,57 +39,27 @@ namespace Geo.Geometries
             return Coordinate;
         }
 
-        public string ToWktString()
-        {
-            return new WktWriter().Write(this);
-        }
-
-        public string ToWktString(WktWriterSettings settings)
-        {
-            return new WktWriter(settings).Write(this);
-        }
-
-        public byte[] ToWkbBinary()
-        {
-            return new WkbWriter().Write(this);
-        }
-
-        public byte[] ToWkbBinary(WkbWriterSettings settings)
-        {
-            return new WkbWriter(settings).Write(this);
-        }
-
-        string ISpatial4nShape.ToSpatial4nString()
-        {
-            return new Spatial4nWriter().Write(this);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return this;
-        }
-
         public string ToGeoJson()
         {
             return GeoJson.Serialize(this);
         }
 
-        public bool IsEmpty
+        public override bool IsEmpty
         {
             get { return Coordinate == null; }
         }
 
-        public bool Is3D
+        public override bool Is3D
         {
             get { return Coordinate != null && Coordinate.Is3D; }
         }
 
-        public bool IsMeasured
+        public override bool IsMeasured
         {
             get { return Coordinate != null && Coordinate.IsMeasured; }
         }
 
-        public Envelope GetBounds()
+        public override Envelope GetBounds()
         {
             return Coordinate.GetBounds();
         }

@@ -3,14 +3,11 @@ using System.Linq;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
-using Geo.IO.Spatial4n;
-using Geo.IO.Wkb;
-using Geo.IO.Wkt;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : SpatialObject, ISurface, IOgcGeometry, IGeoJsonGeometry
+    public class Polygon : OgcGeometry, ISurface, IGeoJsonGeometry
     {
         public static readonly Polygon Empty = new Polygon();
 
@@ -31,52 +28,22 @@ namespace Geo.Geometries
         public LinearRing Shell { get; private set; }
         public SpatialReadOnlyCollection<LinearRing> Holes { get; private set; }
 
-        public bool IsEmpty
+        public override bool IsEmpty
         {
             get { return Shell == null || Shell.IsEmpty; }
         }
 
-        public bool Is3D
+        public override bool Is3D
         {
             get { return !IsEmpty && Shell.Is3D; }
         }
 
-        public bool IsMeasured
+        public override bool IsMeasured
         {
             get { return !IsEmpty && Shell.IsMeasured; }
         }
 
-        string ISpatial4nShape.ToSpatial4nString()
-        {
-            return new Spatial4nWriter().Write(this);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return this;
-        }
-
-        public string ToWktString()
-        {
-            return new WktWriter().Write(this);
-        }
-
-        public string ToWktString(WktWriterSettings settings)
-        {
-            return new WktWriter(settings).Write(this);
-        }
-
-        public byte[] ToWkbBinary()
-        {
-            return new WkbWriter().Write(this);
-        }
-
-        public byte[] ToWkbBinary(WkbWriterSettings settings)
-        {
-            return new WkbWriter(settings).Write(this);
-        }
-
-        public Envelope GetBounds()
+        public override Envelope GetBounds()
         {
             return Shell.GetBounds();
         }

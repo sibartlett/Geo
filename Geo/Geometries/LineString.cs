@@ -3,14 +3,11 @@ using System.Linq;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
-using Geo.IO.Spatial4n;
-using Geo.IO.Wkb;
-using Geo.IO.Wkt;
 using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : SpatialObject, ICurve, IOgcGeometry, IGeoJsonGeometry
+    public class LineString : OgcGeometry, ICurve, IGeoJsonGeometry
     {
         public static readonly LineString Empty = new LineString();
 
@@ -33,23 +30,23 @@ namespace Geo.Geometries
 
         public CoordinateSequence Coordinates { get; private set; }
 
-        public Envelope GetBounds()
+        public override Envelope GetBounds()
         {
             return IsEmpty ? null :
                 new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude), Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
         }
 
-        public bool IsEmpty
+        public override bool IsEmpty
         {
             get { return Coordinates.IsEmpty; }
         }
 
-        public bool Is3D
+        public override bool Is3D
         {
             get { return Coordinates.HasElevation; }
         }
 
-        public bool IsMeasured
+        public override bool IsMeasured
         {
             get { return Coordinates.HasM; }
         }
@@ -65,36 +62,6 @@ namespace Geo.Geometries
         public Distance GetLength()
         {
             return GeoContext.Current.GeodeticCalculator.CalculateLength(Coordinates);
-        }
-
-        public string ToWktString()
-        {
-            return new WktWriter().Write(this);
-        }
-
-        public string ToWktString(WktWriterSettings settings)
-        {
-            return new WktWriter(settings).Write(this);
-        }
-
-        public byte[] ToWkbBinary()
-        {
-            return new WkbWriter().Write(this);
-        }
-
-        public byte[] ToWkbBinary(WkbWriterSettings settings)
-        {
-            return new WkbWriter(settings).Write(this);
-        }
-
-        string ISpatial4nShape.ToSpatial4nString()
-        {
-            return new Spatial4nWriter().Write(this);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return this;
         }
 
         public Coordinate this[int index]

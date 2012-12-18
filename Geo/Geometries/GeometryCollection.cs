@@ -3,13 +3,10 @@ using System.Linq;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
-using Geo.IO.Spatial4n;
-using Geo.IO.Wkb;
-using Geo.IO.Wkt;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : SpatialObject, IGeometry, IOgcGeometry, IGeoJsonGeometry
+    public class GeometryCollection : OgcGeometry, IGeoJsonGeometry
     {
         public static readonly GeometryCollection Empty = new GeometryCollection();
 
@@ -31,7 +28,7 @@ namespace Geo.Geometries
 
         public SpatialReadOnlyCollection<IGeometry> Geometries { get; private set; }
 
-        public Envelope GetBounds()
+        public override Envelope GetBounds()
         {
             Envelope envelope = null;
             foreach (var geometry in Geometries)
@@ -44,17 +41,17 @@ namespace Geo.Geometries
             return envelope;
         }
 
-        public bool IsEmpty
+        public override bool IsEmpty
         {
             get { return Geometries.Count == 0; }
         }
 
-        public bool Is3D
+        public override bool Is3D
         {
             get { return Geometries.Any(x => x.Is3D); }
         }
 
-        public bool IsMeasured
+        public override bool IsMeasured
         {
             get { return Geometries.Any(x => x.IsMeasured); }
         }
@@ -62,36 +59,6 @@ namespace Geo.Geometries
         public string ToGeoJson()
         {
             return GeoJson.Serialize(this);
-        }
-
-        public string ToWktString()
-        {
-            return new WktWriter().Write(this);
-        }
-
-        public string ToWktString(WktWriterSettings settings)
-        {
-            return new WktWriter(settings).Write(this);
-        }
-
-        public byte[] ToWkbBinary()
-        {
-            return new WkbWriter().Write(this);
-        }
-
-        public byte[] ToWkbBinary(WkbWriterSettings settings)
-        {
-            return new WkbWriter(settings).Write(this);
-        }
-
-        string ISpatial4nShape.ToSpatial4nString()
-        {
-            return new Spatial4nWriter().Write(this);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return this;
         }
 
         #region Equality methods
