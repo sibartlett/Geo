@@ -21,7 +21,7 @@ namespace Geo.Raven.Json
             if (coordinate.Is3D || coordinate.IsMeasured)
                 writer.WriteValue(coordinate.Elevation);
             if (coordinate.IsMeasured)
-                writer.WriteValue(coordinate.M);
+                writer.WriteValue(coordinate.Measure);
             writer.WriteEndArray();
         }
 

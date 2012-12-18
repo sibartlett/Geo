@@ -307,7 +307,7 @@ namespace Geo.IO.Wkt
                 if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.M);
+                    builder.Append(coordinate.Measure);
                 }
             }
             else
@@ -326,7 +326,7 @@ namespace Geo.IO.Wkt
                 if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.M);
+                    builder.Append(coordinate.Measure);
                 }
             }
         }

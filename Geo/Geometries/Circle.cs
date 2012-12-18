@@ -35,9 +35,9 @@ namespace Geo.Geometries
             Radius = radius;
         }
 
-        public Circle(double latitiude, double longitude, double elevation, double m, double radius)
+        public Circle(double latitiude, double longitude, double elevation, double measure, double radius)
         {
-            Center = new Coordinate(latitiude, longitude, m, elevation);
+            Center = new Coordinate(latitiude, longitude, measure, elevation);
             Radius = radius;
         }
 

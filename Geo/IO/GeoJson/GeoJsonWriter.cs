@@ -169,11 +169,11 @@ namespace Geo.IO.GeoJson
         {
             var point = position.GetCoordinate();
             if (point.Is3D && point.IsMeasured)
-                return new[] { point.Longitude, point.Latitude, point.Elevation, point.M };
+                return new[] { point.Longitude, point.Latitude, point.Elevation, point.Measure };
             if (point.Is3D)
                 return new[] { point.Longitude, point.Latitude, point.Elevation };
             if (point.IsMeasured)
-                return new[] { point.Longitude, point.Latitude, point.M };
+                return new[] { point.Longitude, point.Latitude, point.Measure };
             return new[] { point.Longitude, point.Latitude };
         }
 

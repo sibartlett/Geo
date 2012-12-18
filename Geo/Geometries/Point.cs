@@ -22,9 +22,9 @@ namespace Geo.Geometries
             Coordinate = new Coordinate(latitude, longitude, elevation);
         }
 
-        public Point(double latitude, double longitude, double elevation, double m)
+        public Point(double latitude, double longitude, double elevation, double measure)
         {
-            Coordinate = new Coordinate(latitude, longitude, elevation, m);
+            Coordinate = new Coordinate(latitude, longitude, elevation, measure);
         }
 
         public Point(Coordinate coordinate)

@@ -32,7 +32,7 @@ namespace Geo
             Latitude = latitude;
             Longitude = longitude;
             Elevation = NullOrdinate;
-            M = NullOrdinate;
+            Measure = NullOrdinate;
         }
 
         public Coordinate(double latitude, double longitude, double elevation) : this(latitude, longitude)
@@ -40,15 +40,15 @@ namespace Geo
             Elevation = elevation;
         }
 
-        public Coordinate(double latitude, double longitude, double elevation, double m) : this(latitude, longitude, elevation)
+        public Coordinate(double latitude, double longitude, double elevation, double measure) : this(latitude, longitude, elevation)
         {
-            M = m;
+            Measure = measure;
         }
 
         public double Latitude { get; private set; }
         public double Longitude { get; private set; }
         public double Elevation { get; private set; }
-        public double M { get; private set; }
+        public double Measure { get; private set; }
 
         public bool Is3D
         {
@@ -57,7 +57,7 @@ namespace Geo
 
         public bool IsMeasured
         {
-            get { return !double.IsNaN(M); }
+            get { return !double.IsNaN(Measure); }
         }
 
         public override string ToString()
@@ -65,8 +65,8 @@ namespace Geo
             var result = Latitude + ", " + Longitude;
             if (!double.IsNaN(Elevation))
                 result += ", " + Elevation;
-            if (!double.IsNaN(M))
-                result += ", " + M;
+            if (!double.IsNaN(Measure))
+                result += ", " + Measure;
             return result;
         }
 
@@ -261,7 +261,7 @@ namespace Geo
             if (options.UseElevation && !Elevation.Equals(other.Elevation))
                 return false;
 
-            if (options.UseM && !M.Equals(other.M))
+            if (options.UseM && !Measure.Equals(other.Measure))
                 return false;
 
             if (Latitude.Equals(other.Latitude))
@@ -310,7 +310,7 @@ namespace Geo
                 if (options.UseElevation)
                     hashCode = (hashCode * 397) ^ Elevation.GetHashCode();
                 if (options.UseM)
-                    hashCode = (hashCode*397) ^ M.GetHashCode();
+                    hashCode = (hashCode*397) ^ Measure.GetHashCode();
                 return hashCode;
             }
         }

@@ -89,7 +89,7 @@ namespace Geo.IO.Wkb
                 writer.Write(coordinate.Elevation);
 
             if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
-                writer.Write(coordinate.M);
+                writer.Write(coordinate.Measure);
         }
 
         private void WriteCoordinates(CoordinateSequence coordinates, WkbBinaryWriter writer)
