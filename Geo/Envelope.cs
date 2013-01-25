@@ -63,7 +63,7 @@ namespace Geo
                 && envelope.MinLat > MinLat
                 && envelope.MaxLat < MaxLat
                 && envelope.MinLon > MinLon
-                && envelope.MaxLat < MaxLat;
+                && envelope.MaxLon < MaxLon;
         }
 
         public bool Contains(Coordinate coordinate)
@@ -71,7 +71,7 @@ namespace Geo
             return coordinate.Latitude > MinLat
                 && coordinate.Latitude < MaxLat
                 && coordinate.Longitude > MinLon
-                && coordinate.Longitude < MaxLat;
+                && coordinate.Longitude < MaxLon;
         }
 
         public bool Contains(IGeometry geometry)
