@@ -1,6 +1,4 @@
-﻿using Geo.IO.Wkt;
-
-namespace Geo.IO.Wkb
+﻿namespace Geo.IO.Wkb
 {
     public class WkbWriterSettings
     {
@@ -15,9 +13,9 @@ namespace Geo.IO.Wkb
         public WkbEncoding Encoding { get; set; }
         public bool Triangle { get; set; }
 
-        public static WktWriterSettings NtsCompatible
+        public static WkbWriterSettings NtsCompatible
         {
-            get { return new WktWriterSettings(); }
+            get { return new WkbWriterSettings(); }
         }
     }
 }
