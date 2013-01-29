@@ -2,6 +2,8 @@
 
 Geo is a spatial library that is made specfically for geographic data.
 
+[Wiki](https://github.com/sibartlett/Geo/wiki) | [Issues](https://github.com/sibartlett/Geo/issues)
+
 #### NuGet Packages
 
 __Geo__ - _[NuGet](https://nuget.org/packages/Geo) (.NET 4.0+, Windows 8 Store applications, Windows Phone 7.0+, Silverlight 4 & 5)_
