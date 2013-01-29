@@ -11,7 +11,7 @@ namespace Geo.Geometries
     {
         public static readonly Polygon Empty = new Polygon();
 
-        public Polygon() : this(null)
+        public Polygon() : this((LinearRing) null)
         {
         }
 
@@ -21,7 +21,15 @@ namespace Geo.Geometries
             Holes = new SpatialReadOnlyCollection<LinearRing>(holes ?? new LinearRing[0]);
         }
 
-        public Polygon(LinearRing shell, params LinearRing[] holes) : this(shell, (IEnumerable<LinearRing>) holes)
+        public Polygon(LinearRing shell, params LinearRing[] holes) : this(shell, (IEnumerable<LinearRing>)holes)
+        {
+        }
+
+        public Polygon(params Coordinate[] shell) : this(new LinearRing(shell))
+        {
+        }
+
+        public Polygon(IEnumerable<Coordinate> shell) : this(new LinearRing(shell))
         {
         }
 
