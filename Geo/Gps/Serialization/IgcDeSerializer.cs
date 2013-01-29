@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Geo.Geometries;
 using Geo.Gps.Metadata;
 
 namespace Geo.Gps.Serialization
 {
     public class IgcDeSerializer : IGpsFileDeSerializer
     {
+        private const string COORDINATE_REGEX = @"(?<d1>\d\d)(?<m1>\d\d\d\d\d)(?<dir1>[NnSs])(?<d2>\d\d\d)(?<m2>\d\d\d\d\d)(?<dir2>[EeWw])";
         private const string H_DATE_LINE_REGEX = @"^HFDTE(?<d>\d\d)(?<m>\d\d)(?<y>\d\d)$";
         private const string H_GLIDER_TYPE_REGEX = @"^HFGTYGLIDERTYPE:(?<value>.+)$";
         private const string H_GLIDER_REG_REGEX = @"^HFGIDGLIDERID:(?<value>.+)$";
@@ -125,13 +125,30 @@ namespace Geo.Gps.Serialization
                 string presAlt = match.Groups["presAlt"].Value;
                 string gpsAlt = match.Groups["gpsAlt"].Value;
 
-                var cood = Coordinate.Parse(coord);
+                var cood = ParseCoordinate(coord);
                 var fix = new Fix(cood.Latitude, cood.Longitude, double.Parse(gpsAlt), date.AddHours(int.Parse(h)).AddMinutes(int.Parse(m)).AddSeconds(int.Parse(s)));
 
                 trackSegment.Fixes.Add(fix);
                 return true;
             }
             return false;
+        }
+
+        private Coordinate ParseCoordinate(string coord)
+        {
+            var match = Regex.Match(coord, COORDINATE_REGEX);
+
+            if (match.Success)
+            {
+                var deg1 = double.Parse(match.Groups["d1"].Value) + double.Parse(match.Groups["m1"].Value) / 1000 / 60;
+                var dir1 = Regex.IsMatch(match.Groups["dir1"].Value, "[Ss]") ? -1d : 1d;
+                var deg2 = double.Parse(match.Groups["d2"].Value) + double.Parse(match.Groups["m2"].Value) / 1000 / 60;
+                var dir2 = Regex.IsMatch(match.Groups["dir2"].Value, "[Ww]") ? -1d : 1d;
+
+                return new Coordinate(deg1 * dir1, deg2 * dir2);
+            }
+
+            throw new FormatException("Coordinate (" + coord + ") is not a supported format.");
         }
     }
 }
