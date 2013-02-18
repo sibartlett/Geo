@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Globalization;
+using System.Runtime.Serialization;
 using System.Text;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
@@ -292,22 +293,22 @@ namespace Geo.IO.Wkt
 
         private void AppendCoordinate(StringBuilder builder, Coordinate coordinate)
         {
-            builder.Append(coordinate.Longitude);
+            builder.Append(coordinate.Longitude.ToString(CultureInfo.InvariantCulture));
             builder.Append(" ");
-            builder.Append(coordinate.Latitude);
+            builder.Append(coordinate.Latitude.ToString(CultureInfo.InvariantCulture));
 
             if (_settings.DimensionFlag)
             {
                 if (coordinate.Is3D && _settings.MaxDimesions > 2)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Elevation);
+                    builder.Append(coordinate.Elevation.ToString(CultureInfo.InvariantCulture));
                 }
 
                 if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Measure);
+                    builder.Append(coordinate.Measure.ToString(CultureInfo.InvariantCulture));
                 }
             }
             else
@@ -315,7 +316,7 @@ namespace Geo.IO.Wkt
                 if (coordinate.Is3D && _settings.MaxDimesions > 2)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Elevation);
+                    builder.Append(coordinate.Elevation.ToString(CultureInfo.InvariantCulture));
                 }
                 else if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
@@ -326,7 +327,7 @@ namespace Geo.IO.Wkt
                 if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Measure);
+                    builder.Append(coordinate.Measure.ToString(CultureInfo.InvariantCulture));
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.IO.Wkt;
@@ -43,7 +44,10 @@ namespace Geo.IO.Spatial4n
                         RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                result = new Circle(new Coordinate(double.Parse(match.Groups[2].Value), double.Parse(match.Groups[1].Value)), ConvertCircleRadius(double.Parse(match.Groups[3].Value)));
+                result = new Circle(new Coordinate(
+                    double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture),
+                    double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)),
+                    ConvertCircleRadius(double.Parse(match.Groups[3].Value, CultureInfo.InvariantCulture)));
                 return true;
             }
             result = null;
@@ -57,7 +61,10 @@ namespace Geo.IO.Spatial4n
                         RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                result = new Point(new Coordinate(double.Parse(match.Groups[1].Value), double.Parse(match.Groups[2].Value)));
+                result = new Point(
+                    double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture),
+                    double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture)
+                    );
                 return true;
             }
             result = null;
@@ -71,7 +78,10 @@ namespace Geo.IO.Spatial4n
                         RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                result = new Point(new Coordinate(double.Parse(match.Groups[2].Value), double.Parse(match.Groups[1].Value)));
+                result = new Point(
+                        double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture),
+                        double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)
+                        );
                 return true;
             }
             result = null;
@@ -87,10 +97,10 @@ namespace Geo.IO.Spatial4n
             if (match.Success)
             {
                 result = new Envelope(
-                    double.Parse(match.Groups[2].Value),
-                    double.Parse(match.Groups[1].Value),
-                    double.Parse(match.Groups[4].Value),
-                    double.Parse(match.Groups[3].Value)
+                    double.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture),
+                    double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture),
+                    double.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture),
+                    double.Parse(match.Groups[3].Value, CultureInfo.InvariantCulture)
                     );
                 return true;
             }
