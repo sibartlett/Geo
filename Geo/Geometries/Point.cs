@@ -19,12 +19,12 @@ namespace Geo.Geometries
 
         public Point(double latitude, double longitude, double elevation)
         {
-            Coordinate = new Coordinate(latitude, longitude, elevation);
+            Coordinate = new CoordinateZ(latitude, longitude, elevation);
         }
 
         public Point(double latitude, double longitude, double elevation, double measure)
         {
-            Coordinate = new Coordinate(latitude, longitude, elevation, measure);
+            Coordinate = new CoordinateZM(latitude, longitude, elevation, measure);
         }
 
         public Point(Coordinate coordinate)

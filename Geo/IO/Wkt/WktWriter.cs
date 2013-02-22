@@ -302,13 +302,13 @@ namespace Geo.IO.Wkt
                 if (coordinate.Is3D && _settings.MaxDimesions > 2)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Elevation.ToString(CultureInfo.InvariantCulture));
+                    builder.Append(((Is3D)coordinate).Elevation.ToString(CultureInfo.InvariantCulture));
                 }
 
                 if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Measure.ToString(CultureInfo.InvariantCulture));
+                    builder.Append(((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture));
                 }
             }
             else
@@ -316,7 +316,7 @@ namespace Geo.IO.Wkt
                 if (coordinate.Is3D && _settings.MaxDimesions > 2)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Elevation.ToString(CultureInfo.InvariantCulture));
+                    builder.Append(((Is3D)coordinate).Elevation.ToString(CultureInfo.InvariantCulture));
                 }
                 else if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
@@ -327,7 +327,7 @@ namespace Geo.IO.Wkt
                 if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
                 {
                     builder.Append(" ");
-                    builder.Append(coordinate.Measure.ToString(CultureInfo.InvariantCulture));
+                    builder.Append(((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture));
                 }
             }
         }

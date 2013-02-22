@@ -264,9 +264,9 @@ namespace Geo.IO.GeoJson
             if (coordinates.Count == 2)
                 result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]));
             else if (coordinates.Count == 3)
-                result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]));
+                result = new CoordinateZ(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]));
             else
-                result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]), Convert.ToDouble(coordinates[3]));
+                result = new CoordinateZM(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]), Convert.ToDouble(coordinates[2]), Convert.ToDouble(coordinates[3]));
             return true;
         }
 

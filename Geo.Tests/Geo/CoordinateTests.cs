@@ -26,24 +26,24 @@ namespace Geo.Tests.Geo
         [Test]
         public void Equality_Elevation()
         {
-            Assert.True(new Coordinate(0, 0, 0).Equals(new Coordinate(0, 0, 0), new SpatialEqualityOptions{ UseElevation = true }));
-            Assert.False(new Coordinate(0, 0, 0).Equals(new Coordinate(0, 0, 10), new SpatialEqualityOptions{ UseElevation = true }));
-            Assert.True(new Coordinate(0, 0, 0).Equals(new Coordinate(0, 0, 10), new SpatialEqualityOptions{ UseElevation = false }));
+            Assert.True(new CoordinateZ(0, 0, 0).Equals(new CoordinateZ(0, 0, 0), new SpatialEqualityOptions{ UseElevation = true }));
+            Assert.False(new CoordinateZ(0, 0, 0).Equals(new CoordinateZ(0, 0, 10), new SpatialEqualityOptions{ UseElevation = true }));
+            Assert.True(new CoordinateZ(0, 0, 0).Equals(new CoordinateZ(0, 0, 10), new SpatialEqualityOptions{ UseElevation = false }));
         }
 
         [Test]
         public void Equality_M()
         {
-            Assert.True(new Coordinate(0, 0, 0, 0).Equals(new Coordinate(0, 0, 0, 0), new SpatialEqualityOptions{ UseM = true }));
-            Assert.False(new Coordinate(0, 0, 0, 0).Equals(new Coordinate(0, 0, 0, 10), new SpatialEqualityOptions{ UseM = true }));
-            Assert.True(new Coordinate(0, 0, 0, 0).Equals(new Coordinate(0, 0, 0, 10), new SpatialEqualityOptions { UseM = false }));
+            Assert.True(new CoordinateZM(0, 0, 0, 0).Equals(new CoordinateZM(0, 0, 0, 0), new SpatialEqualityOptions { UseM = true }));
+            Assert.False(new CoordinateZM(0, 0, 0, 0).Equals(new CoordinateZM(0, 0, 0, 10), new SpatialEqualityOptions { UseM = true }));
+            Assert.True(new CoordinateZM(0, 0, 0, 0).Equals(new CoordinateZM(0, 0, 0, 10), new SpatialEqualityOptions { UseM = false }));
         }
 
         [Test]
         public void Equality_PoleCoordinates()
         {
-            Assert.True(new Coordinate(90, 0, 0, 0).Equals(new Coordinate(90, 180, 0, 0), new SpatialEqualityOptions{ PoleCoordiantesAreEqual = true }));
-            Assert.False(new Coordinate(90, 0, 0, 0).Equals(new Coordinate(90, 180, 0, 0), new SpatialEqualityOptions{ PoleCoordiantesAreEqual = false }));
+            Assert.True(new CoordinateZM(90, 0, 0, 0).Equals(new CoordinateZM(90, 180, 0, 0), new SpatialEqualityOptions { PoleCoordiantesAreEqual = true }));
+            Assert.False(new CoordinateZM(90, 0, 0, 0).Equals(new CoordinateZM(90, 180, 0, 0), new SpatialEqualityOptions { PoleCoordiantesAreEqual = false }));
         }
 
         [Test]

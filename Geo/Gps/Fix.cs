@@ -10,15 +10,15 @@ namespace Geo.Gps
         {
         }
 
-        public Fix(double lat, double lon, DateTime dateTime)
+        public Fix(double latitude, double longitude, DateTime dateTime)
         {
-            Coordinate =new Coordinate(lat, lon);
+            Coordinate = new Coordinate(latitude, longitude);
             TimeUtc = dateTime;
         }
 
-        public Fix(double lat, double lon, double z, DateTime dateTime)
+        public Fix(double latitude, double longitude, double elevation, DateTime dateTime)
         {
-            Coordinate = new Coordinate(lat, lon, z);
+            Coordinate = new CoordinateZ(latitude, longitude, elevation);
             TimeUtc = dateTime;
         }
 

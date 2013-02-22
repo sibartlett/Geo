@@ -49,8 +49,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\Interfaces\IRavenIndexable.cs" />
+    <Compile Include="Abstractions\Interfaces\Is3D.cs" />
+    <Compile Include="Abstractions\Interfaces\IsMeasured.cs" />
     <Compile Include="Abstractions\OgcGeometry.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="CoordinateM.cs" />
+    <Compile Include="CoordinateZ.cs" />
+    <Compile Include="CoordinateZM.cs" />
     <Compile Include="Geodesy\GeodeticCalculations.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />

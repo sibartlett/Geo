@@ -44,10 +44,16 @@ namespace Geo.IO.Wkb
         {
             var x = reader.ReadDouble();
             var y = reader.ReadDouble();
-            var z = dimensions == WkbDimensions.XYZ || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : Coordinate.NullOrdinate;
-            var m = dimensions == WkbDimensions.XYM || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : Coordinate.NullOrdinate;
+            var z = dimensions == WkbDimensions.XYZ || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : double.NaN;
+            var m = dimensions == WkbDimensions.XYM || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : double.NaN;
 
-            return new Coordinate(y, x, z, m);
+            if (!double.IsNaN(z) && !double.IsNaN(m))
+                return new CoordinateZM(y, x, z, m);
+            if (!double.IsNaN(z))
+                return new CoordinateZ(y, x, z);
+            if (!double.IsNaN(m))
+                return new CoordinateM(y, x, m);
+            return new Coordinate(y, x);
         }
 
         private CoordinateSequence ReadCoordinates(WkbBinaryReader reader, WkbDimensions dimensions)

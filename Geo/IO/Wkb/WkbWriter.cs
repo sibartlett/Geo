@@ -86,10 +86,10 @@ namespace Geo.IO.Wkb
             writer.Write(coordinate.Latitude);
 
             if (coordinate.Is3D && _settings.MaxDimesions > 2)
-                writer.Write(coordinate.Elevation);
+                writer.Write(((Is3D)coordinate).Elevation);
 
             if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
-                writer.Write(coordinate.Measure);
+                writer.Write(((IsMeasured)coordinate).Measure);
         }
 
         private void WriteCoordinates(CoordinateSequence coordinates, WkbBinaryWriter writer)

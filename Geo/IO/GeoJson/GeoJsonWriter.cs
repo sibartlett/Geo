@@ -167,14 +167,15 @@ namespace Geo.IO.GeoJson
 
         private double[] WriteCoordinate(IPosition position)
         {
-            var point = position.GetCoordinate();
-            if (point.Is3D && point.IsMeasured)
-                return new[] { point.Longitude, point.Latitude, point.Elevation, point.Measure };
-            if (point.Is3D)
-                return new[] { point.Longitude, point.Latitude, point.Elevation };
-            if (point.IsMeasured)
-                return new[] { point.Longitude, point.Latitude, point.Measure };
-            return new[] { point.Longitude, point.Latitude };
+            var coordinate = position.GetCoordinate();
+            var pointZM = coordinate as CoordinateZM;
+            if (pointZM != null)
+                return new[] { pointZM.Longitude, pointZM.Latitude, pointZM.Elevation, pointZM.Measure };
+            var pointZ = coordinate as CoordinateZ;
+            if (pointZ != null)
+                return new[] { pointZ.Longitude, pointZ.Latitude, pointZ.Elevation };
+            //CoordinateM is not supported by GeoJSON
+            return new[] { coordinate.Longitude, coordinate.Latitude };
         }
 
         private IEnumerable<double[]> WriteCoordinates(CoordinateSequence sequence)

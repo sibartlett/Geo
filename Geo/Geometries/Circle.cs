@@ -31,13 +31,13 @@ namespace Geo.Geometries
 
         public Circle(double latitiude, double longitude, double elevation, double radius)
         {
-            Center = new Coordinate(latitiude, longitude, elevation);
+            Center = new CoordinateZ(latitiude, longitude, elevation);
             Radius = radius;
         }
 
         public Circle(double latitiude, double longitude, double elevation, double measure, double radius)
         {
-            Center = new Coordinate(latitiude, longitude, measure, elevation);
+            Center = new CoordinateZM(latitiude, longitude, measure, elevation);
             Radius = radius;
         }
 

@@ -9,7 +9,8 @@ namespace Geo.IO.Wkt
             LinearRing = false;
             Triangle = false;
             DimensionFlag = true;
-            NullOrdinate = Coordinate.NullOrdinate.ToString(CultureInfo.InvariantCulture);
+            //TODO: Review whether we need NullOrdinate setting
+            NullOrdinate = double.NaN.ToString(CultureInfo.InvariantCulture);
             MaxDimesions = 4;
         }
 

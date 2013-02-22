@@ -56,7 +56,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             Assert.AreEqual(new Point(65.9, 0, 5), xyz2);
 
             var xym = reader.Read("POINT M (0.0 65.9 5)");
-            Assert.AreEqual(new Point(65.9, 0, double.NaN, 5), xym);
+            Assert.AreEqual(new Point(new CoordinateM(65.9, 0, 5)), xym);
 
             var xyzm = reader.Read("POINT ZM (0.0 65.9 4 5)");
             Assert.AreEqual(new Point(65.9, 0, 4, 5), xyzm);

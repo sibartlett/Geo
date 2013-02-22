@@ -7,8 +7,6 @@ namespace Geo
 {
     public class Coordinate : SpatialObject, IPosition
     {
-        public static double NullOrdinate { get { return double.NaN; } }
-
         public Coordinate() : this(0, 0)
         {
         }
@@ -31,43 +29,24 @@ namespace Geo
 
             Latitude = latitude;
             Longitude = longitude;
-            Elevation = NullOrdinate;
-            Measure = NullOrdinate;
-        }
-
-        public Coordinate(double latitude, double longitude, double elevation) : this(latitude, longitude)
-        {
-            Elevation = elevation;
-        }
-
-        public Coordinate(double latitude, double longitude, double elevation, double measure) : this(latitude, longitude, elevation)
-        {
-            Measure = measure;
         }
 
         public double Latitude { get; private set; }
         public double Longitude { get; private set; }
-        public double Elevation { get; private set; }
-        public double Measure { get; private set; }
 
-        public bool Is3D
+        public virtual bool Is3D
         {
-            get { return !double.IsNaN(Elevation); }
+            get { return false; }
         }
 
-        public bool IsMeasured
+        public virtual bool IsMeasured
         {
-            get { return !double.IsNaN(Measure); }
+            get { return false; }
         }
 
         public override string ToString()
         {
-            var result = Latitude + ", " + Longitude;
-            if (!double.IsNaN(Elevation))
-                result += ", " + Elevation;
-            if (!double.IsNaN(Measure))
-                result += ", " + Measure;
-            return result;
+            return Latitude + ", " + Longitude;
         }
 
         Coordinate IPosition.GetCoordinate()
@@ -155,10 +134,7 @@ namespace Geo
             if (ReferenceEquals(null, other))
                 return false;
 
-            if (options.UseElevation && !Elevation.Equals(other.Elevation))
-                return false;
-
-            if (options.UseM && !Measure.Equals(other.Measure))
+            if (other.Is3D || other.IsMeasured)
                 return false;
 
             if (Latitude.Equals(other.Latitude))
@@ -204,10 +180,6 @@ namespace Geo
 
                 var hashCode = latitude.GetHashCode();
                 hashCode = (hashCode * 397) ^ longitude.GetHashCode();
-                if (options.UseElevation)
-                    hashCode = (hashCode * 397) ^ Elevation.GetHashCode();
-                if (options.UseM)
-                    hashCode = (hashCode*397) ^ Measure.GetHashCode();
                 return hashCode;
             }
         }

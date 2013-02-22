@@ -269,8 +269,8 @@ namespace Geo.IO.Wkt
             token = tokens.Dequeue(WktTokenType.Number);
             var y = double.Parse(token.Value, CultureInfo.InvariantCulture);
 
-            var z = Coordinate.NullOrdinate;
-            var m = Coordinate.NullOrdinate;
+            var z = double.NaN;
+            var m = double.NaN;
 
             var optional = ParseOptionalOrdinates(tokens);
 
@@ -288,7 +288,13 @@ namespace Geo.IO.Wkt
                 }
             }
 
-            return new Coordinate(y, x, z, m);
+            if (!double.IsNaN(z) && !double.IsNaN(m))
+                return new CoordinateZM(y, x, z, m);
+            if (!double.IsNaN(z))
+                return new CoordinateZ(y, x, z);
+            if (!double.IsNaN(m))
+                return new CoordinateM(y, x, m);
+            return new Coordinate(y, x);
         }
 
         private List<double> ParseOptionalOrdinates(WktTokenQueue tokens)
@@ -303,10 +309,11 @@ namespace Geo.IO.Wkt
                     var token = tokens.Dequeue(WktTokenType.Number);
                     doubles.Add(double.Parse(token.Value, CultureInfo.InvariantCulture));
                 }
-                else if (tokens.NextTokenIs(Coordinate.NullOrdinate.ToString(CultureInfo.InvariantCulture)))
+                else if (tokens.NextTokenIs(double.NaN.ToString(CultureInfo.InvariantCulture)))
                 {
+                    //TODO: Review this
                     tokens.Dequeue(WktTokenType.String);
-                    doubles.Add(Coordinate.NullOrdinate);
+                    doubles.Add(double.NaN);
                 }
                 else
                 {

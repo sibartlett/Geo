@@ -18,7 +18,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             var xyz = writer.Write(new Point(65.9, 0, 5));
             Assert.AreEqual("POINT Z (0 65.9 5)", xyz);
 
-            var xym = writer.Write(new Point(65.9, 0, double.NaN, 5));
+            var xym = writer.Write(new Point(new CoordinateM(65.9, 0, 5)));
             Assert.AreEqual("POINT M (0 65.9 5)", xym);
 
             var xyzm = writer.Write(new Point(65.9, 0, 4, 5));

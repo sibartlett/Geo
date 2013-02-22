@@ -1,4 +1,5 @@
 ﻿using System;
+using Geo.Abstractions.Interfaces;
 using Raven.Imports.Newtonsoft.Json;
 
 namespace Geo.Raven.Json
@@ -19,9 +20,9 @@ namespace Geo.Raven.Json
             writer.WriteValue(coordinate.Longitude);
             writer.WriteValue(coordinate.Latitude);
             if (coordinate.Is3D || coordinate.IsMeasured)
-                writer.WriteValue(coordinate.Elevation);
+                writer.WriteValue(((Is3D)coordinate).Elevation);
             if (coordinate.IsMeasured)
-                writer.WriteValue(coordinate.Measure);
+                writer.WriteValue(((IsMeasured)coordinate).Measure);
             writer.WriteEndArray();
         }
 
@@ -35,10 +36,13 @@ namespace Geo.Raven.Json
                     return new Coordinate(arr[1], arr[0]);
 
                 if (arr.Length == 3)
-                    return new Coordinate(arr[1], arr[0], arr[2]);
+                    return new CoordinateZ(arr[1], arr[0], arr[2]);
+
+                if (arr.Length == 4 && double.IsNaN(arr[2]))
+                    return new CoordinateM(arr[1], arr[0], arr[3]);
 
                 if (arr.Length == 4)
-                    return new Coordinate(arr[1], arr[0], arr[2], arr[3]);
+                    return new CoordinateZM(arr[1], arr[0], arr[2], arr[3]);
             }
 
             return null;
@@ -46,7 +50,7 @@ namespace Geo.Raven.Json
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(Coordinate) == objectType;
+            return typeof(Coordinate).IsAssignableFrom(objectType);
         }
     }
 }

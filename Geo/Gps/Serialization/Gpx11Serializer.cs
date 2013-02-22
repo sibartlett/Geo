@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.Gpx.Gpx11;
@@ -138,7 +139,7 @@ namespace Geo.Gps.Serialization
             {
                 lat = (decimal)waypoint.Coordinate.Latitude,
                 lon = (decimal)waypoint.Coordinate.Longitude,
-                ele = waypoint.Coordinate.Is3D ? 0m : (decimal)waypoint.Coordinate.Elevation
+                ele = waypoint.Coordinate.Is3D ? 0m : (decimal) ((Is3D)waypoint.Coordinate).Elevation
             });
         }
 
@@ -163,7 +164,7 @@ namespace Geo.Gps.Serialization
                         {
                             lat = (decimal)segment.Fixes[j].Coordinate.Latitude,
                             lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
-                            ele = segment.Fixes[j].Coordinate.Is3D ? (decimal)segment.Fixes[j].Coordinate.Elevation : 0m
+                            ele = segment.Fixes[j].Coordinate.Is3D ? (decimal) ((Is3D)segment.Fixes[j].Coordinate).Elevation : 0m
                         };
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
@@ -190,7 +191,7 @@ namespace Geo.Gps.Serialization
                     {
                         lat = (decimal)route.Coordinates[j].Latitude,
                         lon = (decimal)route.Coordinates[j].Longitude,
-                        ele = route.Coordinates[j].Is3D ? (decimal)route.Coordinates[j].Elevation : 0m
+                        ele = route.Coordinates[j].Is3D ? (decimal) ((Is3D)route.Coordinates[j]).Elevation : 0m
                     };
                 }
                 yield return rte;
@@ -264,7 +265,7 @@ namespace Geo.Gps.Serialization
 
                     foreach (var wptType in rteType.rtept)
                     {
-                        var fix = new Coordinate((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
+                        var fix = new CoordinateZ((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
                         route.Coordinates.Add(fix);
                     }
                     data.Routes.Add(route);
