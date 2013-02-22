@@ -49,6 +49,7 @@
     <Compile Include="Indexes\GeoIndexTranformer.cs" />
     <Compile Include="Json\CoordinateConverter.cs" />
     <Compile Include="Json\RavenIndexStringProvider.cs" />
+    <Compile Include="Json\RavenIndexStringReader.cs" />
     <Compile Include="Json\RavenIndexStringWriter.cs" />
     <Compile Include="SpatialField.cs" />
     <Compile Include="Indexes\GeoMultiMapIndexCreationTask.cs" />
