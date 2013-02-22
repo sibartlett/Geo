@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo
 {
-    public class Envelope : ISpatial4nShape, IHasArea, IHasLength, IEquatable<Envelope>
+    public class Envelope : IRavenIndexable, ISpatial4nShape, IHasArea, IHasLength, IEquatable<Envelope>
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -87,6 +87,11 @@ namespace Geo
                 new Coordinate(MinLat, MaxLon),
                 new Coordinate(MinLat, MinLon)
             };
+        }
+
+        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
+        {
+            return this;
         }
 
         #region Equality methods
