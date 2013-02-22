@@ -57,7 +57,7 @@ namespace Geo.IO.Spatial4n
         private bool TryReadGeoPoint(string value, out ISpatial4nShape result)
         {
             var match = Regex.Match(value,
-                        @"([+-]?(?:\d+\.?\d*|\d*\.?\d+)) \s* , \s* ([+-]?(?:\d+\.?\d*|\d*\.?\d+))",
+                        @"^ \s* ([+-]?(?:\d+\.?\d*|\d*\.?\d+)) \s* , \s* ([+-]?(?:\d+\.?\d*|\d*\.?\d+)) \s* $",
                         RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
             if (match.Success)
             {
@@ -74,7 +74,7 @@ namespace Geo.IO.Spatial4n
         private bool TryReadPoint(string value, out ISpatial4nShape result)
         {
             var match = Regex.Match(value,
-                        @"(-?\d+.\d+?) \s+ (-?\d+.\d+?)",
+                        @"^ \s* (-?\d+.\d+?) \s+ (-?\d+.\d+?) \s* $",
                         RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
             if (match.Success)
             {
@@ -91,7 +91,7 @@ namespace Geo.IO.Spatial4n
         private bool TryReadEnvelope(string value, out ISpatial4nShape result)
         {
             var match = Regex.Match(value,
-                        @"(-?\d+.\d+?) \s+ (-?\d+.\d+?) \s+ (-?\d+.\d+?) \s+ (-?\d+.\d+?)",
+                        @"^ \s* (-?\d+.\d+?) \s+ (-?\d+.\d+?) \s+ (-?\d+.\d+?) \s+ (-?\d+.\d+?) \s* $",
                         RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
 
             if (match.Success)
