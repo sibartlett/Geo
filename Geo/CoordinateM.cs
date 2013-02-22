@@ -1,4 +1,5 @@
-﻿using Geo.Abstractions.Interfaces;
+﻿using System;
+using Geo.Abstractions.Interfaces;
 
 namespace Geo
 {
@@ -8,6 +9,9 @@ namespace Geo
         
         public CoordinateM(double latitude, double longitude, double measure) : base(latitude, longitude)
         {
+            if (double.IsNaN(measure) || double.IsInfinity(measure))
+                throw new ArgumentOutOfRangeException("measure");
+
             Measure = measure;
         }
 

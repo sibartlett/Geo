@@ -1,4 +1,5 @@
-﻿using Geo.Abstractions.Interfaces;
+﻿using System;
+using Geo.Abstractions.Interfaces;
 
 namespace Geo
 {
@@ -10,6 +11,12 @@ namespace Geo
         public CoordinateZM(double latitude, double longitude, double elevation, double measure)
             : base(latitude, longitude)
         {
+            if (double.IsNaN(elevation) || double.IsInfinity(elevation))
+                throw new ArgumentOutOfRangeException("elevation");
+
+            if (double.IsNaN(measure) || double.IsInfinity(measure))
+                throw new ArgumentOutOfRangeException("measure");
+
             Elevation = elevation;
             Measure = measure;
         }
