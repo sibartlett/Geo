@@ -24,7 +24,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             var xyzm = writer.Write(new Point(65.9, 0, 4, 5));
             Assert.AreEqual("POINT ZM (0 65.9 4 5)", xyzm);
 
-            var empty = writer.Write(Geometries.Point.Empty);
+            var empty = writer.Write(global::Geo.Geometries.Point.Empty);
             Assert.AreEqual("POINT EMPTY", empty);
         }
 
@@ -36,7 +36,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             var xy = writer.Write(new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5)));
             Assert.AreEqual("LINESTRING (0 65.9, -34.5 9)", xy);
 
-            var empty = writer.Write(Geometries.LineString.Empty);
+            var empty = writer.Write(global::Geo.Geometries.LineString.Empty);
             Assert.AreEqual("LINESTRING EMPTY", empty);
         }
 
@@ -53,7 +53,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             var linearRing = writer2.Write(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(50, 0), new Coordinate(65.9, 0)));
             Assert.AreEqual("LINEARRING (0 65.9, -34.5 9, 0 50, 0 65.9)", linearRing);
 
-            var empty = writer2.Write(Geometries.LinearRing.Empty);
+            var empty = writer2.Write(global::Geo.Geometries.LinearRing.Empty);
             Assert.AreEqual("LINEARRING EMPTY", empty);
         }
 
@@ -65,7 +65,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             var xy = writer.Write(new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20), new Coordinate(65.9, 0))));
             Assert.AreEqual("POLYGON ((0 65.9, -34.5 9, -20 40, 0 65.9))", xy);
 
-            var empty = writer.Write(Geometries.Polygon.Empty);
+            var empty = writer.Write(global::Geo.Geometries.Polygon.Empty);
             Assert.AreEqual("POLYGON EMPTY", empty);
         }
 
@@ -82,7 +82,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             var triangle = writer2.Write(new Triangle(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20), new Coordinate(65.9, 0))));
             Assert.AreEqual("TRIANGLE ((0 65.9, -34.5 9, -20 40, 0 65.9))", triangle);
 
-            var empty = writer2.Write(Geometries.Triangle.Empty);
+            var empty = writer2.Write(global::Geo.Geometries.Triangle.Empty);
             Assert.AreEqual("TRIANGLE EMPTY", empty);
         }
 
