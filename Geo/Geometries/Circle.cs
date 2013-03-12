@@ -46,13 +46,14 @@ namespace Geo.Geometries
 
         public Envelope GetBounds()
         {
-            var radiusDeg = Radius / (Constants.NauticalMile * 60);
+            var latitudinalRadiusDeg = (Radius / (Constants.NauticalMile * 60));
+            var longditudinalRadiusDeg = (Radius / (Constants.NauticalMile * 60)) * Math.Cos(Center.Latitude.ToRadians());
 
             return new Envelope(
-                Center.Latitude - radiusDeg,
-                Center.Longitude - radiusDeg,
-                Center.Latitude + radiusDeg,
-                Center.Longitude + radiusDeg
+                Center.Latitude - latitudinalRadiusDeg,
+                Center.Longitude - longditudinalRadiusDeg,
+                Center.Latitude + latitudinalRadiusDeg,
+                Center.Longitude + longditudinalRadiusDeg
             );
         }
 

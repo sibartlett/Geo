@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Geo\Geometries\Circles\CircleTests.cs" />
     <Compile Include="Geo\CoordinateTests.cs" />
     <Compile Include="Geo\Gps\Serialization\GarminFlightplanDeSerializerTests.cs" />
     <Compile Include="Geo\Gps\Serialization\GpsDeSerializerTests.cs" />

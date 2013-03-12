@@ -65,7 +65,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             Assert.AreEqual(new Point(65.9, 0, 4, 5), xyzm2);
 
             var empty = reader.Read("POINT ZM EMPTY");
-            Assert.AreEqual(Geometries.Point.Empty, empty);
+            Assert.AreEqual(global::Geo.Geometries.Point.Empty, empty);
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             Assert.AreEqual(new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20), new Coordinate(65.9, 0))), xy);
 
             var empty = reader.Read("POLYGON ZM EMPTY");
-            Assert.AreEqual(Geometries.Polygon.Empty, empty);
+            Assert.AreEqual(global::Geo.Geometries.Polygon.Empty, empty);
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace Geo.Tests.Geo.IO.Wkt
             Assert.AreEqual(new Triangle(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20), new Coordinate(65.9, 0))), xy);
 
             var empty = reader.Read("Triangle ZM EMPTY");
-            Assert.AreEqual(Geometries.Triangle.Empty, empty);
+            Assert.AreEqual(global::Geo.Geometries.Triangle.Empty, empty);
         }
 
         [Test]
