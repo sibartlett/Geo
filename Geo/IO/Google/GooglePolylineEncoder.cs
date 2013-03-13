@@ -39,20 +39,20 @@ namespace Geo.IO.Google
 		}
 
 		public LineString Decode(string polyline)
-		{
-			var reader = new StringReader(polyline);
-			var coordinates = new List<Coordinate>();
-			int lat = 0, lng = 0;
+        {
+            var coordinates = new List<Coordinate>();
+            using (var reader = new StringReader(polyline))
+		    {
+			    int lat = 0, lng = 0;
+			    while (reader.Peek() != -1)
+			    {
+				    lat += DecodeNumber(reader);
+				    lng += DecodeNumber(reader);
 
-			while (reader.Peek() != -1)
-			{
-				lat += DecodeNumber(reader);
-				lng += DecodeNumber(reader);
-
-				var p = new Coordinate(lat / CoordinateFactor, lng / CoordinateFactor);
-				coordinates.Add(p);
-			}
-
+				    var p = new Coordinate(lat / CoordinateFactor, lng / CoordinateFactor);
+				    coordinates.Add(p);
+                }
+            }
 			return new LineString(coordinates);
 		}
 
