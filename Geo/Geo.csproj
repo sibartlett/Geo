@@ -57,6 +57,7 @@
     <Compile Include="CoordinateZ.cs" />
     <Compile Include="CoordinateZM.cs" />
     <Compile Include="Geodesy\GeodeticCalculations.cs" />
+    <Compile Include="IO\Google\GooglePolylineEncoder.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />
     <Compile Include="IO\Wkb\WkbBinaryReader.cs" />

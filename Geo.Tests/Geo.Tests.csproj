@@ -76,6 +76,7 @@
     <Compile Include="Geo\Gps\Serialization\PocketFmsFlightplanDeSerializerTests.cs" />
     <Compile Include="Geo\Gps\Serialization\SerializerTestFixtureBase.cs" />
     <Compile Include="Geo\Gps\Serialization\SkyDemonFlightplanDeSerializerTests.cs" />
+    <Compile Include="Geo\IO\Google\GooglePolylineEncoderTests.cs" />
     <Compile Include="Geo\IO\Wkb\WkbTests.cs" />
     <Compile Include="Geo\IO\Wkt\WktWriterTests.cs" />
     <Compile Include="Geo\IO\Wkt\WktReaderTests.cs" />
