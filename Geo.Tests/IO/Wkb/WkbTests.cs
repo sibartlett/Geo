@@ -2,7 +2,7 @@
 using Geo.IO.Wkt;
 using NUnit.Framework;
 
-namespace Geo.Tests.Geo.IO.Wkb
+namespace Geo.Tests.IO.Wkb
 {
     [TestFixture]
     public class WkbTests

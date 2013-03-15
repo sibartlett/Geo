@@ -3,7 +3,7 @@ using NUnit.Framework;
 using Geo.IO.Wkt;
 using Geo.Geometries;
 
-namespace Geo.Tests.Geo.IO.Wkt
+namespace Geo.Tests.IO.Wkt
 {
     [TestFixture]
     public class WktReaderTests

@@ -2,7 +2,7 @@
 using Geo.IO.Google;
 using NUnit.Framework;
 
-namespace Geo.Tests.Geo.IO.Google
+namespace Geo.Tests.IO.Google
 {
 	public class GooglePolylineEncoderTests
 	{

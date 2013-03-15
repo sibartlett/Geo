@@ -2,7 +2,7 @@
 using Geo.Geometries;
 using NUnit.Framework;
 
-namespace Geo.Tests.Geo.Geometries
+namespace Geo.Tests.Geometries
 {
     [TestFixture]
     public class CircleTests
@@ -32,9 +32,6 @@ namespace Geo.Tests.Geo.Geometries
             var maxLonError = Distance(21, bounds.MaxLon);
             Assert.LessOrEqual(maxLonError, 0.002);
         }
-
-        
-        ///////////
 
         [Test]
         public void An_60Degree_CircleWith_111000M_RadiusShouldBeAboutTwoDegreesTall()

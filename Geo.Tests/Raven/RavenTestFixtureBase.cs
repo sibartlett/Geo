@@ -15,7 +15,7 @@ namespace Geo.Tests.Raven
 {
     public abstract class RavenTestFixtureBase : IDisposable
     {
-        private RavenIndexStringWriter _writer = new RavenIndexStringWriter();
+        private readonly RavenIndexStringWriter _writer = new RavenIndexStringWriter();
         public IDocumentStore Store { get; private set; }
 
         public void InitRaven(params AbstractIndexCreationTask[] indexes)

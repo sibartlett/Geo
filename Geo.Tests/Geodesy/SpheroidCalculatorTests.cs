@@ -3,7 +3,7 @@ using Geo.Geometries;
 using Geo.Measure;
 using NUnit.Framework;
 
-namespace Geo.Tests.Geo.Geodesy
+namespace Geo.Tests.Geodesy
 {
     [TestFixture]
     public class SpheroidCalculatorTests

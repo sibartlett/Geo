@@ -4,7 +4,7 @@ using Geo.IO.GeoJson;
 using NUnit.Framework;
 using Geo.Geometries;
 
-namespace Geo.Tests.Geo.IO.GeoJson
+namespace Geo.Tests.IO.GeoJson
 {
     [TestFixture]
     public class GeoJsonTests

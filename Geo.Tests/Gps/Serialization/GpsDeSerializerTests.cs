@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using Geo.Gps;
 
-namespace Geo.Tests.Geo.Gps.Serialization
+namespace Geo.Tests.Gps.Serialization
 {
     [TestFixture]
     public class GpsDeSerializerTests : SerializerTestFixtureBase
