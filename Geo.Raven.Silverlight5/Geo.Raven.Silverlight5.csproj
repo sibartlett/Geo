@@ -63,41 +63,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Geo.Raven\GeoRavenExtensions.cs">
-      <Link>GeoRavenExtensions.cs</Link>
+    <Compile Include="..\Geo.Raven\*.cs">
+      <Link>%(FileName)</Link>
     </Compile>
-    <Compile Include="..\Geo.Raven\Indexes\GeoIndexCreationTask.cs">
-      <Link>GeoIndexCreationTask.cs</Link>
+    <Compile Include="..\Geo.Raven\Indexes\*.cs">
+      <Link>Indexes\%(FileName)</Link>
     </Compile>
-    <Compile Include="..\Geo.Raven\Indexes\GeoIndexTranformer.cs">
-      <Link>GeoIndexTranformer.cs</Link>
+    <Compile Include="..\Geo.Raven\Json\*.cs">
+      <Link>Json\%(FileName)</Link>
     </Compile>
-    <Compile Include="..\Geo.Raven\Indexes\GeoMultiMapIndexCreationTask.cs">
-      <Link>GeoMultiMapIndexCreationTask.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Json\CoordinateConverter.cs">
-      <Link>CoordinateConverter.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Json\GeoContractResolver.cs">
-      <Link>GeoContractResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Json\RavenIndexStringProvider.cs">
-      <Link>RavenIndexStringProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Json\RavenIndexStringWriter.cs">
-      <Link>RavenIndexStringWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Query\AbstractWhereClause.cs">
-      <Link>AbstractWhereClause.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Query\LinqWhereClause.cs">
-      <Link>LinqWhereClause.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\Query\LuceneWhereClause.cs">
-      <Link>LuceneWhereClause.cs</Link>
-    </Compile>
-    <Compile Include="..\Geo.Raven\SpatialField.cs">
-      <Link>SpatialField.cs</Link>
+    <Compile Include="..\Geo.Raven\Query\*.cs">
+      <Link>Query\%(FileName)</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
