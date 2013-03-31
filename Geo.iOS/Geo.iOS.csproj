@@ -149,6 +149,9 @@
     <Compile Include="..\Geo\Properties\*.cs">
       <Link>Gps\Properties\%(FileName)</Link>
     </Compile>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -185,6 +185,9 @@
     <Compile Include="Measure\UnitAttribute.cs" />
     <Compile Include="Measure\UnitMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Geodesy\SpheroidCalculator.cs" />
     <Compile Include="Abstractions\Interfaces\IGeodeticCalculator.cs" />
     <Compile Include="Geodesy\SphereCalculator.cs" />

@@ -60,6 +60,9 @@
     <Compile Include="Query\LinqWhereClause.cs" />
     <Compile Include="Query\LuceneWhereClause.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Geo\Geo.csproj">
