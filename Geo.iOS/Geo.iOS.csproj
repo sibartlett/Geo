@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FBD46211-A149-43A5-BDD9-C612EF067920}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Geo</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Geo.iOS</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <BuildIpa>True</BuildIpa>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Geo\*.cs">
+      <Link>%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Abstractions\*.cs">
+      <Link>Abstractions\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Abstractions\Interfaces\*.cs">
+      <Link>Abstractions\Interfaces\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Geodesy\*.cs">
+      <Link>Geodesy\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Geometries\*.cs">
+      <Link>Geometries\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\*.cs">
+      <Link>Gps\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Metadata\*.cs">
+      <Link>Gps\Metadata\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\*.cs">
+      <Link>Gps\Serialization\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\*.cs">
+      <Link>Gps\Serialization\Xml\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Garmin\*.cs">
+      <Link>Gps\Serialization\Xml\Garmin\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Garmin\Flightplan\*.cs">
+      <Link>Gps\Serialization\Xml\Garmin\Flightplan\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\*.cs">
+      <Link>Gps\Serialization\Xml\Gpx\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\Gpx10\*.cs">
+      <Link>Gps\Serialization\Xml\Gpx\Gpx10\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\Gpx11\*.cs">
+      <Link>Gps\Serialization\Xml\Gpx\Gpx11\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\PocketFms\*.cs">
+      <Link>Gps\Serialization\Xml\PocketFms\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\SkyDemon\*.cs">
+      <Link>Gps\Serialization\Xml\SkyDemon\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\*.cs">
+      <Link>Gps\IO\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\GeoJson\*.cs">
+      <Link>Gps\IO\GeoJson\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Google\*.cs">
+      <Link>Gps\IO\Google\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Spatial4n\*.cs">
+      <Link>Gps\IO\Spatial4n\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Wkb\*.cs">
+      <Link>Gps\IO\Wkb\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Wkt\*.cs">
+      <Link>Gps\IO\Wkt\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Linq\*.cs">
+      <Link>Gps\Linq\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Measure\*.cs">
+      <Link>Gps\Measure\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Properties\*.cs">
+      <Link>Gps\Properties\%(FileName)</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+</Project>

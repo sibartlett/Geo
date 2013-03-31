@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Xml;
+using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11
 {

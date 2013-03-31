@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5E83B9FA-B2F9-4738-A95B-669B343EBCC9}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Geo</RootNamespace>
+    <AssemblyName>Geo.Android</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Android" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Geo\*.cs">
+      <Link>%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Abstractions\*.cs">
+      <Link>Abstractions\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Abstractions\Interfaces\*.cs">
+      <Link>Abstractions\Interfaces\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Geodesy\*.cs">
+      <Link>Geodesy\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Geometries\*.cs">
+      <Link>Geometries\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\*.cs">
+      <Link>Gps\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Metadata\*.cs">
+      <Link>Gps\Metadata\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\*.cs">
+      <Link>Gps\Serialization\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\*.cs">
+      <Link>Gps\Serialization\Xml\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Garmin\*.cs">
+      <Link>Gps\Serialization\Xml\Garmin\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Garmin\Flightplan\*.cs">
+      <Link>Gps\Serialization\Xml\Garmin\Flightplan\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\*.cs">
+      <Link>Gps\Serialization\Xml\Gpx\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\Gpx10\*.cs">
+      <Link>Gps\Serialization\Xml\Gpx\Gpx10\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\Gpx11\*.cs">
+      <Link>Gps\Serialization\Xml\Gpx\Gpx11\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\PocketFms\*.cs">
+      <Link>Gps\Serialization\Xml\PocketFms\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Gps\Serialization\Xml\SkyDemon\*.cs">
+      <Link>Gps\Serialization\Xml\SkyDemon\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\*.cs">
+      <Link>Gps\IO\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\GeoJson\*.cs">
+      <Link>Gps\IO\GeoJson\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Google\*.cs">
+      <Link>Gps\IO\Google\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Spatial4n\*.cs">
+      <Link>Gps\IO\Spatial4n\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Wkb\*.cs">
+      <Link>Gps\IO\Wkb\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\IO\Wkt\*.cs">
+      <Link>Gps\IO\Wkt\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Linq\*.cs">
+      <Link>Gps\Linq\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Measure\*.cs">
+      <Link>Gps\Measure\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Properties\*.cs">
+      <Link>Gps\Properties\%(FileName)</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
