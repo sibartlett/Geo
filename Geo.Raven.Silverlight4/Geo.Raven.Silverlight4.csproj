@@ -64,22 +64,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Geo.Raven\*.cs">
-      <Link>%(FileName)</Link>
+      <Link>Imports\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo.Raven\Indexes\*.cs">
-      <Link>Indexes\%(FileName)</Link>
+      <Link>Imports\Indexes\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo.Raven\Json\*.cs">
-      <Link>Json\%(FileName)</Link>
+      <Link>Imports\Json\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo.Raven\Query\*.cs">
-      <Link>Query\%(FileName)</Link>
+      <Link>Imports\Query\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo.Raven\Properties\*.cs">
-      <Link>Properties\%(FileName)</Link>
+      <Link>Imports\Properties\%(FileName)</Link>
     </Compile>
     <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
+      <Link>Imports\Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

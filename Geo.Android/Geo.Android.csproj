@@ -12,7 +12,6 @@
     <RootNamespace>Geo</RootNamespace>
     <AssemblyName>Geo.Android</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,88 +41,88 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Geo\*.cs">
-      <Link>%(FileName)</Link>
+      <Link>Imports\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Abstractions\*.cs">
-      <Link>Abstractions\%(FileName)</Link>
+      <Link>Imports\Abstractions\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Abstractions\Interfaces\*.cs">
-      <Link>Abstractions\Interfaces\%(FileName)</Link>
+      <Link>Imports\Abstractions\Interfaces\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Geodesy\*.cs">
-      <Link>Geodesy\%(FileName)</Link>
+      <Link>Imports\Geodesy\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Geomagnetism\*.cs">
-      <Link>Geomagnetism\%(FileName)</Link>
+      <Link>Imports\Geomagnetism\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Geomagnetism\Models\*.cs">
-      <Link>Geomagnetism\Models\%(FileName)</Link>
+      <Link>Imports\Geomagnetism\Models\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Geometries\*.cs">
-      <Link>Geometries\%(FileName)</Link>
+      <Link>Imports\Geometries\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\*.cs">
-      <Link>Gps\%(FileName)</Link>
+      <Link>Imports\Gps\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Metadata\*.cs">
-      <Link>Gps\Metadata\%(FileName)</Link>
+      <Link>Imports\Gps\Metadata\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\*.cs">
-      <Link>Gps\Serialization\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\*.cs">
-      <Link>Gps\Serialization\Xml\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\Garmin\*.cs">
-      <Link>Gps\Serialization\Xml\Garmin\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\Garmin\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\Garmin\Flightplan\*.cs">
-      <Link>Gps\Serialization\Xml\Garmin\Flightplan\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\Garmin\Flightplan\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\*.cs">
-      <Link>Gps\Serialization\Xml\Gpx\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\Gpx\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\Gpx10\*.cs">
-      <Link>Gps\Serialization\Xml\Gpx\Gpx10\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\Gpx\Gpx10\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\Gpx\Gpx11\*.cs">
-      <Link>Gps\Serialization\Xml\Gpx\Gpx11\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\Gpx\Gpx11\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\PocketFms\*.cs">
-      <Link>Gps\Serialization\Xml\PocketFms\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\PocketFms\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Gps\Serialization\Xml\SkyDemon\*.cs">
-      <Link>Gps\Serialization\Xml\SkyDemon\%(FileName)</Link>
+      <Link>Imports\Gps\Serialization\Xml\SkyDemon\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\IO\*.cs">
-      <Link>Gps\IO\%(FileName)</Link>
+      <Link>Imports\Gps\IO\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\IO\GeoJson\*.cs">
-      <Link>Gps\IO\GeoJson\%(FileName)</Link>
+      <Link>Imports\Gps\IO\GeoJson\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\IO\Google\*.cs">
-      <Link>Gps\IO\Google\%(FileName)</Link>
+      <Link>Imports\Gps\IO\Google\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\IO\Spatial4n\*.cs">
-      <Link>Gps\IO\Spatial4n\%(FileName)</Link>
+      <Link>Imports\Gps\IO\Spatial4n\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\IO\Wkb\*.cs">
-      <Link>Gps\IO\Wkb\%(FileName)</Link>
+      <Link>Imports\Gps\IO\Wkb\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\IO\Wkt\*.cs">
-      <Link>Gps\IO\Wkt\%(FileName)</Link>
+      <Link>Imports\Gps\IO\Wkt\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Linq\*.cs">
-      <Link>Gps\Linq\%(FileName)</Link>
+      <Link>Imports\Gps\Linq\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Measure\*.cs">
-      <Link>Gps\Measure\%(FileName)</Link>
+      <Link>Imports\Gps\Measure\%(FileName)</Link>
     </Compile>
     <Compile Include="..\Geo\Properties\*.cs">
-      <Link>Gps\Properties\%(FileName)</Link>
+      <Link>Imports\Gps\Properties\%(FileName)</Link>
     </Compile>
     <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
+      <Link>Imports\Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
