@@ -13,47 +13,16 @@ namespace Geo.Geodesy
     {
         private readonly SphereCalculator _sphereCalculator = new SphereCalculator();
 
-        public static SpheroidCalculator Wgs84()
+        public SpheroidCalculator() : this(Spheroid.Default)
         {
-            return new SpheroidCalculator("WGS84", 6378137d, 298.257223563d);
         }
 
-        public static SpheroidCalculator Grs80()
+        public SpheroidCalculator(Spheroid spheroid)
         {
-            return new SpheroidCalculator("GRS80", 6378137d, 298.257222101);
+            Spheroid = spheroid;
         }
 
-        public static SpheroidCalculator International1924()
-        {
-            return new SpheroidCalculator("International 1924", 6378388d, 297d);
-        }
-
-        public static SpheroidCalculator Clarke1866()
-        {
-            return new SpheroidCalculator("Clarke 1866", 6378206.4, 294.9786982);
-        }
-
-        public SpheroidCalculator(string name, double equatorialAxis, double inverseFlattening)
-        {
-            Name = name;
-            InverseFlattening = inverseFlattening;
-            Flattening = 1 / inverseFlattening;
-            EquatorialAxis = equatorialAxis;
-            PolarAxis = equatorialAxis * (1 - 1 / inverseFlattening);
-            Eccentricity = Math.Sqrt(2 * Flattening - Flattening * Flattening);
-        }
-
-        public string Name { get; private set; }
-        public double Flattening { get; private set; }
-        public double InverseFlattening { get; private set; }
-        public double EquatorialAxis { get; private set; }
-        public double PolarAxis { get; private set; }
-        public double Eccentricity { get; private set; }
-
-        public bool IsSphere
-        {
-            get { return Math.Abs(EquatorialAxis - PolarAxis) < double.Epsilon; }
-        }
+        public Spheroid Spheroid { get; private set; }
 
         public GeodeticLine CalculateOrthodromicLine(IPosition point, double heading, double distance)
         {
@@ -75,7 +44,7 @@ namespace Geo.Geodesy
                 //alert("Only N-S courses are meaningful, starting at a pole!")
             }
 
-            var r = 1 - this.Flattening;
+            var r = 1 - Spheroid.Flattening;
             var tu = r*Math.Tan(lat1);
             var sf = Math.Sin(faz);
             var cf = Math.Cos(faz);
@@ -97,7 +66,7 @@ namespace Geo.Geodesy
             var c = 1 - x;
             c = (x*x/4 + 1)/c;
             var d = (0.375*x*x - 1)*x;
-            tu = distance / (r * EquatorialAxis * c);
+            tu = distance / (r * Spheroid.EquatorialAxis * c);
             var y = tu;
             c = y + 1;
 
@@ -123,9 +92,9 @@ namespace Geo.Geodesy
             var glat2 = modlat(Math.Atan2(d, c));
             c = cu*cy - su*sy*cf;
             x = Math.Atan2(sy*sf, c);
-            c = ((-3 * c2a + 4) * Flattening + 4) * c2a * Flattening / 16;
+            c = ((-3 * c2a + 4) * Spheroid.Flattening + 4) * c2a * Spheroid.Flattening / 16;
             d = ((e*cy*c + cz)*sy*c + y)*sa;
-            var glon2 = modlon(lon1 + x - (1 - c)*d*Flattening); // fix date line problems 
+            var glon2 = modlon(lon1 + x - (1 - c) * d * Spheroid.Flattening); // fix date line problems 
             var baz = modcrs(Math.Atan2(sa, b) + Math.PI);
 
             return new GeodeticLine(new Coordinate(point.GetCoordinate().Latitude, point.GetCoordinate().Longitude), new Coordinate(glat2.ToDegrees(), glon2.ToDegrees()),
@@ -189,7 +158,7 @@ namespace Geo.Geodesy
              */
             const int maxIterations = 100;
             const double eps = 0.5E-13;
-            double R = 1 - Flattening;
+            double R = 1 - Spheroid.Flattening;
 
             double tu1 = R * Math.Sin(lat1) / Math.Cos(lat1);
             double tu2 = R * Math.Sin(lat2) / Math.Cos(lat2);
@@ -217,10 +186,10 @@ namespace Geo.Geodesy
                     cz = -cz / c2a + cy;
                 }
                 double e = cz * cz * 2 - 1;
-                double c = ((-3 * c2a + 4) * Flattening + 4) * c2a * Flattening / 16;
+                double c = ((-3 * c2a + 4) * Spheroid.Flattening + 4) * c2a * Spheroid.Flattening / 16;
                 double d = x;
                 x = ((e * cy * c + cz) * sy * c + y) * SA;
-                x = (1 - c) * x * Flattening + lon2 - lon1;
+                x = (1 - c) * x * Spheroid.Flattening + lon2 - lon1;
 
                 if (Math.Abs(d - x) <= eps)
                 {
@@ -231,7 +200,7 @@ namespace Geo.Geodesy
                     d = (0.375 * x * x - 1) * x;
                     x = e * cy;
                     s = 1 - 2 * e;
-                    s = ((((sy * sy * 4 - 3) * s * cz * d / 6 - x) * d / 4 + cz) * sy * d + y) * c * R * EquatorialAxis;
+                    s = ((((sy * sy * 4 - 3) * s * cz * d / 6 - x) * d / 4 + cz) * sy * d + y) * c * R * Spheroid.EquatorialAxis;
                     // 'faz' and 'baz' are forward azimuths at both points.
                     faz = Math.Atan2(tu1, tu2);
                     baz = Math.Atan2(cu1 * sx, baz * cx - su1 * cu2) + Math.PI;
@@ -249,7 +218,7 @@ namespace Geo.Geodesy
             if (Math.Abs(lat1) <= leps && Math.Abs(lat2) <= leps)
             {
                 // Points are on the equator.
-                return new[] { Math.Abs(lon1 - lon2) * EquatorialAxis, faz.ToDegrees(), baz.ToDegrees() };
+                return new[] { Math.Abs(lon1 - lon2) * Spheroid.EquatorialAxis, faz.ToDegrees(), baz.ToDegrees() };
             }
             // Other cases: no solution for this algorithm.
             throw new ArithmeticException();
@@ -285,14 +254,14 @@ namespace Geo.Geodesy
 
                 var midLatRad = (0.5 * (lat1 + lat2)).ToRadians();
                 // expand merid_dist/dmp about lat_mid_rad to order e2*dlat_rad^2
-                var e2 = Math.Pow(Eccentricity, 2);
+                var e2 = Math.Pow(Spheroid.Eccentricity, 2);
                 var ratio = Math.Cos(midLatRad) /
                         Math.Sqrt(1 - e2 * Math.Pow(Math.Sin(midLatRad), 2)) *
                     (1.0 + (e2 * Math.Cos(2 * midLatRad) / 8 -
                         (1 + 2 * Math.Pow(Math.Tan(midLatRad), 2)) / 24 -
                         e2 / 12) * latDeltaRad * latDeltaRad);
 
-                distance = Math.Sqrt(Math.Pow(meridionalDistance, 2) + Math.Pow(EquatorialAxis * ratio * lonDeltaRad, 2));
+                distance = Math.Sqrt(Math.Pow(meridionalDistance, 2) + Math.Pow(Spheroid.EquatorialAxis * ratio * lonDeltaRad, 2));
             }
             else
             {
@@ -336,7 +305,7 @@ namespace Geo.Geodesy
             var lonDeltaRad = lonDelta.ToRadians();
 
             // Calculate course and distance
-            var course = Math.Atan(EquatorialAxis / Constants.NauticalMile * lonDeltaRad / mpDelta);
+            var course = Math.Atan(Spheroid.EquatorialAxis / Constants.NauticalMile * lonDeltaRad / mpDelta);
             var courseDeg = course.ToDegrees();
 
             if (latDelta >= 0)
@@ -351,15 +320,15 @@ namespace Geo.Geodesy
         public double CalculateMeridionalParts(double latitude)
         {
             var lat = latitude.ToRadians();
-            var a = EquatorialAxis * (Math.Log(Math.Tan(0.5 * lat + Math.PI / 4.0)) +
-                             (Eccentricity / 2.0) * Math.Log((1 - Eccentricity * Math.Sin(lat)) / (1 + Eccentricity * Math.Sin(lat))));
+            var a = Spheroid.EquatorialAxis * (Math.Log(Math.Tan(0.5 * lat + Math.PI / 4.0)) +
+                             (Spheroid.Eccentricity / 2.0) * Math.Log((1 - Spheroid.Eccentricity * Math.Sin(lat)) / (1 + Spheroid.Eccentricity * Math.Sin(lat))));
             return a / Constants.NauticalMile;
         }
 
         public double CalculateMeridionalDistance(double latitude)
         {
             var lat = latitude.ToRadians();
-            var e2 = Math.Pow(Eccentricity, 2);
+            var e2 = Math.Pow(Spheroid.Eccentricity, 2);
             var b0 = 1 - (e2 / 4) * (1 + (e2 / 16) * (3 + (5 * e2 / 4) * (1 + 35 * e2 / 64)));
             var b2 = -(3 / 8.0) * (1 + (e2 / 4) * (1 + (15 * e2 / 32) * (1 + 7 * e2 / 12)));
             var b4 = (15 / 256.0) * (1 + (3 * e2 / 4) * (1 + 35 * e2 / 48));
@@ -370,7 +339,7 @@ namespace Geo.Geodesy
                                    e2 * (b4 * Math.Sin(4 * lat) +
                                                e2 * (b6 * Math.Sin(6 * lat) +
                                                            e2 * (b8 * Math.Sin(8 * lat)))));
-            return dist * EquatorialAxis;
+            return dist * Spheroid.EquatorialAxis;
         }
 
         public Area CalculateArea(CoordinateSequence coordinates)

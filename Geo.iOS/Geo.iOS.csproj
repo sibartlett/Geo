@@ -86,6 +86,12 @@
     <Compile Include="..\Geo\Geodesy\*.cs">
       <Link>Geodesy\%(FileName)</Link>
     </Compile>
+    <Compile Include="..\Geo\Geomagnetism\*.cs">
+      <Link>Geomagnetism\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Geo\Geomagnetism\Models\*.cs">
+      <Link>Geomagnetism\Models\%(FileName)</Link>
+    </Compile>
     <Compile Include="..\Geo\Geometries\*.cs">
       <Link>Geometries\%(FileName)</Link>
     </Compile>

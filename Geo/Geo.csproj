@@ -57,6 +57,23 @@
     <Compile Include="CoordinateZ.cs" />
     <Compile Include="CoordinateZM.cs" />
     <Compile Include="Geodesy\GeodeticCalculations.cs" />
+    <Compile Include="Geodesy\Spheroid.cs" />
+    <Compile Include="Geomagnetism\GeomagnetismCalculator.cs" />
+    <Compile Include="Geomagnetism\GeomagnetismResult.cs" />
+    <Compile Include="Geomagnetism\GeomagnetismSource.cs" />
+    <Compile Include="Geomagnetism\IGeomagneticModel.cs" />
+    <Compile Include="Geomagnetism\JulianDate.cs" />
+    <Compile Include="Geomagnetism\Models\Igrf1990.cs" />
+    <Compile Include="Geomagnetism\Models\Igrf1995.cs" />
+    <Compile Include="Geomagnetism\Models\Igrf2000.cs" />
+    <Compile Include="Geomagnetism\Models\Igrf2005.cs" />
+    <Compile Include="Geomagnetism\Models\Igrf2010.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm1985.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm1990.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm1995.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm2000.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm2005.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm2010.cs" />
     <Compile Include="IO\Google\GooglePolylineEncoder.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />
@@ -193,6 +210,7 @@
     <Compile Include="Geodesy\SphereCalculator.cs" />
     <Compile Include="SimpleJson.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

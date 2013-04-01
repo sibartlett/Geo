@@ -1,5 +1,6 @@
 ﻿using Geo.Abstractions.Interfaces;
 using Geo.Geodesy;
+using Geo.Geomagnetism;
 
 namespace Geo
 {
@@ -13,14 +14,22 @@ namespace Geo
             set { _current = value; }
         }
 
-        public GeoContext()
+        public GeoContext() : this(Spheroid.Default)
         {
-            GeodeticCalculator = SpheroidCalculator.Wgs84();
+        }
+
+        public GeoContext(Spheroid spheroid)
+        {
+            Spheroid = spheroid;
+            GeodeticCalculator = new SpheroidCalculator(spheroid);
+            GeomagnetismCalculator = new GeomagnetismCalculator(spheroid);
             EqualityOptions = new SpatialEqualityOptions();
             LongitudeWrapping = false;
         }
 
+        public Spheroid Spheroid { get; set; }
         public IGeodeticCalculator GeodeticCalculator { get; set; }
+        public GeomagnetismCalculator GeomagnetismCalculator { get; set; }
         public SpatialEqualityOptions EqualityOptions { get; set; }
         public bool LongitudeWrapping { get; set; }
     }
