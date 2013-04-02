@@ -9,13 +9,8 @@ namespace Geo.Geomagnetism
 {
     public class GeomagnetismCalculator
     {
-        private readonly List<IGeomagneticModel> _models = new List<IGeomagneticModel>
+        private readonly List<IGeomagneticModel> _models = new List<IGeomagneticModel>(IgrfModelFactory.GetModels())
                                                       {
-                                                          new Igrf1990(),
-                                                          new Igrf1995(),
-                                                          new Igrf2000(),
-                                                          new Igrf2005(),
-                                                          new Igrf2010(),
                                                           new Wmm1985(),
                                                           new Wmm1990(),
                                                           new Wmm1995(),
@@ -49,24 +44,24 @@ namespace Geo.Geomagnetism
             _models.Add(model);
         }
 
-        public GeomagnetismResult TryCalculate(IPosition position, DateTimeOffset date, GeomagnetismSource source)
+        public GeomagnetismResult TryCalculate(IPosition position, DateTimeOffset date, GeomagnetismSource source = GeomagnetismSource.Igrf)
         {
             return TryCalculate(position, date.UtcDateTime, source);
         }
 
-        public GeomagnetismResult TryCalculate(IPosition position, DateTime utcDate, GeomagnetismSource source)
+        public GeomagnetismResult TryCalculate(IPosition position, DateTime utcDate, GeomagnetismSource source = GeomagnetismSource.Igrf)
         {
             GeomagnetismResult result;
-            TryCalculate(position, utcDate, source, out result);
+            TryCalculate(position, utcDate, out result, source);
             return result;
         }
 
-        public bool TryCalculate(IPosition position, DateTimeOffset date, GeomagnetismSource source, out GeomagnetismResult result)
+        public bool TryCalculate(IPosition position, DateTimeOffset date, out GeomagnetismResult result, GeomagnetismSource source = GeomagnetismSource.Igrf)
         {
-            return TryCalculate(position, date.UtcDateTime, source, out result);
+            return TryCalculate(position, date.UtcDateTime, out result, source);
         }
 
-        public bool TryCalculate(IPosition position, DateTime utcDate, GeomagnetismSource source, out GeomagnetismResult result)
+        public bool TryCalculate(IPosition position, DateTime utcDate, out GeomagnetismResult result, GeomagnetismSource source = GeomagnetismSource.Igrf)
         {
             var coordinate = position.GetCoordinate();
             var coordinateZ = coordinate as CoordinateZ ?? new CoordinateZ(coordinate.Latitude, coordinate.Longitude, 0);

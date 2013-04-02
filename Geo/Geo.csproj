@@ -63,11 +63,7 @@
     <Compile Include="Geomagnetism\GeomagnetismSource.cs" />
     <Compile Include="Geomagnetism\IGeomagneticModel.cs" />
     <Compile Include="Geomagnetism\JulianDate.cs" />
-    <Compile Include="Geomagnetism\Models\Igrf1990.cs" />
-    <Compile Include="Geomagnetism\Models\Igrf1995.cs" />
-    <Compile Include="Geomagnetism\Models\Igrf2000.cs" />
-    <Compile Include="Geomagnetism\Models\Igrf2005.cs" />
-    <Compile Include="Geomagnetism\Models\Igrf2010.cs" />
+    <Compile Include="Geomagnetism\Models\IgrfModelFactory.cs" />
     <Compile Include="Geomagnetism\Models\Wmm1985.cs" />
     <Compile Include="Geomagnetism\Models\Wmm1990.cs" />
     <Compile Include="Geomagnetism\Models\Wmm1995.cs" />
