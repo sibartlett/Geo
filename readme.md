@@ -47,13 +47,14 @@ Features include:
 * Use Geo geometries in RavenDB spatial queries
 
 __RavenDB JsonConverters for Geo__ - _[NuGet](https://nuget.org/packages/Geo.Raven) (.NET 4.0+, Silverlight 5)_
+
 RavenDB JsonConverters, which let you take advantage of the new spatial features in Raven 2.5.
 
 #### Useful Information
 
 * All ordinates are in degress, unless specified otherwise
 * All measurements are in S.I. units (metres, seconds, etc.), unless specified otherwise
-* The coordinate reference system kis assumed to be WGS-84
+* The coordinate reference system is assumed to be WGS-84
 
 #### License
 
