@@ -17,13 +17,13 @@
 // <website>https://github.com/facebook-csharp-sdk/simple-json</website>
 //-----------------------------------------------------------------------
 
-// VERSION: 0.25.0
+// VERSION: 0.30.0
 
 // NOTE: uncomment the following line to make SimpleJson class internal.
-#define SIMPLE_JSON_INTERNAL
+//#define SIMPLE_JSON_INTERNAL
 
 // NOTE: uncomment the following line to make JsonArray and JsonObject class internal.
-#define SIMPLE_JSON_OBJARRAYINTERNAL
+//#define SIMPLE_JSON_OBJARRAYINTERNAL
 
 // NOTE: uncomment the following line to enable dynamic support.
 //#define SIMPLE_JSON_DYNAMIC
@@ -33,11 +33,13 @@
 
 // NOTE: uncomment the following line to disable linq expressions/compiled lambda (better performance) instead of method.invoke().
 // define if you are using .net framework <= 3.0 or < WP7.5
-#define SIMPLE_JSON_NO_LINQ_EXPRESSION
+//#define SIMPLE_JSON_NO_LINQ_EXPRESSION
 
 // NOTE: uncomment the following line if you are compiling under Window Metro style application/library.
 // usually already defined in properties
 //#define NETFX_CORE;
+
+// If you are targetting WinStore, WP8 and NET4.5+ PCL make sure to #define SIMPLE_JSON_TYPEINFO;
 
 // original json parsing code from http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
 
@@ -1306,6 +1308,14 @@ namespace Geo
                         return DateTimeOffset.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
                     if (type == typeof(Guid) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid)))
                         return new Guid(str);
+                    if (type == typeof(Uri))
+                    {
+                        bool isValid =  Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
+
+                        Uri result;
+                        if (isValid && Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out result))
+                            return result;
+                    }
                     return str;
                 }
                 else
@@ -1330,13 +1340,9 @@ namespace Geo
                 return value;
             if ((valueIsDouble && type != typeof(double)) || (valueIsLong && type != typeof(long)))
             {
-                obj =
-#if NETFX_CORE
- type == typeof(int) || type == typeof(long) || type == typeof(double) || type == typeof(float) || type == typeof(bool) || type == typeof(decimal) || type == typeof(byte) || type == typeof(short)
-#else
- typeof(IConvertible).IsAssignableFrom(type)
-#endif
- ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture) : value;
+                obj = type == typeof(int) || type == typeof(long) || type == typeof(double) || type == typeof(float) || type == typeof(bool) || type == typeof(decimal) || type == typeof(byte) || type == typeof(short)
+                            ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture)
+                            : value;
             }
             else
             {
@@ -1397,9 +1403,8 @@ namespace Geo
                         }
                         else if (ReflectionUtils.IsTypeGenericeCollectionInterface(type) || ReflectionUtils.IsAssignableFrom(typeof(IList), type))
                         {
-                            Type innerType = ReflectionUtils.GetGenericTypeArguments(type)[0];
-                            Type genericType = typeof(List<>).MakeGenericType(innerType);
-                            list = (IList)ConstructorCache[genericType](jsonObject.Count);
+                            Type innerType = ReflectionUtils.GetGenericListElementType(type);
+                            list = (IList)(ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
                             foreach (object o in jsonObject)
                                 list.Add(DeserializeObject(o, innerType));
                         }
@@ -1562,6 +1567,18 @@ namespace Geo
 
             public delegate TValue ThreadSafeDictionaryValueFactory<TKey, TValue>(TKey key);
 
+#if SIMPLE_JSON_TYPEINFO
+            public static TypeInfo GetTypeInfo(Type type)
+            {
+                return type.GetTypeInfo();
+            }
+#else
+            public static Type GetTypeInfo(Type type)
+            {
+                return type;
+            }
+#endif
+
             public static Attribute GetAttribute(MemberInfo info, Type type)
             {
 #if SIMPLE_JSON_TYPEINFO
@@ -1573,6 +1590,25 @@ namespace Geo
                     return null;
                 return Attribute.GetCustomAttribute(info, type);
 #endif
+            }
+
+            public static Type GetGenericListElementType(Type type)
+            {
+                IEnumerable<Type> interfaces;
+#if SIMPLE_JSON_TYPEINFO
+                interfaces = type.GetTypeInfo().ImplementedInterfaces;
+#else
+                interfaces = type.GetInterfaces();
+#endif
+                foreach (Type implementedInterface in interfaces)
+                {
+                    if (IsTypeGeneric(implementedInterface) &&
+                        implementedInterface.GetGenericTypeDefinition() == typeof (IList<>))
+                    {
+                        return GetGenericTypeArguments(implementedInterface)[0];
+                    }
+                }
+                return GetGenericTypeArguments(type)[0];
             }
 
             public static Attribute GetAttribute(Type objectType, Type attributeType)
@@ -1598,13 +1634,14 @@ namespace Geo
 #endif
             }
 
+            public static bool IsTypeGeneric(Type type)
+            {
+                return GetTypeInfo(type).IsGenericType;
+            }
+
             public static bool IsTypeGenericeCollectionInterface(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
-                if (!type.GetTypeInfo().IsGenericType)
-#else
-                if (!type.IsGenericType)
-#endif
+                if (!IsTypeGeneric(type))
                     return false;
 
                 Type genericDefinition = type.GetGenericTypeDefinition();
@@ -1614,11 +1651,7 @@ namespace Geo
 
             public static bool IsAssignableFrom(Type type1, Type type2)
             {
-#if SIMPLE_JSON_TYPEINFO
-                return type1.GetTypeInfo().IsAssignableFrom(type2.GetTypeInfo());
-#else
-                return type1.IsAssignableFrom(type2);
-#endif
+                return GetTypeInfo(type1).IsAssignableFrom(GetTypeInfo(type2));
             }
 
             public static bool IsTypeDictionary(Type type)
@@ -1626,29 +1659,20 @@ namespace Geo
 #if SIMPLE_JSON_TYPEINFO
                 if (typeof(IDictionary<,>).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
                     return true;
-
-                if (!type.GetTypeInfo().IsGenericType)
-                    return false;
 #else
                 if (typeof(System.Collections.IDictionary).IsAssignableFrom(type))
                     return true;
-
-                if (!type.IsGenericType)
-                    return false;
 #endif
+                if (!GetTypeInfo(type).IsGenericType)
+                    return false;
+
                 Type genericDefinition = type.GetGenericTypeDefinition();
                 return genericDefinition == typeof(IDictionary<,>);
             }
 
             public static bool IsNullableType(Type type)
             {
-                return
-#if SIMPLE_JSON_TYPEINFO
- type.GetTypeInfo().IsGenericType
-#else
- type.IsGenericType
-#endif
- && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+                return GetTypeInfo(type).IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
             }
 
             public static object ToNullableType(object obj, Type nullableType)
@@ -1658,11 +1682,7 @@ namespace Geo
 
             public static bool IsValueType(Type type)
             {
-#if SIMPLE_JSON_TYPEINFO
-                return type.GetTypeInfo().IsValueType;
-#else
-                return type.IsValueType;
-#endif
+                return GetTypeInfo(type).IsValueType;
             }
 
             public static IEnumerable<ConstructorInfo> GetConstructors(Type type)
