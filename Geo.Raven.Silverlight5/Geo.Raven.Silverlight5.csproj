@@ -48,14 +48,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AsyncCtpLibrary_Silverlight5, Version=1.0.4300.23966, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Client.2.0.2330\lib\sl50\AsyncCtpLibrary_Silverlight5.dll</HintPath>
+    <Reference Include="Microsoft.CompilerServices.AsyncTargetingPack.Silverlight5">
+      <HintPath>..\packages\Microsoft.CompilerServices.AsyncTargetingPack.1.0.1\lib\sl50\Microsoft.CompilerServices.AsyncTargetingPack.Silverlight5.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Raven.Client.Silverlight, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Raven.Client.Silverlight, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Client.2.0.2330\lib\sl50\Raven.Client.Silverlight.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Client.2.5.2750\lib\sl50\Raven.Client.Silverlight.dll</HintPath>
     </Reference>
     <Reference Include="system" />
     <Reference Include="System.Core">
