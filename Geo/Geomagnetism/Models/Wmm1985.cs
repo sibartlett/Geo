@@ -4,7 +4,6 @@ namespace Geo.Geomagnetism.Models
 {
     public class Wmm1985 : IGeomagneticModel
     {
-        public GeomagnetismSource Source { get { return  GeomagnetismSource.Wmm; } }
         public DateTime ValidFrom { get { return new DateTime(1985, 1, 1);} }
         public DateTime ValidTo { get { return new DateTime(1990, 1, 1); } }
 

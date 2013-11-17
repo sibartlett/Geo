@@ -5,9 +5,8 @@ namespace Geo.Geomagnetism
 {
     public class GeomagnetismResult
     {
-        public GeomagnetismResult(CoordinateZ coordinate, DateTime date, GeomagnetismSource source, double x, double y, double z)
+        public GeomagnetismResult(CoordinateZ coordinate, DateTime date, double x, double y, double z)
         {
-            Source = source;
             Date = date;
             Coordinate = coordinate;
             if ((Math.Abs(x - 0.0) < double.Epsilon * 2 || Math.Abs(y - 0.0) < double.Epsilon * 2))
@@ -25,7 +24,6 @@ namespace Geo.Geomagnetism
 
         public CoordinateZ Coordinate { get; private set; }
         public DateTime Date { get; private set; }
-        public GeomagnetismSource Source { get; private set; }
 
         public double X { get; private set; }
         public double Y { get; private set; }

@@ -241,7 +241,6 @@ namespace Geo.Geomagnetism.Models
 
                 models[i] = new IgrfGeomagneticModel
                 {
-                    Source = GeomagnetismSource.Igrf,
                     ValidFrom = new DateTime(1900 + (i * 5), 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     ValidTo = new DateTime(1905 + (i * 5), 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     MainCoefficientsG = gnm,
@@ -256,7 +255,6 @@ namespace Geo.Geomagnetism.Models
 
         private class IgrfGeomagneticModel : IGeomagneticModel
         {
-            public GeomagnetismSource Source { get; set; }
             public DateTime ValidFrom { get; set; }
             public DateTime ValidTo { get; set; }
             public double[,] MainCoefficientsG { get; set; }

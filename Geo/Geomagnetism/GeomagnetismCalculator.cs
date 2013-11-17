@@ -3,65 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Geodesy;
-using Geo.Geomagnetism.Models;
 
 namespace Geo.Geomagnetism
 {
     public class GeomagnetismCalculator
     {
-        private readonly List<IGeomagneticModel> _models = new List<IGeomagneticModel>(IgrfModelFactory.GetModels())
-                                                      {
-                                                          new Wmm1985(),
-                                                          new Wmm1990(),
-                                                          new Wmm1995(),
-                                                          new Wmm2000(),
-                                                          new Wmm2005(),
-                                                          new Wmm2010()
-                                                      };
-
         private readonly Spheroid _spheroid;
+        private readonly List<IGeomagneticModel> _models = new List<IGeomagneticModel>();
 
         public List<IGeomagneticModel> Models { get { return _models; } }
 
-        public GeomagnetismCalculator() : this(Spheroid.Default)
+        public GeomagnetismCalculator() : this(Spheroid.Default, null)
         {
         }
 
-        public GeomagnetismCalculator(Spheroid spheroid)
+        public GeomagnetismCalculator(IEnumerable<IGeomagneticModel> geomagneticModels) : this(Spheroid.Default, geomagneticModels)
+        {
+        }
+
+        public GeomagnetismCalculator(Spheroid spheroid) : this(spheroid, null)
+        {
+        }
+
+        public GeomagnetismCalculator(Spheroid spheroid, IEnumerable<IGeomagneticModel> geomagneticModels)
         {
             _spheroid = spheroid;
+            if (geomagneticModels != null)
+                _models.AddRange(geomagneticModels);
         }
 
-        public void AddModel(IGeomagneticModel model)
+        public GeomagnetismResult TryCalculate(IPosition position, DateTimeOffset date)
         {
-            var matches = _models
-                .Where(x=> x.Source == model.Source)
-                .Any(x => x.ValidFrom < model.ValidFrom && x.ValidTo > model.ValidFrom || x.ValidFrom < model.ValidTo && x.ValidTo > model.ValidTo);
-
-            if (matches)
-                throw new NotSupportedException("Can not add a geomagnetic model which conflicts with an existing model.");
-
-            _models.Add(model);
+            return TryCalculate(position, date.UtcDateTime);
         }
 
-        public GeomagnetismResult TryCalculate(IPosition position, DateTimeOffset date, GeomagnetismSource source = GeomagnetismSource.Igrf)
-        {
-            return TryCalculate(position, date.UtcDateTime, source);
-        }
-
-        public GeomagnetismResult TryCalculate(IPosition position, DateTime utcDate, GeomagnetismSource source = GeomagnetismSource.Igrf)
+        public GeomagnetismResult TryCalculate(IPosition position, DateTime utcDate)
         {
             GeomagnetismResult result;
-            TryCalculate(position, utcDate, out result, source);
+            TryCalculate(position, utcDate, out result);
             return result;
         }
 
-        public bool TryCalculate(IPosition position, DateTimeOffset date, out GeomagnetismResult result, GeomagnetismSource source = GeomagnetismSource.Igrf)
+        public bool TryCalculate(IPosition position, DateTimeOffset date, out GeomagnetismResult result)
         {
-            return TryCalculate(position, date.UtcDateTime, out result, source);
+            return TryCalculate(position, date.UtcDateTime, out result);
         }
 
-        public bool TryCalculate(IPosition position, DateTime utcDate, out GeomagnetismResult result, GeomagnetismSource source = GeomagnetismSource.Igrf)
+        public bool TryCalculate(IPosition position, DateTime utcDate, out GeomagnetismResult result)
         {
             var coordinate = position.GetCoordinate();
             var coordinateZ = coordinate as CoordinateZ ?? new CoordinateZ(coordinate.Latitude, coordinate.Longitude, 0);
@@ -71,7 +59,7 @@ namespace Geo.Geomagnetism
                 ele = coordinateZ.Elevation / 1000,
                 dat = JulianDate.JD(utcDate);
             
-            var model = _models.SingleOrDefault(mod => mod.ValidFrom <= utcDate && mod.ValidTo > utcDate && mod.Source == source);
+            var model = _models.SingleOrDefault(mod => mod.ValidFrom <= utcDate && mod.ValidTo > utcDate);
 
             if (model == null)
             {
@@ -183,7 +171,7 @@ namespace Geo.Geomagnetism
             var x = -bTheta * cosPsi - bRadial * sinPsi;
             var y = bPhi;
             var z = bTheta * sinPsi - bRadial * cosPsi;
-            result = new GeomagnetismResult(coordinateZ, new DateTime(utcDate.Ticks, DateTimeKind.Utc), source, x, y, z);
+            result = new GeomagnetismResult(coordinateZ, new DateTime(utcDate.Ticks, DateTimeKind.Utc), x, y, z);
             return true;
         }
     }

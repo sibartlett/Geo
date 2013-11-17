@@ -4,7 +4,6 @@ namespace Geo.Geomagnetism
 {
     public interface IGeomagneticModel
     {
-        GeomagnetismSource Source { get; }
         DateTime ValidFrom { get; }
         DateTime ValidTo { get; }
 

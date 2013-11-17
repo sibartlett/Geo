@@ -60,8 +60,8 @@
     <Compile Include="Geodesy\Spheroid.cs" />
     <Compile Include="Geomagnetism\GeomagnetismCalculator.cs" />
     <Compile Include="Geomagnetism\GeomagnetismResult.cs" />
-    <Compile Include="Geomagnetism\GeomagnetismSource.cs" />
     <Compile Include="Geomagnetism\IGeomagneticModel.cs" />
+    <Compile Include="Geomagnetism\IgrfGeomagnetismCalculator.cs" />
     <Compile Include="Geomagnetism\JulianDate.cs" />
     <Compile Include="Geomagnetism\Models\IgrfModelFactory.cs" />
     <Compile Include="Geomagnetism\Models\Wmm1985.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="Geomagnetism\Models\Wmm2000.cs" />
     <Compile Include="Geomagnetism\Models\Wmm2005.cs" />
     <Compile Include="Geomagnetism\Models\Wmm2010.cs" />
+    <Compile Include="Geomagnetism\WmmGeomagnetismCalculator.cs" />
     <Compile Include="IO\Google\GooglePolylineEncoder.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nWriter.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using Geo.Geodesy;
 using Geo.Geomagnetism;
 using NUnit.Framework;
 
@@ -11,8 +10,8 @@ namespace Geo.Tests.Geomagnetism
         [Test]
         public void Test()
         {
-            var a = new GeomagnetismCalculator(Spheroid.Wgs84);
-            var b = a.TryCalculate(new Coordinate(51.8, -0.15), DateTime.UtcNow.Date, GeomagnetismSource.Igrf);
+            var a = new IgrfGeomagnetismCalculator();
+            var b = a.TryCalculate(new Coordinate(51.8, -0.15), DateTime.UtcNow.Date);
             Console.WriteLine(b);
         }
     }
