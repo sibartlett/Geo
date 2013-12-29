@@ -30,8 +30,8 @@ namespace Geo
             return new Envelope(
                 Math.Min(MinLat, other.MinLat),
                 Math.Min(MinLon, other.MinLon),
-                Math.Min(MaxLat, other.MaxLat),
-                Math.Min(MaxLon, other.MaxLon)
+                Math.Max(MaxLat, other.MaxLat),
+                Math.Max(MaxLon, other.MaxLon)
             );
         }
 
