@@ -36,7 +36,7 @@ namespace Geo.Geometries
                 if (envelope == null)
                     envelope = geometry.GetBounds();
                 else
-                    envelope.Combine(geometry.GetBounds());
+                    envelope = envelope.Combine(geometry.GetBounds());
             }
             return envelope;
         }
