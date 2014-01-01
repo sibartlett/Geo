@@ -25,13 +25,5 @@ namespace Geo
                 degrees += 360;
             return degrees;
         }
-
-        public static IEnumerable<T> GetEnumValues<T>()
-        {
-            var type = typeof(T);
-            return type
-                .GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Select(fi => (T) Enum.Parse(type, fi.Name, false));
-        }
     }
 }

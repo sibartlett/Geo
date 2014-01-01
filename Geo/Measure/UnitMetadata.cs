@@ -38,7 +38,7 @@ namespace Geo.Measure
         {
             var type = typeof(T);
             var a = new Dictionary<T, UnitAttribute>();
-            foreach (T unit in InternalHelpers.GetEnumValues<T>())
+            foreach (T unit in Enum.GetValues(typeof(T)))
             {
                 var name = Enum.GetName(type, unit);
 
