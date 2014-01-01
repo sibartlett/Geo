@@ -111,7 +111,7 @@ namespace Geo.Gps.Serialization
 
         private bool ParseFix(string line, TrackSegment trackSegment, DateTime date)
         {
-            if (line.IsNullOrWhitespace())
+            if (string.IsNullOrWhiteSpace(line))
                 return false;
 
             var match = Regex.Match(line, B_LINE_REGEX);

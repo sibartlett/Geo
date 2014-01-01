@@ -63,7 +63,7 @@ namespace Geo.Gps.Serialization
 
         private bool ParseFix(string line, TrackSegment trackSegment)
         {
-            if (line.IsNullOrWhitespace())
+            if (string.IsNullOrWhiteSpace(line))
                 return false;
 
             var match = Regex.Match(line, FIX_SENTENCE);
@@ -86,7 +86,7 @@ namespace Geo.Gps.Serialization
 
         private bool ParseWaypoint(string line, GpsData data)
         {
-            if (line.IsNullOrWhitespace())
+            if (string.IsNullOrWhiteSpace(line))
                 return false;
 
             var match = Regex.Match(line, WPT_SENTENCE);

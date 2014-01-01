@@ -33,10 +33,5 @@ namespace Geo
                 .GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Select(fi => (T) Enum.Parse(type, fi.Name, false));
         }
-
-        public static bool IsNullOrWhitespace(this string value)
-        {
-            return value == null || value.Trim().Length == 0;
-        }
     }
 }

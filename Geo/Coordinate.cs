@@ -71,7 +71,7 @@ namespace Geo
             if (coordinate == null)
                 throw new ArgumentNullException("coordinate");
 
-            if (coordinate.IsNullOrWhitespace())
+            if (string.IsNullOrWhiteSpace(coordinate))
                 throw new ArgumentException("Value was empty", "coordinate");
 
             Coordinate result;

@@ -22,7 +22,7 @@ namespace Geo.Gps.Metadata
 
         public void Attribute(Func<TKeys, string> attribute, string value)
         {
-            if (!value.IsNullOrWhitespace())
+            if (!string.IsNullOrWhiteSpace(value))
             {
                 var key = attribute(_metadataKeys);
                 this[key] = value.Trim();
