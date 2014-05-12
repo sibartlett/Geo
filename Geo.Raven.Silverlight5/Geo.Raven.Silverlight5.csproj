@@ -54,7 +54,7 @@
     <Reference Include="mscorlib" />
     <Reference Include="Raven.Client.Silverlight, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RavenDB.Client.2.5.2750\lib\sl50\Raven.Client.Silverlight.dll</HintPath>
+      <HintPath>..\packages\RavenDB.Client.2.5.2879\lib\sl50\Raven.Client.Silverlight.dll</HintPath>
     </Reference>
     <Reference Include="system" />
     <Reference Include="System.Core">
