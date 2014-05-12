@@ -1,4 +1,5 @@
-﻿using Geo.Geodesy;
+﻿using System;
+using Geo.Geodesy;
 using Geo.Geometries;
 using Geo.Measure;
 using NUnit.Framework;
@@ -58,8 +59,19 @@ namespace Geo.Tests.Geodesy
         {
             var calculator = new SpheroidCalculator(Spheroid.Wgs84);
             var result = calculator.CalculateOrthodromicLine(new Point(lat1, lon1), angle, new Distance(distance, DistanceUnit.Nm).SiValue);
-			Assert.That(result.Coordinate2.Latitude, Is.EqualTo(lat2).Within(Millionth));
-			Assert.That(result.Coordinate2.Longitude, Is.EqualTo(lon2).Within(Millionth));
+            Assert.That(result.Coordinate2.Latitude, Is.EqualTo(lat2).Within(Millionth));
+            Assert.That(result.Coordinate2.Longitude, Is.EqualTo(lon2).Within(Millionth));
+        }
+
+        [TestCase(30, 175, -30, -3.5)]
+        [TestCase(30, 176, -30, -3.5)]
+        public void Bug7(double lat1, double lon1, double lat2, double lon2)
+        {
+            var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+            var result = calculator.CalculateOrthodromicLine(new Point(lat1, lon1), new Point(lat2, lon2));
+            Console.WriteLine(result.Distance);
+            Console.WriteLine(result.Bearing12);
+            Console.WriteLine(result.Bearing21);
         }
     }
 }

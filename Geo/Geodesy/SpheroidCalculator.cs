@@ -169,6 +169,8 @@ namespace Geo.Geodesy
             double baz = s * tu2;
             double faz = baz * tu1;
             double x = lon2 - lon1;
+            double x2 = double.MinValue;
+            bool x2b = false; // has not converged, but is flip-flopping
             for (int i = 0; i < maxIterations; i++)
             {
                 double sx = Math.Sin(x);
@@ -188,10 +190,23 @@ namespace Geo.Geodesy
                 double e = cz * cz * 2 - 1;
                 double c = ((-3 * c2a + 4) * Spheroid.Flattening + 4) * c2a * Spheroid.Flattening / 16;
                 double d = x;
+
                 x = ((e * cy * c + cz) * sy * c + y) * SA;
                 x = (1 - c) * x * Spheroid.Flattening + lon2 - lon1;
 
-                if (Math.Abs(d - x) <= eps)
+                if (Math.Abs(x - x2) <= double.Epsilon)
+                {
+                    d = x = (x + d) / 2;
+                    x2b = true;
+                    continue;
+                }
+                else
+                {
+                    x2 = d;
+                }
+
+                var com = Math.Abs(d - x);
+                if (x2b || com <= eps)
                 {
                     x = Math.Sqrt((1 / (R * R) - 1) * c2a + 1) + 1;
                     x = (x - 2) / x;
