@@ -19,9 +19,7 @@
       <tags>geo spatial gps coordinates wgs84 geography ravendb raven</tags>
    </metadata>
    <files>
-      <file src="Geo.Raven\bin\Release\Geo.Raven.dll" target="lib\net40\Geo.Raven.dll" />
-      <file src="Geo.Raven\bin\Release\Geo.Raven.pdb" target="lib\net40\Geo.Raven.pdb" />
-      <file src="Geo.Raven.Net45\bin\Release\Geo.Raven.dll" target="lib\net45\Geo.Raven.dll" />
-      <file src="Geo.Raven.Net45\bin\Release\Geo.Raven.pdb" target="lib\net45\Geo.Raven.pdb" />
+      <file src="Geo.Raven/bin/Release/Geo.Raven.dll" target="lib/net40/Geo.Raven.dll" />
+      <file src="Geo.Raven.Net45/bin/Release/Geo.Raven.dll" target="lib/net45/Geo.Raven.dll" />
    </files>
 </package>
