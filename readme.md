@@ -6,7 +6,7 @@ Geo is a spatial library that is made specfically for geographic data.
 
 #### NuGet Packages
 
-__Geo__ - _[NuGet](https://nuget.org/packages/Geo) (.NET 4.0+, Windows 8 Store applications, Windows Phone 8.0+, Silverlight 5)_
+__Geo__ - _[NuGet](https://nuget.org/packages/Geo) (.NET 4.0+, Windows 8, Windows Phone 8.0+, Silverlight 5, Xamarin Android and iOS)_
 
 Features include:
 * Geographic geometry types:
@@ -40,7 +40,7 @@ Features include:
 	* IGRF / WMM models
 	* Declination, Inclination, Intensity, etc.
 
-__Geo.Raven__ - _[NuGet](https://nuget.org/packages/Geo.Raven) (.NET 4.0+, Silverlight 5)_
+__Geo.Raven__ - _[NuGet](https://nuget.org/packages/Geo.Raven) (.NET 4.0+)_
 
 Features include:
 * Define RavenDB indexes against Geo geometries
