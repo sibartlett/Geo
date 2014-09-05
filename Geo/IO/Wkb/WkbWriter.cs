@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 
@@ -19,23 +20,32 @@ namespace Geo.IO.Wkb
             _settings = settings;
         }
 
-        public byte[] Write(IOgcGeometry geometry)
+		public byte[] Write(IGeometry geometry)
         {
             using (var stream = new MemoryStream())
             {
-                Write(geometry, stream);
+				WriteInternal(geometry, stream);
                 return stream.ToArray();
             }
-        }
+		}
 
-        public void Write(IOgcGeometry geometry, Stream stream)
-        {
+		public void Write(IGeometry geometry, Stream stream)
+		{
+			using (var tempStream = new MemoryStream())
+			{
+				WriteInternal(geometry, tempStream);
+				tempStream.CopyTo(stream);
+			}
+		}
+
+		private void WriteInternal(IGeometry geometry, Stream stream)
+		{
             using (var writer = new WkbBinaryWriter(stream, _settings.Encoding))
             {
                 WriteEncoding(writer, _settings.Encoding);
                 Write(geometry, writer);
             }
-        }
+		}
 
         private void WriteEncoding(WkbBinaryWriter writer, WkbEncoding encoding)
         {
@@ -45,39 +55,75 @@ namespace Geo.IO.Wkb
         private void Write(IGeometry geometry, WkbBinaryWriter writer)
         {
             var point = geometry as Point;
-            if (point != null)
-                WritePoint(point, writer);
+			if (point != null)
+			{
+				WritePoint (point, writer);
+				return;
+			}
 
             var lineString = geometry as LineString;
-            if (lineString != null)
-                WriteLineString(lineString, writer);
+			if (lineString != null)
+			{
+				WriteLineString (lineString, writer);
+				return;
+			}
 
             if (_settings.Triangle)
             {
                 var triangle = geometry as Triangle;
-                if (triangle != null)
-                    WriteTriangle(triangle, writer);
+				if (triangle != null)
+				{
+					WriteTriangle (triangle, writer);
+					return;
+				}
             }
 
             var polygon = geometry as Polygon;
-            if (polygon != null)
-                WritePolygon(polygon, writer);
+			if (polygon != null)
+			{
+				WritePolygon (polygon, writer);
+				return;
+			}
 
             var multiPoint = geometry as MultiPoint;
-            if (multiPoint != null)
-                WriteMultiPoint(multiPoint, writer);
+			if (multiPoint != null)
+			{
+				WriteMultiPoint (multiPoint, writer);
+				return;
+			}
 
             var multiLineString = geometry as MultiLineString;
-            if (multiLineString != null)
-                WriteMultiLineString(multiLineString, writer);
+			if (multiLineString != null)
+			{
+				WriteMultiLineString (multiLineString, writer);
+				return;
+			}
 
             var multiPolygon = geometry as MultiPolygon;
-            if (multiPolygon != null)
-                WriteMultiPolygon(multiPolygon, writer);
+			if (multiPolygon != null)
+			{
+				WriteMultiPolygon(multiPolygon, writer);
+				return;
+			}
 
             var geometryCollection = geometry as GeometryCollection;
-            if (geometryCollection != null)
-                WriteGeometryCollection(geometryCollection, writer);
+			if (geometryCollection != null)
+			{
+				WriteGeometryCollection(geometryCollection, writer);
+				return;
+			}
+
+			if (_settings.ConvertCirclesToRegularPolygons)
+			{
+				var circle = geometry as Circle;
+				if (circle != null)
+				{
+					WritePolygon(circle.ToPolygon(_settings.CircleSides), writer);
+					return;
+				}
+			}
+
+			throw new SerializationException("Geometry of type '" + geometry.GetType().Name + "' is not supported");
         }
 
         private void WriteCoordinate(Coordinate coordinate, WkbBinaryWriter writer)

@@ -7,12 +7,24 @@ using Geo.Geometries;
 namespace Geo.IO.GeoJson
 {
     public class GeoJsonWriter
-    {
-        public string Write(IGeoJsonObject obj)
-        {
-            var geometry = obj as IGeoJsonGeometry;
-            if (geometry != null)
-                return Write(geometry);
+	{
+		private readonly GeoJsonWriterSettings _settings;
+
+		public GeoJsonWriter()
+		{
+			_settings = new GeoJsonWriterSettings();
+		}
+
+		public GeoJsonWriter(GeoJsonWriterSettings settings)
+		{
+			_settings = settings;
+		}
+
+        public string Write(object obj)
+		{
+			var geometry = obj as IGeoJsonGeometry;
+			if (geometry != null)
+				return Write(geometry);
 
             var feature = obj as Feature;
             if (feature != null)
@@ -20,7 +32,14 @@ namespace Geo.IO.GeoJson
 
             var featureCollection = obj as FeatureCollection;
             if (featureCollection != null)
-                return Write(featureCollection);
+				return Write(featureCollection);
+
+			if (_settings.ConvertCirclesToRegularPolygons)
+			{
+				var circle = obj as Circle;
+				if (circle != null)
+					return Write (circle.ToPolygon(_settings.CircleSides));
+			}
 
             throw new SerializationException("Object of type '" + obj.GetType().Name + "' is not supported by GeoJSON");
         }

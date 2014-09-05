@@ -8,7 +8,7 @@ namespace Geo.IO.GeoJson
         private static readonly GeoJsonReader Reader = new GeoJsonReader();
         private static readonly GeoJsonWriter Writer = new GeoJsonWriter();
 
-        public static string Serialize(IGeoJsonObject obj)
+        public static string Serialize(object obj)
         {
             return Writer.Write(obj);
         }

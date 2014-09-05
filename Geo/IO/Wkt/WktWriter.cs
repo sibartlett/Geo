@@ -89,14 +89,24 @@ namespace Geo.IO.Wkt
             {
                 AppendMultiPolygon(builder, multiPolygon);
                 return;
-            }
+			}
 
-            var geometryCollection = geometry as GeometryCollection;
-            if (geometryCollection != null)
-            {
-                AppendGeometryCollection(builder, geometryCollection);
-                return;
-            }
+			var geometryCollection = geometry as GeometryCollection;
+			if (geometryCollection != null)
+			{
+				AppendGeometryCollection(builder, geometryCollection);
+				return;
+			}
+
+			if (_settings.ConvertCirclesToRegularPolygons)
+			{
+				var circle = geometry as Circle;
+				if (circle != null)
+				{
+					AppendPolygon(builder, circle.ToPolygon(_settings.CircleSides));
+					return;
+				}
+			}
 
             throw new SerializationException("Geometry of type '" + geometry.GetType().Name + "' is not supported");
 
