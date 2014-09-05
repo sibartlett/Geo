@@ -4,7 +4,7 @@ using Geo.IO.GeoJson;
 
 namespace Geo.Geometries
 {
-    public class Point : OgcGeometry, IPosition, IGeoJsonGeometry
+	public class Point : Geometry, IPosition
     {
         public static readonly Point Empty = new Point();
 
@@ -37,11 +37,6 @@ namespace Geo.Geometries
         Coordinate IPosition.GetCoordinate()
         {
             return Coordinate;
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         public override bool IsEmpty

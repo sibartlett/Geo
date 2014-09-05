@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Polygon : OgcGeometry, ISurface, IGeoJsonGeometry
+	public class Polygon : Geometry, ISurface
     {
         public static readonly Polygon Empty = new Polygon();
 
@@ -61,11 +61,6 @@ namespace Geo.Geometries
             var calculator = GeoContext.Current.GeodeticCalculator;
             var area = calculator.CalculateArea(Shell.Coordinates);
             return Holes.Aggregate(area, (current, hole) => current - calculator.CalculateArea(hole.Coordinates));
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

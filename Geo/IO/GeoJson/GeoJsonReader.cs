@@ -102,7 +102,7 @@ namespace Geo.IO.GeoJson
                         }
                     }
 
-                    result = new Feature((IGeoJsonGeometry)geo, pr);
+                    result = new Feature((IGeometry)geo, pr);
 
                     object id;
                     if (obj.TryGetValue("id", out id))

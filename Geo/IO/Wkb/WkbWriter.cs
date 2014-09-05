@@ -223,7 +223,7 @@ namespace Geo.IO.Wkb
                 Write(geometry, writer);
         }
 
-        private void WriteGeometryType(IOgcGeometry geometry, WkbGeometryType baseType, WkbBinaryWriter writer)
+        private void WriteGeometryType(IGeometry geometry, WkbGeometryType baseType, WkbBinaryWriter writer)
         {
             if (geometry.IsEmpty)
             {

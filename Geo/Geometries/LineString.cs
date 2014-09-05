@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class LineString : OgcGeometry, ICurve, IGeoJsonGeometry
+	public class LineString : Geometry, ICurve
     {
         public static readonly LineString Empty = new LineString();
 
@@ -67,11 +67,6 @@ namespace Geo.Geometries
         public Coordinate this[int index]
         {
             get { return Coordinates[index]; }
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

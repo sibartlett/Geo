@@ -1,11 +1,12 @@
 ﻿using Geo.Abstractions.Interfaces;
+using Geo.IO.GeoJson;
 using Geo.IO.Spatial4n;
 using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 
 namespace Geo.Abstractions
 {
-    public abstract class OgcGeometry : SpatialObject, IOgcGeometry
+    public abstract class Geometry : SpatialObject, IGeometry
     {
         public abstract Envelope GetBounds();
         public abstract bool IsEmpty { get; }
@@ -40,6 +41,11 @@ namespace Geo.Abstractions
         ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
         {
             return this;
-        }
+		}
+
+		public string ToGeoJson()
+		{
+			return GeoJson.Serialize(this);
+		}
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Geo.Abstractions.Interfaces
+﻿using Geo.IO.Wkb;
+using Geo.IO.Wkt;
+
+namespace Geo.Abstractions.Interfaces
 {
     public interface IGeometry : IRavenIndexable, ISpatial4nShape, ISpatialEquatable
     {
@@ -7,6 +10,13 @@
         bool IsEmpty { get; }
         bool Is3D { get; }
         bool IsMeasured { get; }
+
+		string ToWktString();
+		string ToWktString(WktWriterSettings settings);
+		byte[] ToWkbBinary();
+		byte[] ToWkbBinary(WkbWriterSettings settings);
+
+		string ToGeoJson();
     }
 
     public interface ICurve : IGeometry, IHasLength

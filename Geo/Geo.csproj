@@ -51,7 +51,6 @@
     <Compile Include="Abstractions\Interfaces\IRavenIndexable.cs" />
     <Compile Include="Abstractions\Interfaces\Is3D.cs" />
     <Compile Include="Abstractions\Interfaces\IsMeasured.cs" />
-    <Compile Include="Abstractions\OgcGeometry.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CoordinateM.cs" />
     <Compile Include="CoordinateZ.cs" />
@@ -112,12 +111,10 @@
     <Compile Include="Geometries\MultiLineString.cs" />
     <Compile Include="Geometries\MultiPoint.cs" />
     <Compile Include="Geometries\MultiPolygon.cs" />
-    <Compile Include="Abstractions\Interfaces\IGeoJsonGeometry.cs" />
     <Compile Include="Abstractions\Interfaces\IGeoJsonObject.cs" />
     <Compile Include="Abstractions\Interfaces\IGeometry.cs" />
     <Compile Include="Abstractions\Interfaces\IPosition.cs" />
     <Compile Include="Abstractions\Interfaces\ISpatial4nShape.cs" />
-    <Compile Include="Abstractions\Interfaces\IOgcGeometry.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="Geometries\LineString.cs" />
     <Compile Include="Geometries\Point.cs" />
@@ -207,6 +204,7 @@
     <Compile Include="Geodesy\SphereCalculator.cs" />
     <Compile Include="SimpleJson.cs" />
     <Compile Include="IO\GeoJson\GeoJsonWriterSettings.cs" />
+    <Compile Include="Abstractions\Geometry.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

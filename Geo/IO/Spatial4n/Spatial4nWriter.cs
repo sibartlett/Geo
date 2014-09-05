@@ -32,7 +32,7 @@ namespace Geo.IO.Spatial4n
             if (TryWriteEnvelope(geometry, out result))
                 return result;
 
-            var wkt = geometry as IOgcGeometry;
+            var wkt = geometry as IGeometry;
             if (wkt != null)
                 return wkt.ToWktString(_wktWriterSettings);
 

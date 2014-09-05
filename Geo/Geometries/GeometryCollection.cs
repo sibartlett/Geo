@@ -6,7 +6,7 @@ using Geo.IO.GeoJson;
 
 namespace Geo.Geometries
 {
-    public class GeometryCollection : OgcGeometry, IGeoJsonGeometry
+	public class GeometryCollection : Geometry
     {
         public static readonly GeometryCollection Empty = new GeometryCollection();
 
@@ -54,11 +54,6 @@ namespace Geo.Geometries
         public override bool IsMeasured
         {
             get { return Geometries.Any(x => x.IsMeasured); }
-        }
-
-        public string ToGeoJson()
-        {
-            return GeoJson.Serialize(this);
         }
 
         #region Equality methods

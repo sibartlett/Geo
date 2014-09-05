@@ -10,7 +10,7 @@ namespace Geo.IO.Wkb
 {
     public class WkbReader
     {
-        public IOgcGeometry Read(byte[] bytes)
+        public IGeometry Read(byte[] bytes)
         {
             if (bytes == null)
                 throw new ArgumentNullException("bytes");
@@ -19,7 +19,7 @@ namespace Geo.IO.Wkb
                 return Read(stream);
         }
 
-        public IOgcGeometry Read(Stream stream)
+        public IGeometry Read(Stream stream)
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
@@ -69,7 +69,7 @@ namespace Geo.IO.Wkb
             return new CoordinateSequence(result);
         }
 
-        private IOgcGeometry ReadGeometry(WkbBinaryReader reader)
+        private IGeometry ReadGeometry(WkbBinaryReader reader)
         {
             var type = reader.ReadUInt32();
             var dimensions = WkbDimensions.XY;

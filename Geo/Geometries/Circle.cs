@@ -7,7 +7,7 @@ using Geo.Measure;
 
 namespace Geo.Geometries
 {
-    public class Circle : SpatialObject, ISurface
+    public class Circle : Geometry, ISurface
     {
         public static readonly Circle Empty = new Circle();
 
@@ -44,7 +44,7 @@ namespace Geo.Geometries
         public Coordinate Center { get; private set; }
         public double Radius { get; private set; }
 
-        public Envelope GetBounds()
+        public override Envelope GetBounds()
         {
             var latitudinalRadiusDeg = (Radius / (Constants.NauticalMile * 60));
             var longditudinalRadiusDeg = (Radius / (Constants.NauticalMile * 60)) * Math.Cos(Center.Latitude.ToRadians());
@@ -67,17 +67,17 @@ namespace Geo.Geometries
             return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
         }
 
-        public bool IsEmpty
+        public override bool IsEmpty
         {
             get { return Center == null; }
         }
 
-        public bool Is3D
+        public override bool Is3D
         {
             get { return Center != null && Center.Is3D; }
         }
 
-        public bool IsMeasured
+        public override bool IsMeasured
         {
             get { return Center != null && Center.IsMeasured; }
         }

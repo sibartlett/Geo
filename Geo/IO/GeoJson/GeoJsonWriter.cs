@@ -22,7 +22,7 @@ namespace Geo.IO.GeoJson
 
         public string Write(object obj)
 		{
-			var geometry = obj as IGeoJsonGeometry;
+			var geometry = obj as IGeometry;
 			if (geometry != null)
 				return Write(geometry);
 
@@ -34,17 +34,10 @@ namespace Geo.IO.GeoJson
             if (featureCollection != null)
 				return Write(featureCollection);
 
-			if (_settings.ConvertCirclesToRegularPolygons)
-			{
-				var circle = obj as Circle;
-				if (circle != null)
-					return Write (circle.ToPolygon(_settings.CircleSides));
-			}
-
             throw new SerializationException("Object of type '" + obj.GetType().Name + "' is not supported by GeoJSON");
         }
 
-        public string Write(IGeoJsonGeometry geometry)
+        public string Write(IGeometry geometry)
         {
             return SimpleJson.SerializeObject(WriteGeometry(geometry));
         }
@@ -87,7 +80,14 @@ namespace Geo.IO.GeoJson
 
             var collection = geometry as GeometryCollection;
             if (collection != null)
-                return WriteGeometryCollection(collection);
+				return WriteGeometryCollection(collection);
+
+			var circle = geometry as Circle;
+			if (_settings.ConvertCirclesToRegularPolygons)
+			{
+				if (circle != null)
+					return WritePolygon(circle.ToPolygon(_settings.CircleSides));
+			}
 
             throw new SerializationException("Geometry of type '" + geometry.GetType().Name + "' is not supported by GeoJSON");
         }
