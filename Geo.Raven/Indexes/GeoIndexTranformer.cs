@@ -24,7 +24,7 @@ namespace Geo.Raven.Indexes
             {
                 var fieldPrefix = match.Groups["prop"].Value.Replace(".", "_");
                 return string.Format("SpatialGenerate(\"{0}_{1}\", {2}.{3}.{1}{4})",
-                        match.Groups["prop"].Value.Replace(".", "_"),
+						fieldPrefix,
                         SpatialField.Name,
                         match.Groups["pre"].Value,
                         match.Groups["prop"].Value,
