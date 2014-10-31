@@ -160,7 +160,7 @@ namespace Geo.IO.GeoJson
             var result = new Dictionary<string, object>
             {
                 { "type", "Feature" },
-                { "geometry", WriteGeometry(feature.Geometry) }
+                { "geometry", feature.Geometry == null ? null : WriteGeometry(feature.Geometry) }
             };
 
             if (feature.Properties != null && feature.Properties.Count > 0)

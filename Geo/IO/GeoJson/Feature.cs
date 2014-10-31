@@ -5,7 +5,7 @@ namespace Geo.IO.GeoJson
 {
     public class Feature : IGeoJsonObject
     {
-        public Feature(IGeometry geometry, Dictionary<string, object> properties = null)
+        public Feature(IGeometry geometry = null, Dictionary<string, object> properties = null)
         {
             Geometry = geometry;
             Properties = properties ?? new Dictionary<string, object>();

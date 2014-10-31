@@ -88,30 +88,33 @@ namespace Geo.IO.GeoJson
             if(TryParseTypeString(obj, out typeString) && typeString.ToLowerInvariant()== "feature")
             {
                 object geometry;
-                object geo;
-                if (obj.TryGetValue("geometry", out geometry) && TryParseGeometry((JsonObject)geometry, out geo))
+                object geo = null;
+                object prop;
+                Dictionary<string, object> pr = null;
+
+                if (obj.TryGetValue("geometry", out geometry))
                 {
-                    object prop;
-                    Dictionary<string, object> pr = null;
-                    if (obj.TryGetValue("properties", out prop) && prop is JsonObject)
-                    {
-                        var props = (JsonObject) prop;
-                        if (props.Count > 0)
-                        {
-                            pr = props.ToDictionary(x => x.Key, x=> SantizeJsonObjects(x.Value));
-                        }
-                    }
-
-                    result = new Feature((IGeometry)geo, pr);
-
-                    object id;
-                    if (obj.TryGetValue("id", out id))
-                    {
-                        ((Feature) result).Id = SantizeJsonObjects(id);
-                    }
-
-                    return true;
+                    TryParseGeometry((JsonObject)geometry, out geo);
                 }
+
+                if (obj.TryGetValue("properties", out prop) && prop is JsonObject)
+                {
+                    var props = (JsonObject) prop;
+                    if (props.Count > 0)
+                    {
+                        pr = props.ToDictionary(x => x.Key, x=> SantizeJsonObjects(x.Value));
+                    }
+                }
+
+                result = new Feature((IGeometry)geo, pr);
+
+                object id;
+                if (obj.TryGetValue("id", out id))
+                {
+                    ((Feature) result).Id = SantizeJsonObjects(id);
+                }
+
+                return true;
             }
             result = null;
             return false;
