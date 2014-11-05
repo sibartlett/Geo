@@ -3,7 +3,7 @@ using Geo.IO.Wkt;
 
 namespace Geo.Abstractions.Interfaces
 {
-    public interface IGeometry : IRavenIndexable, ISpatial4nShape, ISpatialEquatable
+    public interface IGeometry : IRavenIndexable, ISpatial4nShape, ISpatialEquatable, IGeoJsonObject
     {
         Envelope GetBounds();
 
@@ -15,8 +15,6 @@ namespace Geo.Abstractions.Interfaces
 		string ToWktString(WktWriterSettings settings);
 		byte[] ToWkbBinary();
 		byte[] ToWkbBinary(WkbWriterSettings settings);
-
-		string ToGeoJson();
     }
 
     public interface ICurve : IGeometry, IHasLength
