@@ -12,12 +12,16 @@ namespace Geo.IO.Wkb
         {
             _reader = new BinaryReader(stream);
             HasData = _reader.PeekChar() != -1;
-            if (HasData)
-                Encoding = (WkbEncoding)_reader.ReadByte();
         }
 
         public bool HasData { get; private set; }
         public WkbEncoding Encoding { get; private set; }
+
+        public WkbEncoding ReadAndSetEncoding()
+        {
+            Encoding = (WkbEncoding)_reader.ReadByte();
+            return Encoding;
+        }
 
         public byte[] ReadBytes(int count)
         {

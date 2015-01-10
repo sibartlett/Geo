@@ -71,6 +71,8 @@ namespace Geo.IO.Wkb
 
         private IGeometry ReadGeometry(WkbBinaryReader reader)
         {
+            reader.ReadAndSetEncoding();
+
             var type = reader.ReadUInt32();
             var dimensions = WkbDimensions.XY;
             if (type > 1000)
@@ -145,7 +147,13 @@ namespace Geo.IO.Wkb
             var pointsCount = (int)reader.ReadUInt32();
             var points = new List<Point>();
             for (var i = 0; i < pointsCount; i++)
-                points.Add(ReadPoint(reader, dimensions));
+            {
+                var point = ReadGeometry(reader) as Point;
+                if (point != null)
+                    points.Add(point);
+                else
+                    throw new SerializationException("Geometry not a point.");
+            }
             return new MultiPoint(points);
         }
 
@@ -154,7 +162,13 @@ namespace Geo.IO.Wkb
             var pointsCount = (int)reader.ReadUInt32();
             var lineStrings = new List<LineString>();
             for (var i = 0; i < pointsCount; i++)
-                lineStrings.Add(ReadLineString(reader, dimensions));
+            {
+                var lineString = ReadGeometry(reader) as LineString;
+                if (lineString != null)
+                    lineStrings.Add(lineString);
+                else
+                    throw new SerializationException("Geometry not a linestring.");
+            }
             return new MultiLineString(lineStrings);
         }
 
@@ -163,7 +177,13 @@ namespace Geo.IO.Wkb
             var pointsCount = (int)reader.ReadUInt32();
             var polygons = new List<Polygon>();
             for (var i = 0; i < pointsCount; i++)
-                polygons.Add(ReadPolygon(reader, dimensions));
+            {
+                var polygon = ReadGeometry(reader) as Polygon;
+                if (polygon != null)
+                    polygons.Add(polygon);
+                else
+                    throw new SerializationException("Geometry not a polygon.");
+            }
             return new MultiPolygon(polygons);
         }
 

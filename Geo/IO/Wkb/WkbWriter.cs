@@ -42,7 +42,6 @@ namespace Geo.IO.Wkb
 		{
             using (var writer = new WkbBinaryWriter(stream, _settings.Encoding))
             {
-                WriteEncoding(writer, _settings.Encoding);
                 Write(geometry, writer);
             }
 		}
@@ -57,14 +56,14 @@ namespace Geo.IO.Wkb
             var point = geometry as Point;
 			if (point != null)
 			{
-				WritePoint (point, writer);
+				WritePoint(point, writer);
 				return;
 			}
 
             var lineString = geometry as LineString;
 			if (lineString != null)
 			{
-				WriteLineString (lineString, writer);
+				WriteLineString(lineString, writer);
 				return;
 			}
 
@@ -73,7 +72,7 @@ namespace Geo.IO.Wkb
                 var triangle = geometry as Triangle;
 				if (triangle != null)
 				{
-					WriteTriangle (triangle, writer);
+					WriteTriangle(triangle, writer);
 					return;
 				}
             }
@@ -81,21 +80,21 @@ namespace Geo.IO.Wkb
             var polygon = geometry as Polygon;
 			if (polygon != null)
 			{
-				WritePolygon (polygon, writer);
+				WritePolygon(polygon, writer);
 				return;
 			}
 
             var multiPoint = geometry as MultiPoint;
 			if (multiPoint != null)
 			{
-				WriteMultiPoint (multiPoint, writer);
+				WriteMultiPoint(multiPoint, writer);
 				return;
 			}
 
             var multiLineString = geometry as MultiLineString;
 			if (multiLineString != null)
 			{
-				WriteMultiLineString (multiLineString, writer);
+				WriteMultiLineString(multiLineString, writer);
 				return;
 			}
 
@@ -150,6 +149,7 @@ namespace Geo.IO.Wkb
         {
             if (!point.IsEmpty)
             {
+                WriteEncoding(writer, _settings.Encoding);
                 WriteGeometryType(point, WkbGeometryType.Point, writer);
                 WriteCoordinate(point.Coordinate, writer);
             }
@@ -157,18 +157,21 @@ namespace Geo.IO.Wkb
 
         private void WriteLineString(LineString lineString, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(lineString, WkbGeometryType.LineString, writer);
             WriteCoordinates(lineString.Coordinates, writer);
         }
 
         private void WritePolygon(Polygon polygon, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(polygon, WkbGeometryType.Polygon, writer);
             WritePolygonInner(polygon, writer);
         }
 
         private void WriteTriangle(Triangle triangle, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(triangle, WkbGeometryType.Triangle, writer);
             WritePolygonInner(triangle, writer);
         }
@@ -191,31 +194,35 @@ namespace Geo.IO.Wkb
 
         private void WriteMultiPoint(MultiPoint multipoint, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(multipoint, WkbGeometryType.MultiPoint, writer);
             var points = multipoint.Geometries.Cast<Point>().Where(x => !x.IsEmpty).ToList();
             writer.Write((uint)points.Count);
             foreach (var point in points)
-                WriteCoordinate(point.Coordinate, writer);
+                Write(point, writer);
         }
 
         private void WriteMultiLineString(MultiLineString multiLineString, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(multiLineString, WkbGeometryType.MultiLineString, writer);
             writer.Write((uint)multiLineString.Geometries.Count);
             foreach (var linestring in multiLineString.Geometries.Cast<LineString>())
-                WriteCoordinates(linestring.Coordinates, writer);
+                Write(linestring, writer);
         }
 
         private void WriteMultiPolygon(MultiPolygon multiPolygon, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(multiPolygon, WkbGeometryType.MultiPolygon, writer);
             writer.Write((uint)multiPolygon.Geometries.Count);
             foreach (var polygon in multiPolygon.Geometries.Cast<Polygon>())
-                WritePolygonInner(polygon, writer);
+                Write(polygon, writer);
         }
 
         private void WriteGeometryCollection(GeometryCollection collection, WkbBinaryWriter writer)
         {
+            WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(collection, WkbGeometryType.GeometryCollection, writer);
             var geometries = collection.Geometries.Where(x => !(x is Point) || !x.IsEmpty).ToList();
             writer.Write((uint)geometries.Count);
