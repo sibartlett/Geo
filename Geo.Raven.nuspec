@@ -13,13 +13,12 @@
       <dependencies>
          <group>
             <dependency id="Geo" version="0.12.2" />
-            <dependency id="RavenDB.Client" version="2.5.2935" />
+            <dependency id="RavenDB.Client" version="3.0.3528" />
          </group>
       </dependencies>
       <tags>geo spatial gps coordinates wgs84 geography ravendb raven</tags>
    </metadata>
    <files>
-      <file src="Geo.Raven/bin/Release/Geo.Raven.dll" target="lib/net40/Geo.Raven.dll" />
-      <file src="Geo.Raven.Net45/bin/Release/Geo.Raven.dll" target="lib/net45/Geo.Raven.dll" />
+      <file src="Geo.Raven/bin/Release/Geo.Raven.dll" target="lib/net45/Geo.Raven.dll" />
    </files>
 </package>
