@@ -17,16 +17,18 @@ namespace Geo.IO.Wkt
             var queue = new WktTokenQueue();
             var builder = new StringBuilder();
 
+            WktTokenType? lastType = null;
+
             var nextCh = reader.Peek();
             while (nextCh != -1)
             {
                 var ch = (char)reader.Read();
-                var type = GetTokenType(ch);
+                WktTokenType type = GetTokenType(ch, lastType);
 
                 nextCh = reader.Peek();
                 var nextType = WktTokenType.None;
                 if (nextCh != -1)
-                    nextType = GetTokenType((char)nextCh);
+                    nextType = GetTokenType((char)nextCh, type);
 
                 if (type != WktTokenType.Whitespace)
                 {
@@ -41,16 +43,25 @@ namespace Geo.IO.Wkt
                         builder.Remove(0, builder.Length);
                     }
                 }
+
+                lastType = type;
             }
             return queue;
         }
 
-        private static WktTokenType GetTokenType(char ch)
+        private static WktTokenType GetTokenType(char ch, WktTokenType? lastType = null)
         {
             if (char.IsWhiteSpace(ch))
                 return WktTokenType.Whitespace;
             if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z')
+            {
+                if ((ch == 'e' || ch == 'E') && lastType.HasValue && lastType.Value == WktTokenType.Number)
+                {
+                    return WktTokenType.Number;
+                }
+
                 return WktTokenType.String;
+            }
             if (ch == '-' || ch == '.' || ch >= '0' && ch <= '9')
                 return WktTokenType.Number;
             if (ch == ',')
