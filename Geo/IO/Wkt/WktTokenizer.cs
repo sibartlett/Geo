@@ -23,7 +23,7 @@ namespace Geo.IO.Wkt
             while (nextCh != -1)
             {
                 var ch = (char)reader.Read();
-                WktTokenType type = GetTokenType(ch, lastType);
+                var type = GetTokenType(ch, lastType);
 
                 nextCh = reader.Peek();
                 var nextType = WktTokenType.None;
