@@ -42,6 +42,15 @@ namespace Geo.Tests.IO.Wkt
         }
 
         [Test]
+        public void ExponentialNumber()
+        {
+            var reader = new WktReader();
+
+            var xyWithE = reader.Read("POINT (5.5980439826435563E-06 -71.4920233210601)");
+            Assert.AreEqual(new Point(-71.4920233210601, 5.5980439826435563E-06), xyWithE);
+        }
+
+        [Test]
         public void Point()
         {
             var reader = new WktReader();
