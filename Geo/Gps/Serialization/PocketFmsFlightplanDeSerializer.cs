@@ -2,6 +2,7 @@
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.PocketFms;
+using System.Xml;
 
 namespace Geo.Gps.Serialization
 {
@@ -21,6 +22,10 @@ namespace Geo.Gps.Serialization
         public override GpsFeatures SupportedFeatures
         {
             get { return GpsFeatures.Routes; }
+        }
+
+        protected override bool CanDeSerialize(XmlReader xml) {
+            return xml.Name == "PocketFMSFlightplan";
         }
 
         protected override GpsData DeSerialize(PocketFmsFlightplan xml)

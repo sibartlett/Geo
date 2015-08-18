@@ -5,6 +5,7 @@ using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.Gpx.Gpx11;
+using System.Xml;
 
 namespace Geo.Gps.Serialization
 {
@@ -24,6 +25,10 @@ namespace Geo.Gps.Serialization
         public override GpsFeatures SupportedFeatures
         {
             get { return GpsFeatures.All; }
+        }
+
+        protected override bool CanDeSerialize(XmlReader xml) {
+            return xml.NamespaceURI == "http://www.topografix.com/GPX/1/1";
         }
 
         protected override GpsData DeSerialize(GpxFile xml)

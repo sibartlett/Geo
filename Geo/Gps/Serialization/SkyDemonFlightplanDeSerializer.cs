@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.SkyDemon;
+using System.Xml;
 
 namespace Geo.Gps.Serialization
 {
@@ -56,6 +57,10 @@ namespace Geo.Gps.Serialization
             var lond = Regex.IsMatch(match2.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
 
             return new Coordinate(lat * latd, lon * lond);
+        }
+
+        protected override bool CanDeSerialize(XmlReader xml) {
+            return xml.Name == "DivelementsFlightPlanner";
         }
 
         protected override GpsData DeSerialize(SkyDemonFlightplan xml)

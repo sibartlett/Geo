@@ -16,8 +16,14 @@ namespace Geo.Gps.Serialization.Xml
             try
             {
                 streamWrapper.Position = 0;
-                using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
-                    return _xmlSerializer.CanDeserialize(reader);
+                using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false })) {
+                    if (_xmlSerializer.CanDeserialize(reader)) {
+                        if (reader.MoveToContent() == XmlNodeType.Element) {
+                            return CanDeSerialize(reader);
+                        }
+                    }
+                }
+                return false;
             }
             catch (XmlException)
             {
@@ -44,6 +50,7 @@ namespace Geo.Gps.Serialization.Xml
             return DeSerialize(doc);
         }
 
+        protected abstract bool CanDeSerialize(XmlReader xml);
         protected abstract GpsData DeSerialize(T xml);
     }
 }
