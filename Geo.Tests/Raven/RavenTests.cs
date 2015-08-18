@@ -6,6 +6,7 @@ using Raven.Abstractions.Indexing;
 namespace Geo.Tests.Raven
 {
     [TestFixture]
+    [Platform(Exclude="Mono")]
     public class RavenTests : RavenTestFixtureBase
     {
         [Test]
