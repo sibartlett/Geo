@@ -1,5 +1,8 @@
 # Geo - a geospatial library for .NET
 
+[![NuGet](https://img.shields.io/nuget/dt/Geo.svg)]()
+[![Build Status](https://travis-ci.org/sibartlett/Geo.svg?branch=master)](https://travis-ci.org/sibartlett/Geo)
+
 Geo is a spatial library that is made specfically for geographic data.
 
 [Wiki](https://github.com/sibartlett/Geo/wiki) | [Issues](https://github.com/sibartlett/Geo/issues)
