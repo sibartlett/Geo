@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
    <metadata>
       <id>Geo.Raven</id>
-      <version>0.12.2</version>
+      <version>0.13.0</version>
       <title>Geo.Raven</title>
       <authors>Simon Bartlett</authors>
       <owners>Simon Bartlett</owners>
@@ -12,8 +12,8 @@
       <description>RavenDB Client Integration for Geo</description>
       <dependencies>
          <group>
-            <dependency id="Geo" version="0.12.2" />
-            <dependency id="RavenDB.Client" version="3.0.3528" />
+            <dependency id="Geo" version="0.13.0" />
+            <dependency id="RavenDB.Client" version="3.0.3690" />
          </group>
       </dependencies>
       <tags>geo spatial gps coordinates wgs84 geography ravendb raven</tags>
