@@ -63,6 +63,21 @@ namespace Geo.Geometries
             return Holes.Aggregate(area, (current, hole) => current - calculator.CalculateArea(hole.Coordinates));
         }
 
+        public bool Contains( Coordinate coordinate ) {
+            int i, j = Shell.Coordinates.Count - 1;
+            var oddNodes = false;
+            var poly = Shell.Coordinates;
+            for ( i = 0; i < poly.Count; i++ ) {
+                if(poly[i].Longitude<coordinate.Longitude&&poly[j].Longitude>=coordinate.Longitude
+                    || poly[j].Longitude < coordinate.Longitude && poly[i].Longitude >= coordinate.Longitude ) {
+                        if ( poly[i].Latitude + ( coordinate.Longitude - poly[i].Longitude ) / ( poly[j].Longitude - poly[i].Longitude ) * ( poly[j].Latitude - poly[i].Latitude ) < coordinate.Latitude ) {
+                            oddNodes = !oddNodes;
+                        }
+                }
+            }
+            return oddNodes;
+        }
+
         #region Equality methods
 
         public override bool Equals(object obj)
