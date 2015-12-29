@@ -12,7 +12,8 @@ namespace Geo.Geomagnetism
                 new Wmm1995(),
                 new Wmm2000(),
                 new Wmm2005(),
-                new Wmm2010()
+                new Wmm2010(),
+                new Wmm2015()
             };
 
         public WmmGeomagnetismCalculator() : base(GeomagneticModels)
