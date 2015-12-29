@@ -13,7 +13,7 @@
       <dependencies>
          <group>
             <dependency id="Geo" version="0.13.0" />
-            <dependency id="RavenDB.Client" version="3.0.3690" />
+            <dependency id="RavenDB.Client" version="3.0.30000" />
          </group>
       </dependencies>
       <tags>geo spatial gps coordinates wgs84 geography ravendb raven</tags>
