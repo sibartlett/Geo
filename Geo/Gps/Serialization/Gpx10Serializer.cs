@@ -147,7 +147,7 @@ namespace Geo.Gps.Serialization
                     track.Metadata.Attribute(x => x.Description, trkType.desc);
                     track.Metadata.Attribute(x => x.Comment, trkType.cmt);
                 
-                    foreach (var trksegTrkpt in trkType.trkseg)
+					foreach (var trksegTrkpt in trkType.trkseg.Where(seg => seg.trkpt != null))
                     {
                         var segment = new TrackSegment();
                         foreach (var wptType in trksegTrkpt.trkpt)
