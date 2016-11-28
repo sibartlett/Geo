@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
 using NUnit.Framework;
 using Geo.IO.Wkt;
 using Geo.Geometries;
@@ -9,27 +11,25 @@ namespace Geo.Tests.IO.Wkt
     public class WktReaderTests
     {
         [Test]
-        [ExpectedException]
         public void Invalid_geometry_type()
         {
             var reader = new WktReader();
-            reader.Read("SOMETHING EMPTY");
+
+            Assert.Throws<SerializationException>(() => reader.Read("SOMETHING EMPTY"));
         }
 
         [Test]
-        [ExpectedException]
         public void Null_input_string_throws_argument_exception()
         {
             var reader = new WktReader();
-            reader.Read((string) null);
+            Assert.Throws<ArgumentNullException>(() => reader.Read((string)null));
         }
 
         [Test]
-        [ExpectedException]
         public void Null_input_stream_throws_argument_exception()
         {
             var reader = new WktReader();
-            reader.Read((Stream)null);
+            Assert.Throws<ArgumentNullException>(() => reader.Read((Stream)null));
         }
 
         [Test]

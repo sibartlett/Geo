@@ -1,0 +1,57 @@
+{
+  "supports": {},
+  "dependencies": {
+    "SimpleJson": "0.38.0"
+  },
+  "frameworks": {
+    ".NETPortable,Version=v4.0,Profile=Profile328": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": "",
+        "System.Xml": "",
+        "System.Xml.Serialization": ""
+      }
+    },
+    "netstandard1.3": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Xml.XmlDocument": "4.3.0",
+        "System.Xml.XmlSerializer": "4.3.0",
+        "System.Runtime.Serialization.Xml": "4.3.0",
+        "System.Reflection.TypeExtensions": "4.3.0",
+        "System.Reflection.Extensions": "4.3.0"
+      },
+      "buildOptions": {
+        "define": [ 
+          "NETFX_CORE" ] }
+    }
+  },
+  "buildOptions": {
+    "compile": {
+      "exclude": [
+        "Gps/Serialization/Xml/PocketFms/**",
+        "Gps/Serialization/Xml/SkyDemon/**"
+      ],
+      "excludeFiles": [
+        "Gps/Serialization/Xml/Gpx/Gpx10/gpx10.xsd",
+        "Gps/Serialization/Xml/Gpx/Gpx11/gpx11.xsd",
+        "Gps/Serialization/Xml/PocketFms/PocketFMSNavlog-1.2.0.xsd",
+        "Gps/Serialization/Xml/Gpx/Gpx11/GpxExtensions.cs"
+      ],
+      "includeFiles": [
+        "../SharedAssemblyInfo.cs",
+
+        "Gps/Serialization/Xml/PocketFms/PocketFmsFlightplan.cs",
+        "Gps/Serialization/Xml/PocketFms/PocketFmsLib.cs",
+        "Gps/Serialization/Xml/PocketFms/PocketFmsMeta.cs",
+        "Gps/Serialization/Xml/PocketFms/PocketFmsPoint.cs",
+
+        "Gps/Serialization/Xml/SkyDemon/SkyDemonAircraft.cs",
+        "Gps/Serialization/Xml/SkyDemon/SkyDemonFlightplan.cs",
+        "Gps/Serialization/Xml/SkyDemon/SkyDemonRhumbLine.cs",
+        "Gps/Serialization/Xml/SkyDemon/SkyDemonRoute.cs"
+      ]
+    }
+  }
+}
