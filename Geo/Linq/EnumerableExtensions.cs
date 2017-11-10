@@ -40,12 +40,12 @@ namespace Geo.Linq
 
         public static Area Min<TSource>(this IEnumerable<TSource> source, Func<TSource, Area> selector)
         {
-            return new Area(source.Select(selector).Max(x => x.SiValue));
+            return new Area(source.Select(selector).Min(x => x.SiValue));
         }
 
         public static Distance Min<TSource>(this IEnumerable<TSource> source, Func<TSource, Distance> selector)
         {
-            return new Distance(source.Select(selector).Max(x => x.SiValue));
+            return new Distance(source.Select(selector).Min(x => x.SiValue));
         }
     }
 }
