@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Geo.Tests.Gps.Serialization
 {
@@ -7,7 +9,10 @@ namespace Geo.Tests.Gps.Serialization
     {
         protected DirectoryInfo GetReferenceFileDirectory(params string[] subDirectories)
         {
-            var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+            string filePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            filePath = Path.Combine(filePath, "..", "..");
+
+            var dir = new DirectoryInfo(filePath);
             while (dir != null)
             {
                 var refDir = dir.EnumerateDirectories().FirstOrDefault(x => x.Name == "reference");
