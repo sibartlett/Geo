@@ -180,6 +180,7 @@
     <Compile Include="Gps\Serialization\Xml\SkyDemon\SkyDemonFlightplan.cs" />
     <Compile Include="Gps\Track.cs" />
     <Compile Include="Gps\TrackSegment.cs" />
+    <Compile Include="Gps\Waypoint.cs" />
     <Compile Include="InternalHelpers.cs" />
     <Compile Include="IO\GeoJson\Feature.cs" />
     <Compile Include="IO\GeoJson\FeatureCollection.cs" />

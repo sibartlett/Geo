@@ -34,13 +34,13 @@ namespace Geo.Gps
             Metadata = new GpsMetadata();
             Routes = new List<Route>();
             Tracks = new List<Track>();
-            Waypoints = new List<Point>();
+            Waypoints = new List<Waypoint>();
         }
 
         public GpsMetadata Metadata { get; private set; }
         public List<Route> Routes { get; set; }
         public List<Track> Tracks { get; set; }
-        public List<Point> Waypoints { get; set; }
+        public List<Waypoint> Waypoints { get; set; }
 
         public string ToGpx()
         {
