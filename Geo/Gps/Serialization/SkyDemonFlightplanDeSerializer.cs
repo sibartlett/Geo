@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
@@ -45,13 +46,13 @@ namespace Geo.Gps.Serialization
             var match1 = Regex.Match(ord[0], COORD_REGEX1);
             var match2 = Regex.Match(ord[1], COORD_REGEX2);
 
-            var lat = double.Parse(match1.Groups["d"].Value) +
-                      double.Parse(match1.Groups["m"].Value) / 60 +
-                      double.Parse(match1.Groups["s"].Value) / 3600;
+            var lat = double.Parse(match1.Groups["d"].Value, CultureInfo.InvariantCulture) +
+                      double.Parse(match1.Groups["m"].Value, CultureInfo.InvariantCulture) / 60 +
+                      double.Parse(match1.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
 
-            var lon = double.Parse(match2.Groups["d"].Value) +
-                      double.Parse(match2.Groups["m"].Value) / 60+
-                      double.Parse(match2.Groups["s"].Value) / 3600;
+            var lon = double.Parse(match2.Groups["d"].Value, CultureInfo.InvariantCulture) +
+                      double.Parse(match2.Groups["m"].Value, CultureInfo.InvariantCulture) / 60+
+                      double.Parse(match2.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
 
             var latd = Regex.IsMatch(match1.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
             var lond = Regex.IsMatch(match2.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
