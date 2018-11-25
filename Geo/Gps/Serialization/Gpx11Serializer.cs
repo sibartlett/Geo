@@ -144,7 +144,10 @@ namespace Geo.Gps.Serialization
             {
                 lat = (decimal)waypoint.Coordinate.Latitude,
                 lon = (decimal)waypoint.Coordinate.Longitude,
-                ele = waypoint.Coordinate.Is3D ? 0m : (decimal) ((Is3D)waypoint.Coordinate).Elevation
+                ele = waypoint.Coordinate.Is3D ? 0m : (decimal) ((Is3D)waypoint.Coordinate).Elevation,
+                name = waypoint.Name,
+                desc = waypoint.Description,
+                cmt = waypoint.Comment
             });
         }
 
@@ -283,7 +286,7 @@ namespace Geo.Gps.Serialization
                 foreach (var wptType in xml.wpt)
                 {
                     var fix = new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
-                    data.Waypoints.Add(fix);
+                    data.Waypoints.Add(new Waypoint(wptType.name, wptType.cmt, wptType.desc, fix));
                 }
         }
     }
