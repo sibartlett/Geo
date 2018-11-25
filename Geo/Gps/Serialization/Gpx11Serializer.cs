@@ -175,6 +175,8 @@ namespace Geo.Gps.Serialization
                             lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
                             ele = segment.Fixes[j].Coordinate.Is3D ? (decimal) ((Is3D)segment.Fixes[j].Coordinate).Elevation : 0m,
                             eleSpecified = segment.Fixes[j].Coordinate.Is3D,
+                            time = segment.Fixes[j].TimeUtc,
+                            timeSpecified = segment.Fixes[j].TimeUtc != DateTime.MinValue
                         };
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
