@@ -145,6 +145,7 @@ namespace Geo.Gps.Serialization
                 lat = (decimal)waypoint.Coordinate.Latitude,
                 lon = (decimal)waypoint.Coordinate.Longitude,
                 ele = waypoint.Coordinate.Is3D ? (decimal) ((Is3D)waypoint.Coordinate).Elevation : 0m,
+                eleSpecified = waypoint.Coordinate.Is3D,
                 name = waypoint.Name,
                 desc = waypoint.Description,
                 cmt = waypoint.Comment
@@ -172,7 +173,8 @@ namespace Geo.Gps.Serialization
                         {
                             lat = (decimal)segment.Fixes[j].Coordinate.Latitude,
                             lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
-                            ele = segment.Fixes[j].Coordinate.Is3D ? (decimal) ((Is3D)segment.Fixes[j].Coordinate).Elevation : 0m
+                            ele = segment.Fixes[j].Coordinate.Is3D ? (decimal) ((Is3D)segment.Fixes[j].Coordinate).Elevation : 0m,
+                            eleSpecified = segment.Fixes[j].Coordinate.Is3D,
                         };
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
@@ -199,7 +201,8 @@ namespace Geo.Gps.Serialization
                     {
                         lat = (decimal)route.Coordinates[j].Latitude,
                         lon = (decimal)route.Coordinates[j].Longitude,
-                        ele = route.Coordinates[j].Is3D ? (decimal) ((Is3D)route.Coordinates[j]).Elevation : 0m
+                        ele = route.Coordinates[j].Is3D ? (decimal) ((Is3D)route.Coordinates[j]).Elevation : 0m,
+                        eleSpecified = route.Coordinates[j].Is3D,
                     };
                 }
                 yield return rte;
@@ -252,7 +255,8 @@ namespace Geo.Gps.Serialization
                         var segment = new TrackSegment();
                         foreach (var wptType in trksegType.trkpt)
                         {
-                            var fix = new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time);
+                            var fix = wptType.eleSpecified ? new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time) :
+                                                             new Fix((double)wptType.lat, (double)wptType.lon, wptType.time);
                             segment.Fixes.Add(fix);
                         }
                         track.Segments.Add(segment);
@@ -285,7 +289,8 @@ namespace Geo.Gps.Serialization
             if (xml.wpt != null)
                 foreach (var wptType in xml.wpt)
                 {
-                    var fix = new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
+                    var fix = wptType.eleSpecified ? new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele) :
+                                                     new Point((double)wptType.lat, (double)wptType.lon);
                     data.Waypoints.Add(new Waypoint(wptType.name, wptType.cmt, wptType.desc, fix));
                 }
         }
