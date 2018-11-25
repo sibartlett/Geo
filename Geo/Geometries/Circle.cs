@@ -37,7 +37,7 @@ namespace Geo.Geometries
 
         public Circle(double latitiude, double longitude, double elevation, double measure, double radius)
         {
-            Center = new CoordinateZM(latitiude, longitude, measure, elevation);
+            Center = new CoordinateZM(latitiude, longitude, elevation, measure);
             Radius = radius;
         }
 
