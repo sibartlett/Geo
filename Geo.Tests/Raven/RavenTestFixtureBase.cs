@@ -23,7 +23,10 @@ namespace Geo.Tests.Raven
             if (Store != null)
                 Store.Dispose();
 
-            Store = new EmbeddableDocumentStore { RunInMemory = true }.ApplyGeoConventions().Initialize();
+            EmbeddableDocumentStore store = new EmbeddableDocumentStore { RunInMemory = true };
+            store.Configuration.Storage.Voron.AllowOn32Bits = true;
+
+            Store = store.ApplyGeoConventions().Initialize();
             foreach (var index in indexes)
                 Store.ExecuteIndex(index);
         }
