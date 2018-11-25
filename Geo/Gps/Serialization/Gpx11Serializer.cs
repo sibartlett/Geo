@@ -144,7 +144,7 @@ namespace Geo.Gps.Serialization
             {
                 lat = (decimal)waypoint.Coordinate.Latitude,
                 lon = (decimal)waypoint.Coordinate.Longitude,
-                ele = waypoint.Coordinate.Is3D ? 0m : (decimal) ((Is3D)waypoint.Coordinate).Elevation,
+                ele = waypoint.Coordinate.Is3D ? (decimal) ((Is3D)waypoint.Coordinate).Elevation : 0m,
                 name = waypoint.Name,
                 desc = waypoint.Description,
                 cmt = waypoint.Comment
