@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
@@ -94,8 +95,8 @@ namespace Geo
 
             if (match.Success)
             {
-                var deg1 = double.Parse(match.Groups["Deg1"].Value);
-                var deg2 = double.Parse(match.Groups["Deg2"].Value);
+                var deg1 = double.Parse(match.Groups["Deg1"].Value, CultureInfo.InvariantCulture);
+                var deg2 = double.Parse(match.Groups["Deg2"].Value, CultureInfo.InvariantCulture);
 
                 double temp;
                 if (double.TryParse(match.Groups["Min1"].Value, out temp))

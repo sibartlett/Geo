@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using Geo.Gps.Metadata;
@@ -71,10 +72,10 @@ namespace Geo.Gps.Serialization
                         var match = Regex.Match(line, H_DATE_LINE_REGEX);
                         if (match.Success)
                         {
-                            var d = int.Parse(match.Groups["d"].Value);
-                            var m = int.Parse(match.Groups["m"].Value);
-                            var y = int.Parse(match.Groups["y"].Value);
-                            var yn = int.Parse(DateTime.UtcNow.ToString("yy"));
+                            var d = int.Parse(match.Groups["d"].Value, CultureInfo.InvariantCulture);
+                            var m = int.Parse(match.Groups["m"].Value, CultureInfo.InvariantCulture);
+                            var y = int.Parse(match.Groups["y"].Value, CultureInfo.InvariantCulture);
+                            var yn = int.Parse(DateTime.UtcNow.ToString("yy"), CultureInfo.InvariantCulture);
                             if (y > yn)
                                 yn += 100;
                             var yd = yn - y;
@@ -126,7 +127,7 @@ namespace Geo.Gps.Serialization
                 string gpsAlt = match.Groups["gpsAlt"].Value;
 
                 var cood = ParseCoordinate(coord);
-                var fix = new Fix(cood.Latitude, cood.Longitude, double.Parse(gpsAlt), date.AddHours(int.Parse(h)).AddMinutes(int.Parse(m)).AddSeconds(int.Parse(s)));
+                var fix = new Fix(cood.Latitude, cood.Longitude, double.Parse(gpsAlt, CultureInfo.InvariantCulture), date.AddHours(int.Parse(h, CultureInfo.InvariantCulture)).AddMinutes(int.Parse(m, CultureInfo.InvariantCulture)).AddSeconds(int.Parse(s, CultureInfo.InvariantCulture)));
 
                 trackSegment.Fixes.Add(fix);
                 return true;
@@ -140,9 +141,9 @@ namespace Geo.Gps.Serialization
 
             if (match.Success)
             {
-                var deg1 = double.Parse(match.Groups["d1"].Value) + double.Parse(match.Groups["m1"].Value) / 1000 / 60;
+                var deg1 = double.Parse(match.Groups["d1"].Value, CultureInfo.InvariantCulture) + double.Parse(match.Groups["m1"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
                 var dir1 = Regex.IsMatch(match.Groups["dir1"].Value, "[Ss]") ? -1d : 1d;
-                var deg2 = double.Parse(match.Groups["d2"].Value) + double.Parse(match.Groups["m2"].Value) / 1000 / 60;
+                var deg2 = double.Parse(match.Groups["d2"].Value, CultureInfo.InvariantCulture) + double.Parse(match.Groups["m2"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
                 var dir2 = Regex.IsMatch(match.Groups["dir2"].Value, "[Ww]") ? -1d : 1d;
 
                 return new Coordinate(deg1 * dir1, deg2 * dir2);

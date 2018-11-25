@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using Geo.Geometries;
@@ -69,10 +70,10 @@ namespace Geo.Gps.Serialization
             var match = Regex.Match(line, FIX_SENTENCE);
             if (match.Success)
             {
-                int h = int.Parse(match.Groups["h"].Value);
-                int m = int.Parse(match.Groups["m"].Value);
-                double s = double.Parse(match.Groups["s"].Value);
-                double alt = double.Parse(match.Groups["alt"].Value);
+                int h = int.Parse(match.Groups["h"].Value, CultureInfo.InvariantCulture);
+                int m = int.Parse(match.Groups["m"].Value, CultureInfo.InvariantCulture);
+                double s = double.Parse(match.Groups["s"].Value, CultureInfo.InvariantCulture);
+                double alt = double.Parse(match.Groups["alt"].Value, CultureInfo.InvariantCulture);
                 double lat = ConvertOrd(match.Groups["lat"].Value, match.Groups["latd"].Value);
                 double lon = ConvertOrd(match.Groups["lon"].Value, match.Groups["lond"].Value);
 
@@ -106,7 +107,7 @@ namespace Geo.Gps.Serialization
         {
             var d = Regex.IsMatch(dir, "^[NnEe]$") ? 1 : -1;
             var sub = Regex.IsMatch(dir, "^[NnSs]") ? 2 : 3;
-            return (double.Parse(ord.Substring(0, sub)) + double.Parse(ord.Substring(sub, ord.Length - sub)) / 60) * d;
+            return (double.Parse(ord.Substring(0, sub), CultureInfo.InvariantCulture) + double.Parse(ord.Substring(sub, ord.Length - sub), CultureInfo.InvariantCulture) / 60) * d;
         }
     }
 }
