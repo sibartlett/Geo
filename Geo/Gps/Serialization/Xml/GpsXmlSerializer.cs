@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using Geo.Gps.Metadata;
 
 namespace Geo.Gps.Serialization.Xml
@@ -13,7 +14,7 @@ namespace Geo.Gps.Serialization.Xml
 
         public string Serialize(GpsData data)
         {
-            var textWriter = new StringWriter();
+            var textWriter = new EncodingStringWriter(Encoding.UTF8);
             _xmlSerializer.Serialize(textWriter, SerializeInternal(data));
             return textWriter.ToString();
         }
@@ -39,6 +40,13 @@ namespace Geo.Gps.Serialization.Xml
             var value = data.Metadata.Attribute(attribute);
             if (!string.IsNullOrWhiteSpace(value))
                 action(xml, value);
+        }
+
+        class EncodingStringWriter : StringWriter
+        {
+            public EncodingStringWriter(Encoding encoding) => Encoding = encoding;
+
+            public override Encoding Encoding { get; }
         }
     }
 }
