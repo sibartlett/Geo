@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFrameworks>netstandard1.4;netstandard2.0;net461;net472</TargetFrameworks>
     <Company />
     <Copyright>Copyright © Simon Bartlett 2012</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Simon Bartlett</Authors>
-    <Version>0.15.0</Version>
+    <Version>0.15.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
