@@ -70,6 +70,7 @@
     <Compile Include="Geomagnetism\Models\Wmm2005.cs" />
     <Compile Include="Geomagnetism\Models\Wmm2010.cs" />
     <Compile Include="Geomagnetism\Models\Wmm2015.cs" />
+    <Compile Include="Geomagnetism\Models\Wmm2020.cs" />
     <Compile Include="Geomagnetism\WmmGeomagnetismCalculator.cs" />
     <Compile Include="IO\Google\GooglePolylineEncoder.cs" />
     <Compile Include="IO\Spatial4n\Spatial4nReader.cs" />
