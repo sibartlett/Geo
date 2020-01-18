@@ -1,1 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">   <metadata>      <id>Geo</id>      <version>0.14.1</version>      <title>Geo</title>      <authors>Simon Bartlett</authors>      <owners>Simon Bartlett</owners>      <projectUrl>https://github.com/sibartlett/Geo</projectUrl>      <licenseUrl>https://raw.github.com/sibartlett/Geo/master/LICENSE</licenseUrl>      <requireLicenseAcceptance>false</requireLicenseAcceptance>      <description>A geospatial library for .NET</description>      <tags>geo spatial gps coordinates wgs84 geography WKT WKB GeoJSON GPX IGC NMEA Garmin PocketFMS SkyDemon magnetic declination variation geomagnetism igrf wmm</tags>   </metadata>   <files>      <file src="Geo/bin/Release/Geo.dll" target="lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Geo.dll" />   </files></package>
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+   <metadata>
+      <id>Geo</id>
+      <version>0.16.0</version>
+      <title>Geo</title>
+      <authors>Simon Bartlett</authors>
+      <owners>Simon Bartlett</owners>
+      <projectUrl>https://github.com/sibartlett/Geo</projectUrl>
+      <licenseUrl>https://raw.github.com/sibartlett/Geo/master/LICENSE</licenseUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>A geospatial library for .NET</description>
+      <tags>geo spatial gps coordinates wgs84 geography WKT WKB GeoJSON GPX IGC NMEA Garmin PocketFMS SkyDemon magnetic declination variation geomagnetism igrf wmm</tags>
+   </metadata>
+   <files>
+      <file src="Geo/bin/Release/Geo.dll" target="lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Geo.dll" />
+   </files>
+</package>

@@ -6,7 +6,7 @@
     <Copyright>Copyright © Simon Bartlett 2012</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Simon Bartlett</Authors>
-    <Version>0.15.1</Version>
+    <Version>0.16.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
