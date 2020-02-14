@@ -1,8 +1,0 @@
-language: csharp
-solution: Geo.sln
-install:
-  - nuget restore Geo.sln
-  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
-script:
-  - xbuild /p:Configuration=Release Geo.sln
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Geo.Tests/bin/Release/Geo.Tests.dll

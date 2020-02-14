@@ -1,26 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4;netstandard2.0;net461;net472</TargetFrameworks>
-    <Company />
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net461;net472</TargetFrameworks>
     <Copyright>Copyright © Simon Bartlett 2012</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Simon Bartlett</Authors>
+    <AssemblyName>Geo</AssemblyName>
     <Version>0.16.0</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn />
+    <Description>A geospatial library for .NET</Description>
+    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
     <DefineConstants>SIMPLE_JSON_TYPEINFO</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn />
-    <DefineConstants>DEBUG;TRACE;SIMPLE_JSON_TYPEINFO</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
