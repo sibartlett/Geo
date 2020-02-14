@@ -6,7 +6,7 @@ using Geo.Measure;
 
 namespace Geo.Gps
 {
-    public class Route : IRavenIndexable, IHasLength
+    public class Route : IHasLength
     {
         public Route()
         {
@@ -20,11 +20,6 @@ namespace Geo.Gps
         public LineString ToLineString()
         {
             return new LineString(Coordinates);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return ToLineString();
         }
 
         public Distance GetLength()

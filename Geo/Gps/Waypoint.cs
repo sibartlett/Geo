@@ -4,7 +4,7 @@ using Geo.Measure;
 
 namespace Geo.Gps
 {
-    public class Waypoint : IRavenIndexable, IHasLength
+    public class Waypoint : IHasLength
     {
         public string Name { get; private set; }
         public string Comment { get; private set; }
@@ -28,11 +28,6 @@ namespace Geo.Gps
         public LineString ToLineString()
         {
             return new LineString(Point.Coordinate);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return ToLineString();
         }
 
         public Distance GetLength()

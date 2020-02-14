@@ -87,11 +87,6 @@ namespace Geo.Geometries
             return new Spatial4nWriter().Write(this);
         }
 
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return this;
-        }
-
         public Polygon ToPolygon(int sides = 36)
         {
             if (sides < 3)

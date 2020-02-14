@@ -38,11 +38,6 @@ namespace Geo.Abstractions
             return new Spatial4nWriter().Write(this);
         }
 
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return this;
-		}
-
 		public string ToGeoJson()
 		{
 			return GeoJson.Serialize(this);

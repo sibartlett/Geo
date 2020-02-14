@@ -8,7 +8,7 @@ using Geo.Measure;
 
 namespace Geo.Gps
 {
-    public class Track : IRavenIndexable, IHasLength
+    public class Track : IHasLength
     {
         public Track()
         {
@@ -65,11 +65,6 @@ namespace Geo.Gps
         {
             foreach (var segment in Segments)
                 segment.Quantize(seconds);
-        }
-
-        ISpatial4nShape IRavenIndexable.GetSpatial4nShape()
-        {
-            return ToLineString();
         }
 
         public Distance GetLength()

@@ -52,15 +52,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Raven.Client.Lightweight">
-      <HintPath>..\packages\RavenDB.Client.3.0.30000\lib\net45\Raven.Client.Lightweight.dll</HintPath>
-    </Reference>
-    <Reference Include="Raven.Abstractions">
-      <HintPath>..\packages\RavenDB.Database.3.0.30000\lib\net45\Raven.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Raven.Database">
-      <HintPath>..\packages\RavenDB.Database.3.0.30000\lib\net45\Raven.Database.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExpectedExceptionAttribute.cs" />
@@ -82,17 +73,11 @@
     <Compile Include="Geodesy\SpheroidCalculatorTests.cs" />
     <Compile Include="IO\GeoJson\GeoJsonTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Raven\RavenTestFixtureBase.cs" />
-    <Compile Include="Raven\RavenTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Geo.Raven\Geo.Raven.csproj">
-      <Project>{DEB5E2DA-E260-4D7C-9B91-476534521DEC}</Project>
-      <Name>Geo.Raven</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Geo\Geo.csproj">
       <Project>{e0d00649-35ff-4ddc-a402-067fd6ef17fd}</Project>
       <Name>Geo</Name>
