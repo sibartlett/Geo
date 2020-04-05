@@ -117,15 +117,18 @@ namespace Geo.Gps.Serialization
                 SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                rte.rtept = new GpxPoint[route.Coordinates.Count];
-                for (var j = 0; j < route.Coordinates.Count; j++)
+                rte.rtept = new GpxPoint[route.Waypoints.Count];
+                for (var j = 0; j < route.Waypoints.Count; j++)
                 {
                     rte.rtept[j] = new GpxPoint
                     {
-                        lat = (decimal)route.Coordinates[j].Latitude,
-                        lon = (decimal)route.Coordinates[j].Longitude,
-                        ele = route.Coordinates[j].Is3D ? (decimal)((Is3D)route.Coordinates[j]).Elevation : 0m,
-                        eleSpecified = route.Coordinates[j].Is3D
+                        lat = (decimal)route.Waypoints[j].Point.Coordinate.Latitude,
+                        lon = (decimal)route.Waypoints[j].Point.Coordinate.Longitude,
+                        ele = route.Waypoints[j].Point.Is3D ? (decimal)((Is3D)route.Waypoints[j].Point.Coordinate).Elevation : 0m,
+                        eleSpecified = route.Waypoints[j].Point.Is3D,
+                        name = route.Waypoints[j].Name,
+                        desc = route.Waypoints[j].Description,
+                        cmt = route.Waypoints[j].Comment,
                     };
                 }
                 yield return rte;
@@ -182,8 +185,10 @@ namespace Geo.Gps.Serialization
 
                     foreach (var wptType in rteType.rtept)
                     {
-                        var fix = new CoordinateZ((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
-                        route.Coordinates.Add(fix);
+                        Point point = wptType.eleSpecified ? new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele) :
+                                                             new Point((double)wptType.lat, (double)wptType.lon);
+
+                        route.Waypoints.Add(new Waypoint(wptType.name, wptType.desc, wptType.desc, point));
                     }
                     data.Routes.Add(route);
                 }

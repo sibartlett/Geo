@@ -127,12 +127,21 @@ namespace Geo.Tests.Gps.Serialization
                     Assert.AreEqual(entry.Value, r2.Metadata[entry.Key]);
                 }
 
-                Assert.AreEqual(r1.Coordinates.Count, r2.Coordinates.Count);
-                for (int c = 0; c < r1.Coordinates.Count; c ++)
+                Assert.AreEqual(r1.Waypoints.Count, r2.Waypoints.Count);
+                for (int c = 0; c < r1.Waypoints.Count; c ++)
                 {
-                    Compare(r1.Coordinates[c], r2.Coordinates[c]);
+                    Compare(r1.Waypoints[c], r2.Waypoints[c]);
                 }
             }
+        }
+
+        private static void Compare(Waypoint wp1, Waypoint wp2)
+        {
+            Compare(wp1.Coordinate, wp2.Coordinate);
+
+            Assert.AreEqual(wp1.Name, wp2.Name);
+            Assert.AreEqual(wp1.Description, wp2.Description);
+            Assert.AreEqual(wp1.Comment, wp2.Comment);
         }
 
         private static void Compare(Coordinate coord1, Coordinate coord2)
