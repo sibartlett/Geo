@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Geo.Geometries;
 using Geo.Gps.Metadata;
 
 namespace Geo.Gps.Serialization
@@ -127,9 +128,9 @@ namespace Geo.Gps.Serialization
                 string gpsAlt = match.Groups["gpsAlt"].Value;
 
                 var cood = ParseCoordinate(coord);
-                var fix = new Fix(cood.Latitude, cood.Longitude, double.Parse(gpsAlt, CultureInfo.InvariantCulture), date.AddHours(int.Parse(h, CultureInfo.InvariantCulture)).AddMinutes(int.Parse(m, CultureInfo.InvariantCulture)).AddSeconds(int.Parse(s, CultureInfo.InvariantCulture)));
+                var waypoint = new Waypoint(cood.Latitude, cood.Longitude, double.Parse(gpsAlt, CultureInfo.InvariantCulture), date.AddHours(int.Parse(h, CultureInfo.InvariantCulture)).AddMinutes(int.Parse(m, CultureInfo.InvariantCulture)).AddSeconds(int.Parse(s, CultureInfo.InvariantCulture)));
 
-                trackSegment.Fixes.Add(fix);
+                trackSegment.Waypoints.Add(waypoint);
                 return true;
             }
             return false;

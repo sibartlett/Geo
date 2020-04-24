@@ -57,7 +57,7 @@ namespace Geo.Gps.Serialization
             var latd = Regex.IsMatch(match1.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
             var lond = Regex.IsMatch(match2.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
 
-            return new Waypoint(null, null, null, new Point(lat * latd, lon * lond));
+            return new Waypoint(lat * latd, lon * lond);
         }
 
         protected override bool CanDeSerialize(XmlReader xml) {

@@ -91,13 +91,13 @@ namespace Geo.Tests.Gps.Serialization
                     TrackSegment segment1 = track1.Segments[s];
                     TrackSegment segment2 = track2.Segments[s];
 
-                    Assert.AreEqual(segment1.Fixes.Count, segment2.Fixes.Count);
-                    for (int f = 0; f < segment1.Fixes.Count; f ++)
+                    Assert.AreEqual(segment1.Waypoints.Count, segment2.Waypoints.Count);
+                    for (int f = 0; f < segment1.Waypoints.Count; f ++)
                     {
-                        Fix f1 = segment1.Fixes[f];
-                        Fix f2 = segment2.Fixes[f];
+                        Waypoint f1 = segment1.Waypoints[f];
+                        Waypoint f2 = segment2.Waypoints[f];
 
-                        Compare(f1.Coordinate, f2.Coordinate);
+                        Compare(f1.Point.Coordinate, f2.Point.Coordinate);
                         Assert.AreEqual(f1.TimeUtc, f2.TimeUtc);
                     }
                 }

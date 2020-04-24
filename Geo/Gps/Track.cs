@@ -21,7 +21,7 @@ namespace Geo.Gps
 
         public LineString ToLineString()
         {
-            return new LineString(Segments.SelectMany(x=>x.Fixes).Select(x => x.Coordinate));
+            return new LineString(Segments.SelectMany(x=>x.Waypoints).Select(x => x.Coordinate));
         }
 
         public TrackSegment GetFirstSegment()
@@ -34,21 +34,21 @@ namespace Geo.Gps
             return Segments.Count == 0 ? default(TrackSegment) : Segments[Segments.Count - 1];
         }
 
-        public IEnumerable<Fix> GetAllFixes()
+        public IEnumerable<Waypoint> GetAllFixes()
         {
-            return Segments.SelectMany(x => x.Fixes);
+            return Segments.SelectMany(x => x.Waypoints);
         }
 
-        public Fix GetFirstFix()
+        public Waypoint GetFirstWaypoint()
         {
             var segment = GetFirstSegment();
-            return segment == null ? default(Fix) : segment.GetFirstFix();
+            return segment == null ? default(Waypoint) : segment.GetFirstWaypoint();
         }
 
-        public Fix GetLastFix()
+        public Waypoint GetLastWaypoint()
         {
             var segment = GetLastSegment();
-            return segment == null ? default(Fix) : segment.GetLastFix();
+            return segment == null ? default(Waypoint) : segment.GetLastWaypoint();
         }
 
         public Speed GetAverageSpeed()
@@ -58,7 +58,9 @@ namespace Geo.Gps
 
         public TimeSpan GetDuration()
         {
-            return GetLastFix().TimeUtc - GetFirstFix().TimeUtc;
+            if (GetFirstWaypoint().TimeUtc.HasValue && GetLastWaypoint().TimeUtc.HasValue)
+                return GetLastWaypoint().TimeUtc.Value - GetFirstWaypoint().TimeUtc.Value;
+            return TimeSpan.Zero;
         }
 
         public void Quantize(double seconds = 0)

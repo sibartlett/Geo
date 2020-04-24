@@ -31,10 +31,10 @@ namespace Geo.Gps.Serialization
         protected override GpsData DeSerialize(PocketFmsFlightplan xml)
         {
             var route = new Route();
-            route.Waypoints.Add(new Waypoint(null, null, null, new Point((double)xml.LIB[0].FromPoint.Latitude, (double)xml.LIB[0].FromPoint.Longitude)));
+            route.Waypoints.Add(new Waypoint((double)xml.LIB[0].FromPoint.Latitude, (double)xml.LIB[0].FromPoint.Longitude));
             foreach (var lib in xml.LIB)
             {
-                route.Waypoints.Add(new Waypoint(null, null, null, new Point((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude)));
+                route.Waypoints.Add(new Waypoint((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude));
             }
 
             var data = new GpsData();

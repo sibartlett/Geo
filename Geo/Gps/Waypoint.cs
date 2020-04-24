@@ -1,4 +1,5 @@
-﻿using Geo.Abstractions.Interfaces;
+﻿using System;
+using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Measure;
 
@@ -11,13 +12,45 @@ namespace Geo.Gps
         public string Description { get; private set; }
 
         public Point Point { get; set; }
+        public DateTime? TimeUtc { get; set; }
 
-        public Waypoint(string name, string comment, string description, Point point)
+        public Waypoint(double latitude, double longitude)
+        {
+            Point = new Point(latitude, longitude);
+        }
+
+        public Waypoint(double latitude, double longitude, double elevation)
+        {
+            Point = new Point(latitude, longitude, elevation);
+        }
+
+        public Waypoint(double latitude, double longitude, double elevation, DateTime dateTime)
+        {
+            Point = new Point(latitude, longitude, elevation);
+            TimeUtc = dateTime;
+        }
+
+        public Waypoint(Point point, DateTime dateTime)
+        {
+            Point = point;
+            TimeUtc = dateTime;
+        }
+
+        public Waypoint(Point point, string name, string comment, string description)
         {
             Name = name;
             Comment = comment;
             Description = description;
             Point = point;
+        }
+
+        public Waypoint(Point point, DateTime? dateTime, string name, string comment, string description)
+        {
+            Name = name;
+            Comment = comment;
+            Description = description;
+            Point = point;
+            TimeUtc = dateTime;
         }
 
         public Coordinate Coordinate
