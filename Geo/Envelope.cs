@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Geo.Abstractions.Interfaces;
-using Geo.IO.Spatial4n;
 using Geo.Measure;
 
 namespace Geo
 {
-    public class Envelope : ISpatial4nShape, IHasArea, IHasLength, IEquatable<Envelope>
+    public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
     {
         public Envelope(double minLat, double minLon, double maxLat, double maxLon)
         {
@@ -43,11 +42,6 @@ namespace Geo
         public Distance GetLength()
         {
             return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
-        }
-
-        string ISpatial4nShape.ToSpatial4nString()
-        {
-            return new Spatial4nWriter().Write(this);
         }
 
         public bool Intersects(Envelope envelope)

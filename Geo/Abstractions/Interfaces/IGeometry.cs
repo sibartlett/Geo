@@ -3,7 +3,7 @@ using Geo.IO.Wkt;
 
 namespace Geo.Abstractions.Interfaces
 {
-    public interface IGeometry : ISpatial4nShape, ISpatialEquatable, IGeoJsonObject
+    public interface IGeometry : ISpatialEquatable, IGeoJsonObject
     {
         Envelope GetBounds();
 
