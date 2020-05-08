@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
-using Geo.IO.Spatial4n;
 using Geo.Measure;
 
 namespace Geo.Geometries
@@ -80,11 +79,6 @@ namespace Geo.Geometries
         public override bool IsMeasured
         {
             get { return Center != null && Center.IsMeasured; }
-        }
-
-        string ISpatial4nShape.ToSpatial4nString()
-        {
-            return new Spatial4nWriter().Write(this);
         }
 
         public Polygon ToPolygon(int sides = 36)

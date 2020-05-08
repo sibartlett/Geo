@@ -22,7 +22,6 @@ Features include:
 	* WKT (Well-known text)
 	* WKB (Well-known binary)
 	* GeoJSON
-	* Spatial4n/Spatial4j shape strings
 * Serialize and deserialize GPS files:
 	* GPX
 	* NMEA (deserialize only)
