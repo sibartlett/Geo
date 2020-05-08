@@ -77,8 +77,8 @@ namespace Geo.Gps.Serialization
                 double lat = ConvertOrd(match.Groups["lat"].Value, match.Groups["latd"].Value);
                 double lon = ConvertOrd(match.Groups["lon"].Value, match.Groups["lond"].Value);
 
-                var fix = new Fix(lat, lon, alt, DateTime.MinValue.AddHours(h).AddMinutes(m).AddSeconds(s));
-                trackSegment.Fixes.Add(fix);
+                var waypoint = new Waypoint(lat, lon, alt, DateTime.MinValue.AddHours(h).AddMinutes(m).AddSeconds(s));
+                trackSegment.Waypoints.Add(waypoint);
 
                 return true;
             }
@@ -95,8 +95,7 @@ namespace Geo.Gps.Serialization
             {
                 double lat = ConvertOrd(match.Groups["lat"].Value, match.Groups["latd"].Value);
                 double lon = ConvertOrd(match.Groups["lon"].Value, match.Groups["lond"].Value);
-                var fix = new Point(lat, lon);
-                data.Waypoints.Add(new Waypoint(String.Empty, String.Empty, String.Empty, fix));
+                data.Waypoints.Add(new Waypoint(lat, lon));
 
                 return true;
             }

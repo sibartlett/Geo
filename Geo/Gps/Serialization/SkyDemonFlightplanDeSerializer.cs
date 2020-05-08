@@ -28,10 +28,10 @@ namespace Geo.Gps.Serialization
         private Route ConvertRoute(SkyDemonRoute route)
         {
             var result = new Route();
-            result.Coordinates.Add(ParseCoordinate(route.Start));
+            result.Waypoints.Add(ParseWaypoint(route.Start));
             foreach (var rhumbLine in route.RhumbLineRoute)
             {
-                result.Coordinates.Add(ParseCoordinate(rhumbLine.To));
+                result.Waypoints.Add(ParseWaypoint(rhumbLine.To));
             }
             return result;
         }
@@ -39,7 +39,7 @@ namespace Geo.Gps.Serialization
         private const string COORD_REGEX1 = @"^(?<dir>[NnSs])(?<d>\d\d)(?<m>\d\d)(?<s>\d\d.\d\d)$";
         private const string COORD_REGEX2 = @"^(?<dir>[EeWw])(?<d>\d\d\d)(?<m>\d\d)(?<s>\d\d.\d\d)$";
 
-        private Coordinate ParseCoordinate(string c)
+        private Waypoint ParseWaypoint(string c)
         {
             var ord = c.Trim().Split(' ');
 
@@ -57,7 +57,7 @@ namespace Geo.Gps.Serialization
             var latd = Regex.IsMatch(match1.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
             var lond = Regex.IsMatch(match2.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
 
-            return new Coordinate(lat * latd, lon * lond);
+            return new Waypoint(lat * latd, lon * lond);
         }
 
         protected override bool CanDeSerialize(XmlReader xml) {

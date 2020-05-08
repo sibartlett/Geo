@@ -39,7 +39,7 @@ namespace Geo.Gps.Serialization
                 foreach (var point in route.routepoint)
                 {
                     var wp = xml.waypointtable.Single(x => x.identifier == point.waypointidentifier);
-                    rte.Coordinates.Add(new Coordinate(wp.lat, wp.lon));
+                    rte.Waypoints.Add(new Waypoint(wp.lat, wp.lon));
                 }
                 data.Routes.Add(rte);
             }

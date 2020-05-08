@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Gps.Metadata;
@@ -11,15 +12,15 @@ namespace Geo.Gps
         public Route()
         {
             Metadata = new RouteMetadata();
-            Coordinates = new List<Coordinate>();
+            Waypoints = new List<Waypoint>();
         }
 
         public RouteMetadata Metadata { get; private set; }
-        public List<Coordinate> Coordinates { get; set; }
+        public List<Waypoint> Waypoints { get; set; }
 
         public LineString ToLineString()
         {
-            return new LineString(Coordinates);
+            return new LineString(Waypoints.Select(wp => wp.Coordinate));
         }
 
         public Distance GetLength()

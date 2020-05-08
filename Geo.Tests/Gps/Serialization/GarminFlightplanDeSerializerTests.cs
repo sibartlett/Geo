@@ -19,7 +19,7 @@ namespace Geo.Tests.Gps.Serialization
                 var file = new GarminFlightplanDeSerializer().DeSerialize(new StreamWrapper(stream));
                 Assert.That(file, Is.Not.Null);
                 Assert.That(file.Routes.Count, Is.EqualTo(1));
-                Assert.That(file.Routes[0].Coordinates.Count, Is.EqualTo(5));
+                Assert.That(file.Routes[0].Waypoints.Count, Is.EqualTo(5));
             }
         }
     }

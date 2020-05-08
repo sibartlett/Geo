@@ -91,13 +91,13 @@ namespace Geo.Tests.Gps.Serialization
                     TrackSegment segment1 = track1.Segments[s];
                     TrackSegment segment2 = track2.Segments[s];
 
-                    Assert.AreEqual(segment1.Fixes.Count, segment2.Fixes.Count);
-                    for (int f = 0; f < segment1.Fixes.Count; f ++)
+                    Assert.AreEqual(segment1.Waypoints.Count, segment2.Waypoints.Count);
+                    for (int f = 0; f < segment1.Waypoints.Count; f ++)
                     {
-                        Fix f1 = segment1.Fixes[f];
-                        Fix f2 = segment2.Fixes[f];
+                        Waypoint f1 = segment1.Waypoints[f];
+                        Waypoint f2 = segment2.Waypoints[f];
 
-                        Compare(f1.Coordinate, f2.Coordinate);
+                        Compare(f1.Point.Coordinate, f2.Point.Coordinate);
                         Assert.AreEqual(f1.TimeUtc, f2.TimeUtc);
                     }
                 }
@@ -127,12 +127,21 @@ namespace Geo.Tests.Gps.Serialization
                     Assert.AreEqual(entry.Value, r2.Metadata[entry.Key]);
                 }
 
-                Assert.AreEqual(r1.Coordinates.Count, r2.Coordinates.Count);
-                for (int c = 0; c < r1.Coordinates.Count; c ++)
+                Assert.AreEqual(r1.Waypoints.Count, r2.Waypoints.Count);
+                for (int c = 0; c < r1.Waypoints.Count; c ++)
                 {
-                    Compare(r1.Coordinates[c], r2.Coordinates[c]);
+                    Compare(r1.Waypoints[c], r2.Waypoints[c]);
                 }
             }
+        }
+
+        private static void Compare(Waypoint wp1, Waypoint wp2)
+        {
+            Compare(wp1.Coordinate, wp2.Coordinate);
+
+            Assert.AreEqual(wp1.Name, wp2.Name);
+            Assert.AreEqual(wp1.Description, wp2.Description);
+            Assert.AreEqual(wp1.Comment, wp2.Comment);
         }
 
         private static void Compare(Coordinate coord1, Coordinate coord2)

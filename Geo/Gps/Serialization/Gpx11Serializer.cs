@@ -140,16 +140,7 @@ namespace Geo.Gps.Serialization
 
         private IEnumerable<GpxWaypoint> SerializeWaypoints(GpsData data)
         {
-            return data.Waypoints.Select(waypoint => new GpxWaypoint
-            {
-                lat = (decimal)waypoint.Coordinate.Latitude,
-                lon = (decimal)waypoint.Coordinate.Longitude,
-                ele = waypoint.Coordinate.Is3D ? (decimal) ((Is3D)waypoint.Coordinate).Elevation : 0m,
-                eleSpecified = waypoint.Coordinate.Is3D,
-                name = waypoint.Name,
-                desc = waypoint.Description,
-                cmt = waypoint.Comment
-            });
+            return data.Waypoints.Select(waypoint => ConvertToGpxWaypoint(waypoint));
         }
 
         private IEnumerable<GpxTrack> SerializeTracks(GpsData data)
@@ -166,18 +157,10 @@ namespace Geo.Gps.Serialization
                 for (var i = 0; i < track.Segments.Count; i++)
                 {
                     var segment = track.Segments[i];
-                    var pts = new GpxWaypoint[segment.Fixes.Count];
-                    for (var j = 0; j < segment.Fixes.Count; j++)
+                    var pts = new GpxWaypoint[segment.Waypoints.Count];
+                    for (var j = 0; j < segment.Waypoints.Count; j++)
                     {
-                        pts[j] = new GpxWaypoint
-                        {
-                            lat = (decimal)segment.Fixes[j].Coordinate.Latitude,
-                            lon = (decimal)segment.Fixes[j].Coordinate.Longitude,
-                            ele = segment.Fixes[j].Coordinate.Is3D ? (decimal) ((Is3D)segment.Fixes[j].Coordinate).Elevation : 0m,
-                            eleSpecified = segment.Fixes[j].Coordinate.Is3D,
-                            time = segment.Fixes[j].TimeUtc,
-                            timeSpecified = segment.Fixes[j].TimeUtc != DateTime.MinValue
-                        };
+                        pts[j] = ConvertToGpxWaypoint(segment.Waypoints[j]);
                     }
                     trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
                 }
@@ -196,16 +179,10 @@ namespace Geo.Gps.Serialization
                 SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
                 SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
-                rte.rtept = new GpxWaypoint[route.Coordinates.Count];
-                for (var j = 0; j < route.Coordinates.Count; j++)
+                rte.rtept = new GpxWaypoint[route.Waypoints.Count];
+                for (var j = 0; j < route.Waypoints.Count; j++)
                 {
-                    rte.rtept[j] = new GpxWaypoint
-                    {
-                        lat = (decimal)route.Coordinates[j].Latitude,
-                        lon = (decimal)route.Coordinates[j].Longitude,
-                        ele = route.Coordinates[j].Is3D ? (decimal) ((Is3D)route.Coordinates[j]).Elevation : 0m,
-                        eleSpecified = route.Coordinates[j].Is3D,
-                    };
+                    rte.rtept[j] = ConvertToGpxWaypoint(route.Waypoints[j]);
                 }
                 yield return rte;
             }
@@ -257,9 +234,7 @@ namespace Geo.Gps.Serialization
                         var segment = new TrackSegment();
                         foreach (var wptType in trksegType.trkpt)
                         {
-                            var fix = wptType.eleSpecified ? new Fix((double)wptType.lat, (double)wptType.lon, (double)wptType.ele, wptType.time) :
-                                                             new Fix((double)wptType.lat, (double)wptType.lon, wptType.time);
-                            segment.Fixes.Add(fix);
+                            segment.Waypoints.Add(ConvertWaypoint(wptType));
                         }
                         track.Segments.Add(segment);
                     }
@@ -279,8 +254,7 @@ namespace Geo.Gps.Serialization
 
                     foreach (var wptType in rteType.rtept)
                     {
-                        var fix = new CoordinateZ((double)wptType.lat, (double)wptType.lon, (double)wptType.ele);
-                        route.Coordinates.Add(fix);
+                        route.Waypoints.Add(ConvertWaypoint(wptType));
                     }
                     data.Routes.Add(route);
                 }
@@ -291,10 +265,32 @@ namespace Geo.Gps.Serialization
             if (xml.wpt != null)
                 foreach (var wptType in xml.wpt)
                 {
-                    var fix = wptType.eleSpecified ? new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele) :
-                                                     new Point((double)wptType.lat, (double)wptType.lon);
-                    data.Waypoints.Add(new Waypoint(wptType.name, wptType.cmt, wptType.desc, fix));
+                    data.Waypoints.Add(ConvertWaypoint(wptType));
                 }
+        }
+
+        private static Waypoint ConvertWaypoint(GpxWaypoint wptType)
+        {
+            var point = wptType.eleSpecified ? new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele) :
+                                             new Point((double)wptType.lat, (double)wptType.lon);
+            var time = wptType.timeSpecified ? wptType.time : (DateTime?)null;
+            return new Waypoint(point, time, wptType.name, wptType.cmt, wptType.desc);
+        }
+
+        private static GpxWaypoint ConvertToGpxWaypoint(Waypoint waypoint)
+        {
+            return new GpxWaypoint
+            {
+                lat = (decimal)waypoint.Coordinate.Latitude,
+                lon = (decimal)waypoint.Coordinate.Longitude,
+                ele = waypoint.Coordinate.Is3D ? (decimal)((Is3D)waypoint.Coordinate).Elevation : 0m,
+                eleSpecified = waypoint.Coordinate.Is3D,
+                time = waypoint.TimeUtc.HasValue ? waypoint.TimeUtc.Value : DateTime.MinValue,
+                timeSpecified = waypoint.TimeUtc.HasValue,
+                name = waypoint.Name,
+                desc = waypoint.Description,
+                cmt = waypoint.Comment
+            };
         }
     }
 }

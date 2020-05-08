@@ -11,29 +11,29 @@ namespace Geo.Gps
     {
         public TrackSegment()
         {
-            Fixes = new List<Fix>();
+            Waypoints = new List<Waypoint>();
         }
 
-        public List<Fix> Fixes { get; set; }
+        public List<Waypoint> Waypoints { get; set; }
 
         public LineString ToLineString()
         {
-            return new LineString(Fixes.Select(x => x.Coordinate));
+            return new LineString(Waypoints.Select(x => x.Coordinate));
         }
 
         public bool IsEmpty()
         {
-            return Fixes.Count == 0;
+            return Waypoints.Count == 0;
         }
 
-        public Fix GetFirstFix()
+        public Waypoint GetFirstWaypoint()
         {
-            return IsEmpty() ? default(Fix) : Fixes[0];
+            return IsEmpty() ? default(Waypoint) : Waypoints[0];
         }
 
-        public Fix GetLastFix()
+        public Waypoint GetLastWaypoint()
         {
-            return IsEmpty() ? default(Fix) : Fixes[Fixes.Count - 1];
+            return IsEmpty() ? default(Waypoint) : Waypoints[Waypoints.Count - 1];
         }
 
         public Speed GetAverageSpeed()
@@ -43,7 +43,9 @@ namespace Geo.Gps
 
         public TimeSpan GetDuration()
         {
-            return GetLastFix().TimeUtc - GetFirstFix().TimeUtc;
+            if (GetFirstWaypoint().TimeUtc.HasValue && GetLastWaypoint().TimeUtc.HasValue)
+                return GetLastWaypoint().TimeUtc.Value - GetFirstWaypoint().TimeUtc.Value;
+            return TimeSpan.Zero;
         }
 
         public Distance GetLength()
@@ -53,17 +55,21 @@ namespace Geo.Gps
 
         public void Quantize(double seconds = 0)
         {
-            var fixes = new List<Fix>();
-            Fix lastFix = null;
-            foreach (var fix in Fixes)
+            if (Waypoints.Any(x => !x.TimeUtc.HasValue)) {
+                throw new NotSupportedException("All waypoints require a timestamp, for track segment to be quantized.");
+            }
+
+            var waypoints = new List<Waypoint>();
+            Waypoint lastWaypoint = null;
+            foreach (var waypoint in Waypoints)
             {
-                if (lastFix == null || Math.Abs((fix.TimeUtc - lastFix.TimeUtc).TotalSeconds) >= seconds)
+                if (lastWaypoint == null || Math.Abs((waypoint.TimeUtc.Value - lastWaypoint.TimeUtc.Value).TotalSeconds) >= seconds)
                 {
-                    lastFix = fix;
-                    fixes.Add(fix);
+                    lastWaypoint = waypoint;
+                    waypoints.Add(waypoint);
                 }
             }
-            Fixes = fixes;
+            Waypoints = waypoints;
         }
     }
 }
