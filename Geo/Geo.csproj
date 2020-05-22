@@ -6,7 +6,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Simon Bartlett</Authors>
     <AssemblyName>Geo</AssemblyName>
-    <Version>0.20.0</Version>
+    <Version>1.0.0</Version>
     <Description>A geospatial library for .NET</Description>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
     <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
