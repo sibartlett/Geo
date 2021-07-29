@@ -229,14 +229,17 @@ namespace Geo.Gps.Serialization
                     track.Metadata.Attribute(x => x.Description, trkType.desc);
                     track.Metadata.Attribute(x => x.Comment, trkType.cmt);
 
-					foreach (var trksegType in trkType.trkseg.Where(seg => seg.trkpt != null))
+                    if (trkType.trkseg != null)
                     {
-                        var segment = new TrackSegment();
-                        foreach (var wptType in trksegType.trkpt)
+                        foreach (var trksegType in trkType.trkseg.Where(seg => seg.trkpt != null))
                         {
-                            segment.Waypoints.Add(ConvertWaypoint(wptType));
+                            var segment = new TrackSegment();
+                            foreach (var wptType in trksegType.trkpt)
+                            {
+                                segment.Waypoints.Add(ConvertWaypoint(wptType));
+                            }
+                            track.Segments.Add(segment);
                         }
-                        track.Segments.Add(segment);
                     }
                     data.Tracks.Add(track);
                 }
