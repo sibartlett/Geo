@@ -1,36 +1,34 @@
 ﻿using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 
-namespace Geo.Abstractions.Interfaces
+namespace Geo.Abstractions.Interfaces;
+
+public interface IGeometry : ISpatialEquatable, IGeoJsonObject
 {
-    public interface IGeometry : ISpatialEquatable, IGeoJsonObject
-    {
-        Envelope GetBounds();
+    bool IsEmpty { get; }
+    bool Is3D { get; }
+    bool IsMeasured { get; }
+    Envelope GetBounds();
 
-        bool IsEmpty { get; }
-        bool Is3D { get; }
-        bool IsMeasured { get; }
+    string ToWktString();
+    string ToWktString(WktWriterSettings settings);
+    byte[] ToWkbBinary();
+    byte[] ToWkbBinary(WkbWriterSettings settings);
+}
 
-		string ToWktString();
-		string ToWktString(WktWriterSettings settings);
-		byte[] ToWkbBinary();
-		byte[] ToWkbBinary(WkbWriterSettings settings);
-    }
+public interface ICurve : IGeometry, IHasLength
+{
+    bool IsClosed { get; }
+}
 
-    public interface ICurve : IGeometry, IHasLength
-    {
-        bool IsClosed { get; }
-    }
+public interface ISurface : IGeometry, IHasArea
+{
+}
 
-    public interface ISurface : IGeometry, IHasArea
-    {
-    }
+public interface IMultiCurve : IGeometry, IHasLength
+{
+}
 
-    public interface IMultiCurve : IGeometry, IHasLength
-    {
-    }
-
-    public interface IMultiSurface : IGeometry, IHasArea
-    {
-    }
+public interface IMultiSurface : IGeometry, IHasArea
+{
 }

@@ -1,7 +1,6 @@
-﻿namespace Geo.Abstractions.Interfaces
+﻿namespace Geo.Abstractions.Interfaces;
+
+public interface Is3D
 {
-    public interface Is3D
-    {
-        double Elevation { get; }
-    }
+    double Elevation { get; }
 }

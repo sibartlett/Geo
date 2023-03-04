@@ -1,24 +1,23 @@
 ﻿using System;
 
-namespace Geo.Gps
+namespace Geo.Gps;
+
+public class GpsFileFormat
 {
-    public class GpsFileFormat
+    public GpsFileFormat(string extension, string name)
     {
-        public GpsFileFormat(string extension, string name)
-        {
-            Extension = extension;
-            Name = name;
-        }
-
-        public GpsFileFormat(string extension, string name, string specificationUrl)
-        {
-            Extension = extension;
-            Name = name;
-            SpecificationUri = new Uri(specificationUrl);
-        }
-
-        public string Extension { get; private set; }
-        public string Name { get; private set; }
-        public Uri SpecificationUri { get; private set; }
+        Extension = extension;
+        Name = name;
     }
+
+    public GpsFileFormat(string extension, string name, string specificationUrl)
+    {
+        Extension = extension;
+        Name = name;
+        SpecificationUri = new Uri(specificationUrl);
+    }
+
+    public string Extension { get; }
+    public string Name { get; }
+    public Uri SpecificationUri { get; }
 }

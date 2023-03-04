@@ -1,9 +1,8 @@
 ﻿using Geo.Measure;
 
-namespace Geo.Abstractions.Interfaces
+namespace Geo.Abstractions.Interfaces;
+
+public interface IHasLength
 {
-    public interface IHasLength
-    {
-        Distance GetLength();
-    }
+    Distance GetLength();
 }

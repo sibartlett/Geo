@@ -1,49 +1,46 @@
 ﻿using System.Linq;
-using Geo.Geometries;
-using Geo.Gps.Serialization.Xml;
-using Geo.Gps.Serialization.Xml.Garmin;
-using Geo.Gps.Serialization.Xml.Garmin.Flightplan;
 using System.Xml;
+using Geo.Gps.Serialization.Xml;
+using Geo.Gps.Serialization.Xml.Garmin.Flightplan;
 
-namespace Geo.Gps.Serialization
+namespace Geo.Gps.Serialization;
+
+public class GarminFlightplanDeSerializer : GpsXmlDeSerializer<GarminFlightplan>
 {
-    public class GarminFlightplanDeSerializer : GpsXmlDeSerializer<GarminFlightplan>
+    public override GpsFileFormat[] FileFormats
     {
-        public override GpsFileFormat[] FileFormats
+        get
         {
-            get
+            return new[]
             {
-                return new[]
-                           {
-                               new GpsFileFormat("fpl", "Garmin Flightplan"),
-                           };
-            }
+                new GpsFileFormat("fpl", "Garmin Flightplan")
+            };
         }
+    }
 
-        public override GpsFeatures SupportedFeatures
+    public override GpsFeatures SupportedFeatures => GpsFeatures.Routes;
+
+    protected override bool CanDeSerialize(XmlReader xml)
+    {
+        return xml.NamespaceURI == "http://www8.garmin.com/xmlschemas/FlightPlan/v1";
+    }
+
+    protected override GpsData DeSerialize(GarminFlightplan xml)
+    {
+        var data = new GpsData();
+        foreach (var route in xml.route)
         {
-            get { return GpsFeatures.Routes; }
-        }
-
-        protected override bool CanDeSerialize(XmlReader xml) {
-            return xml.NamespaceURI == "http://www8.garmin.com/xmlschemas/FlightPlan/v1";
-        }
-
-        protected override GpsData DeSerialize(GarminFlightplan xml)
-        {
-            var data = new GpsData();
-            foreach (var route in xml.route)
+            var rte = new Route();
+            rte.Metadata.Attribute(x => x.Name, route.routename);
+            foreach (var point in route.routepoint)
             {
-                var rte = new Route();
-                rte.Metadata.Attribute(x => x.Name, route.routename);
-                foreach (var point in route.routepoint)
-                {
-                    var wp = xml.waypointtable.Single(x => x.identifier == point.waypointidentifier);
-                    rte.Waypoints.Add(new Waypoint(wp.lat, wp.lon));
-                }
-                data.Routes.Add(rte);
+                var wp = xml.waypointtable.Single(x => x.identifier == point.waypointidentifier);
+                rte.Waypoints.Add(new Waypoint(wp.lat, wp.lon));
             }
-            return data;
+
+            data.Routes.Add(rte);
         }
+
+        return data;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace Geo.Abstractions.Interfaces
+﻿namespace Geo.Abstractions.Interfaces;
+
+public interface IsMeasured
 {
-    public interface IsMeasured
-    {
-        double Measure { get; }
-    }
+    double Measure { get; }
 }

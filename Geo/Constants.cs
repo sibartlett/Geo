@@ -1,8 +1,7 @@
-﻿namespace Geo
+﻿namespace Geo;
+
+internal class Constants
 {
-    internal class Constants
-    {
-        public const double NauticalMile = 1852d;
-        public const double EarthMeanRadius = 6371008.7714d;
-    }
+    public const double NauticalMile = 1852d;
+    public const double EarthMeanRadius = 6371008.7714d;
 }

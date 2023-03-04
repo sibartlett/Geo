@@ -1,7 +1,6 @@
-namespace Geo.Abstractions.Interfaces
+namespace Geo.Abstractions.Interfaces;
+
+public interface IMeasure
 {
-    public interface IMeasure
-    {
-        double SiValue { get; }
-    }
+    double SiValue { get; }
 }

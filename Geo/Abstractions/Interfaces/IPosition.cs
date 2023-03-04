@@ -1,7 +1,6 @@
-namespace Geo.Abstractions.Interfaces
+namespace Geo.Abstractions.Interfaces;
+
+public interface IPosition
 {
-    public interface IPosition
-    {
-        Coordinate GetCoordinate();
-    }
+    Coordinate GetCoordinate();
 }

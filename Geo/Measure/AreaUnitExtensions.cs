@@ -1,35 +1,34 @@
-namespace Geo.Measure
+namespace Geo.Measure;
+
+public static class AreaUnitExtensions
 {
-    public static class AreaUnitExtensions
+    public static double GetConversionFactor(this AreaUnit unit)
     {
-        public class AreaConversion
+        return UnitMetadata.For(unit).ConversionFactor;
+    }
+
+    public static double ConvertTo(this double metres, AreaUnit unit)
+    {
+        return metres / unit.GetConversionFactor();
+    }
+
+    public static AreaConversion ConvertFrom(this double value, AreaUnit unit)
+    {
+        return new AreaConversion(value * unit.GetConversionFactor());
+    }
+
+    public class AreaConversion
+    {
+        private readonly double _value;
+
+        public AreaConversion(double value)
         {
-            private readonly double _value;
-
-            public AreaConversion(double value)
-            {
-                _value = value;
-            }
-
-            public double To(AreaUnit unit)
-            {
-                return _value.ConvertTo(unit);
-            }
+            _value = value;
         }
 
-        public static double GetConversionFactor(this AreaUnit unit)
+        public double To(AreaUnit unit)
         {
-            return UnitMetadata.For(unit).ConversionFactor;
-        }
-
-        public static double ConvertTo(this double metres, AreaUnit unit)
-        {
-            return metres / unit.GetConversionFactor();
-        }
-
-        public static AreaConversion ConvertFrom(this double value, AreaUnit unit)
-        {
-            return new AreaConversion(value * unit.GetConversionFactor());
+            return _value.ConvertTo(unit);
         }
     }
 }

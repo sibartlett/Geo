@@ -3,41 +3,40 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Geo.Tests.Gps.Serialization
+namespace Geo.Tests.Gps.Serialization;
+
+public abstract class SerializerTestFixtureBase
 {
-    public abstract class SerializerTestFixtureBase
+    protected DirectoryInfo GetReferenceFileDirectory(params string[] subDirectories)
     {
-        protected DirectoryInfo GetReferenceFileDirectory(params string[] subDirectories)
+        var filePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().Location).LocalPath);
+        filePath = Path.Combine(filePath, "..", "..");
+
+        var dir = new DirectoryInfo(filePath);
+        while (dir != null)
         {
-            string filePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().Location).LocalPath);
-            filePath = Path.Combine(filePath, "..", "..");
+            var refDir = dir.EnumerateDirectories().FirstOrDefault(x => x.Name == "reference");
 
-            var dir = new DirectoryInfo(filePath);
-            while (dir != null)
+            if (refDir != null)
             {
-                var refDir = dir.EnumerateDirectories().FirstOrDefault(x => x.Name == "reference");
-
-                if (refDir != null)
+                if (subDirectories == null || subDirectories.Length == 0)
                 {
-
-                    if (subDirectories == null || subDirectories.Length == 0)
-                        dir = refDir;
-                    else
-                    {
-                        foreach (var directory in subDirectories)
-                        {
-                            if (refDir != null)
-                                refDir = refDir.EnumerateDirectories().FirstOrDefault(x => x.Name == directory);
-                        }
-                        dir = refDir;
-                    }
-                    break;
+                    dir = refDir;
+                }
+                else
+                {
+                    foreach (var directory in subDirectories)
+                        if (refDir != null)
+                            refDir = refDir.EnumerateDirectories().FirstOrDefault(x => x.Name == directory);
+                    dir = refDir;
                 }
 
-                dir = dir.Parent;
+                break;
             }
 
-            return dir;
+            dir = dir.Parent;
         }
+
+        return dir;
     }
 }

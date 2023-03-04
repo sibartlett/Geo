@@ -6,72 +6,71 @@ using Geo.Geometries;
 using Geo.Gps.Metadata;
 using Geo.Measure;
 
-namespace Geo.Gps
+namespace Geo.Gps;
+
+public class Track : IHasLength
 {
-    public class Track : IHasLength
+    public Track()
     {
-        public Track()
-        {
-            Metadata = new TrackMetadata();
-            Segments = new List<TrackSegment>();
-        }
+        Metadata = new TrackMetadata();
+        Segments = new List<TrackSegment>();
+    }
 
-        public TrackMetadata Metadata { get; private set; }
-        public List<TrackSegment> Segments { get; set; }
+    public TrackMetadata Metadata { get; }
+    public List<TrackSegment> Segments { get; set; }
 
-        public LineString ToLineString()
-        {
-            return new LineString(Segments.SelectMany(x=>x.Waypoints).Select(x => x.Coordinate));
-        }
+    public Distance GetLength()
+    {
+        return ToLineString().GetLength();
+    }
 
-        public TrackSegment GetFirstSegment()
-        {
-            return Segments.Count == 0 ? default(TrackSegment) : Segments[0];
-        }
+    public LineString ToLineString()
+    {
+        return new LineString(Segments.SelectMany(x => x.Waypoints).Select(x => x.Coordinate));
+    }
 
-        public TrackSegment GetLastSegment()
-        {
-            return Segments.Count == 0 ? default(TrackSegment) : Segments[Segments.Count - 1];
-        }
+    public TrackSegment GetFirstSegment()
+    {
+        return Segments.Count == 0 ? default : Segments[0];
+    }
 
-        public IEnumerable<Waypoint> GetAllFixes()
-        {
-            return Segments.SelectMany(x => x.Waypoints);
-        }
+    public TrackSegment GetLastSegment()
+    {
+        return Segments.Count == 0 ? default : Segments[Segments.Count - 1];
+    }
 
-        public Waypoint GetFirstWaypoint()
-        {
-            var segment = GetFirstSegment();
-            return segment == null ? default(Waypoint) : segment.GetFirstWaypoint();
-        }
+    public IEnumerable<Waypoint> GetAllFixes()
+    {
+        return Segments.SelectMany(x => x.Waypoints);
+    }
 
-        public Waypoint GetLastWaypoint()
-        {
-            var segment = GetLastSegment();
-            return segment == null ? default(Waypoint) : segment.GetLastWaypoint();
-        }
+    public Waypoint GetFirstWaypoint()
+    {
+        var segment = GetFirstSegment();
+        return segment == null ? default : segment.GetFirstWaypoint();
+    }
 
-        public Speed GetAverageSpeed()
-        {
-            return new Speed(GetLength().SiValue, GetDuration());
-        }
+    public Waypoint GetLastWaypoint()
+    {
+        var segment = GetLastSegment();
+        return segment == null ? default : segment.GetLastWaypoint();
+    }
 
-        public TimeSpan GetDuration()
-        {
-            if (GetFirstWaypoint().TimeUtc.HasValue && GetLastWaypoint().TimeUtc.HasValue)
-                return GetLastWaypoint().TimeUtc.Value - GetFirstWaypoint().TimeUtc.Value;
-            return TimeSpan.Zero;
-        }
+    public Speed GetAverageSpeed()
+    {
+        return new Speed(GetLength().SiValue, GetDuration());
+    }
 
-        public void Quantize(double seconds = 0)
-        {
-            foreach (var segment in Segments)
-                segment.Quantize(seconds);
-        }
+    public TimeSpan GetDuration()
+    {
+        if (GetFirstWaypoint().TimeUtc.HasValue && GetLastWaypoint().TimeUtc.HasValue)
+            return GetLastWaypoint().TimeUtc.Value - GetFirstWaypoint().TimeUtc.Value;
+        return TimeSpan.Zero;
+    }
 
-        public Distance GetLength()
-        {
-            return ToLineString().GetLength();
-        }
+    public void Quantize(double seconds = 0)
+    {
+        foreach (var segment in Segments)
+            segment.Quantize(seconds);
     }
 }

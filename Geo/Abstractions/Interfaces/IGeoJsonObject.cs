@@ -1,7 +1,6 @@
-namespace Geo.Abstractions.Interfaces
+namespace Geo.Abstractions.Interfaces;
+
+public interface IGeoJsonObject
 {
-    public interface IGeoJsonObject
-    {
-        string ToGeoJson();
-    }
+    string ToGeoJson();
 }

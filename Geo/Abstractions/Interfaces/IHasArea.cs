@@ -1,9 +1,8 @@
 ﻿using Geo.Measure;
 
-namespace Geo.Abstractions.Interfaces
+namespace Geo.Abstractions.Interfaces;
+
+public interface IHasArea
 {
-    public interface IHasArea
-    {
-        Area GetArea();
-    }
+    Area GetArea();
 }

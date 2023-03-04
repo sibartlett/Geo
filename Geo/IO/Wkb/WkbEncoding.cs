@@ -1,8 +1,7 @@
-﻿namespace Geo.IO.Wkb
+﻿namespace Geo.IO.Wkb;
+
+public enum WkbEncoding
 {
-    public enum WkbEncoding
-    {
-        BigEndian = 0,
-        LittleEndian = 1
-    }
+    BigEndian = 0,
+    LittleEndian = 1
 }

@@ -1,13 +1,12 @@
-﻿namespace Geo.IO.Wkt
+﻿namespace Geo.IO.Wkt;
+
+internal enum WktTokenType
 {
-    internal enum WktTokenType
-    {
-        None,
-        String,
-        Number,
-        Whitespace,
-        LeftParenthesis,
-        RightParenthesis,
-        Comma
-    }
+    None,
+    String,
+    Number,
+    Whitespace,
+    LeftParenthesis,
+    RightParenthesis,
+    Comma
 }
