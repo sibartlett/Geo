@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;net461;net472</TargetFrameworks>
     <Copyright>Copyright © Simon Bartlett 2012</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Simon Bartlett</Authors>
@@ -13,6 +12,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/sibartlett/Geo</RepositoryUrl>
     <DefineConstants>SIMPLE_JSON_TYPEINFO</DefineConstants>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -9,7 +9,7 @@ namespace Geo.Tests.Gps.Serialization
     {
         protected DirectoryInfo GetReferenceFileDirectory(params string[] subDirectories)
         {
-            string filePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+            string filePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().Location).LocalPath);
             filePath = Path.Combine(filePath, "..", "..");
 
             var dir = new DirectoryInfo(filePath);
