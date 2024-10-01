@@ -93,23 +93,34 @@ public class Coordinate : SpatialObject, IPosition
             var deg2 = double.Parse(match.Groups["Deg2"].Value, CultureInfo.InvariantCulture);
 
             double temp;
-            if (double.TryParse(match.Groups["Min1"].Value, out temp))
-                deg1 = deg1 + temp / 60;
+            double dir;
 
-            if (double.TryParse(match.Groups["Min2"].Value, out temp))
-                deg2 = deg2 + temp / 60;
+            if (deg1 < 0.0)
+                dir = -1.0;
+            else
+                dir = 1.0;
+
+            if (double.TryParse(match.Groups["Min1"].Value, out temp))
+                deg1 += dir * temp / 60;
 
             if (double.TryParse(match.Groups["Sec1"].Value, out temp))
-                deg1 = deg1 + temp / 3600;
+                deg1 += dir * temp / 3600;
+
+            if (deg2 < 0.0)
+                dir = -1.0;
+            else
+                dir = 1.0;
+
+            if (double.TryParse(match.Groups["Min2"].Value, out temp))
+                deg2 += dir * temp / 60;
 
             if (double.TryParse(match.Groups["Sec2"].Value, out temp))
-                deg2 = deg2 + temp / 3600;
-
+                deg2 += dir * temp / 3600;
 
             var dir1 = Regex.IsMatch(match.Groups["Dir1"].Value, "[Ss]") ? -1d : 1d;
             var dir2 = Regex.IsMatch(match.Groups["Dir2"].Value, "[Ww]") ? -1d : 1d;
 
-            if ((deg1 <= 90 && deg1 >= -90) || (deg2 <= 180 && deg2 >= -180))
+            if (deg1 is <= 90 and >= -90 || deg2 is <= 180 and >= -180)
             {
                 result = new Coordinate(deg1 * dir1, deg2 * dir2);
                 return true;

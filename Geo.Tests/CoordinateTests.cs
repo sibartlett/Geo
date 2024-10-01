@@ -15,6 +15,8 @@ public class CoordinateTests
     [TestCase("[42.294498, -89.637901]", 42.294498, -89.637901)]
     [TestCase(" ( 42.294498, -89.637901 ) ", 42.294498, -89.637901)]
     [TestCase("42° 17′ 40″ N, 89° 38′ 16″ W", 42.294444444444444d, -89.637777777777785d)]
+    [TestCase("-42° 17′ 40″ N, 89° 38′ 16″ W", -42.294444444444444d, -89.637777777777785d)]
+    [TestCase("-42°″, -89°", -42d, -89d)]
     public void Parse(string coordinate, double latitude, double longitude)
     {
         var result = Coordinate.Parse(coordinate);
