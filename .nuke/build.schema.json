@@ -38,6 +38,7 @@
     "ExecutableTarget": {
       "type": "string",
       "enum": [
+        "CheckForUncommittedChanges",
         "Clean",
         "Compile",
         "Publish",

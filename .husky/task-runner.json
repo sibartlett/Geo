@@ -1,0 +1,18 @@
+{
+   "tasks": [
+      {
+         "name": "Run csharpier on staged files",
+         "group": "pre-commit",
+         "command": "dotnet",
+         "args": ["csharpier", "${staged}"],
+         "include": ["**/*.cs"]
+      },
+      {
+         "name": "Check csharpier on entire repository",
+         "group": "verify",
+         "command": "dotnet",
+         "args": ["csharpier", "."],
+         "include": ["**/*.cs"]
+      }
+   ]
+}

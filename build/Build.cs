@@ -1,13 +1,14 @@
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.ProjectModel;
+using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 
 [GitHubActions(
     "ci",
     GitHubActionsImage.UbuntuLatest,
     On = new[] { GitHubActionsTrigger.Push },
-    InvokedTargets = new[] { nameof(Test) }
+    InvokedTargets = new[] { nameof(CheckForUncommittedChanges), nameof(Test) }
 )]
 class Build : NukeBuild
 {
@@ -17,20 +18,39 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main () => Execute<Build>(x => x.Compile);
+    public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    readonly Configuration Configuration = IsLocalBuild
+        ? Configuration.Debug
+        : Configuration.Release;
 
     [Solution]
     readonly Solution Solution;
+
+    [PathVariable]
+    readonly Tool Git;
+
+    Target CheckForUncommittedChanges =>
+        _ =>
+            _.Executes(() =>
+            {
+                DotNetTasks.DotNet("husky run --group verify");
+
+                if (Git($"status --porcelain").Count > 0)
+                {
+                    Assert.Fail("Uncommitted changes - run csharpier and prettier");
+                }
+            });
 
     Target Clean =>
         _ =>
             _.Before(Restore)
                 .Executes(() =>
                 {
-                    DotNetTasks.DotNetClean(_ => _.SetProject(Solution).SetConfiguration(Configuration));
+                    DotNetTasks.DotNetClean(_ =>
+                        _.SetProject(Solution).SetConfiguration(Configuration)
+                    );
                 });
 
     Target Restore =>
@@ -45,11 +65,10 @@ class Build : NukeBuild
             _.DependsOn(Restore)
                 .Executes(() =>
                 {
-                    DotNetTasks.DotNetBuild(
-                        _ =>
-                            _.SetProjectFile(Solution)
-                                .SetNoRestore(InvokedTargets.Contains(Restore))
-                                .SetConfiguration(Configuration)
+                    DotNetTasks.DotNetBuild(_ =>
+                        _.SetProjectFile(Solution)
+                            .SetNoRestore(InvokedTargets.Contains(Restore))
+                            .SetConfiguration(Configuration)
                     );
                 });
 
@@ -61,8 +80,10 @@ class Build : NukeBuild
                     var projects = Solution.GetAllProjects("*.Tests");
                     foreach (var project in projects)
                     {
-                        DotNetTasks.DotNetTest(
-                            _ => _.SetProjectFile(project.Path).SetConfiguration(Configuration).EnableNoBuild()
+                        DotNetTasks.DotNetTest(_ =>
+                            _.SetProjectFile(project.Path)
+                                .SetConfiguration(Configuration)
+                                .EnableNoBuild()
                         );
                     }
                 });
@@ -71,9 +92,6 @@ class Build : NukeBuild
         _ =>
             _.Executes(() =>
             {
-                DotNetTasks.DotNetPublish(
-                    _ => _.SetConfiguration("Release")
-                );
+                DotNetTasks.DotNetPublish(_ => _.SetConfiguration("Release"));
             });
-
 }
