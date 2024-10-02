@@ -8,21 +8,15 @@ namespace Geo.Geometries;
 
 public class MultiPolygon : GeometryCollection, IMultiSurface
 {
-    public new static readonly MultiPolygon Empty = new();
+    public static new readonly MultiPolygon Empty = new();
 
-    public MultiPolygon()
-    {
-    }
+    public MultiPolygon() { }
 
     public MultiPolygon(IEnumerable<Polygon> polygons)
-        : base(polygons)
-    {
-    }
+        : base(polygons) { }
 
     public MultiPolygon(params Polygon[] polygons)
-        : base(polygons.Cast<IGeometry>())
-    {
-    }
+        : base(polygons.Cast<IGeometry>()) { }
 
     public Area GetArea()
     {

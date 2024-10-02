@@ -35,10 +35,12 @@ internal class WktTokenizer
             if (type != WktTokenType.Whitespace)
             {
                 builder.Append(ch);
-                if (type != nextType ||
-                    type == WktTokenType.Comma ||
-                    type == WktTokenType.LeftParenthesis ||
-                    type == WktTokenType.RightParenthesis)
+                if (
+                    type != nextType
+                    || type == WktTokenType.Comma
+                    || type == WktTokenType.LeftParenthesis
+                    || type == WktTokenType.RightParenthesis
+                )
                 {
                     if (type != WktTokenType.Whitespace)
                         queue.Enqueue(new WktToken(type, builder.ToString()));
@@ -58,7 +60,11 @@ internal class WktTokenizer
             return WktTokenType.Whitespace;
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))
         {
-            if ((ch == 'e' || ch == 'E') && lastType.HasValue && lastType.Value == WktTokenType.Number)
+            if (
+                (ch == 'e' || ch == 'E')
+                && lastType.HasValue
+                && lastType.Value == WktTokenType.Number
+            )
                 return WktTokenType.Number;
 
             return WktTokenType.String;

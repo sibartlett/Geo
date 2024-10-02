@@ -3,5 +3,5 @@
 public enum WkbEncoding
 {
     BigEndian = 0,
-    LittleEndian = 1
+    LittleEndian = 1,
 }

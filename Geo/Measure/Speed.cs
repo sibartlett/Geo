@@ -20,8 +20,11 @@ public struct Speed : IMeasure, IEquatable<Speed>, IComparable<Speed>
     public Speed(double metres, TimeSpan timeSpan)
     {
         Unit = SpeedUnit.Ms;
-        if (Math.Abs(metres - 0d) < double.Epsilon || timeSpan == default ||
-            Math.Abs(timeSpan.TotalSeconds - 0) < double.Epsilon)
+        if (
+            Math.Abs(metres - 0d) < double.Epsilon
+            || timeSpan == default
+            || Math.Abs(timeSpan.TotalSeconds - 0) < double.Epsilon
+        )
             SiValue = 0d;
         else
             SiValue = metres / timeSpan.TotalSeconds;
@@ -68,7 +71,8 @@ public struct Speed : IMeasure, IEquatable<Speed>, IComparable<Speed>
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(null, obj))
+            return false;
         return obj is Speed && Equals((Speed)obj);
     }
 

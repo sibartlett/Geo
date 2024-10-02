@@ -54,7 +54,8 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(null, obj))
+            return false;
         return obj is Distance && Equals((Distance)obj);
     }
 

@@ -16,9 +16,11 @@ public class SkyDemonRoute
     //[XmlArrayItem("LoadingPoint", typeof (SkyDemonLoadingPoint[]), IsNullable = false)]
     //public SkyDemonLoadingPoint[][] WeightBalance { get; set; }
 
-    [XmlAttribute] public string Start { get; set; }
+    [XmlAttribute]
+    public string Start { get; set; }
 
-    [XmlAttribute] public string Level { get; set; }
+    [XmlAttribute]
+    public string Level { get; set; }
 
     //[XmlAttribute]
     //public string CruiseProfile { get; set; }

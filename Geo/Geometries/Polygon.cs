@@ -10,9 +10,8 @@ public class Polygon : Geometry, ISurface
 {
     public static readonly Polygon Empty = new();
 
-    public Polygon() : this((LinearRing)null)
-    {
-    }
+    public Polygon()
+        : this((LinearRing)null) { }
 
     public Polygon(LinearRing shell, IEnumerable<LinearRing> holes)
     {
@@ -20,17 +19,14 @@ public class Polygon : Geometry, ISurface
         Holes = new SpatialReadOnlyCollection<LinearRing>(holes ?? new LinearRing[0]);
     }
 
-    public Polygon(LinearRing shell, params LinearRing[] holes) : this(shell, (IEnumerable<LinearRing>)holes)
-    {
-    }
+    public Polygon(LinearRing shell, params LinearRing[] holes)
+        : this(shell, (IEnumerable<LinearRing>)holes) { }
 
-    public Polygon(params Coordinate[] shell) : this(new LinearRing(shell))
-    {
-    }
+    public Polygon(params Coordinate[] shell)
+        : this(new LinearRing(shell)) { }
 
-    public Polygon(IEnumerable<Coordinate> shell) : this(new LinearRing(shell))
-    {
-    }
+    public Polygon(IEnumerable<Coordinate> shell)
+        : this(new LinearRing(shell)) { }
 
     public LinearRing Shell { get; }
     public SpatialReadOnlyCollection<LinearRing> Holes { get; }
@@ -50,7 +46,10 @@ public class Polygon : Geometry, ISurface
     {
         var calculator = GeoContext.Current.GeodeticCalculator;
         var area = calculator.CalculateArea(Shell.Coordinates);
-        return Holes.Aggregate(area, (current, hole) => current - calculator.CalculateArea(hole.Coordinates));
+        return Holes.Aggregate(
+            area,
+            (current, hole) => current - calculator.CalculateArea(hole.Coordinates)
+        );
     }
 
     #region Equality methods
@@ -76,18 +75,16 @@ public class Polygon : Geometry, ISurface
             return true;
 
         return Shell.Equals(other.Shell, options)
-               && Holes.Count == other.Holes.Count
-               && !Holes
-                   .Where((t, i) => !t.Equals(other.Holes[i], options))
-                   .Any();
+            && Holes.Count == other.Holes.Count
+            && !Holes.Where((t, i) => !t.Equals(other.Holes[i], options)).Any();
     }
 
     public override int GetHashCode(SpatialEqualityOptions options)
     {
         unchecked
         {
-            return ((Shell != null ? Shell.GetHashCode(options) : 0) * 397) ^
-                   (Holes != null ? Holes.GetHashCode(options) : 0);
+            return ((Shell != null ? Shell.GetHashCode(options) : 0) * 397)
+                ^ (Holes != null ? Holes.GetHashCode(options) : 0);
         }
     }
 

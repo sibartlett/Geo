@@ -97,8 +97,14 @@ public class WktReaderTests
 
         var xy = reader.Read("LINEARRING (0.0 65.9, -34.5 9, 5.0 65.9, 0.0 65.9)");
         Assert.Equal(
-            new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(65.9, 5),
-                new Coordinate(65.9, 0)), xy);
+            new LinearRing(
+                new Coordinate(65.9, 0),
+                new Coordinate(9, -34.5),
+                new Coordinate(65.9, 5),
+                new Coordinate(65.9, 0)
+            ),
+            xy
+        );
 
         var empty = reader.Read("LINEARRING ZM EMPTY");
         Assert.Equal(new LinearRing(), empty);
@@ -111,8 +117,16 @@ public class WktReaderTests
 
         var xy = reader.Read("POLYGON ((0.0 65.9, -34.5 9, -20 40, 0 65.9))");
         Assert.Equal(
-            new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
-                new Coordinate(65.9, 0))), xy);
+            new Polygon(
+                new LinearRing(
+                    new Coordinate(65.9, 0),
+                    new Coordinate(9, -34.5),
+                    new Coordinate(40, -20),
+                    new Coordinate(65.9, 0)
+                )
+            ),
+            xy
+        );
 
         var empty = reader.Read("POLYGON ZM EMPTY");
         Assert.Equal(Geo.Geometries.Polygon.Empty, empty);
@@ -125,8 +139,16 @@ public class WktReaderTests
 
         var xy = reader.Read("TRIANGLE ((0.0 65.9, -34.5 9, -20 40, 0 65.9))");
         Assert.Equal(
-            new Triangle(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
-                new Coordinate(65.9, 0))), xy);
+            new Triangle(
+                new LinearRing(
+                    new Coordinate(65.9, 0),
+                    new Coordinate(9, -34.5),
+                    new Coordinate(40, -20),
+                    new Coordinate(65.9, 0)
+                )
+            ),
+            xy
+        );
 
         var empty = reader.Read("Triangle ZM EMPTY");
         Assert.Equal(Geo.Geometries.Triangle.Empty, empty);
@@ -137,11 +159,18 @@ public class WktReaderTests
     {
         var reader = new WktReader();
 
-        var points =
-            reader.Read("GEOMETRYCOLLECTION (POINT (0.0 65.9), POINT (-34.5 9), POINT  (-20 40), POINT (0 65.9))");
+        var points = reader.Read(
+            "GEOMETRYCOLLECTION (POINT (0.0 65.9), POINT (-34.5 9), POINT  (-20 40), POINT (0 65.9))"
+        );
         Assert.Equal(
-            new GeometryCollection(new Point(65.9, 0), new Point(9, -34.5), new Point(40, -20), new Point(65.9, 0)),
-            points);
+            new GeometryCollection(
+                new Point(65.9, 0),
+                new Point(9, -34.5),
+                new Point(40, -20),
+                new Point(65.9, 0)
+            ),
+            points
+        );
 
         var empty = reader.Read("GEOMETRYCOLLECTION ZM EMPTY");
         Assert.Equal(new GeometryCollection(), empty);
@@ -153,13 +182,27 @@ public class WktReaderTests
         var reader = new WktReader();
 
         var none = reader.Read("MULTIPOINT (0.0 65.9, -34.5 9, -20 40, 0 65.9)");
-        Assert.Equal(new MultiPoint(new Point(65.9, 0), new Point(9, -34.5), new Point(40, -20), new Point(65.9, 0)),
-            none);
+        Assert.Equal(
+            new MultiPoint(
+                new Point(65.9, 0),
+                new Point(9, -34.5),
+                new Point(40, -20),
+                new Point(65.9, 0)
+            ),
+            none
+        );
 
         var brackets = reader.Read("MULTIPOINT (EMPTY, (0.0 65.9), (-34.5 9), (-20 40), (0 65.9))");
         Assert.Equal(
-            new MultiPoint(new Point(), new Point(65.9, 0), new Point(9, -34.5), new Point(40, -20),
-                new Point(65.9, 0)), brackets);
+            new MultiPoint(
+                new Point(),
+                new Point(65.9, 0),
+                new Point(9, -34.5),
+                new Point(40, -20),
+                new Point(65.9, 0)
+            ),
+            brackets
+        );
 
         var empty = reader.Read("MULTIPOINT ZM EMPTY");
         Assert.Equal(new MultiPoint(), empty);
@@ -172,18 +215,37 @@ public class WktReaderTests
 
         var one = reader.Read("MULTILINESTRING ((0.0 65.9, -34.5 9, -20 40, 0 65.9))");
         Assert.Equal(
-            new MultiLineString(new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
-                new Coordinate(40, -20), new Coordinate(65.9, 0))), one);
-
+            new MultiLineString(
+                new LineString(
+                    new Coordinate(65.9, 0),
+                    new Coordinate(9, -34.5),
+                    new Coordinate(40, -20),
+                    new Coordinate(65.9, 0)
+                )
+            ),
+            one
+        );
 
         var two = reader.Read(
-            "MULTILINESTRING ((0.0 65.9, -34.5 9, -20 40, 0 65.9), (0.0 65.9, -34.5 9, -20 40, 0 65.9))");
+            "MULTILINESTRING ((0.0 65.9, -34.5 9, -20 40, 0 65.9), (0.0 65.9, -34.5 9, -20 40, 0 65.9))"
+        );
         Assert.Equal(
             new MultiLineString(
-                new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
-                    new Coordinate(65.9, 0)),
-                new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
-                    new Coordinate(65.9, 0))), two);
+                new LineString(
+                    new Coordinate(65.9, 0),
+                    new Coordinate(9, -34.5),
+                    new Coordinate(40, -20),
+                    new Coordinate(65.9, 0)
+                ),
+                new LineString(
+                    new Coordinate(65.9, 0),
+                    new Coordinate(9, -34.5),
+                    new Coordinate(40, -20),
+                    new Coordinate(65.9, 0)
+                )
+            ),
+            two
+        );
 
         var empty = reader.Read("MULTILINESTRING ZM EMPTY");
         Assert.Equal(new MultiLineString(), empty);
@@ -196,18 +258,43 @@ public class WktReaderTests
 
         var one = reader.Read("MULTIPOLYGON (((0.0 65.9, -34.5 9, -20 40, 0 65.9)))");
         Assert.Equal(
-            new MultiPolygon(new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
-                new Coordinate(40, -20), new Coordinate(65.9, 0)))), one);
-
+            new MultiPolygon(
+                new Polygon(
+                    new LinearRing(
+                        new Coordinate(65.9, 0),
+                        new Coordinate(9, -34.5),
+                        new Coordinate(40, -20),
+                        new Coordinate(65.9, 0)
+                    )
+                )
+            ),
+            one
+        );
 
         var two = reader.Read(
-            "MULTIPOLYGON (((0.0 65.9, -34.5 9, -20 40, 0 65.9)),((0.0 65.9, -34.5 9, -20 40, 0 65.9)))");
+            "MULTIPOLYGON (((0.0 65.9, -34.5 9, -20 40, 0 65.9)),((0.0 65.9, -34.5 9, -20 40, 0 65.9)))"
+        );
         Assert.Equal(
             new MultiPolygon(
-                new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
-                    new Coordinate(65.9, 0))),
-                new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
-                    new Coordinate(65.9, 0)))), two);
+                new Polygon(
+                    new LinearRing(
+                        new Coordinate(65.9, 0),
+                        new Coordinate(9, -34.5),
+                        new Coordinate(40, -20),
+                        new Coordinate(65.9, 0)
+                    )
+                ),
+                new Polygon(
+                    new LinearRing(
+                        new Coordinate(65.9, 0),
+                        new Coordinate(9, -34.5),
+                        new Coordinate(40, -20),
+                        new Coordinate(65.9, 0)
+                    )
+                )
+            ),
+            two
+        );
 
         var empty = reader.Read("MULTIPOLYGON ZM EMPTY");
         Assert.Equal(new MultiPolygon(), empty);

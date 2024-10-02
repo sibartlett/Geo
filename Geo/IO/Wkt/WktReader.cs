@@ -130,8 +130,10 @@ public class WktReader
         tokens.Dequeue(WktTokenType.LeftParenthesis);
         var linestrings = ParseLineStrings(tokens, dimensions);
         tokens.Dequeue(WktTokenType.RightParenthesis);
-        return new Polygon(new LinearRing(linestrings.First().Coordinates),
-            linestrings.Skip(1).Select(x => new LinearRing(x.Coordinates)));
+        return new Polygon(
+            new LinearRing(linestrings.First().Coordinates),
+            linestrings.Skip(1).Select(x => new LinearRing(x.Coordinates))
+        );
     }
 
     private List<LineString> ParseLineStrings(WktTokenQueue tokens, WktDimensions dimensions)
@@ -159,7 +161,6 @@ public class WktReader
         }
 
         tokens.Dequeue(WktTokenType.LeftParenthesis);
-
 
         var points = new List<Point> { ParseMultiPointCoordinate(tokens, dimensions) };
         while (tokens.NextTokenIs(WktTokenType.Comma))
@@ -326,7 +327,10 @@ public class WktReader
         return doubles;
     }
 
-    private CoordinateSequence ParseCoordinateSequence(WktTokenQueue tokens, WktDimensions dimensions)
+    private CoordinateSequence ParseCoordinateSequence(
+        WktTokenQueue tokens,
+        WktDimensions dimensions
+    )
     {
         if (tokens.NextTokenIs("EMPTY"))
         {

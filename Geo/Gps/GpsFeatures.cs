@@ -13,5 +13,5 @@ public enum GpsFeatures
     RoutesAndWaypoints = 5,
     TracksAndWaypoints = 6,
 
-    All = 7
+    All = 7,
 }

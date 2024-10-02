@@ -17,7 +17,7 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
         {
             return new[]
             {
-                new GpsFileFormat("gps", "GPX 1.0", "http://www.topografix.com/GPX/1/0/gpx.xsd")
+                new GpsFileFormat("gps", "GPX 1.0", "http://www.topografix.com/GPX/1/0/gpx.xsd"),
             };
         }
     }
@@ -77,7 +77,8 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
             {
                 var segment = track.Segments[i];
                 var pts = new GpxTrackPoint[segment.Waypoints.Count];
-                for (var j = 0; j < segment.Waypoints.Count; j++) pts[j] = ConvertToGpxTrackPoint(segment.Waypoints[j]);
+                for (var j = 0; j < segment.Waypoints.Count; j++)
+                    pts[j] = ConvertToGpxTrackPoint(segment.Waypoints[j]);
                 trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
             }
 
@@ -96,11 +97,11 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
             SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
             rte.rtept = new GpxPoint[route.Waypoints.Count];
-            for (var j = 0; j < route.Waypoints.Count; j++) rte.rtept[j] = ConvertToGpxPoint(route.Waypoints[j]);
+            for (var j = 0; j < route.Waypoints.Count; j++)
+                rte.rtept[j] = ConvertToGpxPoint(route.Waypoints[j]);
             yield return rte;
         }
     }
-
 
     private static void ParseMetadata(GpxFile xml, GpsData data)
     {
@@ -128,7 +129,8 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
                     foreach (var trksegTrkpt in trkType.trkseg.Where(seg => seg.trkpt != null))
                     {
                         var segment = new TrackSegment();
-                        foreach (var wptType in trksegTrkpt.trkpt) segment.Waypoints.Add(ConvertWaypoint(wptType));
+                        foreach (var wptType in trksegTrkpt.trkpt)
+                            segment.Waypoints.Add(ConvertWaypoint(wptType));
                         track.Segments.Add(segment);
                     }
 
@@ -146,7 +148,8 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
                 route.Metadata.Attribute(x => x.Description, rteType.desc);
                 route.Metadata.Attribute(x => x.Comment, rteType.cmt);
 
-                foreach (var wptType in rteType.rtept) route.Waypoints.Add(ConvertWaypoint(wptType));
+                foreach (var wptType in rteType.rtept)
+                    route.Waypoints.Add(ConvertWaypoint(wptType));
                 data.Routes.Add(route);
             }
     }
@@ -179,7 +182,7 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
             timeSpecified = waypoint.TimeUtc.HasValue,
             name = waypoint.Name,
             desc = waypoint.Description,
-            cmt = waypoint.Comment
+            cmt = waypoint.Comment,
         };
     }
 
@@ -195,7 +198,7 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
             timeSpecified = waypoint.TimeUtc.HasValue,
             name = waypoint.Name,
             desc = waypoint.Description,
-            cmt = waypoint.Comment
+            cmt = waypoint.Comment,
         };
     }
 }

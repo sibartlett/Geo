@@ -5,7 +5,8 @@ namespace Geo;
 
 public class CoordinateZ : Coordinate, Is3D
 {
-    public CoordinateZ(double latitude, double longitude, double elevation) : base(latitude, longitude)
+    public CoordinateZ(double latitude, double longitude, double elevation)
+        : base(latitude, longitude)
     {
         if (double.IsNaN(elevation) || double.IsInfinity(elevation))
             throw new ArgumentOutOfRangeException("elevation");
@@ -42,8 +43,10 @@ public class CoordinateZ : Coordinate, Is3D
                 return true;
 
             if (options.AntiMeridianCoordinatesAreEqual)
-                if ((Longitude.Equals(180) && other.Longitude.Equals(-180)) ||
-                    (Longitude.Equals(-180) && other.Longitude.Equals(180)))
+                if (
+                    (Longitude.Equals(180) && other.Longitude.Equals(-180))
+                    || (Longitude.Equals(-180) && other.Longitude.Equals(180))
+                )
                     return true;
         }
 

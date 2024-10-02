@@ -58,7 +58,6 @@ public class CircleTests
         Assert.True(maxLonError <= 0.002);
     }
 
-
     public double Distance(double nr1, double nr2)
     {
         return Math.Abs(nr1 - nr2);

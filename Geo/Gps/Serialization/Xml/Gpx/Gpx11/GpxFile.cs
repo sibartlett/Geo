@@ -13,15 +13,20 @@ public class GpxFile
 
     public GpxMetadata metadata { get; set; }
 
-    [XmlElement("wpt")] public GpxWaypoint[] wpt { get; set; }
+    [XmlElement("wpt")]
+    public GpxWaypoint[] wpt { get; set; }
 
-    [XmlElement("rte")] public GpxRoute[] rte { get; set; }
+    [XmlElement("rte")]
+    public GpxRoute[] rte { get; set; }
 
-    [XmlElement("trk")] public GpxTrack[] trk { get; set; }
+    [XmlElement("trk")]
+    public GpxTrack[] trk { get; set; }
 
     //public extensionsType extensions { get; set; }
 
-    [XmlAttribute] public string version { get; set; }
+    [XmlAttribute]
+    public string version { get; set; }
 
-    [XmlAttribute] public string creator { get; set; }
+    [XmlAttribute]
+    public string creator { get; set; }
 }

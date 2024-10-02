@@ -15,22 +15,28 @@ public class GpxFile : GpxMetadataBase
 
     public string email { get; set; }
 
-    [XmlElement(DataType = "anyURI")] public string url { get; set; }
+    [XmlElement(DataType = "anyURI")]
+    public string url { get; set; }
 
     public string urlname { get; set; }
 
     public GpxBounds bounds { get; set; }
 
-    [XmlElement("wpt")] public GpxPoint[] wpt { get; set; }
+    [XmlElement("wpt")]
+    public GpxPoint[] wpt { get; set; }
 
-    [XmlElement("rte")] public GpxRoute[] rte { get; set; }
+    [XmlElement("rte")]
+    public GpxRoute[] rte { get; set; }
 
-    [XmlElement("trk")] public GpxTrack[] trk { get; set; }
+    [XmlElement("trk")]
+    public GpxTrack[] trk { get; set; }
 
     //[XmlAnyElement]
     //public XmlElement[] Any { get; set; }
 
-    [XmlAttribute] public string version { get; set; }
+    [XmlAttribute]
+    public string version { get; set; }
 
-    [XmlAttribute] public string creator { get; set; }
+    [XmlAttribute]
+    public string creator { get; set; }
 }

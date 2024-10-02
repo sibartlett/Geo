@@ -8,16 +8,15 @@ namespace Geo;
 
 public class Coordinate : SpatialObject, IPosition
 {
-    private const string CoordinateRegex
-        = @"^[\(\[\{\s]*"
-          + @"(?<Deg1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir1>[NnSsEeWw])?"
-          + @"[,\s]+"
-          + @"(?<Deg2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir2>[NnSsEeWw])?"
-          + @"[\)\]\}\s]*$";
+    private const string CoordinateRegex =
+        @"^[\(\[\{\s]*"
+        + @"(?<Deg1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir1>[NnSsEeWw])?"
+        + @"[,\s]+"
+        + @"(?<Deg2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir2>[NnSsEeWw])?"
+        + @"[\)\]\}\s]*$";
 
-    public Coordinate() : this(0, 0)
-    {
-    }
+    public Coordinate()
+        : this(0, 0) { }
 
     public Coordinate(double latitude, double longitude)
     {
@@ -152,8 +151,10 @@ public class Coordinate : SpatialObject, IPosition
                 return true;
 
             if (options.AntiMeridianCoordinatesAreEqual)
-                if ((Longitude.Equals(180) && other.Longitude.Equals(-180)) ||
-                    (Longitude.Equals(-180) && other.Longitude.Equals(180)))
+                if (
+                    (Longitude.Equals(180) && other.Longitude.Equals(-180))
+                    || (Longitude.Equals(-180) && other.Longitude.Equals(180))
+                )
                     return true;
         }
 

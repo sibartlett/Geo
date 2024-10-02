@@ -122,7 +122,9 @@ public class WkbWriter
             }
         }
 
-        throw new SerializationException("Geometry of type '" + geometry.GetType().Name + "' is not supported");
+        throw new SerializationException(
+            "Geometry of type '" + geometry.GetType().Name + "' is not supported"
+        );
     }
 
     private void WriteCoordinate(Coordinate coordinate, WkbBinaryWriter writer)
@@ -230,7 +232,11 @@ public class WkbWriter
             Write(geometry, writer);
     }
 
-    private void WriteGeometryType(IGeometry geometry, WkbGeometryType baseType, WkbBinaryWriter writer)
+    private void WriteGeometryType(
+        IGeometry geometry,
+        WkbGeometryType baseType,
+        WkbBinaryWriter writer
+    )
     {
         if (geometry.IsEmpty)
         {

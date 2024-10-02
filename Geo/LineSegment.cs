@@ -29,16 +29,17 @@ public class LineSegment : SpatialObject
     public override bool Equals(object obj, SpatialEqualityOptions options)
     {
         var other = obj as LineSegment;
-        return !ReferenceEquals(null, other) && Equals(Coordinate1, other.Coordinate1, options) &&
-               Equals(Coordinate2, other.Coordinate2, options);
+        return !ReferenceEquals(null, other)
+            && Equals(Coordinate1, other.Coordinate1, options)
+            && Equals(Coordinate2, other.Coordinate2, options);
     }
 
     public override int GetHashCode(SpatialEqualityOptions options)
     {
         unchecked
         {
-            return ((Coordinate1 != null ? Coordinate1.GetHashCode(options) : 0) * 397) ^
-                   (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
+            return ((Coordinate1 != null ? Coordinate1.GetHashCode(options) : 0) * 397)
+                ^ (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
         }
     }
 

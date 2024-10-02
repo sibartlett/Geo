@@ -6,19 +6,13 @@ namespace Geo.Geometries;
 
 public class MultiPoint : GeometryCollection
 {
-    public new static readonly MultiPoint Empty = new();
+    public static new readonly MultiPoint Empty = new();
 
-    public MultiPoint()
-    {
-    }
+    public MultiPoint() { }
 
     public MultiPoint(IEnumerable<Point> points)
-        : base(points)
-    {
-    }
+        : base(points) { }
 
     public MultiPoint(params Point[] points)
-        : base(points.Cast<IGeometry>())
-    {
-    }
+        : base(points.Cast<IGeometry>()) { }
 }

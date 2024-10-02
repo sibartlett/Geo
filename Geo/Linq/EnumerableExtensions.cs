@@ -25,7 +25,10 @@ public static class EnumerableExtensions
         return new Area(source.Select(selector).Sum(x => x.SiValue));
     }
 
-    public static Distance Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, Distance> selector)
+    public static Distance Sum<TSource>(
+        this IEnumerable<TSource> source,
+        Func<TSource, Distance> selector
+    )
     {
         return new Distance(source.Select(selector).Sum(x => x.SiValue));
     }
@@ -35,7 +38,10 @@ public static class EnumerableExtensions
         return new Area(source.Select(selector).Max(x => x.SiValue));
     }
 
-    public static Distance Max<TSource>(this IEnumerable<TSource> source, Func<TSource, Distance> selector)
+    public static Distance Max<TSource>(
+        this IEnumerable<TSource> source,
+        Func<TSource, Distance> selector
+    )
     {
         return new Distance(source.Select(selector).Max(x => x.SiValue));
     }
@@ -45,7 +51,10 @@ public static class EnumerableExtensions
         return new Area(source.Select(selector).Min(x => x.SiValue));
     }
 
-    public static Distance Min<TSource>(this IEnumerable<TSource> source, Func<TSource, Distance> selector)
+    public static Distance Min<TSource>(
+        this IEnumerable<TSource> source,
+        Func<TSource, Distance> selector
+    )
     {
         return new Distance(source.Select(selector).Min(x => x.SiValue));
     }

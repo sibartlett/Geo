@@ -9,5 +9,6 @@ public class GpxLink
 
     public string type { get; set; }
 
-    [XmlAttribute(DataType = "anyURI")] public string href { get; set; }
+    [XmlAttribute(DataType = "anyURI")]
+    public string href { get; set; }
 }

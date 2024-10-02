@@ -53,8 +53,10 @@ public class CoordinateZM : Coordinate, Is3D, IsMeasured
                 return true;
 
             if (options.AntiMeridianCoordinatesAreEqual)
-                if ((Longitude.Equals(180) && other.Longitude.Equals(-180)) ||
-                    (Longitude.Equals(-180) && other.Longitude.Equals(180)))
+                if (
+                    (Longitude.Equals(180) && other.Longitude.Equals(-180))
+                    || (Longitude.Equals(-180) && other.Longitude.Equals(180))
+                )
                     return true;
         }
 

@@ -8,5 +8,5 @@ internal enum WktTokenType
     Whitespace,
     LeftParenthesis,
     RightParenthesis,
-    Comma
+    Comma,
 }

@@ -9,5 +9,6 @@ public class SkyDemonLoadingPoints
     [XmlElement("FuelLoadingPoint", Form = XmlSchemaForm.Unqualified)]
     public SkyDemonFuelLoadingPoint[] FuelLoadingPoint { get; set; }
 
-    [XmlElement("LoadingPoint")] public SkyDemonLoadingPoint[] LoadingPoint { get; set; }
+    [XmlElement("LoadingPoint")]
+    public SkyDemonLoadingPoint[] LoadingPoint { get; set; }
 }

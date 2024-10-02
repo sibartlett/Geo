@@ -9,13 +9,7 @@ public class GarminFlightplanDeSerializer : GpsXmlDeSerializer<GarminFlightplan>
 {
     public override GpsFileFormat[] FileFormats
     {
-        get
-        {
-            return new[]
-            {
-                new GpsFileFormat("fpl", "Garmin Flightplan")
-            };
-        }
+        get { return new[] { new GpsFileFormat("fpl", "Garmin Flightplan") }; }
     }
 
     public override GpsFeatures SupportedFeatures => GpsFeatures.Routes;

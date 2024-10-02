@@ -64,7 +64,10 @@ public class GeoJsonReader
     {
         result = null;
         string typeString;
-        if (TryParseTypeString(obj, out typeString) && typeString.ToLowerInvariant() == "featurecollection")
+        if (
+            TryParseTypeString(obj, out typeString)
+            && typeString.ToLowerInvariant() == "featurecollection"
+        )
         {
             var features = obj["features"] as JsonArray;
 
@@ -96,18 +99,21 @@ public class GeoJsonReader
             object prop;
             Dictionary<string, object> pr = null;
 
-            if (obj.TryGetValue("geometry", out geometry)) TryParseGeometry((JsonObject)geometry, out geo);
+            if (obj.TryGetValue("geometry", out geometry))
+                TryParseGeometry((JsonObject)geometry, out geo);
 
             if (obj.TryGetValue("properties", out prop) && prop is JsonObject)
             {
                 var props = (JsonObject)prop;
-                if (props.Count > 0) pr = props.ToDictionary(x => x.Key, x => SantizeJsonObjects(x.Value));
+                if (props.Count > 0)
+                    pr = props.ToDictionary(x => x.Key, x => SantizeJsonObjects(x.Value));
             }
 
             result = new Feature((IGeometry)geo, pr);
 
             object id;
-            if (obj.TryGetValue("id", out id)) ((Feature)result).Id = SantizeJsonObjects(id);
+            if (obj.TryGetValue("id", out id))
+                ((Feature)result).Id = SantizeJsonObjects(id);
 
             return true;
         }
@@ -182,9 +188,16 @@ public class GeoJsonReader
         var coordinates = obj["coordinates"] as JsonArray;
 
         Coordinate[][] temp;
-        if (coordinates != null && coordinates.Count > 0 && TryParseCoordinateArrayArray(coordinates, out temp))
+        if (
+            coordinates != null
+            && coordinates.Count > 0
+            && TryParseCoordinateArrayArray(coordinates, out temp)
+        )
         {
-            result = new Polygon(new LinearRing(temp[0]), temp.Skip(1).Select(x => new LinearRing(x)));
+            result = new Polygon(
+                new LinearRing(temp[0]),
+                temp.Skip(1).Select(x => new LinearRing(x))
+            );
             return true;
         }
 
@@ -226,9 +239,12 @@ public class GeoJsonReader
         Coordinate[][][] co;
         if (coordinates != null && TryParseCoordinateArrayArrayArray(coordinates, out co))
         {
-            result = new MultiPolygon(co.Select(x =>
-                new Polygon(new LinearRing(x.First()), x.Skip(1).Select(c => new LinearRing(c)))
-            ));
+            result = new MultiPolygon(
+                co.Select(x => new Polygon(
+                    new LinearRing(x.First()),
+                    x.Skip(1).Select(c => new LinearRing(c))
+                ))
+            );
             return true;
         }
 
@@ -269,13 +285,23 @@ public class GeoJsonReader
             return false;
 
         if (coordinates.Count == 2)
-            result = new Coordinate(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]));
+            result = new Coordinate(
+                Convert.ToDouble(coordinates[1]),
+                Convert.ToDouble(coordinates[0])
+            );
         else if (coordinates.Count == 3)
-            result = new CoordinateZ(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]),
-                Convert.ToDouble(coordinates[2]));
+            result = new CoordinateZ(
+                Convert.ToDouble(coordinates[1]),
+                Convert.ToDouble(coordinates[0]),
+                Convert.ToDouble(coordinates[2])
+            );
         else
-            result = new CoordinateZM(Convert.ToDouble(coordinates[1]), Convert.ToDouble(coordinates[0]),
-                Convert.ToDouble(coordinates[2]), Convert.ToDouble(coordinates[3]));
+            result = new CoordinateZM(
+                Convert.ToDouble(coordinates[1]),
+                Convert.ToDouble(coordinates[0]),
+                Convert.ToDouble(coordinates[2]),
+                Convert.ToDouble(coordinates[3])
+            );
         return true;
     }
 
@@ -315,7 +341,10 @@ public class GeoJsonReader
         return true;
     }
 
-    private bool TryParseCoordinateArrayArrayArray(JsonArray coordinates, out Coordinate[][][] result)
+    private bool TryParseCoordinateArrayArrayArray(
+        JsonArray coordinates,
+        out Coordinate[][][] result
+    )
     {
         result = null;
         if (coordinates == null)

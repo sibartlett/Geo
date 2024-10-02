@@ -9,7 +9,9 @@ public abstract class SerializerTestFixtureBase
 {
     protected DirectoryInfo GetReferenceFileDirectory(params string[] subDirectories)
     {
-        var filePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().Location).LocalPath);
+        var filePath = Path.GetDirectoryName(
+            new Uri(Assembly.GetExecutingAssembly().Location).LocalPath
+        );
         filePath = Path.Combine(filePath, "..", "..");
 
         var dir = new DirectoryInfo(filePath);
@@ -27,7 +29,9 @@ public abstract class SerializerTestFixtureBase
                 {
                     foreach (var directory in subDirectories)
                         if (refDir != null)
-                            refDir = refDir.EnumerateDirectories().FirstOrDefault(x => x.Name == directory);
+                            refDir = refDir
+                                .EnumerateDirectories()
+                                .FirstOrDefault(x => x.Name == directory);
                     dir = refDir;
                 }
 

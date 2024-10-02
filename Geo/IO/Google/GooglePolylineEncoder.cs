@@ -43,7 +43,8 @@ public class GooglePolylineEncoder
         var coordinates = new List<Coordinate>();
         using (var reader = new StringReader(polyline))
         {
-            int lat = 0, lng = 0;
+            int lat = 0,
+                lng = 0;
             while (reader.Peek() != -1)
             {
                 lat += DecodeNumber(reader);
@@ -75,7 +76,9 @@ public class GooglePolylineEncoder
 
     private static int DecodeNumber(StringReader reader)
     {
-        int b, shift = 0, result = 0;
+        int b,
+            shift = 0,
+            result = 0;
         do
         {
             b = reader.Read() - MinAscii;

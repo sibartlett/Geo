@@ -15,7 +15,12 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
         try
         {
             streamWrapper.Position = 0;
-            using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
+            using (
+                var reader = XmlReader.Create(
+                    streamWrapper,
+                    new XmlReaderSettings { CloseInput = false }
+                )
+            )
             {
                 if (_xmlSerializer.CanDeserialize(reader))
                     if (reader.MoveToContent() == XmlNodeType.Element)
@@ -38,7 +43,12 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
         try
         {
             streamWrapper.Position = 0;
-            using (var reader = XmlReader.Create(streamWrapper, new XmlReaderSettings { CloseInput = false }))
+            using (
+                var reader = XmlReader.Create(
+                    streamWrapper,
+                    new XmlReaderSettings { CloseInput = false }
+                )
+            )
             {
                 doc = (T)_xmlSerializer.Deserialize(reader);
             }

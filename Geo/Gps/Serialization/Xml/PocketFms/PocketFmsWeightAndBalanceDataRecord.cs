@@ -15,5 +15,6 @@ public class PocketFmsWeightAndBalanceDataRecord
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
     public PocketFmsMeasure<decimal> Moment { get; set; }
 
-    [XmlAttribute] public string WBDescription { get; set; }
+    [XmlAttribute]
+    public string WBDescription { get; set; }
 }

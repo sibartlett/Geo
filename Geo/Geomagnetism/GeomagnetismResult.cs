@@ -35,8 +35,16 @@ public class GeomagnetismResult
 
     public override string ToString()
     {
-        return string.Format(CultureInfo.InvariantCulture,
-            "Magnetic Field[D={0}, I={1}, H={2}, F={3}, X={4}, Y={5}, Z={6}]", Declination, Inclination,
-            HorizontalIntensity, TotalIntensity, X, Y, Z);
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "Magnetic Field[D={0}, I={1}, H={2}, F={3}, X={4}, Y={5}, Z={6}]",
+            Declination,
+            Inclination,
+            HorizontalIntensity,
+            TotalIntensity,
+            X,
+            Y,
+            Z
+        );
     }
 }

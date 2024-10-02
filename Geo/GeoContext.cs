@@ -8,9 +8,8 @@ public class GeoContext
 {
     private static GeoContext _current;
 
-    public GeoContext() : this(Spheroid.Default)
-    {
-    }
+    public GeoContext()
+        : this(Spheroid.Default) { }
 
     public GeoContext(Spheroid spheroid)
     {

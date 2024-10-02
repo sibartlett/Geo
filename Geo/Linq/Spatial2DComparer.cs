@@ -4,7 +4,8 @@ using Geo.Abstractions.Interfaces;
 
 namespace Geo.Linq;
 
-public class Spatial2DComparer<T> : IEqualityComparer<T> where T : ISpatialEquatable
+public class Spatial2DComparer<T> : IEqualityComparer<T>
+    where T : ISpatialEquatable
 {
     public bool Equals(T x, T y)
     {

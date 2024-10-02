@@ -6,13 +6,10 @@ namespace Geo.IO.Wkt;
 
 internal class WktTokenQueue : Queue<WktToken>
 {
-    public WktTokenQueue()
-    {
-    }
+    public WktTokenQueue() { }
 
-    public WktTokenQueue(IEnumerable<WktToken> tokens) : base(tokens)
-    {
-    }
+    public WktTokenQueue(IEnumerable<WktToken> tokens)
+        : base(tokens) { }
 
     public bool NextTokenIs(WktTokenType type)
     {
@@ -41,7 +38,10 @@ internal class WktTokenQueue : Queue<WktToken>
     public WktToken Dequeue(string value)
     {
         var token = Dequeue();
-        if (token.Type != WktTokenType.String || !string.Equals(value, token.Value, StringComparison.OrdinalIgnoreCase))
+        if (
+            token.Type != WktTokenType.String
+            || !string.Equals(value, token.Value, StringComparison.OrdinalIgnoreCase)
+        )
             throw new SerializationException("Invalid WKT string.");
         return token;
     }

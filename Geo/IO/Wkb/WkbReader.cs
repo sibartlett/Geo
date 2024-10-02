@@ -37,7 +37,9 @@ public class WkbReader
             }
             catch (EndOfStreamException)
             {
-                throw new SerializationException("End of stream reached before end of valid WKB geometry.");
+                throw new SerializationException(
+                    "End of stream reached before end of valid WKB geometry."
+                );
             }
         }
     }
@@ -46,8 +48,14 @@ public class WkbReader
     {
         var x = reader.ReadDouble();
         var y = reader.ReadDouble();
-        var z = dimensions == WkbDimensions.XYZ || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : double.NaN;
-        var m = dimensions == WkbDimensions.XYM || dimensions == WkbDimensions.XYZM ? reader.ReadDouble() : double.NaN;
+        var z =
+            dimensions == WkbDimensions.XYZ || dimensions == WkbDimensions.XYZM
+                ? reader.ReadDouble()
+                : double.NaN;
+        var m =
+            dimensions == WkbDimensions.XYM || dimensions == WkbDimensions.XYZM
+                ? reader.ReadDouble()
+                : double.NaN;
 
         if (!double.IsNaN(z) && !double.IsNaN(m))
             return new CoordinateZM(y, x, z, m);
@@ -63,7 +71,8 @@ public class WkbReader
         var pointCount = (int)reader.ReadUInt32();
 
         var result = new List<Coordinate>(pointCount);
-        for (var i = 0; i < pointCount; i++) result.Add(ReadCoordinate(reader, dimensions));
+        for (var i = 0; i < pointCount; i++)
+            result.Add(ReadCoordinate(reader, dimensions));
 
         return new CoordinateSequence(result);
     }

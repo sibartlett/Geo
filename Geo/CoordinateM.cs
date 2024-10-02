@@ -5,7 +5,8 @@ namespace Geo;
 
 public class CoordinateM : Coordinate, IsMeasured
 {
-    public CoordinateM(double latitude, double longitude, double measure) : base(latitude, longitude)
+    public CoordinateM(double latitude, double longitude, double measure)
+        : base(latitude, longitude)
     {
         if (double.IsNaN(measure) || double.IsInfinity(measure))
             throw new ArgumentOutOfRangeException("measure");
@@ -42,8 +43,10 @@ public class CoordinateM : Coordinate, IsMeasured
                 return true;
 
             if (options.AntiMeridianCoordinatesAreEqual)
-                if ((Longitude.Equals(180) && other.Longitude.Equals(-180)) ||
-                    (Longitude.Equals(-180) && other.Longitude.Equals(180)))
+                if (
+                    (Longitude.Equals(180) && other.Longitude.Equals(-180))
+                    || (Longitude.Equals(-180) && other.Longitude.Equals(180))
+                )
                     return true;
         }
 

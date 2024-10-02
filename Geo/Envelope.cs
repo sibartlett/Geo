@@ -47,24 +47,24 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
     public bool Intersects(Envelope envelope)
     {
         return envelope.GetExtremeCoordinates().Any(Contains)
-               || GetExtremeCoordinates().Any(envelope.Contains);
+            || GetExtremeCoordinates().Any(envelope.Contains);
     }
 
     public bool Contains(Envelope envelope)
     {
         return envelope != null
-               && envelope.MinLat > MinLat
-               && envelope.MaxLat < MaxLat
-               && envelope.MinLon > MinLon
-               && envelope.MaxLon < MaxLon;
+            && envelope.MinLat > MinLat
+            && envelope.MaxLat < MaxLat
+            && envelope.MinLon > MinLon
+            && envelope.MaxLon < MaxLon;
     }
 
     public bool Contains(Coordinate coordinate)
     {
         return coordinate.Latitude > MinLat
-               && coordinate.Latitude < MaxLat
-               && coordinate.Longitude > MinLon
-               && coordinate.Longitude < MaxLon;
+            && coordinate.Latitude < MaxLat
+            && coordinate.Longitude > MinLon
+            && coordinate.Longitude < MaxLon;
     }
 
     public bool Contains(IGeometry geometry)
@@ -80,7 +80,7 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
             new Coordinate(MaxLat, MinLon),
             new Coordinate(MaxLat, MaxLon),
             new Coordinate(MinLat, MaxLon),
-            new Coordinate(MinLat, MinLon)
+            new Coordinate(MinLat, MinLon),
         };
     }
 
@@ -88,15 +88,21 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
 
     public bool Equals(Envelope other)
     {
-        return !ReferenceEquals(null, other) && MinLat.Equals(other.MinLat) && MinLon.Equals(other.MinLon) &&
-               MaxLat.Equals(other.MaxLat) && MaxLon.Equals(other.MaxLon);
+        return !ReferenceEquals(null, other)
+            && MinLat.Equals(other.MinLat)
+            && MinLon.Equals(other.MinLon)
+            && MaxLat.Equals(other.MaxLat)
+            && MaxLon.Equals(other.MaxLon);
     }
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
+        if (ReferenceEquals(null, obj))
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj.GetType() != GetType())
+            return false;
         return Equals((Envelope)obj);
     }
 

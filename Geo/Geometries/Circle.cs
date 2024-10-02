@@ -34,7 +34,13 @@ public class Circle : Geometry, ISurface
         Radius = radius;
     }
 
-    public Circle(double latitiude, double longitude, double elevation, double measure, double radius)
+    public Circle(
+        double latitiude,
+        double longitude,
+        double elevation,
+        double measure,
+        double radius
+    )
     {
         Center = new CoordinateZM(latitiude, longitude, elevation, measure);
         Radius = radius;
@@ -46,7 +52,8 @@ public class Circle : Geometry, ISurface
     public override Envelope GetBounds()
     {
         var latitudinalRadiusDeg = Radius / (Constants.NauticalMile * 60);
-        var longditudinalRadiusDeg = Radius / (Constants.NauticalMile * 60) * Math.Cos(Center.Latitude.ToRadians());
+        var longditudinalRadiusDeg =
+            Radius / (Constants.NauticalMile * 60) * Math.Cos(Center.Latitude.ToRadians());
 
         return new Envelope(
             Center.Latitude - latitudinalRadiusDeg,
@@ -82,7 +89,8 @@ public class Circle : Geometry, ISurface
         Coordinate first = null;
         for (var i = 0; i < sides; i++)
         {
-            var coord = GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(Center, angle * i, Radius)
+            var coord = GeoContext
+                .Current.GeodeticCalculator.CalculateOrthodromicLine(Center, angle * i, Radius)
                 .Coordinate2;
             if (i == 0)
                 first = coord;
@@ -98,7 +106,9 @@ public class Circle : Geometry, ISurface
     public override bool Equals(object obj, SpatialEqualityOptions options)
     {
         var other = obj as Circle;
-        return !ReferenceEquals(null, other) && Radius.Equals(other.Radius) && Equals(Center, other.Center, options);
+        return !ReferenceEquals(null, other)
+            && Radius.Equals(other.Radius)
+            && Equals(Center, other.Center, options);
     }
 
     public override bool Equals(object obj)
@@ -115,7 +125,8 @@ public class Circle : Geometry, ISurface
     {
         unchecked
         {
-            return (Radius.GetHashCode() * 397) ^ (Center != null ? Center.GetHashCode(options) : 0);
+            return (Radius.GetHashCode() * 397)
+                ^ (Center != null ? Center.GetHashCode(options) : 0);
         }
     }
 

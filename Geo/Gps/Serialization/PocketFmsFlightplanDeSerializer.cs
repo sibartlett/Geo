@@ -12,8 +12,11 @@ public class PocketFmsFlightplanDeSerializer : GpsXmlDeSerializer<PocketFmsFligh
         {
             return new[]
             {
-                new GpsFileFormat("xml", "PocketFMS Flightplan",
-                    "http://www.PocketFMS.com/XMLSchema/PocketFMSNavlog-1.2.0.xsd")
+                new GpsFileFormat(
+                    "xml",
+                    "PocketFMS Flightplan",
+                    "http://www.PocketFMS.com/XMLSchema/PocketFMSNavlog-1.2.0.xsd"
+                ),
             };
         }
     }
@@ -28,10 +31,16 @@ public class PocketFmsFlightplanDeSerializer : GpsXmlDeSerializer<PocketFmsFligh
     protected override GpsData DeSerialize(PocketFmsFlightplan xml)
     {
         var route = new Route();
-        route.Waypoints.Add(new Waypoint((double)xml.LIB[0].FromPoint.Latitude,
-            (double)xml.LIB[0].FromPoint.Longitude));
+        route.Waypoints.Add(
+            new Waypoint(
+                (double)xml.LIB[0].FromPoint.Latitude,
+                (double)xml.LIB[0].FromPoint.Longitude
+            )
+        );
         foreach (var lib in xml.LIB)
-            route.Waypoints.Add(new Waypoint((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude));
+            route.Waypoints.Add(
+                new Waypoint((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude)
+            );
 
         var data = new GpsData();
         data.Routes.Add(route);

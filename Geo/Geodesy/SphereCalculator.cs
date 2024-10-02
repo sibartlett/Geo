@@ -7,9 +7,8 @@ namespace Geo.Geodesy;
 
 public class SphereCalculator : IGeodeticCalculator
 {
-    public SphereCalculator() : this(Constants.EarthMeanRadius)
-    {
-    }
+    public SphereCalculator()
+        : this(Constants.EarthMeanRadius) { }
 
     public SphereCalculator(double radius)
     {
@@ -17,7 +16,6 @@ public class SphereCalculator : IGeodeticCalculator
     }
 
     public double Radius { get; protected set; }
-
 
     public GeodeticLine CalculateOrthodromicLine(IPosition point, double heading, double distance)
     {
@@ -75,9 +73,9 @@ public class SphereCalculator : IGeodeticCalculator
             {
                 var p1 = coordinates[i];
                 var p2 = coordinates[i + 1];
-                area += (p2.Longitude - p1.Longitude).ToRadians() *
-                        (2 + Math.Sin(p1.Latitude.ToRadians()) +
-                         Math.Sin(p2.Latitude.ToRadians()));
+                area +=
+                    (p2.Longitude - p1.Longitude).ToRadians()
+                    * (2 + Math.Sin(p1.Latitude.ToRadians()) + Math.Sin(p2.Latitude.ToRadians()));
             }
 
             area = area * Radius * Radius / 2.0;

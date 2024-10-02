@@ -56,13 +56,18 @@ public class TrackSegment : IHasLength
     public void Quantize(double seconds = 0)
     {
         if (Waypoints.Any(x => !x.TimeUtc.HasValue))
-            throw new NotSupportedException("All waypoints require a timestamp, for track segment to be quantized.");
+            throw new NotSupportedException(
+                "All waypoints require a timestamp, for track segment to be quantized."
+            );
 
         var waypoints = new List<Waypoint>();
         Waypoint lastWaypoint = null;
         foreach (var waypoint in Waypoints)
-            if (lastWaypoint == null ||
-                Math.Abs((waypoint.TimeUtc.Value - lastWaypoint.TimeUtc.Value).TotalSeconds) >= seconds)
+            if (
+                lastWaypoint == null
+                || Math.Abs((waypoint.TimeUtc.Value - lastWaypoint.TimeUtc.Value).TotalSeconds)
+                    >= seconds
+            )
             {
                 lastWaypoint = waypoint;
                 waypoints.Add(waypoint);

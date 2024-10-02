@@ -14,14 +14,12 @@ public class WmmGeomagnetismCalculator : GeomagnetismCalculator
         new Wmm2005(),
         new Wmm2010(),
         new Wmm2015(),
-        new Wmm2020()
+        new Wmm2020(),
     };
 
-    public WmmGeomagnetismCalculator() : base(GeomagneticModels)
-    {
-    }
+    public WmmGeomagnetismCalculator()
+        : base(GeomagneticModels) { }
 
-    public WmmGeomagnetismCalculator(Spheroid spheroid) : base(spheroid, GeomagneticModels)
-    {
-    }
+    public WmmGeomagnetismCalculator(Spheroid spheroid)
+        : base(spheroid, GeomagneticModels) { }
 }

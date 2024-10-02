@@ -13,13 +13,7 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
 
     public override GpsFileFormat[] FileFormats
     {
-        get
-        {
-            return new[]
-            {
-                new GpsFileFormat("flightplan", "SkyDemon Flightplan")
-            };
-        }
+        get { return new[] { new GpsFileFormat("flightplan", "SkyDemon Flightplan") }; }
     }
 
     public override GpsFeatures SupportedFeatures => GpsFeatures.Routes;
@@ -28,7 +22,8 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
     {
         var result = new Route();
         result.Waypoints.Add(ParseWaypoint(route.Start));
-        foreach (var rhumbLine in route.RhumbLineRoute) result.Waypoints.Add(ParseWaypoint(rhumbLine.To));
+        foreach (var rhumbLine in route.RhumbLineRoute)
+            result.Waypoints.Add(ParseWaypoint(rhumbLine.To));
         return result;
     }
 
@@ -39,13 +34,15 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
         var match1 = Regex.Match(ord[0], COORD_REGEX1);
         var match2 = Regex.Match(ord[1], COORD_REGEX2);
 
-        var lat = double.Parse(match1.Groups["d"].Value, CultureInfo.InvariantCulture) +
-                  double.Parse(match1.Groups["m"].Value, CultureInfo.InvariantCulture) / 60 +
-                  double.Parse(match1.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
+        var lat =
+            double.Parse(match1.Groups["d"].Value, CultureInfo.InvariantCulture)
+            + double.Parse(match1.Groups["m"].Value, CultureInfo.InvariantCulture) / 60
+            + double.Parse(match1.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
 
-        var lon = double.Parse(match2.Groups["d"].Value, CultureInfo.InvariantCulture) +
-                  double.Parse(match2.Groups["m"].Value, CultureInfo.InvariantCulture) / 60 +
-                  double.Parse(match2.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
+        var lon =
+            double.Parse(match2.Groups["d"].Value, CultureInfo.InvariantCulture)
+            + double.Parse(match2.Groups["m"].Value, CultureInfo.InvariantCulture) / 60
+            + double.Parse(match2.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
 
         var latd = Regex.IsMatch(match1.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
         var lond = Regex.IsMatch(match2.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
@@ -66,7 +63,8 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
         //N514807.00 W0000930.00
         var data = new GpsData();
 
-        if (xml.PrimaryRoute != null) data.Routes.Add(ConvertRoute(xml.PrimaryRoute));
+        if (xml.PrimaryRoute != null)
+            data.Routes.Add(ConvertRoute(xml.PrimaryRoute));
 
         if (xml.Routes != null)
             foreach (var route in xml.Routes)

@@ -24,5 +24,6 @@ public class WktWriterSettings
     public bool ConvertCirclesToRegularPolygons { get; set; }
     public int CircleSides { get; set; }
 
-    public static WktWriterSettings NtsCompatible => new() { DimensionFlag = false, LinearRing = true };
+    public static WktWriterSettings NtsCompatible =>
+        new() { DimensionFlag = false, LinearRing = true };
 }

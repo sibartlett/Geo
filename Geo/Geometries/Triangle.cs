@@ -5,21 +5,15 @@ namespace Geo.Geometries;
 
 public class Triangle : Polygon
 {
-    public new static readonly Triangle Empty = new();
+    public static new readonly Triangle Empty = new();
 
-    public Triangle()
-    {
-    }
+    public Triangle() { }
 
     public Triangle(Coordinate p0, Coordinate p1, Coordinate p2)
-        : base(new LinearRing(p0, p1, p2, p0))
-    {
-    }
+        : base(new LinearRing(p0, p1, p2, p0)) { }
 
     public Triangle(LinearRing shell, params LinearRing[] holes)
-        : this(shell, (IEnumerable<LinearRing>)holes)
-    {
-    }
+        : this(shell, (IEnumerable<LinearRing>)holes) { }
 
     public Triangle(LinearRing shell, IEnumerable<LinearRing> holes)
         : base(shell, holes)

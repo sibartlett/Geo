@@ -10,20 +10,19 @@ public class GeomagnetismCalculator
 {
     private readonly Spheroid _spheroid;
 
-    public GeomagnetismCalculator() : this(Spheroid.Default, null)
-    {
-    }
+    public GeomagnetismCalculator()
+        : this(Spheroid.Default, null) { }
 
-    public GeomagnetismCalculator(IEnumerable<IGeomagneticModel> geomagneticModels) : this(Spheroid.Default,
-        geomagneticModels)
-    {
-    }
+    public GeomagnetismCalculator(IEnumerable<IGeomagneticModel> geomagneticModels)
+        : this(Spheroid.Default, geomagneticModels) { }
 
-    public GeomagnetismCalculator(Spheroid spheroid) : this(spheroid, null)
-    {
-    }
+    public GeomagnetismCalculator(Spheroid spheroid)
+        : this(spheroid, null) { }
 
-    public GeomagnetismCalculator(Spheroid spheroid, IEnumerable<IGeomagneticModel> geomagneticModels)
+    public GeomagnetismCalculator(
+        Spheroid spheroid,
+        IEnumerable<IGeomagneticModel> geomagneticModels
+    )
     {
         _spheroid = spheroid;
         if (geomagneticModels != null)
@@ -52,14 +51,18 @@ public class GeomagnetismCalculator
     public bool TryCalculate(IPosition position, DateTime utcDate, out GeomagnetismResult result)
     {
         var coordinate = position.GetCoordinate();
-        var coordinateZ = coordinate as CoordinateZ ?? new CoordinateZ(coordinate.Latitude, coordinate.Longitude, 0);
+        var coordinateZ =
+            coordinate as CoordinateZ
+            ?? new CoordinateZ(coordinate.Latitude, coordinate.Longitude, 0);
 
         double lat = coordinateZ.Latitude.ToRadians(),
             lon = coordinateZ.Longitude.ToRadians(),
             ele = coordinateZ.Elevation / 1000,
             dat = JulianDate.JD(utcDate);
 
-        var model = Models.SingleOrDefault(mod => mod.ValidFrom <= utcDate && mod.ValidTo > utcDate);
+        var model = Models.SingleOrDefault(mod =>
+            mod.ValidFrom <= utcDate && mod.ValidTo > utcDate
+        );
 
         if (model == null)
         {
@@ -84,7 +87,8 @@ public class GeomagnetismCalculator
 
         var sr = Math.Sqrt(a2 * cosLat2 + b2 * sinLat2);
         var theta = Math.Atan2(cosLat * (ele * sr + a2), sinLat * (ele * sr + b2));
-        var r = ele * ele + 2.0 * ele * sr + (a4 - (a4 - b4) * sinLat2) / (a2 - (a2 - b2) * sinLat2);
+        var r =
+            ele * ele + 2.0 * ele * sr + (a4 - (a4 - b4) * sinLat2) / (a2 - (a2 - b2) * sinLat2);
 
         r = Math.Sqrt(r);
 
@@ -96,7 +100,6 @@ public class GeomagnetismCalculator
             invS = 1.0 / (s + 1E-08);
         else
             invS = 1.0 / (s + 0.0);
-
 
         var p = new double[bound, bound];
         var dp = new double[bound, bound];
@@ -123,16 +126,22 @@ public class GeomagnetismCalculator
                 var root1 = Math.Sqrt((j - 1) * (j - 1) - i2);
                 var root2 = 1.0 / Math.Sqrt(j * j - i2);
                 p[j, i] = (p[j - 1, i] * c * (2.0 * j - 1) - p[j - 2, i] * root1) * root2;
-                dp[j, i] = ((dp[j - 1, i] * c - p[j - 1, i] * s) * (2.0 * j - 1) - dp[j - 2, i] * root1) * root2;
+                dp[j, i] =
+                    ((dp[j - 1, i] * c - p[j - 1, i] * s) * (2.0 * j - 1) - dp[j - 2, i] * root1)
+                    * root2;
             }
         }
 
-        double[,] g = new double[bound, bound], h = new double[bound, bound];
-        double bRadial = 0.0, bTheta = 0.0, bPhi = 0.0;
+        double[,] g = new double[bound, bound],
+            h = new double[bound, bound];
+        double bRadial = 0.0,
+            bTheta = 0.0,
+            bPhi = 0.0;
         var fn0 = _spheroid.MeanRadius / 1000 / r;
         var fn = fn0 * fn0;
 
-        double[] sm = new double[bound], cm = new double[bound];
+        double[] sm = new double[bound],
+            cm = new double[bound];
         sm[0] = Math.Sin(0);
         cm[0] = Math.Cos(0);
 
@@ -144,11 +153,15 @@ public class GeomagnetismCalculator
 
             for (var j = 0; j < bound; j++)
             {
-                g[i, j] = model.MainCoefficientsG[i, j] + yearfrac * model.SecularCoefficientsG[i, j];
-                h[i, j] = model.MainCoefficientsH[i, j] + yearfrac * model.SecularCoefficientsH[i, j];
+                g[i, j] =
+                    model.MainCoefficientsG[i, j] + yearfrac * model.SecularCoefficientsG[i, j];
+                h[i, j] =
+                    model.MainCoefficientsH[i, j] + yearfrac * model.SecularCoefficientsH[i, j];
             }
 
-            double c1 = 0, c2 = 0, c3 = 0;
+            double c1 = 0,
+                c2 = 0,
+                c3 = 0;
             for (var j = 0; j <= i; j++)
             {
                 var c0 = g[i, j] * cm[j] + h[i, j] * sm[j];
@@ -163,7 +176,6 @@ public class GeomagnetismCalculator
             bPhi += c3 * fn * invS;
         }
 
-
         var psi = theta - (Math.PI / 2.0 - lat);
         var sinPsi = Math.Sin(psi);
         var cosPsi = Math.Cos(psi);
@@ -171,7 +183,13 @@ public class GeomagnetismCalculator
         var x = -bTheta * cosPsi - bRadial * sinPsi;
         var y = bPhi;
         var z = bTheta * sinPsi - bRadial * cosPsi;
-        result = new GeomagnetismResult(coordinateZ, new DateTime(utcDate.Ticks, DateTimeKind.Utc), x, y, z);
+        result = new GeomagnetismResult(
+            coordinateZ,
+            new DateTime(utcDate.Ticks, DateTimeKind.Utc),
+            x,
+            y,
+            z
+        );
         return true;
     }
 }

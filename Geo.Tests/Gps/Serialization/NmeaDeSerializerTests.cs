@@ -10,7 +10,9 @@ public class NmeaDeSerializerTests : SerializerTestFixtureBase
     [Fact]
     public void Stockholm_Walk()
     {
-        var file = GetReferenceFileDirectory("nmea").GetFiles().First(x => x.Name == "Stockholm_Walk.nmea");
+        var file = GetReferenceFileDirectory("nmea")
+            .GetFiles()
+            .First(x => x.Name == "Stockholm_Walk.nmea");
         using var stream = new FileStream(file.FullName, FileMode.Open);
         var streamWrapper = new StreamWrapper(stream);
         var parser = new NmeaDeSerializer();

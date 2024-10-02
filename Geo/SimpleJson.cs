@@ -54,19 +54,20 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
-#if !SIMPLE_JSON_NO_LINQ_EXPRESSION
-using System.Linq.Expressions;
-#endif
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-#if SIMPLE_JSON_DYNAMIC
-using System.Dynamic;
-#endif
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using Geo.Reflection;
+#if SIMPLE_JSON_DYNAMIC
+using System.Dynamic;
+#endif
+
+#if !SIMPLE_JSON_NO_LINQ_EXPRESSION
+using System.Linq.Expressions;
+#endif
 
 // ReSharper disable LoopCanBeConvertedToQuery
 // ReSharper disable RedundantExplicitArrayCreation
@@ -84,18 +85,19 @@ namespace Geo
 #else
     public
 #endif
- class JsonArray : List<object>
+    class JsonArray : List<object>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonArray"/> class. 
+        /// Initializes a new instance of the <see cref="JsonArray"/> class.
         /// </summary>
         public JsonArray() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonArray"/> class. 
+        /// Initializes a new instance of the <see cref="JsonArray"/> class.
         /// </summary>
         /// <param name="capacity">The capacity of the json array.</param>
-        public JsonArray(int capacity) : base(capacity) { }
+        public JsonArray(int capacity)
+            : base(capacity) { }
 
         /// <summary>
         /// The json representation of the array.
@@ -118,11 +120,11 @@ namespace Geo
 #else
     public
 #endif
- class JsonObject :
+    class JsonObject :
 #if SIMPLE_JSON_DYNAMIC
- DynamicObject,
+        DynamicObject,
 #endif
- IDictionary<string, object>
+        IDictionary<string, object>
     {
         /// <summary>
         /// The internal member dictionary.
@@ -163,7 +165,8 @@ namespace Geo
                 throw new ArgumentOutOfRangeException("index");
             int i = 0;
             foreach (KeyValuePair<string, object> o in obj)
-                if (i++ == index) return o.Value;
+                if (i++ == index)
+                    return o.Value;
             return null;
         }
 
@@ -274,7 +277,8 @@ namespace Geo
         /// <param name="arrayIndex">Index of the array.</param>
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
-            if (array == null) throw new ArgumentNullException("array");
+            if (array == null)
+                throw new ArgumentNullException("array");
             int num = Count;
             foreach (KeyValuePair<string, object> kvp in this)
             {
@@ -362,10 +366,12 @@ namespace Geo
             // </pex>
             Type targetType = binder.Type;
 
-            if ((targetType == typeof(IEnumerable)) ||
-                (targetType == typeof(IEnumerable<KeyValuePair<string, object>>)) ||
-                (targetType == typeof(IDictionary<string, object>)) ||
-                (targetType == typeof(IDictionary)))
+            if (
+                (targetType == typeof(IEnumerable))
+                || (targetType == typeof(IEnumerable<KeyValuePair<string, object>>))
+                || (targetType == typeof(IDictionary<string, object>))
+                || (targetType == typeof(IDictionary))
+            )
             {
                 result = this;
                 return true;
@@ -401,7 +407,8 @@ namespace Geo
         /// </returns>
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
-            if (indexes == null) throw new ArgumentNullException("indexes");
+            if (indexes == null)
+                throw new ArgumentNullException("indexes");
             if (indexes.Length == 1)
             {
                 result = ((IDictionary<string, object>)this)[(string)indexes[0]];
@@ -442,7 +449,8 @@ namespace Geo
         /// </returns>
         public override bool TrySetIndex(SetIndexBinder binder, object[] indexes, object value)
         {
-            if (indexes == null) throw new ArgumentNullException("indexes");
+            if (indexes == null)
+                throw new ArgumentNullException("indexes");
             if (indexes.Length == 1)
             {
                 ((IDictionary<string, object>)this)[(string)indexes[0]] = value;
@@ -489,7 +497,7 @@ namespace Geo
     /// <summary>
     /// This class encodes and decodes JSON strings.
     /// Spec. details, see http://www.json.org/
-    /// 
+    ///
     /// JSON uses Arrays and Objects. These correspond here to the datatypes JsonArray(IList&lt;object>) and JsonObject(IDictionary&lt;string,object>).
     /// All numbers are parsed to doubles.
     /// </summary>
@@ -499,7 +507,7 @@ namespace Geo
 #else
     public
 #endif
- static class SimpleJson
+    static class SimpleJson
     {
         private const int TOKEN_NONE = 0;
         private const int TOKEN_CURLY_OPEN = 1;
@@ -516,13 +524,22 @@ namespace Geo
         private const int BUILDER_CAPACITY = 2000;
 
         private static readonly char[] EscapeTable;
-        private static readonly char[] EscapeCharacters = new char[] { '"', '\\', '\b', '\f', '\n', '\r', '\t' };
+        private static readonly char[] EscapeCharacters = new char[]
+        {
+            '"',
+            '\\',
+            '\b',
+            '\f',
+            '\n',
+            '\r',
+            '\t',
+        };
         private static readonly string EscapeCharactersString = new string(EscapeCharacters);
 
         static SimpleJson()
         {
             EscapeTable = new char[93];
-            EscapeTable['"']  = '"';
+            EscapeTable['"'] = '"';
             EscapeTable['\\'] = '\\';
             EscapeTable['\b'] = 'b';
             EscapeTable['\f'] = 'f';
@@ -556,7 +573,11 @@ namespace Geo
         /// <returns>
         /// Returns true if successfull otherwise false.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1007:UseGenericsWhereAppropriate",
+            Justification = "Need to support .NET 2"
+        )]
         public static bool TryDeserializeObject(string json, out object obj)
         {
             bool success = true;
@@ -572,12 +593,22 @@ namespace Geo
             return success;
         }
 
-        public static object DeserializeObject(string json, Type type, IJsonSerializerStrategy jsonSerializerStrategy)
+        public static object DeserializeObject(
+            string json,
+            Type type,
+            IJsonSerializerStrategy jsonSerializerStrategy
+        )
         {
             object jsonObject = DeserializeObject(json);
-            return type == null || jsonObject != null && ReflectionUtils.IsAssignableFrom(jsonObject.GetType(), type)
-                       ? jsonObject
-                       : (jsonSerializerStrategy ?? CurrentJsonSerializerStrategy).DeserializeObject(jsonObject, type);
+            return
+                type == null
+                || jsonObject != null
+                    && ReflectionUtils.IsAssignableFrom(jsonObject.GetType(), type)
+                ? jsonObject
+                : (jsonSerializerStrategy ?? CurrentJsonSerializerStrategy).DeserializeObject(
+                    jsonObject,
+                    type
+                );
         }
 
         public static object DeserializeObject(string json, Type type)
@@ -585,7 +616,10 @@ namespace Geo
             return DeserializeObject(json, type, null);
         }
 
-        public static T DeserializeObject<T>(string json, IJsonSerializerStrategy jsonSerializerStrategy)
+        public static T DeserializeObject<T>(
+            string json,
+            IJsonSerializerStrategy jsonSerializerStrategy
+        )
         {
             return (T)DeserializeObject(json, typeof(T), jsonSerializerStrategy);
         }
@@ -601,7 +635,10 @@ namespace Geo
         /// <param name="json">A IDictionary&lt;string,object> / IList&lt;object></param>
         /// <param name="jsonSerializerStrategy">Serializer strategy to use</param>
         /// <returns>A JSON encoded string, or null if object 'json' is not serializable</returns>
-        public static string SerializeObject(object json, IJsonSerializerStrategy jsonSerializerStrategy)
+        public static string SerializeObject(
+            object json,
+            IJsonSerializerStrategy jsonSerializerStrategy
+        )
         {
             StringBuilder builder = new StringBuilder(BUILDER_CAPACITY);
             bool success = SerializeValue(jsonSerializerStrategy, json, builder);
@@ -835,20 +872,37 @@ namespace Geo
                         {
                             // parse the 32 bit hex into an integer codepoint
                             uint codePoint;
-                            if (!(success = UInt32.TryParse(new string(json, index, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codePoint)))
+                            if (
+                                !(
+                                    success = UInt32.TryParse(
+                                        new string(json, index, 4),
+                                        NumberStyles.HexNumber,
+                                        CultureInfo.InvariantCulture,
+                                        out codePoint
+                                    )
+                                )
+                            )
                                 return "";
 
                             // convert the integer codepoint to a unicode char and add to string
-                            if (0xD800 <= codePoint && codePoint <= 0xDBFF)  // if high surrogate
+                            if (0xD800 <= codePoint && codePoint <= 0xDBFF) // if high surrogate
                             {
                                 index += 4; // skip 4 chars
                                 remainingLength = json.Length - index;
                                 if (remainingLength >= 6)
                                 {
                                     uint lowCodePoint;
-                                    if (new string(json, index, 2) == "\\u" && UInt32.TryParse(new string(json, index + 2, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out lowCodePoint))
+                                    if (
+                                        new string(json, index, 2) == "\\u"
+                                        && UInt32.TryParse(
+                                            new string(json, index + 2, 4),
+                                            NumberStyles.HexNumber,
+                                            CultureInfo.InvariantCulture,
+                                            out lowCodePoint
+                                        )
+                                    )
                                     {
-                                        if (0xDC00 <= lowCodePoint && lowCodePoint <= 0xDFFF)    // if low surrogate
+                                        if (0xDC00 <= lowCodePoint && lowCodePoint <= 0xDFFF) // if low surrogate
                                         {
                                             s.Append((char)codePoint);
                                             s.Append((char)lowCodePoint);
@@ -857,7 +911,7 @@ namespace Geo
                                         }
                                     }
                                 }
-                                success = false;    // invalid surrogate pair
+                                success = false; // invalid surrogate pair
                                 return "";
                             }
                             s.Append(ConvertFromUtf32((int)codePoint));
@@ -883,13 +937,21 @@ namespace Geo
         {
             // http://www.java2s.com/Open-Source/CSharp/2.6.4-mono-.net-core/System/System/Char.cs.htm
             if (utf32 < 0 || utf32 > 0x10FFFF)
-                throw new ArgumentOutOfRangeException("utf32", "The argument must be from 0 to 0x10FFFF.");
+                throw new ArgumentOutOfRangeException(
+                    "utf32",
+                    "The argument must be from 0 to 0x10FFFF."
+                );
             if (0xD800 <= utf32 && utf32 <= 0xDFFF)
-                throw new ArgumentOutOfRangeException("utf32", "The argument must not be in surrogate pair range.");
+                throw new ArgumentOutOfRangeException(
+                    "utf32",
+                    "The argument must not be in surrogate pair range."
+                );
             if (utf32 < 0x10000)
                 return new string((char)utf32, 1);
             utf32 -= 0x10000;
-            return new string(new char[] { (char)((utf32 >> 10) + 0xD800), (char)(utf32 % 0x0400 + 0xDC00) });
+            return new string(
+                new char[] { (char)((utf32 >> 10) + 0xD800), (char)(utf32 % 0x0400 + 0xDC00) }
+            );
         }
 
         static object ParseNumber(char[] json, ref int index, ref bool success)
@@ -899,16 +961,29 @@ namespace Geo
             int charLength = (lastIndex - index) + 1;
             object returnNumber;
             string str = new string(json, index, charLength);
-            if (str.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || str.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
+            if (
+                str.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1
+                || str.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1
+            )
             {
                 double number;
-                success = double.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+                success = double.TryParse(
+                    new string(json, index, charLength),
+                    NumberStyles.Any,
+                    CultureInfo.InvariantCulture,
+                    out number
+                );
                 returnNumber = number;
             }
             else
             {
                 long number;
-                success = long.TryParse(new string(json, index, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
+                success = long.TryParse(
+                    new string(json, index, charLength),
+                    NumberStyles.Any,
+                    CultureInfo.InvariantCulture,
+                    out number
+                );
                 returnNumber = number;
             }
             index = lastIndex + 1;
@@ -919,14 +994,16 @@ namespace Geo
         {
             int lastIndex;
             for (lastIndex = index; lastIndex < json.Length; lastIndex++)
-                if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1) break;
+                if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1)
+                    break;
             return lastIndex - 1;
         }
 
         static void EatWhitespace(char[] json, ref int index)
         {
             for (; index < json.Length; index++)
-                if (" \t\n\r\b\f".IndexOf(json[index]) == -1) break;
+                if (" \t\n\r\b\f".IndexOf(json[index]) == -1)
+                    break;
         }
 
         static int LookAhead(char[] json, int index)
@@ -977,7 +1054,13 @@ namespace Geo
             // false
             if (remainingLength >= 5)
             {
-                if (json[index] == 'f' && json[index + 1] == 'a' && json[index + 2] == 'l' && json[index + 3] == 's' && json[index + 4] == 'e')
+                if (
+                    json[index] == 'f'
+                    && json[index + 1] == 'a'
+                    && json[index + 2] == 'l'
+                    && json[index + 3] == 's'
+                    && json[index + 4] == 'e'
+                )
                 {
                     index += 5;
                     return TOKEN_FALSE;
@@ -986,7 +1069,12 @@ namespace Geo
             // true
             if (remainingLength >= 4)
             {
-                if (json[index] == 't' && json[index + 1] == 'r' && json[index + 2] == 'u' && json[index + 3] == 'e')
+                if (
+                    json[index] == 't'
+                    && json[index + 1] == 'r'
+                    && json[index + 2] == 'u'
+                    && json[index + 3] == 'e'
+                )
                 {
                     index += 4;
                     return TOKEN_TRUE;
@@ -995,7 +1083,12 @@ namespace Geo
             // null
             if (remainingLength >= 4)
             {
-                if (json[index] == 'n' && json[index + 1] == 'u' && json[index + 2] == 'l' && json[index + 3] == 'l')
+                if (
+                    json[index] == 'n'
+                    && json[index + 1] == 'u'
+                    && json[index + 2] == 'l'
+                    && json[index + 3] == 'l'
+                )
                 {
                     index += 4;
                     return TOKEN_NULL;
@@ -1004,7 +1097,11 @@ namespace Geo
             return TOKEN_NONE;
         }
 
-        static bool SerializeValue(IJsonSerializerStrategy jsonSerializerStrategy, object value, StringBuilder builder)
+        static bool SerializeValue(
+            IJsonSerializerStrategy jsonSerializerStrategy,
+            object value,
+            StringBuilder builder
+        )
         {
             bool success = true;
             string stringValue = value as string;
@@ -1015,20 +1112,35 @@ namespace Geo
                 IDictionary<string, object> dict = value as IDictionary<string, object>;
                 if (dict != null)
                 {
-                    success = SerializeObject(jsonSerializerStrategy, dict.Keys, dict.Values, builder);
+                    success = SerializeObject(
+                        jsonSerializerStrategy,
+                        dict.Keys,
+                        dict.Values,
+                        builder
+                    );
                 }
                 else
                 {
-                    IDictionary<string, string> stringDictionary = value as IDictionary<string, string>;
+                    IDictionary<string, string> stringDictionary =
+                        value as IDictionary<string, string>;
                     if (stringDictionary != null)
                     {
-                        success = SerializeObject(jsonSerializerStrategy, stringDictionary.Keys, stringDictionary.Values, builder);
+                        success = SerializeObject(
+                            jsonSerializerStrategy,
+                            stringDictionary.Keys,
+                            stringDictionary.Values,
+                            builder
+                        );
                     }
                     else
                     {
                         IEnumerable enumerableValue = value as IEnumerable;
                         if (enumerableValue != null)
-                            success = SerializeArray(jsonSerializerStrategy, enumerableValue, builder);
+                            success = SerializeArray(
+                                jsonSerializerStrategy,
+                                enumerableValue,
+                                builder
+                            );
                         else if (IsNumeric(value))
                             success = SerializeNumber(value, builder);
                         else if (value is bool)
@@ -1038,7 +1150,10 @@ namespace Geo
                         else
                         {
                             object serializedObject;
-                            success = jsonSerializerStrategy.TrySerializeNonPrimitiveObject(value, out serializedObject);
+                            success = jsonSerializerStrategy.TrySerializeNonPrimitiveObject(
+                                value,
+                                out serializedObject
+                            );
                             if (success)
                                 SerializeValue(jsonSerializerStrategy, serializedObject, builder);
                         }
@@ -1048,7 +1163,12 @@ namespace Geo
             return success;
         }
 
-        static bool SerializeObject(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable keys, IEnumerable values, StringBuilder builder)
+        static bool SerializeObject(
+            IJsonSerializerStrategy jsonSerializerStrategy,
+            IEnumerable keys,
+            IEnumerable values,
+            StringBuilder builder
+        )
         {
             builder.Append("{");
             IEnumerator ke = keys.GetEnumerator();
@@ -1063,8 +1183,8 @@ namespace Geo
                 string stringKey = key as string;
                 if (stringKey != null)
                     SerializeString(stringKey, builder);
-                else
-                    if (!SerializeValue(jsonSerializerStrategy, value, builder)) return false;
+                else if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                    return false;
                 builder.Append(":");
                 if (!SerializeValue(jsonSerializerStrategy, value, builder))
                     return false;
@@ -1074,7 +1194,11 @@ namespace Geo
             return true;
         }
 
-        static bool SerializeArray(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable anArray, StringBuilder builder)
+        static bool SerializeArray(
+            IJsonSerializerStrategy jsonSerializerStrategy,
+            IEnumerable anArray,
+            StringBuilder builder
+        )
         {
             builder.Append("[");
             bool first = true;
@@ -1132,7 +1256,11 @@ namespace Geo
 
             if (safeCharacterCount > 0)
             {
-                builder.Append(charArray, charArray.Length - safeCharacterCount, safeCharacterCount);
+                builder.Append(
+                    charArray,
+                    charArray.Length - safeCharacterCount,
+                    safeCharacterCount
+                );
             }
 
             builder.Append('"');
@@ -1154,7 +1282,11 @@ namespace Geo
             else if (number is float)
                 builder.Append(((float)number).ToString(CultureInfo.InvariantCulture));
             else
-                builder.Append(Convert.ToDouble(number, CultureInfo.InvariantCulture).ToString("r", CultureInfo.InvariantCulture));
+                builder.Append(
+                    Convert
+                        .ToDouble(number, CultureInfo.InvariantCulture)
+                        .ToString("r", CultureInfo.InvariantCulture)
+                );
             return true;
         }
 
@@ -1164,17 +1296,28 @@ namespace Geo
         /// </summary>
         static bool IsNumeric(object value)
         {
-            if (value is sbyte) return true;
-            if (value is byte) return true;
-            if (value is short) return true;
-            if (value is ushort) return true;
-            if (value is int) return true;
-            if (value is uint) return true;
-            if (value is long) return true;
-            if (value is ulong) return true;
-            if (value is float) return true;
-            if (value is double) return true;
-            if (value is decimal) return true;
+            if (value is sbyte)
+                return true;
+            if (value is byte)
+                return true;
+            if (value is short)
+                return true;
+            if (value is ushort)
+                return true;
+            if (value is int)
+                return true;
+            if (value is uint)
+                return true;
+            if (value is long)
+                return true;
+            if (value is ulong)
+                return true;
+            if (value is float)
+                return true;
+            if (value is double)
+                return true;
+            if (value is decimal)
+                return true;
             return false;
         }
 
@@ -1183,55 +1326,63 @@ namespace Geo
         {
             get
             {
-                return _currentJsonSerializerStrategy ??
-                    (_currentJsonSerializerStrategy =
+                return _currentJsonSerializerStrategy
+                    ?? (_currentJsonSerializerStrategy =
 #if SIMPLE_JSON_DATACONTRACT
- DataContractJsonSerializerStrategy
+                        DataContractJsonSerializerStrategy
 #else
- PocoJsonSerializerStrategy
+                        PocoJsonSerializerStrategy
 #endif
-);
+                    );
             }
-            set
-            {
-                _currentJsonSerializerStrategy = value;
-            }
+            set { _currentJsonSerializerStrategy = value; }
         }
 
         private static PocoJsonSerializerStrategy _pocoJsonSerializerStrategy;
+
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public static PocoJsonSerializerStrategy PocoJsonSerializerStrategy
         {
             get
             {
-                return _pocoJsonSerializerStrategy ?? (_pocoJsonSerializerStrategy = new PocoJsonSerializerStrategy());
+                return _pocoJsonSerializerStrategy
+                    ?? (_pocoJsonSerializerStrategy = new PocoJsonSerializerStrategy());
             }
         }
 
 #if SIMPLE_JSON_DATACONTRACT
 
         private static DataContractJsonSerializerStrategy _dataContractJsonSerializerStrategy;
+
         [System.ComponentModel.EditorBrowsable(EditorBrowsableState.Advanced)]
         public static DataContractJsonSerializerStrategy DataContractJsonSerializerStrategy
         {
             get
             {
-                return _dataContractJsonSerializerStrategy ?? (_dataContractJsonSerializerStrategy = new DataContractJsonSerializerStrategy());
+                return _dataContractJsonSerializerStrategy
+                    ?? (
+                        _dataContractJsonSerializerStrategy =
+                            new DataContractJsonSerializerStrategy()
+                    );
             }
         }
 
 #endif
     }
-    
+
     [GeneratedCode("simple-json", "1.0.0")]
 #if SIMPLE_JSON_INTERNAL
     internal
 #else
     public
 #endif
- interface IJsonSerializerStrategy
+    interface IJsonSerializerStrategy
     {
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1007:UseGenericsWhereAppropriate",
+            Justification = "Need to support .NET 2"
+        )]
         bool TrySerializeNonPrimitiveObject(object input, out object output);
         object DeserializeObject(object value, Type type);
     }
@@ -1242,27 +1393,39 @@ namespace Geo
 #else
     public
 #endif
- class PocoJsonSerializerStrategy : IJsonSerializerStrategy
+    class PocoJsonSerializerStrategy : IJsonSerializerStrategy
     {
         internal IDictionary<Type, ReflectionUtils.ConstructorDelegate> ConstructorCache;
         internal IDictionary<Type, IDictionary<string, ReflectionUtils.GetDelegate>> GetCache;
-        internal IDictionary<Type, IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>> SetCache;
+        internal IDictionary<
+            Type,
+            IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>
+        > SetCache;
 
         internal static readonly Type[] EmptyTypes = new Type[0];
         internal static readonly Type[] ArrayConstructorParameterTypes = new Type[] { typeof(int) };
 
         private static readonly string[] Iso8601Format = new string[]
-                                                             {
-                                                                 @"yyyy-MM-dd\THH:mm:ss.FFFFFFF\Z",
-                                                                 @"yyyy-MM-dd\THH:mm:ss\Z",
-                                                                 @"yyyy-MM-dd\THH:mm:ssK"
-                                                             };
+        {
+            @"yyyy-MM-dd\THH:mm:ss.FFFFFFF\Z",
+            @"yyyy-MM-dd\THH:mm:ss\Z",
+            @"yyyy-MM-dd\THH:mm:ssK",
+        };
 
         public PocoJsonSerializerStrategy()
         {
-            ConstructorCache = new ReflectionUtils.ThreadSafeDictionary<Type, ReflectionUtils.ConstructorDelegate>(ContructorDelegateFactory);
-            GetCache = new ReflectionUtils.ThreadSafeDictionary<Type, IDictionary<string, ReflectionUtils.GetDelegate>>(GetterValueFactory);
-            SetCache = new ReflectionUtils.ThreadSafeDictionary<Type, IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>>(SetterValueFactory);
+            ConstructorCache = new ReflectionUtils.ThreadSafeDictionary<
+                Type,
+                ReflectionUtils.ConstructorDelegate
+            >(ContructorDelegateFactory);
+            GetCache = new ReflectionUtils.ThreadSafeDictionary<
+                Type,
+                IDictionary<string, ReflectionUtils.GetDelegate>
+            >(GetterValueFactory);
+            SetCache = new ReflectionUtils.ThreadSafeDictionary<
+                Type,
+                IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>
+            >(SetterValueFactory);
         }
 
         protected virtual string MapClrMemberNameToJsonFieldName(string clrPropertyName)
@@ -1272,12 +1435,18 @@ namespace Geo
 
         internal virtual ReflectionUtils.ConstructorDelegate ContructorDelegateFactory(Type key)
         {
-            return ReflectionUtils.GetContructor(key, key.IsArray ? ArrayConstructorParameterTypes : EmptyTypes);
+            return ReflectionUtils.GetContructor(
+                key,
+                key.IsArray ? ArrayConstructorParameterTypes : EmptyTypes
+            );
         }
 
-        internal virtual IDictionary<string, ReflectionUtils.GetDelegate> GetterValueFactory(Type type)
+        internal virtual IDictionary<string, ReflectionUtils.GetDelegate> GetterValueFactory(
+            Type type
+        )
         {
-            IDictionary<string, ReflectionUtils.GetDelegate> result = new Dictionary<string, ReflectionUtils.GetDelegate>();
+            IDictionary<string, ReflectionUtils.GetDelegate> result =
+                new Dictionary<string, ReflectionUtils.GetDelegate>();
             foreach (PropertyInfo propertyInfo in ReflectionUtils.GetProperties(type))
             {
                 if (propertyInfo.CanRead)
@@ -1285,21 +1454,27 @@ namespace Geo
                     MethodInfo getMethod = ReflectionUtils.GetGetterMethodInfo(propertyInfo);
                     if (getMethod.IsStatic || !getMethod.IsPublic)
                         continue;
-                    result[MapClrMemberNameToJsonFieldName(propertyInfo.Name)] = ReflectionUtils.GetGetMethod(propertyInfo);
+                    result[MapClrMemberNameToJsonFieldName(propertyInfo.Name)] =
+                        ReflectionUtils.GetGetMethod(propertyInfo);
                 }
             }
             foreach (FieldInfo fieldInfo in ReflectionUtils.GetFields(type))
             {
                 if (fieldInfo.IsStatic || !fieldInfo.IsPublic)
                     continue;
-                result[MapClrMemberNameToJsonFieldName(fieldInfo.Name)] = ReflectionUtils.GetGetMethod(fieldInfo);
+                result[MapClrMemberNameToJsonFieldName(fieldInfo.Name)] =
+                    ReflectionUtils.GetGetMethod(fieldInfo);
             }
             return result;
         }
 
-        internal virtual IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> SetterValueFactory(Type type)
+        internal virtual IDictionary<
+            string,
+            KeyValuePair<Type, ReflectionUtils.SetDelegate>
+        > SetterValueFactory(Type type)
         {
-            IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> result = new Dictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>();
+            IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> result =
+                new Dictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>();
             foreach (PropertyInfo propertyInfo in ReflectionUtils.GetProperties(type))
             {
                 if (propertyInfo.CanWrite)
@@ -1307,88 +1482,138 @@ namespace Geo
                     MethodInfo setMethod = ReflectionUtils.GetSetterMethodInfo(propertyInfo);
                     if (setMethod.IsStatic || !setMethod.IsPublic)
                         continue;
-                    result[MapClrMemberNameToJsonFieldName(propertyInfo.Name)] = new KeyValuePair<Type, ReflectionUtils.SetDelegate>(propertyInfo.PropertyType, ReflectionUtils.GetSetMethod(propertyInfo));
+                    result[MapClrMemberNameToJsonFieldName(propertyInfo.Name)] = new KeyValuePair<
+                        Type,
+                        ReflectionUtils.SetDelegate
+                    >(propertyInfo.PropertyType, ReflectionUtils.GetSetMethod(propertyInfo));
                 }
             }
             foreach (FieldInfo fieldInfo in ReflectionUtils.GetFields(type))
             {
                 if (fieldInfo.IsInitOnly || fieldInfo.IsStatic || !fieldInfo.IsPublic)
                     continue;
-                result[MapClrMemberNameToJsonFieldName(fieldInfo.Name)] = new KeyValuePair<Type, ReflectionUtils.SetDelegate>(fieldInfo.FieldType, ReflectionUtils.GetSetMethod(fieldInfo));
+                result[MapClrMemberNameToJsonFieldName(fieldInfo.Name)] = new KeyValuePair<
+                    Type,
+                    ReflectionUtils.SetDelegate
+                >(fieldInfo.FieldType, ReflectionUtils.GetSetMethod(fieldInfo));
             }
             return result;
         }
 
         public virtual bool TrySerializeNonPrimitiveObject(object input, out object output)
         {
-            return TrySerializeKnownTypes(input, out output) || TrySerializeUnknownTypes(input, out output);
+            return TrySerializeKnownTypes(input, out output)
+                || TrySerializeUnknownTypes(input, out output);
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public virtual object DeserializeObject(object value, Type type)
         {
-            if (type == null) throw new ArgumentNullException("type");
+            if (type == null)
+                throw new ArgumentNullException("type");
             string str = value as string;
 
-            if (type == typeof (Guid) && string.IsNullOrEmpty(str))
+            if (type == typeof(Guid) && string.IsNullOrEmpty(str))
                 return default(Guid);
 
             if (value == null)
                 return null;
-            
+
             object obj = null;
 
             if (str != null)
             {
                 if (str.Length != 0) // We know it can't be null now.
                 {
-                    if (type == typeof(DateTime) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTime)))
-                        return DateTime.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                    if (type == typeof(DateTimeOffset) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(DateTimeOffset)))
-                        return DateTimeOffset.ParseExact(str, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-                    if (type == typeof(Guid) || (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid)))
+                    if (
+                        type == typeof(DateTime)
+                        || (
+                            ReflectionUtils.IsNullableType(type)
+                            && Nullable.GetUnderlyingType(type) == typeof(DateTime)
+                        )
+                    )
+                        return DateTime.ParseExact(
+                            str,
+                            Iso8601Format,
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+                        );
+                    if (
+                        type == typeof(DateTimeOffset)
+                        || (
+                            ReflectionUtils.IsNullableType(type)
+                            && Nullable.GetUnderlyingType(type) == typeof(DateTimeOffset)
+                        )
+                    )
+                        return DateTimeOffset.ParseExact(
+                            str,
+                            Iso8601Format,
+                            CultureInfo.InvariantCulture,
+                            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+                        );
+                    if (
+                        type == typeof(Guid)
+                        || (
+                            ReflectionUtils.IsNullableType(type)
+                            && Nullable.GetUnderlyingType(type) == typeof(Guid)
+                        )
+                    )
                         return new Guid(str);
                     if (type == typeof(Uri))
                     {
-                        bool isValid =  Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
+                        bool isValid = Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
 
                         Uri result;
                         if (isValid && Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out result))
                             return result;
 
-												return null;
+                        return null;
                     }
-                  
-									if (type == typeof(string))  
-										return str;
 
-									return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
+                    if (type == typeof(string))
+                        return str;
+
+                    return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
                 }
                 else
                 {
                     if (type == typeof(Guid))
                         obj = default(Guid);
-                    else if (ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid))
+                    else if (
+                        ReflectionUtils.IsNullableType(type)
+                        && Nullable.GetUnderlyingType(type) == typeof(Guid)
+                    )
                         obj = null;
                     else
                         obj = str;
                 }
                 // Empty string case
-                if (!ReflectionUtils.IsNullableType(type) && Nullable.GetUnderlyingType(type) == typeof(Guid))
+                if (
+                    !ReflectionUtils.IsNullableType(type)
+                    && Nullable.GetUnderlyingType(type) == typeof(Guid)
+                )
                     return str;
             }
             else if (value is bool)
                 return value;
-            
+
             bool valueIsLong = value is long;
             bool valueIsDouble = value is double;
             if ((valueIsLong && type == typeof(long)) || (valueIsDouble && type == typeof(double)))
                 return value;
             if ((valueIsDouble && type != typeof(double)) || (valueIsLong && type != typeof(long)))
             {
-                obj = type == typeof(int) || type == typeof(long) || type == typeof(double) || type == typeof(float) || type == typeof(bool) || type == typeof(decimal) || type == typeof(byte) || type == typeof(short)
-                            ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture)
-                            : value;
+                obj =
+                    type == typeof(int)
+                    || type == typeof(long)
+                    || type == typeof(double)
+                    || type == typeof(float)
+                    || type == typeof(bool)
+                    || type == typeof(decimal)
+                    || type == typeof(byte)
+                    || type == typeof(short)
+                        ? Convert.ChangeType(value, type, CultureInfo.InvariantCulture)
+                        : value;
             }
             else
             {
@@ -1404,7 +1629,10 @@ namespace Geo
                         Type keyType = types[0];
                         Type valueType = types[1];
 
-                        Type genericType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
+                        Type genericType = typeof(Dictionary<,>).MakeGenericType(
+                            keyType,
+                            valueType
+                        );
 
                         IDictionary dict = (IDictionary)ConstructorCache[genericType]();
 
@@ -1420,7 +1648,12 @@ namespace Geo
                         else
                         {
                             obj = ConstructorCache[type]();
-                            foreach (KeyValuePair<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> setter in SetCache[type])
+                            foreach (
+                                KeyValuePair<
+                                    string,
+                                    KeyValuePair<Type, ReflectionUtils.SetDelegate>
+                                > setter in SetCache[type]
+                            )
                             {
                                 object jsonValue;
                                 if (jsonObject.TryGetValue(setter.Key, out jsonValue))
@@ -1447,10 +1680,17 @@ namespace Geo
                             foreach (object o in jsonObject)
                                 list[i++] = DeserializeObject(o, type.GetElementType());
                         }
-                        else if (ReflectionUtils.IsTypeGenericeCollectionInterface(type) || ReflectionUtils.IsAssignableFrom(typeof(IList), type))
+                        else if (
+                            ReflectionUtils.IsTypeGenericeCollectionInterface(type)
+                            || ReflectionUtils.IsAssignableFrom(typeof(IList), type)
+                        )
                         {
                             Type innerType = ReflectionUtils.GetGenericListElementType(type);
-                            list = (IList)(ConstructorCache[type] ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)])(jsonObject.Count);
+                            list = (IList)
+                                (
+                                    ConstructorCache[type]
+                                    ?? ConstructorCache[typeof(List<>).MakeGenericType(innerType)]
+                                )(jsonObject.Count);
                             foreach (object o in jsonObject)
                                 list.Add(DeserializeObject(o, innerType));
                         }
@@ -1469,14 +1709,22 @@ namespace Geo
             return Convert.ToDouble(p, CultureInfo.InvariantCulture);
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1007:UseGenericsWhereAppropriate",
+            Justification = "Need to support .NET 2"
+        )]
         protected virtual bool TrySerializeKnownTypes(object input, out object output)
         {
             bool returnValue = true;
             if (input is DateTime)
-                output = ((DateTime)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
+                output = ((DateTime)input)
+                    .ToUniversalTime()
+                    .ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
             else if (input is DateTimeOffset)
-                output = ((DateTimeOffset)input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
+                output = ((DateTimeOffset)input)
+                    .ToUniversalTime()
+                    .ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
             else if (input is Guid)
                 output = ((Guid)input).ToString("D");
             else if (input is Uri)
@@ -1494,10 +1742,16 @@ namespace Geo
             }
             return returnValue;
         }
-        [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification="Need to support .NET 2")]
+
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1007:UseGenericsWhereAppropriate",
+            Justification = "Need to support .NET 2"
+        )]
         protected virtual bool TrySerializeUnknownTypes(object input, out object output)
         {
-            if (input == null) throw new ArgumentNullException("input");
+            if (input == null)
+                throw new ArgumentNullException("input");
             output = null;
             Type type = input.GetType();
             if (type.FullName == null)
@@ -1521,21 +1775,31 @@ namespace Geo
 #else
     public
 #endif
- class DataContractJsonSerializerStrategy : PocoJsonSerializerStrategy
+    class DataContractJsonSerializerStrategy : PocoJsonSerializerStrategy
     {
         public DataContractJsonSerializerStrategy()
         {
-            GetCache = new ReflectionUtils.ThreadSafeDictionary<Type, IDictionary<string, ReflectionUtils.GetDelegate>>(GetterValueFactory);
-            SetCache = new ReflectionUtils.ThreadSafeDictionary<Type, IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>>(SetterValueFactory);
+            GetCache = new ReflectionUtils.ThreadSafeDictionary<
+                Type,
+                IDictionary<string, ReflectionUtils.GetDelegate>
+            >(GetterValueFactory);
+            SetCache = new ReflectionUtils.ThreadSafeDictionary<
+                Type,
+                IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>
+            >(SetterValueFactory);
         }
 
-        internal override IDictionary<string, ReflectionUtils.GetDelegate> GetterValueFactory(Type type)
+        internal override IDictionary<string, ReflectionUtils.GetDelegate> GetterValueFactory(
+            Type type
+        )
         {
-            bool hasDataContract = ReflectionUtils.GetAttribute(type, typeof(DataContractAttribute)) != null;
+            bool hasDataContract =
+                ReflectionUtils.GetAttribute(type, typeof(DataContractAttribute)) != null;
             if (!hasDataContract)
                 return base.GetterValueFactory(type);
             string jsonKey;
-            IDictionary<string, ReflectionUtils.GetDelegate> result = new Dictionary<string, ReflectionUtils.GetDelegate>();
+            IDictionary<string, ReflectionUtils.GetDelegate> result =
+                new Dictionary<string, ReflectionUtils.GetDelegate>();
             foreach (PropertyInfo propertyInfo in ReflectionUtils.GetProperties(type))
             {
                 if (propertyInfo.CanRead)
@@ -1553,26 +1817,37 @@ namespace Geo
             return result;
         }
 
-        internal override IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> SetterValueFactory(Type type)
+        internal override IDictionary<
+            string,
+            KeyValuePair<Type, ReflectionUtils.SetDelegate>
+        > SetterValueFactory(Type type)
         {
-            bool hasDataContract = ReflectionUtils.GetAttribute(type, typeof(DataContractAttribute)) != null;
+            bool hasDataContract =
+                ReflectionUtils.GetAttribute(type, typeof(DataContractAttribute)) != null;
             if (!hasDataContract)
                 return base.SetterValueFactory(type);
             string jsonKey;
-            IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> result = new Dictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>();
+            IDictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> result =
+                new Dictionary<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>>();
             foreach (PropertyInfo propertyInfo in ReflectionUtils.GetProperties(type))
             {
                 if (propertyInfo.CanWrite)
                 {
                     MethodInfo setMethod = ReflectionUtils.GetSetterMethodInfo(propertyInfo);
                     if (!setMethod.IsStatic && CanAdd(propertyInfo, out jsonKey))
-                        result[jsonKey] = new KeyValuePair<Type, ReflectionUtils.SetDelegate>(propertyInfo.PropertyType, ReflectionUtils.GetSetMethod(propertyInfo));
+                        result[jsonKey] = new KeyValuePair<Type, ReflectionUtils.SetDelegate>(
+                            propertyInfo.PropertyType,
+                            ReflectionUtils.GetSetMethod(propertyInfo)
+                        );
                 }
             }
             foreach (FieldInfo fieldInfo in ReflectionUtils.GetFields(type))
             {
                 if (!fieldInfo.IsInitOnly && !fieldInfo.IsStatic && CanAdd(fieldInfo, out jsonKey))
-                    result[jsonKey] = new KeyValuePair<Type, ReflectionUtils.SetDelegate>(fieldInfo.FieldType, ReflectionUtils.GetSetMethod(fieldInfo));
+                    result[jsonKey] = new KeyValuePair<Type, ReflectionUtils.SetDelegate>(
+                        fieldInfo.FieldType,
+                        ReflectionUtils.GetSetMethod(fieldInfo)
+                    );
             }
             // todo implement sorting for DATACONTRACT.
             return result;
@@ -1583,27 +1858,29 @@ namespace Geo
             jsonKey = null;
             if (ReflectionUtils.GetAttribute(info, typeof(IgnoreDataMemberAttribute)) != null)
                 return false;
-            DataMemberAttribute dataMemberAttribute = (DataMemberAttribute)ReflectionUtils.GetAttribute(info, typeof(DataMemberAttribute));
+            DataMemberAttribute dataMemberAttribute = (DataMemberAttribute)
+                ReflectionUtils.GetAttribute(info, typeof(DataMemberAttribute));
             if (dataMemberAttribute == null)
                 return false;
-            jsonKey = string.IsNullOrEmpty(dataMemberAttribute.Name) ? info.Name : dataMemberAttribute.Name;
+            jsonKey = string.IsNullOrEmpty(dataMemberAttribute.Name)
+                ? info.Name
+                : dataMemberAttribute.Name;
             return true;
         }
     }
-
 #endif
 
     namespace Reflection
     {
         // This class is meant to be copied into other libraries. So we want to exclude it from Code Analysis rules
- 	    // that might be in place in the target project.
+        // that might be in place in the target project.
         [GeneratedCode("reflection-utils", "1.0.0")]
 #if SIMPLE_JSON_REFLECTION_UTILS_PUBLIC
         public
 #else
         internal
 #endif
- class ReflectionUtils
+        class ReflectionUtils
         {
             private static readonly object[] EmptyObjects = new object[] { };
 
@@ -1648,8 +1925,10 @@ namespace Geo
 #endif
                 foreach (Type implementedInterface in interfaces)
                 {
-                    if (IsTypeGeneric(implementedInterface) &&
-                        implementedInterface.GetGenericTypeDefinition() == typeof (IList<>))
+                    if (
+                        IsTypeGeneric(implementedInterface)
+                        && implementedInterface.GetGenericTypeDefinition() == typeof(IList<>)
+                    )
                     {
                         return GetGenericTypeArguments(implementedInterface)[0];
                     }
@@ -1659,13 +1938,20 @@ namespace Geo
 
             public static Attribute GetAttribute(Type objectType, Type attributeType)
             {
-
 #if SIMPLE_JSON_TYPEINFO
-                if (objectType == null || attributeType == null || !objectType.GetTypeInfo().IsDefined(attributeType))
+                if (
+                    objectType == null
+                    || attributeType == null
+                    || !objectType.GetTypeInfo().IsDefined(attributeType)
+                )
                     return null;
                 return objectType.GetTypeInfo().GetCustomAttribute(attributeType);
 #else
-                if (objectType == null || attributeType == null || !Attribute.IsDefined(objectType, attributeType))
+                if (
+                    objectType == null
+                    || attributeType == null
+                    || !Attribute.IsDefined(objectType, attributeType)
+                )
                     return null;
                 return Attribute.GetCustomAttribute(objectType, attributeType);
 #endif
@@ -1692,14 +1978,15 @@ namespace Geo
 
                 Type genericDefinition = type.GetGenericTypeDefinition();
 
-                return (genericDefinition == typeof(IList<>)
+                return (
+                    genericDefinition == typeof(IList<>)
                     || genericDefinition == typeof(ICollection<>)
                     || genericDefinition == typeof(IEnumerable<>)
 #if SIMPLE_JSON_READONLY_COLLECTIONS
                     || genericDefinition == typeof(IReadOnlyCollection<>)
                     || genericDefinition == typeof(IReadOnlyList<>)
 #endif
-                    );
+                );
             }
 
             public static bool IsAssignableFrom(Type type1, Type type2)
@@ -1725,12 +2012,19 @@ namespace Geo
 
             public static bool IsNullableType(Type type)
             {
-                return GetTypeInfo(type).IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+                return GetTypeInfo(type).IsGenericType
+                    && type.GetGenericTypeDefinition() == typeof(Nullable<>);
             }
 
             public static object ToNullableType(object obj, Type nullableType)
             {
-                return obj == null ? null : Convert.ChangeType(obj, Nullable.GetUnderlyingType(nullableType), CultureInfo.InvariantCulture);
+                return obj == null
+                    ? null
+                    : Convert.ChangeType(
+                        obj,
+                        Nullable.GetUnderlyingType(nullableType),
+                        CultureInfo.InvariantCulture
+                    );
             }
 
             public static bool IsValueType(Type type)
@@ -1781,7 +2075,12 @@ namespace Geo
 #if SIMPLE_JSON_TYPEINFO
                 return type.GetRuntimeProperties();
 #else
-                return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                return type.GetProperties(
+                    BindingFlags.Instance
+                        | BindingFlags.Public
+                        | BindingFlags.NonPublic
+                        | BindingFlags.Static
+                );
 #endif
             }
 
@@ -1790,7 +2089,12 @@ namespace Geo
 #if SIMPLE_JSON_TYPEINFO
                 return type.GetRuntimeFields();
 #else
-                return type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                return type.GetFields(
+                    BindingFlags.Instance
+                        | BindingFlags.Public
+                        | BindingFlags.NonPublic
+                        | BindingFlags.Static
+                );
 #endif
             }
 
@@ -1830,12 +2134,20 @@ namespace Geo
 #endif
             }
 
-            public static ConstructorDelegate GetConstructorByReflection(ConstructorInfo constructorInfo)
+            public static ConstructorDelegate GetConstructorByReflection(
+                ConstructorInfo constructorInfo
+            )
             {
-                return delegate(object[] args) { return constructorInfo.Invoke(args); };
+                return delegate(object[] args)
+                {
+                    return constructorInfo.Invoke(args);
+                };
             }
 
-            public static ConstructorDelegate GetConstructorByReflection(Type type, params Type[] argsType)
+            public static ConstructorDelegate GetConstructorByReflection(
+                Type type,
+                params Type[] argsType
+            )
             {
                 ConstructorInfo constructorInfo = GetConstructorInfo(type, argsType);
                 return constructorInfo == null ? null : GetConstructorByReflection(constructorInfo);
@@ -1843,7 +2155,9 @@ namespace Geo
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
 
-            public static ConstructorDelegate GetConstructorByExpression(ConstructorInfo constructorInfo)
+            public static ConstructorDelegate GetConstructorByExpression(
+                ConstructorInfo constructorInfo
+            )
             {
                 ParameterInfo[] paramsInfo = constructorInfo.GetParameters();
                 ParameterExpression param = Expression.Parameter(typeof(object[]), "args");
@@ -1857,17 +2171,24 @@ namespace Geo
                     argsExp[i] = paramCastExp;
                 }
                 NewExpression newExp = Expression.New(constructorInfo, argsExp);
-                Expression<Func<object[], object>> lambda = Expression.Lambda<Func<object[], object>>(newExp, param);
+                Expression<Func<object[], object>> lambda = Expression.Lambda<
+                    Func<object[], object>
+                >(newExp, param);
                 Func<object[], object> compiledLambda = lambda.Compile();
-                return delegate(object[] args) { return compiledLambda(args); };
+                return delegate(object[] args)
+                {
+                    return compiledLambda(args);
+                };
             }
 
-            public static ConstructorDelegate GetConstructorByExpression(Type type, params Type[] argsType)
+            public static ConstructorDelegate GetConstructorByExpression(
+                Type type,
+                params Type[] argsType
+            )
             {
                 ConstructorInfo constructorInfo = GetConstructorInfo(type, argsType);
                 return constructorInfo == null ? null : GetConstructorByExpression(constructorInfo);
             }
-
 #endif
 
             public static GetDelegate GetGetMethod(PropertyInfo propertyInfo)
@@ -1891,12 +2212,18 @@ namespace Geo
             public static GetDelegate GetGetMethodByReflection(PropertyInfo propertyInfo)
             {
                 MethodInfo methodInfo = GetGetterMethodInfo(propertyInfo);
-                return delegate(object source) { return methodInfo.Invoke(source, EmptyObjects); };
+                return delegate(object source)
+                {
+                    return methodInfo.Invoke(source, EmptyObjects);
+                };
             }
 
             public static GetDelegate GetGetMethodByReflection(FieldInfo fieldInfo)
             {
-                return delegate(object source) { return fieldInfo.GetValue(source); };
+                return delegate(object source)
+                {
+                    return fieldInfo.GetValue(source);
+                };
             }
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
@@ -1905,19 +2232,40 @@ namespace Geo
             {
                 MethodInfo getMethodInfo = GetGetterMethodInfo(propertyInfo);
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
-                UnaryExpression instanceCast = (!IsValueType(propertyInfo.DeclaringType)) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
-                Func<object, object> compiled = Expression.Lambda<Func<object, object>>(Expression.TypeAs(Expression.Call(instanceCast, getMethodInfo), typeof(object)), instance).Compile();
-                return delegate(object source) { return compiled(source); };
+                UnaryExpression instanceCast =
+                    (!IsValueType(propertyInfo.DeclaringType))
+                        ? Expression.TypeAs(instance, propertyInfo.DeclaringType)
+                        : Expression.Convert(instance, propertyInfo.DeclaringType);
+                Func<object, object> compiled = Expression
+                    .Lambda<Func<object, object>>(
+                        Expression.TypeAs(
+                            Expression.Call(instanceCast, getMethodInfo),
+                            typeof(object)
+                        ),
+                        instance
+                    )
+                    .Compile();
+                return delegate(object source)
+                {
+                    return compiled(source);
+                };
             }
 
             public static GetDelegate GetGetMethodByExpression(FieldInfo fieldInfo)
             {
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
-                MemberExpression member = Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo);
-                GetDelegate compiled = Expression.Lambda<GetDelegate>(Expression.Convert(member, typeof(object)), instance).Compile();
-                return delegate(object source) { return compiled(source); };
+                MemberExpression member = Expression.Field(
+                    Expression.Convert(instance, fieldInfo.DeclaringType),
+                    fieldInfo
+                );
+                GetDelegate compiled = Expression
+                    .Lambda<GetDelegate>(Expression.Convert(member, typeof(object)), instance)
+                    .Compile();
+                return delegate(object source)
+                {
+                    return compiled(source);
+                };
             }
-
 #endif
 
             public static SetDelegate GetSetMethod(PropertyInfo propertyInfo)
@@ -1941,12 +2289,18 @@ namespace Geo
             public static SetDelegate GetSetMethodByReflection(PropertyInfo propertyInfo)
             {
                 MethodInfo methodInfo = GetSetterMethodInfo(propertyInfo);
-                return delegate(object source, object value) { methodInfo.Invoke(source, new object[] { value }); };
+                return delegate(object source, object value)
+                {
+                    methodInfo.Invoke(source, new object[] { value });
+                };
             }
 
             public static SetDelegate GetSetMethodByReflection(FieldInfo fieldInfo)
             {
-                return delegate(object source, object value) { fieldInfo.SetValue(source, value); };
+                return delegate(object source, object value)
+                {
+                    fieldInfo.SetValue(source, value);
+                };
             }
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
@@ -1956,19 +2310,47 @@ namespace Geo
                 MethodInfo setMethodInfo = GetSetterMethodInfo(propertyInfo);
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
                 ParameterExpression value = Expression.Parameter(typeof(object), "value");
-                UnaryExpression instanceCast = (!IsValueType(propertyInfo.DeclaringType)) ? Expression.TypeAs(instance, propertyInfo.DeclaringType) : Expression.Convert(instance, propertyInfo.DeclaringType);
-                UnaryExpression valueCast = (!IsValueType(propertyInfo.PropertyType)) ? Expression.TypeAs(value, propertyInfo.PropertyType) : Expression.Convert(value, propertyInfo.PropertyType);
-                Action<object, object> compiled = Expression.Lambda<Action<object, object>>(Expression.Call(instanceCast, setMethodInfo, valueCast), new ParameterExpression[] { instance, value }).Compile();
-                return delegate(object source, object val) { compiled(source, val); };
+                UnaryExpression instanceCast =
+                    (!IsValueType(propertyInfo.DeclaringType))
+                        ? Expression.TypeAs(instance, propertyInfo.DeclaringType)
+                        : Expression.Convert(instance, propertyInfo.DeclaringType);
+                UnaryExpression valueCast =
+                    (!IsValueType(propertyInfo.PropertyType))
+                        ? Expression.TypeAs(value, propertyInfo.PropertyType)
+                        : Expression.Convert(value, propertyInfo.PropertyType);
+                Action<object, object> compiled = Expression
+                    .Lambda<Action<object, object>>(
+                        Expression.Call(instanceCast, setMethodInfo, valueCast),
+                        new ParameterExpression[] { instance, value }
+                    )
+                    .Compile();
+                return delegate(object source, object val)
+                {
+                    compiled(source, val);
+                };
             }
 
             public static SetDelegate GetSetMethodByExpression(FieldInfo fieldInfo)
             {
                 ParameterExpression instance = Expression.Parameter(typeof(object), "instance");
                 ParameterExpression value = Expression.Parameter(typeof(object), "value");
-                Action<object, object> compiled = Expression.Lambda<Action<object, object>>(
-                    Assign(Expression.Field(Expression.Convert(instance, fieldInfo.DeclaringType), fieldInfo), Expression.Convert(value, fieldInfo.FieldType)), instance, value).Compile();
-                return delegate(object source, object val) { compiled(source, val); };
+                Action<object, object> compiled = Expression
+                    .Lambda<Action<object, object>>(
+                        Assign(
+                            Expression.Field(
+                                Expression.Convert(instance, fieldInfo.DeclaringType),
+                                fieldInfo
+                            ),
+                            Expression.Convert(value, fieldInfo.FieldType)
+                        ),
+                        instance,
+                        value
+                    )
+                    .Compile();
+                return delegate(object source, object val)
+                {
+                    compiled(source, val);
+                };
             }
 
             public static BinaryExpression Assign(Expression left, Expression right)
@@ -1976,7 +2358,9 @@ namespace Geo
 #if SIMPLE_JSON_TYPEINFO
                 return Expression.Assign(left, right);
 #else
-                MethodInfo assign = typeof(Assigner<>).MakeGenericType(left.Type).GetMethod("Assign");
+                MethodInfo assign = typeof(Assigner<>)
+                    .MakeGenericType(left.Type)
+                    .GetMethod("Assign");
                 BinaryExpression assignExpr = Expression.Add(left, right, assign);
                 return assignExpr;
 #endif
@@ -1989,7 +2373,6 @@ namespace Geo
                     return (left = right);
                 }
             }
-
 #endif
 
             public sealed class ThreadSafeDictionary<TKey, TValue> : IDictionary<TKey, TValue>
@@ -1998,7 +2381,9 @@ namespace Geo
                 private readonly ThreadSafeDictionaryValueFactory<TKey, TValue> _valueFactory;
                 private Dictionary<TKey, TValue> _dictionary;
 
-                public ThreadSafeDictionary(ThreadSafeDictionaryValueFactory<TKey, TValue> valueFactory)
+                public ThreadSafeDictionary(
+                    ThreadSafeDictionaryValueFactory<TKey, TValue> valueFactory
+                )
                 {
                     _valueFactory = valueFactory;
                 }
@@ -2028,7 +2413,9 @@ namespace Geo
                             TValue val;
                             if (_dictionary.TryGetValue(key, out val))
                                 return val;
-                            Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>(_dictionary);
+                            Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>(
+                                _dictionary
+                            );
                             dict[key] = value;
                             _dictionary = dict;
                         }
@@ -2118,7 +2505,6 @@ namespace Geo
                     return _dictionary.GetEnumerator();
                 }
             }
-
         }
     }
 }

@@ -108,7 +108,9 @@ public class WktWriter
             }
         }
 
-        throw new SerializationException("Geometry of type '" + geometry.GetType().Name + "' is not supported");
+        throw new SerializationException(
+            "Geometry of type '" + geometry.GetType().Name + "' is not supported"
+        );
     }
 
     private void AppendPoint(StringBuilder builder, Point point)
@@ -259,7 +261,10 @@ public class WktWriter
         builder.Append(")");
     }
 
-    private void AppendGeometryCollection(StringBuilder builder, GeometryCollection geometryCollection)
+    private void AppendGeometryCollection(
+        StringBuilder builder,
+        GeometryCollection geometryCollection
+    )
     {
         builder.Append("GEOMETRYCOLLECTION");
         if (geometryCollection.IsEmpty)
@@ -322,7 +327,9 @@ public class WktWriter
             if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
             {
                 builder.Append(" ");
-                builder.Append(((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture));
+                builder.Append(
+                    ((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture)
+                );
             }
         }
         else
@@ -341,7 +348,9 @@ public class WktWriter
             if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
             {
                 builder.Append(" ");
-                builder.Append(((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture));
+                builder.Append(
+                    ((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture)
+                );
             }
         }
     }

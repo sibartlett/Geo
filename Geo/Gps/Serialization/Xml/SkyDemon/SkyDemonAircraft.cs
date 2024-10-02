@@ -21,7 +21,8 @@ public class SkyDemonAircraft
     //[XmlAttribute]
     //public string Name { get; set; }
 
-    [XmlAttribute] public string Registration { get; set; }
+    [XmlAttribute]
+    public string Registration { get; set; }
 
     //[XmlAttribute]
     //public string FuelType { get; set; }
@@ -53,7 +54,8 @@ public class SkyDemonAircraft
     //[XmlAttribute]
     //public string EmptyArmLat { get; set; }
 
-    [XmlAttribute] public string Type { get; set; }
+    [XmlAttribute]
+    public string Type { get; set; }
 
     //[XmlAttribute]
     //public string ColourMarkings { get; set; }

@@ -22,7 +22,7 @@ public class SpatialEqualityOptions
             AntiMeridianCoordinatesAreEqual = AntiMeridianCoordinatesAreEqual,
             PoleCoordiantesAreEqual = PoleCoordiantesAreEqual,
             UseElevation = elevation,
-            UseM = false
+            UseM = false,
         };
     }
 

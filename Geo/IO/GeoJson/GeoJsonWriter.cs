@@ -34,7 +34,9 @@ public class GeoJsonWriter
         if (featureCollection != null)
             return Write(featureCollection);
 
-        throw new SerializationException("Object of type '" + obj.GetType().Name + "' is not supported by GeoJSON");
+        throw new SerializationException(
+            "Object of type '" + obj.GetType().Name + "' is not supported by GeoJSON"
+        );
     }
 
     public string Write(IGeometry geometry)
@@ -87,8 +89,9 @@ public class GeoJsonWriter
             if (circle != null)
                 return WritePolygon(circle.ToPolygon(_settings.CircleSides));
 
-        throw new SerializationException("Geometry of type '" + geometry.GetType().Name +
-                                         "' is not supported by GeoJSON");
+        throw new SerializationException(
+            "Geometry of type '" + geometry.GetType().Name + "' is not supported by GeoJSON"
+        );
     }
 
     private Dictionary<string, object> WritePoint(Point point)
@@ -96,7 +99,7 @@ public class GeoJsonWriter
         return new Dictionary<string, object>
         {
             { "type", "Point" },
-            { "coordinates", WriteCoordinate(point) }
+            { "coordinates", WriteCoordinate(point) },
         };
     }
 
@@ -105,7 +108,7 @@ public class GeoJsonWriter
         return new Dictionary<string, object>
         {
             { "type", "LineString" },
-            { "coordinates", WriteCoordinates(lineString.Coordinates) }
+            { "coordinates", WriteCoordinates(lineString.Coordinates) },
         };
     }
 
@@ -114,7 +117,7 @@ public class GeoJsonWriter
         return new Dictionary<string, object>
         {
             { "type", "Polygon" },
-            { "coordinates", WriteCoordinates(polygon) }
+            { "coordinates", WriteCoordinates(polygon) },
         };
     }
 
@@ -123,7 +126,10 @@ public class GeoJsonWriter
         return new Dictionary<string, object>
         {
             { "type", "MultiPoint" },
-            { "coordinates", multiPoint.Geometries.Cast<Point>().Select(WriteCoordinate).ToArray() }
+            {
+                "coordinates",
+                multiPoint.Geometries.Cast<Point>().Select(WriteCoordinate).ToArray()
+            },
         };
     }
 
@@ -134,8 +140,11 @@ public class GeoJsonWriter
             { "type", "MultiLineString" },
             {
                 "coordinates",
-                multiLineString.Geometries.Cast<LineString>().Select(x => WriteCoordinates(x.Coordinates)).ToArray()
-            }
+                multiLineString
+                    .Geometries.Cast<LineString>()
+                    .Select(x => WriteCoordinates(x.Coordinates))
+                    .ToArray()
+            },
         };
     }
 
@@ -144,16 +153,21 @@ public class GeoJsonWriter
         return new Dictionary<string, object>
         {
             { "type", "MultiPolygon" },
-            { "coordinates", multiPolygon.Geometries.Cast<Polygon>().Select(WriteCoordinates).ToArray() }
+            {
+                "coordinates",
+                multiPolygon.Geometries.Cast<Polygon>().Select(WriteCoordinates).ToArray()
+            },
         };
     }
 
-    private Dictionary<string, object> WriteGeometryCollection(GeometryCollection geometryCollection)
+    private Dictionary<string, object> WriteGeometryCollection(
+        GeometryCollection geometryCollection
+    )
     {
         return new Dictionary<string, object>
         {
             { "type", "GeometryCollection" },
-            { "geometries", geometryCollection.Geometries.Select(WriteGeometry).ToArray() }
+            { "geometries", geometryCollection.Geometries.Select(WriteGeometry).ToArray() },
         };
     }
 
@@ -162,7 +176,7 @@ public class GeoJsonWriter
         var result = new Dictionary<string, object>
         {
             { "type", "Feature" },
-            { "geometry", feature.Geometry == null ? null : WriteGeometry(feature.Geometry) }
+            { "geometry", feature.Geometry == null ? null : WriteGeometry(feature.Geometry) },
         };
 
         if (feature.Properties != null && feature.Properties.Count > 0)
@@ -181,17 +195,22 @@ public class GeoJsonWriter
         return new Dictionary<string, object>
         {
             { "type", "FeatureCollection" },
-            { "features", featureCollection.Features.Select(WriteFeature).ToArray() }
+            { "features", featureCollection.Features.Select(WriteFeature).ToArray() },
         };
     }
-
 
     private double[] WriteCoordinate(IPosition position)
     {
         var coordinate = position.GetCoordinate();
         var pointZM = coordinate as CoordinateZM;
         if (pointZM != null)
-            return new[] { pointZM.Longitude, pointZM.Latitude, pointZM.Elevation, pointZM.Measure };
+            return new[]
+            {
+                pointZM.Longitude,
+                pointZM.Latitude,
+                pointZM.Elevation,
+                pointZM.Measure,
+            };
         var pointZ = coordinate as CoordinateZ;
         if (pointZ != null)
             return new[] { pointZ.Longitude, pointZ.Latitude, pointZ.Elevation };

@@ -21,14 +21,8 @@ public interface ICurve : IGeometry, IHasLength
     bool IsClosed { get; }
 }
 
-public interface ISurface : IGeometry, IHasArea
-{
-}
+public interface ISurface : IGeometry, IHasArea { }
 
-public interface IMultiCurve : IGeometry, IHasLength
-{
-}
+public interface IMultiCurve : IGeometry, IHasLength { }
 
-public interface IMultiSurface : IGeometry, IHasArea
-{
-}
+public interface IMultiSurface : IGeometry, IHasArea { }

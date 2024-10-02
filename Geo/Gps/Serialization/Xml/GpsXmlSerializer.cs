@@ -21,24 +21,36 @@ public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSeria
 
     protected abstract T SerializeInternal(GpsData data);
 
-    protected void SerializeMetadata(GpsData data, T xml, Func<GpsMetadata.MetadataKeys, string> attribute,
-        Action<T, string> action)
+    protected void SerializeMetadata(
+        GpsData data,
+        T xml,
+        Func<GpsMetadata.MetadataKeys, string> attribute,
+        Action<T, string> action
+    )
     {
         var value = data.Metadata.Attribute(attribute);
         if (!string.IsNullOrWhiteSpace(value))
             action(xml, value);
     }
 
-    protected void SerializeTrackMetadata<TTrack>(Track data, TTrack xml,
-        Func<TrackMetadata.MetadataKeys, string> attribute, Action<TTrack, string> action)
+    protected void SerializeTrackMetadata<TTrack>(
+        Track data,
+        TTrack xml,
+        Func<TrackMetadata.MetadataKeys, string> attribute,
+        Action<TTrack, string> action
+    )
     {
         var value = data.Metadata.Attribute(attribute);
         if (!string.IsNullOrWhiteSpace(value))
             action(xml, value);
     }
 
-    protected void SerializeRouteMetadata<TRoute>(Route data, TRoute xml,
-        Func<RouteMetadata.MetadataKeys, string> attribute, Action<TRoute, string> action)
+    protected void SerializeRouteMetadata<TRoute>(
+        Route data,
+        TRoute xml,
+        Func<RouteMetadata.MetadataKeys, string> attribute,
+        Action<TRoute, string> action
+    )
     {
         var value = data.Metadata.Attribute(attribute);
         if (!string.IsNullOrWhiteSpace(value))

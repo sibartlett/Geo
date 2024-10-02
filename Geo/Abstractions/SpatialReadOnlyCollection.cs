@@ -8,9 +8,8 @@ namespace Geo.Abstractions;
 public class SpatialReadOnlyCollection<TElement> : ReadOnlyCollection<TElement>, ISpatialEquatable
     where TElement : ISpatialEquatable
 {
-    public SpatialReadOnlyCollection(IEnumerable<TElement> list) : base(list.ToList())
-    {
-    }
+    public SpatialReadOnlyCollection(IEnumerable<TElement> list)
+        : base(list.ToList()) { }
 
     public bool IsEmpty => Count == 0;
 
@@ -24,15 +23,12 @@ public class SpatialReadOnlyCollection<TElement> : ReadOnlyCollection<TElement>,
         if (Count != other.Count)
             return false;
 
-        return !this
-            .Where((t, i) => !SpatialObject.Equals(t, other[i], options))
-            .Any();
+        return !this.Where((t, i) => !SpatialObject.Equals(t, other[i], options)).Any();
     }
 
     public int GetHashCode(SpatialEqualityOptions options)
     {
-        return this
-            .Select(x => x.GetHashCode(options))
+        return this.Select(x => x.GetHashCode(options))
             .Aggregate(0, (current, result) => (current * 397) ^ result);
     }
 

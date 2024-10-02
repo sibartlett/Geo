@@ -10,17 +10,14 @@ public class LineString : Geometry, ICurve
 {
     public static readonly LineString Empty = new();
 
-    public LineString() : this(new CoordinateSequence())
-    {
-    }
+    public LineString()
+        : this(new CoordinateSequence()) { }
 
-    public LineString(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
-    {
-    }
+    public LineString(IEnumerable<Coordinate> coordinates)
+        : this(new CoordinateSequence(coordinates)) { }
 
-    public LineString(params Coordinate[] coordinates) : this(new CoordinateSequence(coordinates))
-    {
-    }
+    public LineString(params Coordinate[] coordinates)
+        : this(new CoordinateSequence(coordinates)) { }
 
     public LineString(CoordinateSequence coordinates)
     {
@@ -35,8 +32,12 @@ public class LineString : Geometry, ICurve
     {
         return IsEmpty
             ? null
-            : new Envelope(Coordinates.Min(x => x.Latitude), Coordinates.Min(x => x.Longitude),
-                Coordinates.Max(x => x.Latitude), Coordinates.Max(x => x.Longitude));
+            : new Envelope(
+                Coordinates.Min(x => x.Latitude),
+                Coordinates.Min(x => x.Longitude),
+                Coordinates.Max(x => x.Latitude),
+                Coordinates.Max(x => x.Longitude)
+            );
     }
 
     public override bool IsEmpty => Coordinates.IsEmpty;

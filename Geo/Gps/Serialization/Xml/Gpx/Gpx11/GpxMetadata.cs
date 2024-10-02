@@ -8,7 +8,8 @@ public class GpxMetadata : GpxMetadataBase
     public GpxPerson author { get; set; }
     public GpxCopyright copyright { get; set; }
 
-    [XmlElement("link")] public GpxLink[] link { get; set; }
+    [XmlElement("link")]
+    public GpxLink[] link { get; set; }
 
     public GpxBounds bounds { get; set; }
 

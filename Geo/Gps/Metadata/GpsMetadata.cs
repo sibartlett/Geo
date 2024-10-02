@@ -2,9 +2,8 @@ namespace Geo.Gps.Metadata;
 
 public class GpsMetadata : Metadata<GpsMetadata.MetadataKeys>
 {
-    public GpsMetadata() : base(new MetadataKeys())
-    {
-    }
+    public GpsMetadata()
+        : base(new MetadataKeys()) { }
 
     public class MetadataKeys
     {
@@ -12,9 +11,7 @@ public class GpsMetadata : Metadata<GpsMetadata.MetadataKeys>
         public CopyrightKeys Copyright = new();
         public VehicleKeys Vehicle = new();
 
-        internal MetadataKeys()
-        {
-        }
+        internal MetadataKeys() { }
 
         public string Name => "name";
         public string Description => "description";

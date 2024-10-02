@@ -4,8 +4,14 @@ namespace Geo.Geodesy;
 
 public class GeodeticLine : LineSegment
 {
-    public GeodeticLine(Coordinate coordinate1, Coordinate coordinate2, double distance, double bearing12,
-        double bearing21) : base(coordinate1, coordinate2)
+    public GeodeticLine(
+        Coordinate coordinate1,
+        Coordinate coordinate2,
+        double distance,
+        double bearing12,
+        double bearing21
+    )
+        : base(coordinate1, coordinate2)
     {
         Bearing12 = bearing12.NormalizeDegrees();
         Bearing21 = bearing21.NormalizeDegrees();
@@ -21,9 +27,12 @@ public class GeodeticLine : LineSegment
     public override bool Equals(object obj, SpatialEqualityOptions options)
     {
         var other = obj as GeodeticLine;
-        return !ReferenceEquals(null, other) && Equals(Coordinate1, other.Coordinate1, options) &&
-               Equals(Coordinate2, other.Coordinate2, options) && Distance.Equals(other.Distance) &&
-               Bearing12.Equals(other.Bearing12) && Bearing21.Equals(other.Bearing21);
+        return !ReferenceEquals(null, other)
+            && Equals(Coordinate1, other.Coordinate1, options)
+            && Equals(Coordinate2, other.Coordinate2, options)
+            && Distance.Equals(other.Distance)
+            && Bearing12.Equals(other.Bearing12)
+            && Bearing21.Equals(other.Bearing21);
     }
 
     public override int GetHashCode(SpatialEqualityOptions options)
@@ -31,7 +40,8 @@ public class GeodeticLine : LineSegment
         unchecked
         {
             var hashCode = Coordinate1 != null ? Coordinate1.GetHashCode(options) : 0;
-            hashCode = (hashCode * 397) ^ (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
+            hashCode =
+                (hashCode * 397) ^ (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
             hashCode = (hashCode * 397) ^ Distance.GetHashCode();
             hashCode = (hashCode * 397) ^ Bearing12.GetHashCode();
             hashCode = (hashCode * 397) ^ Bearing21.GetHashCode();

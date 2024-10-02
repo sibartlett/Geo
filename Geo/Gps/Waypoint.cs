@@ -37,7 +37,13 @@ public class Waypoint : IHasLength
         Point = point;
     }
 
-    public Waypoint(Point point, DateTime? dateTime, string name, string comment, string description)
+    public Waypoint(
+        Point point,
+        DateTime? dateTime,
+        string name,
+        string comment,
+        string description
+    )
     {
         Name = name;
         Comment = comment;

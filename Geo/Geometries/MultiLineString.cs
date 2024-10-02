@@ -8,21 +8,15 @@ namespace Geo.Geometries;
 
 public class MultiLineString : GeometryCollection, IMultiCurve
 {
-    public new static readonly MultiLineString Empty = new();
+    public static new readonly MultiLineString Empty = new();
 
-    public MultiLineString()
-    {
-    }
+    public MultiLineString() { }
 
     public MultiLineString(IEnumerable<LineString> lineStrings)
-        : base(lineStrings)
-    {
-    }
+        : base(lineStrings) { }
 
     public MultiLineString(params LineString[] lineStrings)
-        : base(lineStrings.Cast<IGeometry>())
-    {
-    }
+        : base(lineStrings.Cast<IGeometry>()) { }
 
     public Distance GetLength()
     {

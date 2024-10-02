@@ -7,9 +7,8 @@ public class Point : Geometry, IPosition
 {
     public static readonly Point Empty = new();
 
-    public Point() : this(null)
-    {
-    }
+    public Point()
+        : this(null) { }
 
     public Point(double latitude, double longitude)
     {

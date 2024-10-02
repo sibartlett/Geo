@@ -26,7 +26,11 @@ public class IgcDeSerializer : IGpsFileDeSerializer
         {
             return new[]
             {
-                new GpsFileFormat("igc", "IGC", "http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/")
+                new GpsFileFormat(
+                    "igc",
+                    "IGC",
+                    "http://carrier.csi.cam.ac.uk/forsterlewis/soaring/igc_file_format/"
+                ),
             };
         }
     }
@@ -67,7 +71,10 @@ public class IgcDeSerializer : IGpsFileDeSerializer
                         var d = int.Parse(match.Groups["d"].Value, CultureInfo.InvariantCulture);
                         var m = int.Parse(match.Groups["m"].Value, CultureInfo.InvariantCulture);
                         var y = int.Parse(match.Groups["y"].Value, CultureInfo.InvariantCulture);
-                        var yn = int.Parse(DateTime.UtcNow.ToString("yy"), CultureInfo.InvariantCulture);
+                        var yn = int.Parse(
+                            DateTime.UtcNow.ToString("yy"),
+                            CultureInfo.InvariantCulture
+                        );
                         if (y > yn)
                             yn += 100;
                         var yd = yn - y;
@@ -102,8 +109,12 @@ public class IgcDeSerializer : IGpsFileDeSerializer
         return data;
     }
 
-    private bool ParseMetadata(GpsData data, Func<GpsMetadata.MetadataKeys, string> attribute, string regex,
-        string line)
+    private bool ParseMetadata(
+        GpsData data,
+        Func<GpsMetadata.MetadataKeys, string> attribute,
+        string regex,
+        string line
+    )
     {
         var match = Regex.Match(line, regex);
         if (match.Success)
@@ -132,11 +143,14 @@ public class IgcDeSerializer : IGpsFileDeSerializer
             var gpsAlt = match.Groups["gpsAlt"].Value;
 
             var cood = ParseCoordinate(coord);
-            var waypoint = new Waypoint(cood.Latitude, cood.Longitude,
+            var waypoint = new Waypoint(
+                cood.Latitude,
+                cood.Longitude,
                 double.Parse(gpsAlt, CultureInfo.InvariantCulture),
                 date.AddHours(int.Parse(h, CultureInfo.InvariantCulture))
                     .AddMinutes(int.Parse(m, CultureInfo.InvariantCulture))
-                    .AddSeconds(int.Parse(s, CultureInfo.InvariantCulture)));
+                    .AddSeconds(int.Parse(s, CultureInfo.InvariantCulture))
+            );
 
             trackSegment.Waypoints.Add(waypoint);
             return true;
@@ -151,11 +165,13 @@ public class IgcDeSerializer : IGpsFileDeSerializer
 
         if (match.Success)
         {
-            var deg1 = double.Parse(match.Groups["d1"].Value, CultureInfo.InvariantCulture) +
-                       double.Parse(match.Groups["m1"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
+            var deg1 =
+                double.Parse(match.Groups["d1"].Value, CultureInfo.InvariantCulture)
+                + double.Parse(match.Groups["m1"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
             var dir1 = Regex.IsMatch(match.Groups["dir1"].Value, "[Ss]") ? -1d : 1d;
-            var deg2 = double.Parse(match.Groups["d2"].Value, CultureInfo.InvariantCulture) +
-                       double.Parse(match.Groups["m2"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
+            var deg2 =
+                double.Parse(match.Groups["d2"].Value, CultureInfo.InvariantCulture)
+                + double.Parse(match.Groups["m2"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
             var dir2 = Regex.IsMatch(match.Groups["dir2"].Value, "[Ww]") ? -1d : 1d;
 
             return new Coordinate(deg1 * dir1, deg2 * dir2);

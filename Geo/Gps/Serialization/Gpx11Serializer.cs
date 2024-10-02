@@ -17,7 +17,7 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
         {
             return new[]
             {
-                new GpsFileFormat("gps", "GPX 1.1", "http://www.topografix.com/GPX/1/1/gpx.xsd")
+                new GpsFileFormat("gps", "GPX 1.1", "http://www.topografix.com/GPX/1/1/gpx.xsd"),
             };
         }
     }
@@ -43,91 +43,137 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
     {
         var xml = new GpxFile();
         SerializeMetadata(data, xml, x => x.Software, (gpx, s) => gpx.creator = s);
-        SerializeMetadata(data, xml, x => x.Name, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            gpx.metadata.name = s;
-        });
-        SerializeMetadata(data, xml, x => x.Description, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            gpx.metadata.desc = s;
-        });
-        SerializeMetadata(data, xml, x => x.Keywords, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            gpx.metadata.keywords = s;
-        });
-
-        SerializeMetadata(data, xml, x => x.Link, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.link == null)
-                gpx.metadata.link = new GpxLink[1];
-            gpx.metadata.link[0] = new GpxLink { href = s };
-        });
-
-        SerializeMetadata(data, xml, x => x.Copyright.Author, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.copyright == null)
-                gpx.metadata.copyright = new GpxCopyright();
-            gpx.metadata.copyright.author = s;
-        });
-        SerializeMetadata(data, xml, x => x.Copyright.License, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.copyright == null)
-                gpx.metadata.copyright = new GpxCopyright();
-            gpx.metadata.copyright.license = s;
-        });
-        SerializeMetadata(data, xml, x => x.Copyright.Year, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.copyright == null)
-                gpx.metadata.copyright = new GpxCopyright();
-            gpx.metadata.copyright.year = s;
-        });
-
-        SerializeMetadata(data, xml, x => x.Author.Name, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.author == null)
-                gpx.metadata.author = new GpxPerson();
-            gpx.metadata.author.name = s;
-        });
-        SerializeMetadata(data, xml, x => x.Author.Email, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.author == null)
-                gpx.metadata.author = new GpxPerson();
-            var parts = s.Split('@');
-            gpx.metadata.author.email = new GpxEmail
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Name,
+            (gpx, s) =>
             {
-                id = parts[0],
-                domain = parts[1]
-            };
-        });
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                gpx.metadata.name = s;
+            }
+        );
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Description,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                gpx.metadata.desc = s;
+            }
+        );
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Keywords,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                gpx.metadata.keywords = s;
+            }
+        );
 
-        SerializeMetadata(data, xml, x => x.Author.Link, (gpx, s) =>
-        {
-            if (gpx.metadata == null)
-                gpx.metadata = new GpxMetadata();
-            if (gpx.metadata.author == null)
-                gpx.metadata.author = new GpxPerson();
-            if (gpx.metadata.author.link == null)
-                gpx.metadata.author.link = new GpxLink();
-            gpx.metadata.author.link.href = s;
-        });
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Link,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.link == null)
+                    gpx.metadata.link = new GpxLink[1];
+                gpx.metadata.link[0] = new GpxLink { href = s };
+            }
+        );
+
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Copyright.Author,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.copyright == null)
+                    gpx.metadata.copyright = new GpxCopyright();
+                gpx.metadata.copyright.author = s;
+            }
+        );
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Copyright.License,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.copyright == null)
+                    gpx.metadata.copyright = new GpxCopyright();
+                gpx.metadata.copyright.license = s;
+            }
+        );
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Copyright.Year,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.copyright == null)
+                    gpx.metadata.copyright = new GpxCopyright();
+                gpx.metadata.copyright.year = s;
+            }
+        );
+
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Author.Name,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.author == null)
+                    gpx.metadata.author = new GpxPerson();
+                gpx.metadata.author.name = s;
+            }
+        );
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Author.Email,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.author == null)
+                    gpx.metadata.author = new GpxPerson();
+                var parts = s.Split('@');
+                gpx.metadata.author.email = new GpxEmail { id = parts[0], domain = parts[1] };
+            }
+        );
+
+        SerializeMetadata(
+            data,
+            xml,
+            x => x.Author.Link,
+            (gpx, s) =>
+            {
+                if (gpx.metadata == null)
+                    gpx.metadata = new GpxMetadata();
+                if (gpx.metadata.author == null)
+                    gpx.metadata.author = new GpxPerson();
+                if (gpx.metadata.author.link == null)
+                    gpx.metadata.author.link = new GpxLink();
+                gpx.metadata.author.link.href = s;
+            }
+        );
 
         xml.trk = SerializeTracks(data).ToArray();
         xml.rte = SerializeRoutes(data).ToArray();
@@ -156,7 +202,8 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
             {
                 var segment = track.Segments[i];
                 var pts = new GpxWaypoint[segment.Waypoints.Count];
-                for (var j = 0; j < segment.Waypoints.Count; j++) pts[j] = ConvertToGpxWaypoint(segment.Waypoints[j]);
+                for (var j = 0; j < segment.Waypoints.Count; j++)
+                    pts[j] = ConvertToGpxWaypoint(segment.Waypoints[j]);
                 trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
             }
 
@@ -175,7 +222,8 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
             SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
 
             rte.rtept = new GpxWaypoint[route.Waypoints.Count];
-            for (var j = 0; j < route.Waypoints.Count; j++) rte.rtept[j] = ConvertToGpxWaypoint(route.Waypoints[j]);
+            for (var j = 0; j < route.Waypoints.Count; j++)
+                rte.rtept[j] = ConvertToGpxWaypoint(route.Waypoints[j]);
             yield return rte;
         }
     }
@@ -196,8 +244,10 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
             {
                 data.Metadata.Attribute(x => x.Author.Name, xml.metadata.author.name);
                 if (xml.metadata.author.email != null)
-                    data.Metadata.Attribute(x => x.Author.Email,
-                        xml.metadata.author.email.id + "@" + xml.metadata.author.email.domain);
+                    data.Metadata.Attribute(
+                        x => x.Author.Email,
+                        xml.metadata.author.email.id + "@" + xml.metadata.author.email.domain
+                    );
                 if (xml.metadata.author.link != null)
                     data.Metadata.Attribute(x => x.Author.Link, xml.metadata.author.link.href);
             }
@@ -226,7 +276,8 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
                     foreach (var trksegType in trkType.trkseg.Where(seg => seg.trkpt != null))
                     {
                         var segment = new TrackSegment();
-                        foreach (var wptType in trksegType.trkpt) segment.Waypoints.Add(ConvertWaypoint(wptType));
+                        foreach (var wptType in trksegType.trkpt)
+                            segment.Waypoints.Add(ConvertWaypoint(wptType));
                         track.Segments.Add(segment);
                     }
 
@@ -244,7 +295,8 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
                 route.Metadata.Attribute(x => x.Description, rteType.desc);
                 route.Metadata.Attribute(x => x.Comment, rteType.cmt);
 
-                foreach (var wptType in rteType.rtept) route.Waypoints.Add(ConvertWaypoint(wptType));
+                foreach (var wptType in rteType.rtept)
+                    route.Waypoints.Add(ConvertWaypoint(wptType));
                 data.Routes.Add(route);
             }
     }
@@ -277,7 +329,7 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
             timeSpecified = waypoint.TimeUtc.HasValue,
             name = waypoint.Name,
             desc = waypoint.Description,
-            cmt = waypoint.Comment
+            cmt = waypoint.Comment,
         };
     }
 }

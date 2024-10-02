@@ -9,5 +9,5 @@ internal enum WkbGeometryType : uint
     MultiLineString = 5,
     MultiPolygon = 6,
     GeometryCollection = 7,
-    Triangle = 17
+    Triangle = 17,
 }

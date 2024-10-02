@@ -15,13 +15,7 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
 
     public GpsFileFormat[] FileFormats
     {
-        get
-        {
-            return new[]
-            {
-                new GpsFileFormat("nmea", "NMEA")
-            };
-        }
+        get { return new[] { new GpsFileFormat("nmea", "NMEA") }; }
     }
 
     public GpsFeatures SupportedFeatures => GpsFeatures.TracksAndWaypoints;
@@ -81,7 +75,12 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
             var lat = ConvertOrd(match.Groups["lat"].Value, match.Groups["latd"].Value);
             var lon = ConvertOrd(match.Groups["lon"].Value, match.Groups["lond"].Value);
 
-            var waypoint = new Waypoint(lat, lon, alt, DateTime.MinValue.AddHours(h).AddMinutes(m).AddSeconds(s));
+            var waypoint = new Waypoint(
+                lat,
+                lon,
+                alt,
+                DateTime.MinValue.AddHours(h).AddMinutes(m).AddSeconds(s)
+            );
             trackSegment.Waypoints.Add(waypoint);
 
             return true;
@@ -112,7 +111,10 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
     {
         var d = Regex.IsMatch(dir, "^[NnEe]$") ? 1 : -1;
         var sub = Regex.IsMatch(dir, "^[NnSs]") ? 2 : 3;
-        return (double.Parse(ord.Substring(0, sub), CultureInfo.InvariantCulture) +
-                double.Parse(ord.Substring(sub, ord.Length - sub), CultureInfo.InvariantCulture) / 60) * d;
+        return (
+                double.Parse(ord.Substring(0, sub), CultureInfo.InvariantCulture)
+                + double.Parse(ord.Substring(sub, ord.Length - sub), CultureInfo.InvariantCulture)
+                    / 60
+            ) * d;
     }
 }

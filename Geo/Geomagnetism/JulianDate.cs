@@ -26,12 +26,21 @@ internal class JulianDate
         if (day > 14)
             return false;
 
-        // Any date in the range 10/5/1582 to 10/14/1582 is invalid 
+        // Any date in the range 10/5/1582 to 10/14/1582 is invalid
         throw new NotSupportedException(
-            "Date is not valid as it does not exist in either the Julian or the Gregorian calendars.");
+            "Date is not valid as it does not exist in either the Julian or the Gregorian calendars."
+        );
     }
 
-    private static double DateToJD(int year, int month, int day, int hour, int minute, int second, int millisecond)
+    private static double DateToJD(
+        int year,
+        int month,
+        int day,
+        int hour,
+        int minute,
+        int second,
+        int millisecond
+    )
     {
         // Determine correct calendar based on date
         var isJulianDate = IsJulianDate(year, month, day);
@@ -44,13 +53,29 @@ internal class JulianDate
         return (int)(365.25 * (y + 4716)) + (int)(30.6001 * (m + 1)) + d + b - 1524.5;
     }
 
-    public static double JD(int year, int month, int day, int hour, int minute, int second, int millisecond)
+    public static double JD(
+        int year,
+        int month,
+        int day,
+        int hour,
+        int minute,
+        int second,
+        int millisecond
+    )
     {
         return DateToJD(year, month, day, hour, minute, second, millisecond);
     }
 
     public static double JD(DateTime date)
     {
-        return DateToJD(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, date.Millisecond);
+        return DateToJD(
+            date.Year,
+            date.Month,
+            date.Day,
+            date.Hour,
+            date.Minute,
+            date.Second,
+            date.Millisecond
+        );
     }
 }

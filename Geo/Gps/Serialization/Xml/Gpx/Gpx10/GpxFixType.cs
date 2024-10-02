@@ -6,8 +6,12 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx10;
 public enum GpxFixType
 {
     none,
-    [XmlEnum("2d")] Item2d,
-    [XmlEnum("3d")] Item3d,
+
+    [XmlEnum("2d")]
+    Item2d,
+
+    [XmlEnum("3d")]
+    Item3d,
     dgps,
-    pps
+    pps,
 }

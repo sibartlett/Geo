@@ -51,10 +51,15 @@ public class WkbTests
     {
         Test("GEOMETRYCOLLECTION (LINESTRING EMPTY, POLYGON EMPTY)");
         Test("GEOMETRYCOLLECTION (LINESTRING (45.89 23.9, 0 0), POLYGON ((0 0, 1 0, 0 1, 0 0)))");
-        Test("GEOMETRYCOLLECTION (LINESTRING Z (45.89 23.9 0.45, 0 0 0.45), POLYGON Z ((0 0 2, 1 0 2, 0 1 2, 0 0 2)))");
-        Test("GEOMETRYCOLLECTION (LINESTRING M (45.89 23.9 34, 0 0 34), POLYGON M ((0 0 -1, 1 0 -1, 0 1 -1, 0 0 -1)))");
         Test(
-            "GEOMETRYCOLLECTION (LINESTRING ZM (45.89 23.9 0.45 34, 0 0 0.45 34), POLYGON ZM ((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1)))");
+            "GEOMETRYCOLLECTION (LINESTRING Z (45.89 23.9 0.45, 0 0 0.45), POLYGON Z ((0 0 2, 1 0 2, 0 1 2, 0 0 2)))"
+        );
+        Test(
+            "GEOMETRYCOLLECTION (LINESTRING M (45.89 23.9 34, 0 0 34), POLYGON M ((0 0 -1, 1 0 -1, 0 1 -1, 0 0 -1)))"
+        );
+        Test(
+            "GEOMETRYCOLLECTION (LINESTRING ZM (45.89 23.9 0.45 34, 0 0 0.45 34), POLYGON ZM ((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1)))"
+        );
     }
 
     private void Test(string wkt)
@@ -69,7 +74,9 @@ public class WkbTests
             Assert.Equal(geometry, geometry2);
         }
         {
-            var wkbWriter = new WkbWriter(new WkbWriterSettings { Encoding = WkbEncoding.BigEndian, Triangle = true });
+            var wkbWriter = new WkbWriter(
+                new WkbWriterSettings { Encoding = WkbEncoding.BigEndian, Triangle = true }
+            );
             var wkb = wkbWriter.Write(geometry);
             var wkbReader = new WkbReader();
             var geometry2 = wkbReader.Read(wkb);

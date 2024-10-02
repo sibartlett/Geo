@@ -6,17 +6,14 @@ namespace Geo;
 
 public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
 {
-    public CoordinateSequence() : base(new List<Coordinate>())
-    {
-    }
+    public CoordinateSequence()
+        : base(new List<Coordinate>()) { }
 
-    public CoordinateSequence(IEnumerable<Coordinate> coordinates) : base(coordinates.ToList())
-    {
-    }
+    public CoordinateSequence(IEnumerable<Coordinate> coordinates)
+        : base(coordinates.ToList()) { }
 
-    public CoordinateSequence(params Coordinate[] coordinates) : base(coordinates.ToList())
-    {
-    }
+    public CoordinateSequence(params Coordinate[] coordinates)
+        : base(coordinates.ToList()) { }
 
     public bool HasElevation
     {
@@ -34,8 +31,12 @@ public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
     {
         return IsEmpty
             ? null
-            : new Envelope(this.Min(x => x.Latitude), this.Min(x => x.Longitude), this.Max(x => x.Latitude),
-                this.Max(x => x.Longitude));
+            : new Envelope(
+                this.Min(x => x.Latitude),
+                this.Min(x => x.Longitude),
+                this.Max(x => x.Latitude),
+                this.Max(x => x.Longitude)
+            );
     }
 
     public IEnumerable<LineSegment> ToLineSegments()

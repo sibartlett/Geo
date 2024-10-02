@@ -16,7 +16,7 @@ public class GpsData
         FileSerializers = new List<IGpsFileSerializer>
         {
             new Gpx10Serializer(),
-            new Gpx11Serializer()
+            new Gpx11Serializer(),
         };
         FileParsers = new List<IGpsFileDeSerializer>(FileSerializers.OfType<IGpsFileDeSerializer>())
         {
@@ -24,7 +24,7 @@ public class GpsData
             new NmeaDeSerializer(),
             new GarminFlightplanDeSerializer(),
             new PocketFmsFlightplanDeSerializer(),
-            new SkyDemonFlightplanDeSerializer()
+            new SkyDemonFlightplanDeSerializer(),
         };
     }
 

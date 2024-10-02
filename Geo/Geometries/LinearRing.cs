@@ -5,23 +5,23 @@ namespace Geo.Geometries;
 
 public class LinearRing : LineString
 {
-    public new static readonly LinearRing Empty = new();
+    public static new readonly LinearRing Empty = new();
 
-    public LinearRing() : this(new CoordinateSequence())
-    {
-    }
+    public LinearRing()
+        : this(new CoordinateSequence()) { }
 
-    public LinearRing(IEnumerable<Coordinate> coordinates) : this(new CoordinateSequence(coordinates))
-    {
-    }
+    public LinearRing(IEnumerable<Coordinate> coordinates)
+        : this(new CoordinateSequence(coordinates)) { }
 
-    public LinearRing(params Coordinate[] coordinates) : this(new CoordinateSequence(coordinates))
-    {
-    }
+    public LinearRing(params Coordinate[] coordinates)
+        : this(new CoordinateSequence(coordinates)) { }
 
-    public LinearRing(CoordinateSequence coordinates) : base(coordinates)
+    public LinearRing(CoordinateSequence coordinates)
+        : base(coordinates)
     {
         if (coordinates != null && !coordinates.IsEmpty && !coordinates.IsClosed)
-            throw new ArgumentException("The Coordinate Sequence must be closed to form a Linear Ring");
+            throw new ArgumentException(
+                "The Coordinate Sequence must be closed to form a Linear Ring"
+            );
     }
 }

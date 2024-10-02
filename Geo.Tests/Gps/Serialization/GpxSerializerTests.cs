@@ -61,7 +61,8 @@ public class GpxSerializerTests : SerializerTestFixtureBase
     private void Compare(GpsData data, GpsData data2)
     {
         Assert.Equal(data.Metadata.Count, data2.Metadata.Count);
-        foreach (var entry in data.Metadata) Assert.Equal(entry.Value, data2.Metadata[entry.Key]);
+        foreach (var entry in data.Metadata)
+            Assert.Equal(entry.Value, data2.Metadata[entry.Key]);
 
         Assert.Equal(data.Tracks.Count, data2.Tracks.Count);
         for (var i = 0; i < data.Tracks.Count; i++)
@@ -70,7 +71,8 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             var track2 = data2.Tracks[i];
 
             Assert.Equal(track1.Metadata.Count, track2.Metadata.Count);
-            foreach (var entry in track1.Metadata) Assert.Equal(entry.Value, track2.Metadata[entry.Key]);
+            foreach (var entry in track1.Metadata)
+                Assert.Equal(entry.Value, track2.Metadata[entry.Key]);
 
             Assert.Equal(track1.Segments.Count, track2.Segments.Count);
             for (var s = 0; s < track1.Segments.Count; s++)
@@ -109,10 +111,12 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             var r2 = data2.Routes[i];
 
             Assert.Equal(r1.Metadata.Count, r2.Metadata.Count);
-            foreach (var entry in r1.Metadata) Assert.Equal(entry.Value, r2.Metadata[entry.Key]);
+            foreach (var entry in r1.Metadata)
+                Assert.Equal(entry.Value, r2.Metadata[entry.Key]);
 
             Assert.Equal(r1.Waypoints.Count, r2.Waypoints.Count);
-            for (var c = 0; c < r1.Waypoints.Count; c++) Compare(r1.Waypoints[c], r2.Waypoints[c]);
+            for (var c = 0; c < r1.Waypoints.Count; c++)
+                Compare(r1.Waypoints[c], r2.Waypoints[c]);
         }
     }
 

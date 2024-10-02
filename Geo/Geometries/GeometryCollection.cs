@@ -21,9 +21,7 @@ public class GeometryCollection : Geometry
     }
 
     public GeometryCollection(params IGeometry[] geometries)
-        : this((IEnumerable<IGeometry>)geometries)
-    {
-    }
+        : this((IEnumerable<IGeometry>)geometries) { }
 
     public SpatialReadOnlyCollection<IGeometry> Geometries { get; }
 
@@ -62,9 +60,7 @@ public class GeometryCollection : Geometry
         if (Geometries.Count != other.Geometries.Count)
             return false;
 
-        return !Geometries
-            .Where((t, i) => !t.Equals(other.Geometries[i], options))
-            .Any();
+        return !Geometries.Where((t, i) => !t.Equals(other.Geometries[i], options)).Any();
     }
 
     public override bool Equals(object obj)
