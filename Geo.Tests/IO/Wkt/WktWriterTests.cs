@@ -1,131 +1,130 @@
 ﻿using Geo.Geometries;
 using Geo.IO.Wkt;
-using NUnit.Framework;
+using Xunit;
 
 namespace Geo.Tests.IO.Wkt;
 
-[TestFixture]
 public class WktWriterTests
 {
-    [Test]
+    [Fact]
     public void Point()
     {
         var writer = new WktWriter();
 
         var xy = writer.Write(new Point(65.9, 0));
-        Assert.AreEqual("POINT (0 65.9)", xy);
+        Assert.Equal("POINT (0 65.9)", xy);
 
         var xyz = writer.Write(new Point(65.9, 0, 5));
-        Assert.AreEqual("POINT Z (0 65.9 5)", xyz);
+        Assert.Equal("POINT Z (0 65.9 5)", xyz);
 
         var xym = writer.Write(new Point(new CoordinateM(65.9, 0, 5)));
-        Assert.AreEqual("POINT M (0 65.9 5)", xym);
+        Assert.Equal("POINT M (0 65.9 5)", xym);
 
         var xyzm = writer.Write(new Point(65.9, 0, 4, 5));
-        Assert.AreEqual("POINT ZM (0 65.9 4 5)", xyzm);
+        Assert.Equal("POINT ZM (0 65.9 4 5)", xyzm);
 
         var empty = writer.Write(Geo.Geometries.Point.Empty);
-        Assert.AreEqual("POINT EMPTY", empty);
+        Assert.Equal("POINT EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void LineString()
     {
         var writer = new WktWriter();
 
         var xy = writer.Write(new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5)));
-        Assert.AreEqual("LINESTRING (0 65.9, -34.5 9)", xy);
+        Assert.Equal("LINESTRING (0 65.9, -34.5 9)", xy);
 
         var empty = writer.Write(Geo.Geometries.LineString.Empty);
-        Assert.AreEqual("LINESTRING EMPTY", empty);
+        Assert.Equal("LINESTRING EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void LinearRing()
     {
         var writer = new WktWriter();
 
         var lineString = writer.Write(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
             new Coordinate(50, 0), new Coordinate(65.9, 0)));
-        Assert.AreEqual("LINESTRING (0 65.9, -34.5 9, 0 50, 0 65.9)", lineString);
+        Assert.Equal("LINESTRING (0 65.9, -34.5 9, 0 50, 0 65.9)", lineString);
 
         var writer2 = new WktWriter(new WktWriterSettings { LinearRing = true });
 
         var linearRing = writer2.Write(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
             new Coordinate(50, 0), new Coordinate(65.9, 0)));
-        Assert.AreEqual("LINEARRING (0 65.9, -34.5 9, 0 50, 0 65.9)", linearRing);
+        Assert.Equal("LINEARRING (0 65.9, -34.5 9, 0 50, 0 65.9)", linearRing);
 
         var empty = writer2.Write(Geo.Geometries.LinearRing.Empty);
-        Assert.AreEqual("LINEARRING EMPTY", empty);
+        Assert.Equal("LINEARRING EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void Polygon()
     {
         var writer = new WktWriter();
 
         var xy = writer.Write(new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
             new Coordinate(40, -20), new Coordinate(65.9, 0))));
-        Assert.AreEqual("POLYGON ((0 65.9, -34.5 9, -20 40, 0 65.9))", xy);
+        Assert.Equal("POLYGON ((0 65.9, -34.5 9, -20 40, 0 65.9))", xy);
 
         var empty = writer.Write(Geo.Geometries.Polygon.Empty);
-        Assert.AreEqual("POLYGON EMPTY", empty);
+        Assert.Equal("POLYGON EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void Triangle()
     {
         var writer = new WktWriter();
 
         var polygon = writer.Write(new Triangle(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
             new Coordinate(40, -20), new Coordinate(65.9, 0))));
-        Assert.AreEqual("POLYGON ((0 65.9, -34.5 9, -20 40, 0 65.9))", polygon);
+        Assert.Equal("POLYGON ((0 65.9, -34.5 9, -20 40, 0 65.9))", polygon);
 
         var writer2 = new WktWriter(new WktWriterSettings { Triangle = true });
 
         var triangle = writer2.Write(new Triangle(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
             new Coordinate(40, -20), new Coordinate(65.9, 0))));
-        Assert.AreEqual("TRIANGLE ((0 65.9, -34.5 9, -20 40, 0 65.9))", triangle);
+        Assert.Equal("TRIANGLE ((0 65.9, -34.5 9, -20 40, 0 65.9))", triangle);
 
         var empty = writer2.Write(Geo.Geometries.Triangle.Empty);
-        Assert.AreEqual("TRIANGLE EMPTY", empty);
+        Assert.Equal("TRIANGLE EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void GeometryCollection()
     {
         var writer = new WktWriter();
 
         var brackets = writer.Write(new GeometryCollection(new Point(65.9, 0), new Point(9, -34.5), new Point(40, -20),
             new Point(65.9, 0)));
-        Assert.AreEqual("GEOMETRYCOLLECTION (POINT (0 65.9), POINT (-34.5 9), POINT (-20 40), POINT (0 65.9))",
+        Assert.Equal("GEOMETRYCOLLECTION (POINT (0 65.9), POINT (-34.5 9), POINT (-20 40), POINT (0 65.9))",
             brackets);
 
         var empty = writer.Write(new GeometryCollection());
-        Assert.AreEqual("GEOMETRYCOLLECTION EMPTY", empty);
+        Assert.Equal("GEOMETRYCOLLECTION EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void MultiPoint()
     {
         var writer = new WktWriter();
 
         var brackets = writer.Write(new MultiPoint(new Point(65.9, 0), new Point(9, -34.5), new Point(40, -20),
             new Point(65.9, 0)));
-        Assert.AreEqual("MULTIPOINT ((0 65.9), (-34.5 9), (-20 40), (0 65.9))", brackets);
+        Assert.Equal("MULTIPOINT ((0 65.9), (-34.5 9), (-20 40), (0 65.9))", brackets);
 
         var empty = writer.Write(new MultiPoint());
-        Assert.AreEqual("MULTIPOINT EMPTY", empty);
+        Assert.Equal("MULTIPOINT EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void MultiLineString()
     {
         var writer = new WktWriter();
 
         var one = writer.Write(new MultiLineString(new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5),
             new Coordinate(40, -20), new Coordinate(65.9, 0))));
-        Assert.AreEqual("MULTILINESTRING ((0 65.9, -34.5 9, -20 40, 0 65.9))", one);
+        Assert.Equal("MULTILINESTRING ((0 65.9, -34.5 9, -20 40, 0 65.9))", one);
 
 
         var two = writer.Write(new MultiLineString(
@@ -133,20 +132,20 @@ public class WktWriterTests
                 new Coordinate(65.9, 0)),
             new LineString(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
                 new Coordinate(65.9, 0))));
-        Assert.AreEqual("MULTILINESTRING ((0 65.9, -34.5 9, -20 40, 0 65.9), (0 65.9, -34.5 9, -20 40, 0 65.9))", two);
+        Assert.Equal("MULTILINESTRING ((0 65.9, -34.5 9, -20 40, 0 65.9), (0 65.9, -34.5 9, -20 40, 0 65.9))", two);
 
         var empty = writer.Write(new MultiLineString());
-        Assert.AreEqual("MULTILINESTRING EMPTY", empty);
+        Assert.Equal("MULTILINESTRING EMPTY", empty);
     }
 
-    [Test]
+    [Fact]
     public void MultiPolygon()
     {
         var writer = new WktWriter();
 
         var one = writer.Write(new MultiPolygon(new Polygon(new LinearRing(new Coordinate(65.9, 0),
             new Coordinate(9, -34.5), new Coordinate(40, -20), new Coordinate(65.9, 0)))));
-        Assert.AreEqual("MULTIPOLYGON (((0 65.9, -34.5 9, -20 40, 0 65.9)))", one);
+        Assert.Equal("MULTIPOLYGON (((0 65.9, -34.5 9, -20 40, 0 65.9)))", one);
 
 
         var two = writer.Write(new MultiPolygon(
@@ -154,9 +153,9 @@ public class WktWriterTests
                 new Coordinate(65.9, 0))),
             new Polygon(new LinearRing(new Coordinate(65.9, 0), new Coordinate(9, -34.5), new Coordinate(40, -20),
                 new Coordinate(65.9, 0)))));
-        Assert.AreEqual("MULTIPOLYGON (((0 65.9, -34.5 9, -20 40, 0 65.9)), ((0 65.9, -34.5 9, -20 40, 0 65.9)))", two);
+        Assert.Equal("MULTIPOLYGON (((0 65.9, -34.5 9, -20 40, 0 65.9)), ((0 65.9, -34.5 9, -20 40, 0 65.9)))", two);
 
         var empty = writer.Write(new MultiPolygon());
-        Assert.AreEqual("MULTIPOLYGON EMPTY", empty);
+        Assert.Equal("MULTIPOLYGON EMPTY", empty);
     }
 }

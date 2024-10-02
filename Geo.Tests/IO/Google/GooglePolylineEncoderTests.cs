@@ -1,12 +1,12 @@
 ﻿using Geo.Geometries;
 using Geo.IO.Google;
-using NUnit.Framework;
+using Xunit;
 
 namespace Geo.Tests.IO.Google;
 
 public class GooglePolylineEncoderTests
 {
-    [Test]
+    [Fact]
     public void Encode()
     {
         var lineString = new LineString(new Coordinate(38.5, -120.2),
@@ -15,10 +15,10 @@ public class GooglePolylineEncoderTests
 
         var result = new GooglePolylineEncoder().Encode(lineString);
 
-        Assert.AreEqual("_p~iF~ps|U_ulLnnqC_mqNvxq`@", result);
+        Assert.Equal("_p~iF~ps|U_ulLnnqC_mqNvxq`@", result);
     }
 
-    [Test]
+    [Fact]
     public void Decode()
     {
         var lineString = new LineString(new Coordinate(38.5, -120.2),
@@ -27,6 +27,6 @@ public class GooglePolylineEncoderTests
 
         var result = new GooglePolylineEncoder().Decode("_p~iF~ps|U_ulLnnqC_mqNvxq`@");
 
-        Assert.AreEqual(lineString, result);
+        Assert.Equal(lineString, result);
     }
 }

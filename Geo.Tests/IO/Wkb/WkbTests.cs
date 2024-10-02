@@ -1,13 +1,12 @@
 ﻿using Geo.IO.Wkb;
 using Geo.IO.Wkt;
-using NUnit.Framework;
+using Xunit;
 
 namespace Geo.Tests.IO.Wkb;
 
-[TestFixture]
 public class WkbTests
 {
-    [Test]
+    [Fact]
     public void Point()
     {
         //Test("POINT EMPTY");
@@ -17,7 +16,7 @@ public class WkbTests
         Test("POINT ZM (45.89 23.9 0.45 34)");
     }
 
-    [Test]
+    [Fact]
     public void LineString()
     {
         Test("LINESTRING EMPTY");
@@ -27,7 +26,7 @@ public class WkbTests
         Test("LINESTRING ZM (45.89 23.9 0.45 34, 0 0 0.45 34)");
     }
 
-    [Test]
+    [Fact]
     public void Polygon()
     {
         Test("POLYGON EMPTY");
@@ -37,7 +36,7 @@ public class WkbTests
         Test("POLYGON ZM ((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1))");
     }
 
-    [Test]
+    [Fact]
     public void Triangle()
     {
         Test("TRIANGLE EMPTY");
@@ -47,7 +46,7 @@ public class WkbTests
         Test("TRIANGLE ZM ((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1))");
     }
 
-    [Test]
+    [Fact]
     public void GeometryCollection()
     {
         Test("GEOMETRYCOLLECTION (LINESTRING EMPTY, POLYGON EMPTY)");
@@ -67,14 +66,14 @@ public class WkbTests
             var wkb = wkbWriter.Write(geometry);
             var wkbReader = new WkbReader();
             var geometry2 = wkbReader.Read(wkb);
-            Assert.AreEqual(geometry, geometry2);
+            Assert.Equal(geometry, geometry2);
         }
         {
             var wkbWriter = new WkbWriter(new WkbWriterSettings { Encoding = WkbEncoding.BigEndian, Triangle = true });
             var wkb = wkbWriter.Write(geometry);
             var wkbReader = new WkbReader();
             var geometry2 = wkbReader.Read(wkb);
-            Assert.AreEqual(geometry, geometry2);
+            Assert.Equal(geometry, geometry2);
         }
     }
 }
