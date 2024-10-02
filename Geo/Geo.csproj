@@ -5,7 +5,7 @@
         <NeutralLanguage>en</NeutralLanguage>
         <Authors>Simon Bartlett</Authors>
         <AssemblyName>Geo</AssemblyName>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <Description>A geospatial library for .NET</Description>
         <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
         <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
@@ -34,9 +34,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="..\README.md" Pack="true" PackagePath="\">
-            <Link>README.md</Link>
-        </Content>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <Target Name="Husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0">
