@@ -15,6 +15,7 @@ public class WmmGeomagnetismCalculator : GeomagnetismCalculator
         new Wmm2010(),
         new Wmm2015(),
         new Wmm2020(),
+        new Wmm2025(),
     };
 
     public WmmGeomagnetismCalculator()
