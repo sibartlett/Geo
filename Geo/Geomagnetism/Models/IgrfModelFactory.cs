@@ -37,8 +37,11 @@ public class IgrfModelFactory
             -29692,
             -29619.4,
             -29554.63,
-            -29496.5,
-            11.4,
+            -29496.57,
+            -29441.46,
+            -29403.41,
+            -29350.0,
+            12.6,
         };
         coefficientss[1, 1, 0] = new[]
         {
@@ -64,8 +67,11 @@ public class IgrfModelFactory
             -1784,
             -1728.2,
             -1669.05,
-            -1585.9,
-            16.7,
+            -1586.42,
+            -1501.77,
+            -1451.37,
+            -1410.3,
+            10.0,
         };
         coefficientss[1, 1, 1] = new[]
         {
@@ -91,8 +97,11 @@ public class IgrfModelFactory
             5306,
             5186.1,
             5077.99,
-            4945.1,
-            -28.8,
+            4944.26,
+            4795.99,
+            4653.35,
+            4545.5,
+            -21.5,
         };
         coefficientss[2, 0, 0] = new[]
         {
@@ -118,8 +127,11 @@ public class IgrfModelFactory
             -2200,
             -2267.7,
             -2337.24,
-            -2396.6,
-            -11.3,
+            -2396.06,
+            -2445.88,
+            -2499.78,
+            -2556.2,
+            -11.2,
         };
         coefficientss[2, 1, 0] = new[]
         {
@@ -145,8 +157,11 @@ public class IgrfModelFactory
             3070,
             3068.4,
             3047.69,
-            3026.0,
-            -3.9,
+            3026.34,
+            3012.2,
+            2981.96,
+            2950.9,
+            -5.3,
         };
         coefficientss[2, 1, 1] = new[]
         {
@@ -172,8 +187,11 @@ public class IgrfModelFactory
             -2366,
             -2481.6,
             -2594.50,
-            -2707.7,
-            -23.0,
+            -2708.54,
+            -2845.41,
+            -2991.72,
+            -3133.6,
+            -27.3,
         };
         coefficientss[2, 2, 0] = new[]
         {
@@ -199,8 +217,11 @@ public class IgrfModelFactory
             1681,
             1670.9,
             1657.76,
-            1668.6,
-            2.7,
+            1668.17,
+            1676.35,
+            1676.85,
+            1648.7,
+            -8.3,
         };
         coefficientss[2, 2, 1] = new[]
         {
@@ -226,8 +247,11 @@ public class IgrfModelFactory
             -413,
             -458.0,
             -515.43,
-            -575.4,
-            -12.9,
+            -575.73,
+            -642.17,
+            -734.62,
+            -814.2,
+            -11.1,
         };
         coefficientss[3, 0, 0] = new[]
         {
@@ -253,8 +277,11 @@ public class IgrfModelFactory
             1335,
             1339.6,
             1336.30,
-            1339.7,
-            1.3,
+            1339.85,
+            1350.33,
+            1363.00,
+            1360.9,
+            -1.5,
         };
         coefficientss[3, 1, 0] = new[]
         {
@@ -280,8 +307,11 @@ public class IgrfModelFactory
             -2267,
             -2288.0,
             -2305.83,
-            -2326.3,
-            -3.9,
+            -2326.54,
+            -2352.26,
+            -2380.80,
+            -2404.2,
+            -4.4,
         };
         coefficientss[3, 1, 1] = new[]
         {
@@ -307,8 +337,11 @@ public class IgrfModelFactory
             -262,
             -227.6,
             -198.86,
-            -160.5,
-            8.6,
+            -160.40,
+            -115.29,
+            -81.96,
+            -56.9,
+            3.8,
         };
         coefficientss[3, 2, 0] = new[]
         {
@@ -334,8 +367,11 @@ public class IgrfModelFactory
             1249,
             1252.1,
             1246.39,
-            1231.7,
-            -2.9,
+            1232.10,
+            1225.85,
+            1236.06,
+            1243.8,
+            0.4,
         };
         coefficientss[3, 2, 1] = new[]
         {
@@ -361,8 +397,11 @@ public class IgrfModelFactory
             302,
             293.4,
             269.72,
-            251.7,
-            -2.9,
+            251.75,
+            245.04,
+            241.80,
+            237.6,
+            -0.2,
         };
         coefficientss[3, 3, 0] = new[]
         {
@@ -388,8 +427,11 @@ public class IgrfModelFactory
             759,
             714.5,
             672.51,
-            634.2,
-            -8.1,
+            633.73,
+            581.69,
+            525.60,
+            453.4,
+            -15.6,
         };
         coefficientss[3, 3, 1] = new[]
         {
@@ -415,8 +457,11 @@ public class IgrfModelFactory
             -427,
             -491.1,
             -524.72,
-            -536.8,
-            -2.1,
+            -537.03,
+            -538.7,
+            -542.52,
+            -549.6,
+            -3.9,
         };
         coefficientss[4, 0, 0] = new[]
         {
@@ -442,8 +487,11 @@ public class IgrfModelFactory
             940,
             932.3,
             920.55,
-            912.6,
-            -1.4,
+            912.66,
+            907.42,
+            902.82,
+            894.7,
+            -1.7,
         };
         coefficientss[4, 1, 0] = new[]
         {
@@ -469,8 +517,11 @@ public class IgrfModelFactory
             780,
             786.8,
             797.96,
-            809.0,
-            2.0,
+            808.97,
+            813.68,
+            809.47,
+            799.6,
+            -2.3,
         };
         coefficientss[4, 1, 1] = new[]
         {
@@ -496,8 +547,11 @@ public class IgrfModelFactory
             262,
             272.6,
             282.07,
-            286.4,
-            0.4,
+            286.48,
+            283.54,
+            282.10,
+            278.6,
+            -1.3,
         };
         coefficientss[4, 2, 0] = new[]
         {
@@ -523,8 +577,11 @@ public class IgrfModelFactory
             290,
             250.0,
             210.65,
-            166.6,
-            -8.9,
+            166.58,
+            120.49,
+            86.18,
+            55.8,
+            -5.8,
         };
         coefficientss[4, 2, 1] = new[]
         {
@@ -550,8 +607,11 @@ public class IgrfModelFactory
             -236,
             -231.9,
             -225.23,
-            -211.2,
-            3.2,
+            -211.03,
+            -188.43,
+            -158.50,
+            -134.0,
+            4.1,
         };
         coefficientss[4, 3, 0] = new[]
         {
@@ -577,8 +637,11 @@ public class IgrfModelFactory
             -418,
             -403.0,
             -379.86,
-            -357.1,
-            4.4,
+            -356.83,
+            -334.85,
+            -309.47,
+            -281.1,
+            5.4,
         };
         coefficientss[4, 3, 1] = new[]
         {
@@ -604,8 +667,11 @@ public class IgrfModelFactory
             97,
             119.8,
             145.15,
-            164.4,
-            3.6,
+            164.46,
+            180.95,
+            199.75,
+            212.0,
+            1.6,
         };
         coefficientss[4, 4, 0] = new[]
         {
@@ -631,8 +697,11 @@ public class IgrfModelFactory
             122,
             111.3,
             100.00,
-            89.7,
-            -2.3,
+            89.40,
+            70.38,
+            47.44,
+            12.0,
+            -6.8,
         };
         coefficientss[4, 4, 1] = new[]
         {
@@ -658,8 +727,11 @@ public class IgrfModelFactory
             -306,
             -303.8,
             -305.36,
-            -309.2,
-            -0.8,
+            -309.72,
+            -329.23,
+            -350.30,
+            -375.4,
+            -4.1,
         };
         coefficientss[5, 0, 0] = new[]
         {
@@ -685,8 +757,11 @@ public class IgrfModelFactory
             -214,
             -218.8,
             -227.00,
-            -231.1,
-            -0.5,
+            -230.87,
+            -232.91,
+            -234.42,
+            -232.9,
+            0.6,
         };
         coefficientss[5, 1, 0] = new[]
         {
@@ -712,8 +787,11 @@ public class IgrfModelFactory
             352,
             351.4,
             354.41,
-            357.2,
-            0.5,
+            357.29,
+            360.14,
+            363.26,
+            369.0,
+            1.3,
         };
         coefficientss[5, 1, 1] = new[]
         {
@@ -739,8 +817,11 @@ public class IgrfModelFactory
             46,
             43.8,
             42.72,
-            44.7,
-            0.5,
+            44.58,
+            46.98,
+            47.52,
+            45.3,
+            -0.5,
         };
         coefficientss[5, 2, 0] = new[]
         {
@@ -766,8 +847,11 @@ public class IgrfModelFactory
             235,
             222.3,
             208.95,
-            200.3,
-            -1.5,
+            200.26,
+            192.35,
+            187.86,
+            187.2,
+            0.0,
         };
         coefficientss[5, 2, 1] = new[]
         {
@@ -793,8 +877,11 @@ public class IgrfModelFactory
             165,
             171.9,
             180.25,
-            188.9,
-            1.5,
+            189.01,
+            196.98,
+            208.36,
+            220.0,
+            2.1,
         };
         coefficientss[5, 3, 0] = new[]
         {
@@ -820,8 +907,11 @@ public class IgrfModelFactory
             -118,
             -130.4,
             -136.54,
-            -141.2,
-            -0.7,
+            -141.05,
+            -140.94,
+            -140.73,
+            -138.7,
+            0.7,
         };
         coefficientss[5, 3, 1] = new[]
         {
@@ -847,8 +937,11 @@ public class IgrfModelFactory
             -143,
             -133.1,
             -123.45,
-            -118.1,
-            0.9,
+            -118.06,
+            -119.14,
+            -121.43,
+            -122.9,
+            0.5,
         };
         coefficientss[5, 4, 0] = new[]
         {
@@ -874,8 +967,11 @@ public class IgrfModelFactory
             -166,
             -168.6,
             -168.05,
-            -163.1,
-            1.3,
+            -163.17,
+            -157.4,
+            -151.16,
+            -141.9,
+            2.3,
         };
         coefficientss[5, 4, 1] = new[]
         {
@@ -901,8 +997,11 @@ public class IgrfModelFactory
             -55,
             -39.3,
             -19.57,
-            0.1,
-            3.7,
+            -0.01,
+            15.98,
+            32.09,
+            42.9,
+            1.7,
         };
         coefficientss[5, 5, 0] = new[]
         {
@@ -928,8 +1027,11 @@ public class IgrfModelFactory
             -17,
             -12.9,
             -13.55,
-            -7.7,
-            1.4,
+            -8.03,
+            4.3,
+            13.98,
+            20.9,
+            1.0,
         };
         coefficientss[5, 5, 1] = new[]
         {
@@ -955,8 +1057,11 @@ public class IgrfModelFactory
             107,
             106.3,
             103.85,
-            100.9,
-            -0.6,
+            101.04,
+            100.12,
+            99.14,
+            106.2,
+            1.9,
         };
         coefficientss[6, 0, 0] = new[]
         {
@@ -982,8 +1087,11 @@ public class IgrfModelFactory
             68,
             72.3,
             73.60,
-            72.8,
-            -0.3,
+            72.78,
+            69.55,
+            65.97,
+            64.3,
+            -0.2,
         };
         coefficientss[6, 1, 0] = new[]
         {
@@ -1009,7 +1117,10 @@ public class IgrfModelFactory
             67,
             68.2,
             69.56,
-            68.6,
+            68.69,
+            67.57,
+            65.56,
+            63.8,
             -0.3,
         };
         coefficientss[6, 1, 1] = new[]
@@ -1036,8 +1147,11 @@ public class IgrfModelFactory
             -17,
             -17.4,
             -20.33,
-            -20.8,
-            -0.1,
+            -20.90,
+            -20.61,
+            -19.22,
+            -18.4,
+            0.3,
         };
         coefficientss[6, 2, 0] = new[]
         {
@@ -1063,8 +1177,11 @@ public class IgrfModelFactory
             68,
             74.2,
             76.74,
-            76.0,
-            -0.3,
+            75.92,
+            72.79,
+            72.96,
+            76.7,
+            0.8,
         };
         coefficientss[6, 2, 1] = new[]
         {
@@ -1090,8 +1207,11 @@ public class IgrfModelFactory
             72,
             63.7,
             54.75,
-            44.2,
-            -2.1,
+            44.18,
+            33.3,
+            25.02,
+            16.8,
+            -1.6,
         };
         coefficientss[6, 3, 0] = new[]
         {
@@ -1117,8 +1237,11 @@ public class IgrfModelFactory
             -170,
             -160.9,
             -151.34,
-            -141.4,
-            1.9,
+            -141.40,
+            -129.85,
+            -121.57,
+            -115.7,
+            1.2,
         };
         coefficientss[6, 3, 1] = new[]
         {
@@ -1144,7 +1267,10 @@ public class IgrfModelFactory
             67,
             65.1,
             63.63,
-            61.5,
+            61.54,
+            58.74,
+            52.76,
+            48.9,
             -0.4,
         };
         coefficientss[6, 4, 0] = new[]
@@ -1171,8 +1297,11 @@ public class IgrfModelFactory
             -1,
             -5.9,
             -14.58,
-            -22.9,
-            -1.6,
+            -22.83,
+            -28.93,
+            -36.06,
+            -40.9,
+            -0.8,
         };
         coefficientss[6, 4, 1] = new[]
         {
@@ -1198,8 +1327,11 @@ public class IgrfModelFactory
             -58,
             -61.2,
             -63.53,
-            -66.3,
-            -0.5,
+            -66.26,
+            -66.64,
+            -64.40,
+            -59.8,
+            0.8,
         };
         coefficientss[6, 5, 0] = new[]
         {
@@ -1225,8 +1357,11 @@ public class IgrfModelFactory
             19,
             16.9,
             14.58,
-            13.1,
-            -0.2,
+            13.10,
+            13.14,
+            13.60,
+            14.9,
+            0.4,
         };
         coefficientss[6, 5, 1] = new[]
         {
@@ -1252,8 +1387,11 @@ public class IgrfModelFactory
             1,
             0.7,
             0.24,
-            3.1,
-            0.8,
+            3.02,
+            7.35,
+            8.96,
+            10.9,
+            0.7,
         };
         coefficientss[6, 6, 0] = new[]
         {
@@ -1279,8 +1417,11 @@ public class IgrfModelFactory
             -93,
             -90.4,
             -86.36,
-            -77.9,
-            1.8,
+            -78.09,
+            -70.85,
+            -64.80,
+            -60.8,
+            0.9,
         };
         coefficientss[6, 6, 1] = new[]
         {
@@ -1306,8 +1447,11 @@ public class IgrfModelFactory
             36,
             43.8,
             50.94,
-            54.9,
-            0.5,
+            55.40,
+            62.41,
+            68.04,
+            72.8,
+            0.9,
         };
         coefficientss[7, 0, 0] = new[]
         {
@@ -1333,8 +1477,11 @@ public class IgrfModelFactory
             77,
             79.0,
             79.88,
-            80.4,
-            0.2,
+            80.44,
+            81.29,
+            80.54,
+            79.6,
+            -0.1,
         };
         coefficientss[7, 1, 0] = new[]
         {
@@ -1360,7 +1507,10 @@ public class IgrfModelFactory
             -72,
             -74.0,
             -74.46,
-            -75.0,
+            -75.00,
+            -75.99,
+            -76.63,
+            -76.9,
             -0.1,
         };
         coefficientss[7, 1, 1] = new[]
@@ -1387,7 +1537,10 @@ public class IgrfModelFactory
             -69,
             -64.6,
             -61.14,
-            -57.8,
+            -57.80,
+            -54.27,
+            -51.50,
+            -48.9,
             0.6,
         };
         coefficientss[7, 2, 0] = new[]
@@ -1414,8 +1567,11 @@ public class IgrfModelFactory
             1,
             0.0,
             -1.65,
-            -4.7,
-            -0.6,
+            -4.55,
+            -6.79,
+            -8.23,
+            -8.8,
+            -0.1,
         };
         coefficientss[7, 2, 1] = new[]
         {
@@ -1441,8 +1597,11 @@ public class IgrfModelFactory
             -25,
             -24.2,
             -22.57,
-            -21.2,
-            0.3,
+            -21.20,
+            -19.53,
+            -16.85,
+            -14.4,
+            0.5,
         };
         coefficientss[7, 3, 0] = new[]
         {
@@ -1468,8 +1627,11 @@ public class IgrfModelFactory
             28,
             33.3,
             38.73,
-            45.3,
-            1.4,
+            45.24,
+            51.82,
+            56.45,
+            59.3,
+            0.5,
         };
         coefficientss[7, 3, 1] = new[]
         {
@@ -1495,8 +1657,11 @@ public class IgrfModelFactory
             4,
             6.2,
             6.82,
-            6.6,
-            -0.2,
+            6.54,
+            5.59,
+            2.36,
+            -1.0,
+            -0.7,
         };
         coefficientss[7, 4, 0] = new[]
         {
@@ -1522,8 +1687,11 @@ public class IgrfModelFactory
             5,
             9.1,
             12.30,
-            14.0,
-            0.3,
+            14.00,
+            15.07,
+            15.80,
+            15.8,
+            -0.1,
         };
         coefficientss[7, 4, 1] = new[]
         {
@@ -1549,8 +1717,11 @@ public class IgrfModelFactory
             24,
             24.0,
             25.35,
-            24.9,
-            -0.1,
+            24.96,
+            24.45,
+            23.56,
+            23.5,
+            0.0,
         };
         coefficientss[7, 5, 0] = new[]
         {
@@ -1576,8 +1747,11 @@ public class IgrfModelFactory
             4,
             6.9,
             9.37,
-            10.4,
-            0.1,
+            10.46,
+            9.32,
+            6.30,
+            2.5,
+            -0.8,
         };
         coefficientss[7, 5, 1] = new[]
         {
@@ -1603,8 +1777,11 @@ public class IgrfModelFactory
             17,
             14.8,
             10.93,
-            7.0,
-            -0.8,
+            7.03,
+            3.27,
+            -2.19,
+            -7.4,
+            -0.9,
         };
         coefficientss[7, 6, 0] = new[]
         {
@@ -1630,7 +1807,10 @@ public class IgrfModelFactory
             8,
             7.3,
             5.42,
-            1.6,
+            1.64,
+            -2.88,
+            -7.21,
+            -11.2,
             -0.8,
         };
         coefficientss[7, 6, 1] = new[]
@@ -1657,8 +1837,11 @@ public class IgrfModelFactory
             -24,
             -25.4,
             -26.32,
-            -27.7,
-            -0.3,
+            -27.61,
+            -27.5,
+            -27.19,
+            -25.1,
+            0.5,
         };
         coefficientss[7, 7, 0] = new[]
         {
@@ -1684,8 +1867,11 @@ public class IgrfModelFactory
             -2,
             -1.2,
             1.94,
-            4.9,
-            0.4,
+            4.92,
+            6.61,
+            9.77,
+            14.3,
+            0.9,
         };
         coefficientss[7, 7, 1] = new[]
         {
@@ -1711,8 +1897,11 @@ public class IgrfModelFactory
             -6,
             -5.8,
             -4.64,
-            -3.4,
-            0.2,
+            -3.28,
+            -2.32,
+            -1.90,
+            -2.2,
+            -0.3,
         };
         coefficientss[8, 0, 0] = new[]
         {
@@ -1738,7 +1927,10 @@ public class IgrfModelFactory
             25,
             24.4,
             24.80,
-            24.3,
+            24.41,
+            23.98,
+            23.66,
+            23.1,
             -0.1,
         };
         coefficientss[8, 1, 0] = new[]
@@ -1765,8 +1957,11 @@ public class IgrfModelFactory
             6,
             6.6,
             7.62,
-            8.2,
-            0.1,
+            8.21,
+            8.89,
+            9.74,
+            10.9,
+            0.2,
         };
         coefficientss[8, 1, 1] = new[]
         {
@@ -1792,8 +1987,11 @@ public class IgrfModelFactory
             11,
             11.9,
             11.20,
-            10.9,
-            0.0,
+            10.84,
+            10.04,
+            8.43,
+            7.2,
+            -0.3,
         };
         coefficientss[8, 2, 0] = new[]
         {
@@ -1819,8 +2017,11 @@ public class IgrfModelFactory
             -6,
             -9.2,
             -11.73,
-            -14.5,
-            -0.5,
+            -14.50,
+            -16.78,
+            -17.49,
+            -17.5,
+            0.0,
         };
         coefficientss[8, 2, 1] = new[]
         {
@@ -1846,8 +2047,11 @@ public class IgrfModelFactory
             -21,
             -21.5,
             -20.88,
-            -20.0,
-            0.2,
+            -20.03,
+            -18.26,
+            -15.23,
+            -12.6,
+            0.4,
         };
         coefficientss[8, 3, 0] = new[]
         {
@@ -1873,8 +2077,11 @@ public class IgrfModelFactory
             -9,
             -7.9,
             -6.88,
-            -5.7,
-            0.3,
+            -5.59,
+            -3.16,
+            -0.49,
+            2.0,
+            0.4,
         };
         coefficientss[8, 3, 1] = new[]
         {
@@ -1900,8 +2107,11 @@ public class IgrfModelFactory
             8,
             8.5,
             9.83,
-            11.9,
-            0.5,
+            11.83,
+            13.18,
+            12.83,
+            11.5,
+            -0.3,
         };
         coefficientss[8, 4, 0] = new[]
         {
@@ -1927,8 +2137,11 @@ public class IgrfModelFactory
             -14,
             -16.6,
             -18.11,
-            -19.3,
-            -0.3,
+            -19.34,
+            -20.56,
+            -21.07,
+            -21.8,
+            -0.1,
         };
         coefficientss[8, 4, 1] = new[]
         {
@@ -1954,7 +2167,10 @@ public class IgrfModelFactory
             -23,
             -21.5,
             -19.71,
-            -17.4,
+            -17.41,
+            -14.6,
+            -11.76,
+            -9.7,
             0.4,
         };
         coefficientss[8, 5, 0] = new[]
@@ -1981,7 +2197,10 @@ public class IgrfModelFactory
             9,
             9.1,
             10.17,
-            11.6,
+            11.61,
+            13.33,
+            15.28,
+            16.9,
             0.3,
         };
         coefficientss[8, 5, 1] = new[]
@@ -2008,8 +2227,11 @@ public class IgrfModelFactory
             15,
             15.5,
             16.22,
-            16.7,
-            0.1,
+            16.71,
+            16.16,
+            14.94,
+            12.7,
+            -0.5,
         };
         coefficientss[8, 6, 0] = new[]
         {
@@ -2035,8 +2257,11 @@ public class IgrfModelFactory
             6,
             7.0,
             9.36,
-            10.9,
-            0.2,
+            10.85,
+            11.76,
+            13.65,
+            14.9,
+            0.1,
         };
         coefficientss[8, 6, 1] = new[]
         {
@@ -2062,8 +2287,11 @@ public class IgrfModelFactory
             11,
             8.9,
             7.61,
-            7.1,
-            -0.1,
+            6.96,
+            5.69,
+            3.62,
+            0.7,
+            -0.6,
         };
         coefficientss[8, 7, 0] = new[]
         {
@@ -2089,8 +2317,11 @@ public class IgrfModelFactory
             -5,
             -7.9,
             -11.25,
-            -14.1,
-            -0.5,
+            -14.05,
+            -15.98,
+            -16.59,
+            -16.8,
+            0.0,
         };
         coefficientss[8, 7, 1] = new[]
         {
@@ -2116,8 +2347,11 @@ public class IgrfModelFactory
             -16,
             -14.9,
             -12.76,
-            -10.8,
-            0.4,
+            -10.74,
+            -9.1,
+            -6.90,
+            -5.2,
+            0.3,
         };
         coefficientss[8, 8, 0] = new[]
         {
@@ -2143,8 +2377,11 @@ public class IgrfModelFactory
             -7,
             -7.0,
             -4.87,
-            -3.7,
-            0.2,
+            -3.54,
+            -2.02,
+            -0.34,
+            1.0,
+            0.3,
         };
         coefficientss[8, 8, 1] = new[]
         {
@@ -2170,8 +2407,11 @@ public class IgrfModelFactory
             -4,
             -2.1,
             -0.06,
-            1.7,
-            0.4,
+            1.64,
+            2.26,
+            2.90,
+            3.9,
+            0.2,
         };
         coefficientss[9, 0, 0] = new[]
         {
@@ -2197,7 +2437,10 @@ public class IgrfModelFactory
             4,
             5.0,
             5.58,
-            5.4,
+            5.50,
+            5.33,
+            5.03,
+            4.7,
             0.0,
         };
         coefficientss[9, 1, 0] = new[]
@@ -2224,7 +2467,10 @@ public class IgrfModelFactory
             9,
             9.4,
             9.76,
-            9.4,
+            9.45,
+            8.83,
+            8.36,
+            8.0,
             0.0,
         };
         coefficientss[9, 1, 1] = new[]
@@ -2251,7 +2497,10 @@ public class IgrfModelFactory
             -20,
             -19.7,
             -20.11,
-            -20.5,
+            -20.54,
+            -21.77,
+            -23.44,
+            -24.8,
             0.0,
         };
         coefficientss[9, 2, 0] = new[]
@@ -2278,7 +2527,10 @@ public class IgrfModelFactory
             3,
             3.0,
             3.58,
-            3.4,
+            3.45,
+            3.02,
+            2.84,
+            3.0,
             0.0,
         };
         coefficientss[9, 2, 1] = new[]
@@ -2305,7 +2557,10 @@ public class IgrfModelFactory
             15,
             13.4,
             12.69,
-            11.6,
+            11.51,
+            10.76,
+            11.04,
+            12.1,
             0.0,
         };
         coefficientss[9, 3, 0] = new[]
@@ -2332,7 +2587,10 @@ public class IgrfModelFactory
             -10,
             -8.4,
             -6.94,
-            -5.3,
+            -5.27,
+            -3.22,
+            -1.48,
+            -0.2,
             0.0,
         };
         coefficientss[9, 3, 1] = new[]
@@ -2359,7 +2617,10 @@ public class IgrfModelFactory
             12,
             12.5,
             12.67,
-            12.8,
+            12.75,
+            11.74,
+            9.86,
+            8.3,
             0.0,
         };
         coefficientss[9, 4, 0] = new[]
@@ -2386,7 +2647,10 @@ public class IgrfModelFactory
             8,
             6.3,
             5.01,
-            3.1,
+            3.13,
+            0.67,
+            -1.14,
+            -2.5,
             0.0,
         };
         coefficientss[9, 4, 1] = new[]
@@ -2413,7 +2677,10 @@ public class IgrfModelFactory
             -6,
             -6.2,
             -6.72,
-            -7.2,
+            -7.14,
+            -6.74,
+            -5.13,
+            -3.4,
             0.0,
         };
         coefficientss[9, 5, 0] = new[]
@@ -2440,7 +2707,10 @@ public class IgrfModelFactory
             -8,
             -8.9,
             -10.76,
-            -12.4,
+            -12.38,
+            -13.2,
+            -13.22,
+            -13.1,
             0.0,
         };
         coefficientss[9, 5, 1] = new[]
@@ -2467,7 +2737,10 @@ public class IgrfModelFactory
             -8,
             -8.4,
             -8.16,
-            -7.4,
+            -7.42,
+            -6.88,
+            -6.20,
+            -5.3,
             0.0,
         };
         coefficientss[9, 6, 0] = new[]
@@ -2494,7 +2767,10 @@ public class IgrfModelFactory
             -1,
             -1.5,
             -1.25,
-            -0.8,
+            -0.76,
+            -0.1,
+            1.08,
+            2.4,
             0.0,
         };
         coefficientss[9, 6, 1] = new[]
@@ -2521,7 +2797,10 @@ public class IgrfModelFactory
             8,
             8.4,
             8.10,
-            8.0,
+            7.97,
+            7.79,
+            7.79,
+            7.2,
             0.0,
         };
         coefficientss[9, 7, 0] = new[]
@@ -2548,7 +2827,10 @@ public class IgrfModelFactory
             10,
             9.3,
             8.76,
-            8.4,
+            8.43,
+            8.68,
+            8.82,
+            8.6,
             0.0,
         };
         coefficientss[9, 7, 1] = new[]
@@ -2575,7 +2857,10 @@ public class IgrfModelFactory
             5,
             3.8,
             2.92,
-            2.2,
+            2.14,
+            1.04,
+            0.40,
+            -0.6,
             0.0,
         };
         coefficientss[9, 8, 0] = new[]
@@ -2602,7 +2887,10 @@ public class IgrfModelFactory
             -2,
             -4.3,
             -6.66,
-            -8.4,
+            -8.42,
+            -9.06,
+            -9.23,
+            -8.7,
             0.0,
         };
         coefficientss[9, 8, 1] = new[]
@@ -2629,7 +2917,10 @@ public class IgrfModelFactory
             -8,
             -8.2,
             -7.73,
-            -6.1,
+            -6.08,
+            -3.89,
+            -1.44,
+            0.8,
             0.0,
         };
         coefficientss[9, 9, 0] = new[]
@@ -2656,7 +2947,10 @@ public class IgrfModelFactory
             -8,
             -8.2,
             -9.22,
-            -10.1,
+            -10.08,
+            -10.54,
+            -11.86,
+            -12.8,
             0.0,
         };
         coefficientss[9, 9, 1] = new[]
@@ -2683,7 +2977,10 @@ public class IgrfModelFactory
             3,
             4.8,
             6.01,
-            7.0,
+            7.01,
+            8.44,
+            9.60,
+            9.8,
             0.0,
         };
         coefficientss[10, 0, 0] = new[]
@@ -2710,7 +3007,10 @@ public class IgrfModelFactory
             -3,
             -2.6,
             -2.17,
-            -2.0,
+            -1.94,
+            -2.01,
+            -1.84,
+            -1.3,
             0.0,
         };
         coefficientss[10, 1, 0] = new[]
@@ -2737,7 +3037,10 @@ public class IgrfModelFactory
             -6,
             -6.0,
             -6.12,
-            -6.3,
+            -6.24,
+            -6.26,
+            -6.25,
+            -6.4,
             0.0,
         };
         coefficientss[10, 1, 1] = new[]
@@ -2764,7 +3067,10 @@ public class IgrfModelFactory
             1,
             1.7,
             2.19,
-            2.8,
+            2.73,
+            3.28,
+            3.38,
+            3.3,
             0.0,
         };
         coefficientss[10, 2, 0] = new[]
@@ -2791,7 +3097,10 @@ public class IgrfModelFactory
             2,
             1.7,
             1.42,
-            0.9,
+            0.89,
+            0.17,
+            -0.11,
+            0.2,
             0.0,
         };
         coefficientss[10, 2, 1] = new[]
@@ -2818,7 +3127,10 @@ public class IgrfModelFactory
             0,
             0.0,
             0.10,
-            -0.1,
+            -0.10,
+            -0.4,
+            -0.18,
+            0.1,
             0.0,
         };
         coefficientss[10, 3, 0] = new[]
@@ -2845,7 +3157,10 @@ public class IgrfModelFactory
             -4,
             -3.1,
             -2.35,
-            -1.1,
+            -1.07,
+            0.55,
+            1.66,
+            2.0,
             0.0,
         };
         coefficientss[10, 3, 1] = new[]
@@ -2872,7 +3187,10 @@ public class IgrfModelFactory
             4,
             4.0,
             4.46,
-            4.7,
+            4.71,
+            4.55,
+            3.50,
+            2.5,
             0.0,
         };
         coefficientss[10, 4, 0] = new[]
@@ -2899,7 +3217,10 @@ public class IgrfModelFactory
             -1,
             -0.5,
             -0.15,
-            -0.2,
+            -0.16,
+            -0.55,
+            -0.86,
+            -1.0,
             0.0,
         };
         coefficientss[10, 4, 1] = new[]
@@ -2926,7 +3247,10 @@ public class IgrfModelFactory
             5,
             4.9,
             4.76,
+            4.44,
             4.4,
+            4.86,
+            5.4,
             0.0,
         };
         coefficientss[10, 5, 0] = new[]
@@ -2953,7 +3277,10 @@ public class IgrfModelFactory
             4,
             3.7,
             3.06,
-            2.5,
+            2.45,
+            1.7,
+            0.65,
+            -0.5,
             0.0,
         };
         coefficientss[10, 5, 1] = new[]
@@ -2980,7 +3307,10 @@ public class IgrfModelFactory
             -5,
             -5.9,
             -6.58,
-            -7.2,
+            -7.22,
+            -7.92,
+            -8.62,
+            -9.0,
             0.0,
         };
         coefficientss[10, 6, 0] = new[]
@@ -3007,7 +3337,10 @@ public class IgrfModelFactory
             2,
             1.0,
             0.29,
-            -0.3,
+            -0.33,
+            -0.67,
+            -0.88,
+            -0.9,
             0.0,
         };
         coefficientss[10, 6, 1] = new[]
@@ -3034,7 +3367,10 @@ public class IgrfModelFactory
             -1,
             -1.2,
             -1.01,
-            -1.0,
+            -0.96,
+            -0.61,
+            -0.11,
+            0.4,
             0.0,
         };
         coefficientss[10, 7, 0] = new[]
@@ -3061,7 +3397,10 @@ public class IgrfModelFactory
             2,
             2.0,
             2.06,
-            2.2,
+            2.13,
+            2.13,
+            1.88,
+            1.5,
             0.0,
         };
         coefficientss[10, 7, 1] = new[]
@@ -3088,7 +3427,10 @@ public class IgrfModelFactory
             -2,
             -2.9,
             -3.47,
-            -4.0,
+            -3.95,
+            -4.16,
+            -4.26,
+            -4.2,
             0.0,
         };
         coefficientss[10, 8, 0] = new[]
@@ -3115,7 +3457,10 @@ public class IgrfModelFactory
             5,
             4.2,
             3.77,
-            3.1,
+            3.09,
+            2.33,
+            1.44,
+            0.9,
             0.0,
         };
         coefficientss[10, 8, 1] = new[]
@@ -3142,7 +3487,10 @@ public class IgrfModelFactory
             1,
             0.2,
             -0.86,
-            -2.0,
+            -1.99,
+            -2.85,
+            -3.43,
+            -3.8,
             0.0,
         };
         coefficientss[10, 9, 0] = new[]
@@ -3169,7 +3517,10 @@ public class IgrfModelFactory
             1,
             0.3,
             -0.21,
-            -1.0,
+            -1.03,
+            -1.8,
+            -2.38,
+            -2.6,
             0.0,
         };
         coefficientss[10, 9, 1] = new[]
@@ -3196,7 +3547,10 @@ public class IgrfModelFactory
             -2,
             -2.2,
             -2.31,
-            -2.0,
+            -1.97,
+            -1.12,
+            -0.10,
+            0.9,
             0.0,
         };
         coefficientss[10, 10, 0] = new[]
@@ -3223,7 +3577,10 @@ public class IgrfModelFactory
             0,
             -1.1,
             -2.09,
-            -2.8,
+            -2.80,
+            -3.59,
+            -3.84,
+            -3.9,
             0.0,
         };
         coefficientss[10, 10, 1] = new[]
@@ -3250,7 +3607,10 @@ public class IgrfModelFactory
             -7,
             -7.4,
             -7.93,
-            -8.3,
+            -8.31,
+            -8.72,
+            -8.84,
+            -9.0,
             0.0,
         };
         coefficientss[11, 0, 0] = new[]
@@ -3277,6 +3637,9 @@ public class IgrfModelFactory
             0,
             2.7,
             2.95,
+            3.05,
+            3,
+            2.96,
             3.0,
             0.0,
         };
@@ -3304,7 +3667,10 @@ public class IgrfModelFactory
             0,
             -1.7,
             -1.60,
-            -1.5,
+            -1.48,
+            -1.4,
+            -1.36,
+            -1.4,
             0.0,
         };
         coefficientss[11, 1, 1] = new[]
@@ -3331,7 +3697,10 @@ public class IgrfModelFactory
             0,
             0.1,
             0.26,
-            0.1,
+            0.13,
+            0,
+            -0.02,
+            0.0,
             0.0,
         };
         coefficientss[11, 2, 0] = new[]
@@ -3358,7 +3727,10 @@ public class IgrfModelFactory
             0,
             -1.9,
             -1.88,
-            -2.1,
+            -2.03,
+            -2.3,
+            -2.51,
+            -2.5,
             0.0,
         };
         coefficientss[11, 2, 1] = new[]
@@ -3385,7 +3757,10 @@ public class IgrfModelFactory
             0,
             1.3,
             1.44,
-            1.7,
+            1.67,
+            2.11,
+            2.50,
+            2.8,
             0.0,
         };
         coefficientss[11, 3, 0] = new[]
@@ -3412,7 +3787,10 @@ public class IgrfModelFactory
             0,
             1.5,
             1.44,
-            1.6,
+            1.65,
+            2.08,
+            2.31,
+            2.4,
             0.0,
         };
         coefficientss[11, 3, 1] = new[]
@@ -3439,6 +3817,9 @@ public class IgrfModelFactory
             0,
             -0.9,
             -0.77,
+            -0.66,
+            -0.6,
+            -0.55,
             -0.6,
             0.0,
         };
@@ -3466,7 +3847,10 @@ public class IgrfModelFactory
             0,
             -0.1,
             -0.31,
-            -0.5,
+            -0.51,
+            -0.79,
+            -0.85,
+            -0.6,
             0.0,
         };
         coefficientss[11, 4, 1] = new[]
@@ -3493,7 +3877,10 @@ public class IgrfModelFactory
             0,
             -2.6,
             -2.27,
-            -1.8,
+            -1.76,
+            -1.05,
+            -0.39,
+            0.1,
             0.0,
         };
         coefficientss[11, 5, 0] = new[]
@@ -3520,7 +3907,10 @@ public class IgrfModelFactory
             0,
             0.1,
             0.29,
-            0.5,
+            0.54,
+            0.58,
+            0.28,
+            0.0,
             0.0,
         };
         coefficientss[11, 5, 1] = new[]
@@ -3547,7 +3937,10 @@ public class IgrfModelFactory
             0,
             0.9,
             0.90,
-            0.9,
+            0.85,
+            0.76,
+            0.62,
+            0.5,
             0.0,
         };
         coefficientss[11, 6, 0] = new[]
@@ -3574,7 +3967,10 @@ public class IgrfModelFactory
             0,
             -0.7,
             -0.79,
-            -0.8,
+            -0.79,
+            -0.7,
+            -0.66,
+            -0.6,
             0.0,
         };
         coefficientss[11, 6, 1] = new[]
@@ -3601,7 +3997,10 @@ public class IgrfModelFactory
             0,
             -0.7,
             -0.58,
-            -0.4,
+            -0.39,
+            -0.2,
+            -0.21,
+            -0.3,
             0.0,
         };
         coefficientss[11, 7, 0] = new[]
@@ -3628,7 +4027,10 @@ public class IgrfModelFactory
             0,
             0.7,
             0.53,
-            0.4,
+            0.37,
+            0.14,
+            -0.07,
+            -0.1,
             0.0,
         };
         coefficientss[11, 7, 1] = new[]
@@ -3655,7 +4057,10 @@ public class IgrfModelFactory
             0,
             -2.8,
             -2.69,
-            -2.5,
+            -2.51,
+            -2.12,
+            -1.66,
+            -1.2,
             0.0,
         };
         coefficientss[11, 8, 0] = new[]
@@ -3682,7 +4087,10 @@ public class IgrfModelFactory
             0,
             1.7,
             1.80,
-            1.8,
+            1.79,
+            1.7,
+            1.44,
+            1.1,
             0.0,
         };
         coefficientss[11, 8, 1] = new[]
@@ -3709,7 +4117,10 @@ public class IgrfModelFactory
             0,
             -0.9,
             -1.08,
-            -1.3,
+            -1.27,
+            -1.44,
+            -1.60,
+            -1.7,
             0.0,
         };
         coefficientss[11, 9, 0] = new[]
@@ -3736,7 +4147,10 @@ public class IgrfModelFactory
             0,
             0.1,
             0.16,
-            0.2,
+            0.12,
+            -0.22,
+            -0.59,
+            -1.0,
             0.0,
         };
         coefficientss[11, 9, 1] = new[]
@@ -3763,7 +4177,10 @@ public class IgrfModelFactory
             0,
             -1.2,
             -1.58,
-            -2.1,
+            -2.11,
+            -2.57,
+            -2.98,
+            -2.9,
             0.0,
         };
         coefficientss[11, 10, 0] = new[]
@@ -3790,7 +4207,10 @@ public class IgrfModelFactory
             0,
             1.2,
             0.96,
-            0.8,
+            0.75,
+            0.44,
+            0.18,
+            -0.1,
             0.0,
         };
         coefficientss[11, 10, 1] = new[]
@@ -3817,7 +4237,10 @@ public class IgrfModelFactory
             0,
             -1.9,
             -1.90,
-            -1.9,
+            -1.94,
+            -2.01,
+            -1.97,
+            -1.8,
             0.0,
         };
         coefficientss[11, 11, 0] = new[]
@@ -3844,7 +4267,10 @@ public class IgrfModelFactory
             0,
             4.0,
             3.99,
-            3.8,
+            3.75,
+            3.49,
+            3.09,
+            2.6,
             0.0,
         };
         coefficientss[11, 11, 1] = new[]
@@ -3871,7 +4297,10 @@ public class IgrfModelFactory
             0,
             -0.9,
             -1.39,
-            -1.8,
+            -1.86,
+            -2.34,
+            -2.51,
+            -2.3,
             0.0,
         };
         coefficientss[12, 0, 0] = new[]
@@ -3898,7 +4327,10 @@ public class IgrfModelFactory
             0,
             -2.2,
             -2.15,
-            -2.1,
+            -2.12,
+            -2.09,
+            -2.00,
+            -2.0,
             0.0,
         };
         coefficientss[12, 1, 0] = new[]
@@ -3925,7 +4357,10 @@ public class IgrfModelFactory
             0,
             -0.3,
             -0.29,
-            -0.2,
+            -0.21,
+            -0.16,
+            -0.13,
+            -0.1,
             0.0,
         };
         coefficientss[12, 1, 1] = new[]
@@ -3952,7 +4387,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.55,
-            -0.8,
+            -0.87,
+            -1.08,
+            -1.15,
+            -1.2,
             0.0,
         };
         coefficientss[12, 2, 0] = new[]
@@ -3979,7 +4417,10 @@ public class IgrfModelFactory
             0,
             0.2,
             0.21,
-            0.3,
+            0.30,
+            0.46,
+            0.43,
+            0.4,
             0.0,
         };
         coefficientss[12, 2, 1] = new[]
@@ -4006,7 +4447,10 @@ public class IgrfModelFactory
             0,
             0.3,
             0.23,
-            0.3,
+            0.27,
+            0.37,
+            0.52,
+            0.6,
             0.0,
         };
         coefficientss[12, 3, 0] = new[]
@@ -4033,7 +4477,10 @@ public class IgrfModelFactory
             0,
             0.9,
             0.89,
-            1.0,
+            1.04,
+            1.23,
+            1.28,
+            1.2,
             0.0,
         };
         coefficientss[12, 3, 1] = new[]
@@ -4060,7 +4507,10 @@ public class IgrfModelFactory
             0,
             2.5,
             2.38,
-            2.2,
+            2.13,
+            1.75,
+            1.37,
+            1.0,
             0.0,
         };
         coefficientss[12, 4, 0] = new[]
@@ -4087,7 +4537,10 @@ public class IgrfModelFactory
             0,
             -0.2,
             -0.38,
-            -0.7,
+            -0.63,
+            -0.89,
+            -1.14,
+            -1.2,
             0.0,
         };
         coefficientss[12, 4, 1] = new[]
@@ -4114,7 +4567,10 @@ public class IgrfModelFactory
             0,
             -2.6,
             -2.63,
-            -2.5,
+            -2.49,
+            -2.19,
+            -1.81,
+            -1.5,
             0.0,
         };
         coefficientss[12, 5, 0] = new[]
@@ -4141,7 +4597,10 @@ public class IgrfModelFactory
             0,
             0.9,
             0.96,
-            0.9,
+            0.95,
+            0.85,
+            0.71,
+            0.6,
             0.0,
         };
         coefficientss[12, 5, 1] = new[]
@@ -4168,7 +4627,10 @@ public class IgrfModelFactory
             0,
             0.7,
             0.61,
-            0.5,
+            0.49,
+            0.27,
+            0.08,
+            0.0,
             0.0,
         };
         coefficientss[12, 6, 0] = new[]
@@ -4195,7 +4657,10 @@ public class IgrfModelFactory
             0,
             -0.5,
             -0.30,
-            -0.1,
+            -0.11,
+            0.1,
+            0.31,
+            0.5,
             0.0,
         };
         coefficientss[12, 6, 1] = new[]
@@ -4222,6 +4687,9 @@ public class IgrfModelFactory
             0,
             0.3,
             0.40,
+            0.59,
+            0.72,
+            0.71,
             0.6,
             0.0,
         };
@@ -4249,6 +4717,9 @@ public class IgrfModelFactory
             0,
             0.3,
             0.46,
+            0.52,
+            0.54,
+            0.49,
             0.5,
             0.0,
         };
@@ -4276,7 +4747,10 @@ public class IgrfModelFactory
             0,
             0.0,
             0.01,
-            0.0,
+            0.00,
+            -0.09,
+            -0.15,
+            -0.2,
             0.0,
         };
         coefficientss[12, 8, 0] = new[]
@@ -4303,7 +4777,10 @@ public class IgrfModelFactory
             0,
             -0.3,
             -0.35,
-            -0.4,
+            -0.39,
+            -0.37,
+            -0.26,
+            -0.1,
             0.0,
         };
         coefficientss[12, 8, 1] = new[]
@@ -4330,7 +4807,10 @@ public class IgrfModelFactory
             0,
             0.0,
             0.02,
-            0.1,
+            0.13,
+            0.29,
+            0.55,
+            0.8,
             0.0,
         };
         coefficientss[12, 9, 0] = new[]
@@ -4357,7 +4837,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.36,
-            -0.4,
+            -0.37,
+            -0.43,
+            -0.47,
+            -0.5,
             0.0,
         };
         coefficientss[12, 9, 1] = new[]
@@ -4384,7 +4867,10 @@ public class IgrfModelFactory
             0,
             0.3,
             0.28,
-            0.3,
+            0.27,
+            0.23,
+            0.16,
+            0.1,
             0.0,
         };
         coefficientss[12, 10, 0] = new[]
@@ -4411,7 +4897,10 @@ public class IgrfModelFactory
             0,
             -0.1,
             0.08,
-            0.2,
+            0.21,
+            0.22,
+            0.09,
+            -0.2,
             0.0,
         };
         coefficientss[12, 10, 1] = new[]
@@ -4438,6 +4927,9 @@ public class IgrfModelFactory
             0,
             -0.9,
             -0.87,
+            -0.86,
+            -0.89,
+            -0.93,
             -0.9,
             0.0,
         };
@@ -4465,7 +4957,10 @@ public class IgrfModelFactory
             0,
             -0.2,
             -0.49,
-            -0.8,
+            -0.77,
+            -0.94,
+            -1.13,
+            -1.2,
             0.0,
         };
         coefficientss[12, 11, 1] = new[]
@@ -4492,7 +4987,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.34,
-            -0.2,
+            -0.23,
+            -0.16,
+            -0.04,
+            0.1,
             0.0,
         };
         coefficientss[12, 12, 0] = new[]
@@ -4519,7 +5017,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.08,
-            0.0,
+            0.04,
+            -0.03,
+            -0.33,
+            -0.7,
             0.0,
         };
         coefficientss[12, 12, 1] = new[]
@@ -4546,7 +5047,10 @@ public class IgrfModelFactory
             0,
             0.8,
             0.88,
-            0.8,
+            0.87,
+            0.72,
+            0.52,
+            0.2,
             0.0,
         };
         coefficientss[13, 0, 0] = new[]
@@ -4573,7 +5077,10 @@ public class IgrfModelFactory
             0,
             -0.2,
             -0.16,
-            -0.2,
+            -0.09,
+            -0.02,
+            0.08,
+            0.2,
             0.0,
         };
         coefficientss[13, 1, 0] = new[]
@@ -4600,6 +5107,9 @@ public class IgrfModelFactory
             0,
             -0.9,
             -0.88,
+            -0.89,
+            -0.92,
+            -0.93,
             -0.9,
             0.0,
         };
@@ -4627,7 +5137,10 @@ public class IgrfModelFactory
             0,
             -0.9,
             -0.76,
-            -0.8,
+            -0.87,
+            -0.88,
+            -0.88,
+            -0.9,
             0.0,
         };
         coefficientss[13, 2, 0] = new[]
@@ -4654,7 +5167,10 @@ public class IgrfModelFactory
             0,
             0.3,
             0.30,
-            0.3,
+            0.31,
+            0.42,
+            0.53,
+            0.6,
             0.0,
         };
         coefficientss[13, 2, 1] = new[]
@@ -4681,7 +5197,10 @@ public class IgrfModelFactory
             0,
             0.2,
             0.33,
-            0.3,
+            0.30,
+            0.49,
+            0.64,
+            0.7,
             0.0,
         };
         coefficientss[13, 3, 0] = new[]
@@ -4708,7 +5227,10 @@ public class IgrfModelFactory
             0,
             0.1,
             0.28,
-            0.4,
+            0.42,
+            0.63,
+            0.72,
+            0.7,
             0.0,
         };
         coefficientss[13, 3, 1] = new[]
@@ -4735,7 +5257,10 @@ public class IgrfModelFactory
             0,
             1.8,
             1.72,
-            1.7,
+            1.66,
+            1.56,
+            1.40,
+            1.2,
             0.0,
         };
         coefficientss[13, 4, 0] = new[]
@@ -4762,7 +5287,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.43,
-            -0.4,
+            -0.45,
+            -0.42,
+            -0.30,
+            -0.2,
             0.0,
         };
         coefficientss[13, 4, 1] = new[]
@@ -4789,7 +5317,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.54,
-            -0.6,
+            -0.59,
+            -0.5,
+            -0.38,
+            -0.3,
             0.0,
         };
         coefficientss[13, 5, 0] = new[]
@@ -4816,7 +5347,10 @@ public class IgrfModelFactory
             0,
             1.3,
             1.18,
-            1.1,
+            1.08,
+            0.96,
+            0.75,
+            0.5,
             0.0,
         };
         coefficientss[13, 5, 1] = new[]
@@ -4843,7 +5377,10 @@ public class IgrfModelFactory
             0,
             -1.0,
             -1.07,
-            -1.2,
+            -1.14,
+            -1.24,
+            -1.31,
+            -1.3,
             0.0,
         };
         coefficientss[13, 6, 0] = new[]
@@ -4870,7 +5407,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.37,
-            -0.3,
+            -0.31,
+            -0.19,
+            -0.01,
+            0.1,
             0.0,
         };
         coefficientss[13, 6, 1] = new[]
@@ -4897,6 +5437,9 @@ public class IgrfModelFactory
             0,
             -0.1,
             -0.04,
+            -0.07,
+            -0.1,
+            -0.09,
             -0.1,
             0.0,
         };
@@ -4924,7 +5467,10 @@ public class IgrfModelFactory
             0,
             0.7,
             0.75,
-            0.8,
+            0.78,
+            0.81,
+            0.76,
+            0.7,
             0.0,
         };
         coefficientss[13, 7, 1] = new[]
@@ -4951,7 +5497,10 @@ public class IgrfModelFactory
             0,
             0.7,
             0.63,
-            0.5,
+            0.54,
+            0.42,
+            0.29,
+            0.2,
             0.0,
         };
         coefficientss[13, 8, 0] = new[]
@@ -4978,7 +5527,10 @@ public class IgrfModelFactory
             0,
             -0.4,
             -0.26,
-            -0.2,
+            -0.18,
+            -0.13,
+            -0.05,
+            0.0,
             0.0,
         };
         coefficientss[13, 8, 1] = new[]
@@ -5005,7 +5557,10 @@ public class IgrfModelFactory
             0,
             0.3,
             0.21,
-            0.1,
+            0.10,
+            -0.04,
+            -0.11,
+            -0.2,
             0.0,
         };
         coefficientss[13, 9, 0] = new[]
@@ -5032,7 +5587,10 @@ public class IgrfModelFactory
             0,
             0.3,
             0.35,
-            0.4,
+            0.38,
+            0.38,
+            0.37,
+            0.3,
             0.0,
         };
         coefficientss[13, 9, 1] = new[]
@@ -5059,6 +5617,9 @@ public class IgrfModelFactory
             0,
             0.6,
             0.53,
+            0.49,
+            0.48,
+            0.47,
             0.5,
             0.0,
         };
@@ -5086,7 +5647,10 @@ public class IgrfModelFactory
             0,
             -0.1,
             -0.05,
-            0.0,
+            0.02,
+            0.08,
+            0.13,
+            0.2,
             0.0,
         };
         coefficientss[13, 10, 1] = new[]
@@ -5113,7 +5677,10 @@ public class IgrfModelFactory
             0,
             0.3,
             0.38,
-            0.4,
+            0.44,
+            0.48,
+            0.54,
+            0.6,
             0.0,
         };
         coefficientss[13, 11, 0] = new[]
@@ -5140,6 +5707,9 @@ public class IgrfModelFactory
             0,
             0.4,
             0.41,
+            0.42,
+            0.46,
+            0.45,
             0.4,
             0.0,
         };
@@ -5167,7 +5737,10 @@ public class IgrfModelFactory
             0,
             -0.2,
             -0.22,
-            -0.2,
+            -0.25,
+            -0.3,
+            -0.41,
+            -0.6,
             0.0,
         };
         coefficientss[13, 12, 0] = new[]
@@ -5194,7 +5767,10 @@ public class IgrfModelFactory
             0,
             0.0,
             -0.10,
-            -0.3,
+            -0.26,
+            -0.35,
+            -0.46,
+            -0.5,
             0.0,
         };
         coefficientss[13, 12, 1] = new[]
@@ -5221,7 +5797,10 @@ public class IgrfModelFactory
             0,
             -0.5,
             -0.57,
-            -0.5,
+            -0.53,
+            -0.43,
+            -0.36,
+            -0.3,
             0.0,
         };
         coefficientss[13, 13, 0] = new[]
@@ -5248,7 +5827,10 @@ public class IgrfModelFactory
             0,
             0.1,
             -0.18,
-            -0.3,
+            -0.26,
+            -0.36,
+            -0.40,
+            -0.4,
             0.0,
         };
         coefficientss[13, 13, 1] = new[]
@@ -5275,7 +5857,10 @@ public class IgrfModelFactory
             0,
             -0.9,
             -0.82,
-            -0.8,
+            -0.79,
+            -0.71,
+            -0.60,
+            -0.5,
             0.0,
         };
 
