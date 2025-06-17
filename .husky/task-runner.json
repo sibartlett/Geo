@@ -4,15 +4,13 @@
          "name": "Run csharpier on staged files",
          "group": "pre-commit",
          "command": "dotnet",
-         "args": ["csharpier", "${staged}"],
-         "include": ["**/*.cs"]
+         "args": ["csharpier", "format", "${staged}"]
       },
       {
          "name": "Check csharpier on entire repository",
          "group": "verify",
          "command": "dotnet",
-         "args": ["csharpier", "."],
-         "include": ["**/*.cs"]
+         "args": ["csharpier", "check", "."]
       }
    ]
 }

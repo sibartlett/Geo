@@ -17,7 +17,6 @@ class Build : NukeBuild
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-
     public static int Main() => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -36,11 +35,6 @@ class Build : NukeBuild
             _.Executes(() =>
             {
                 DotNetTasks.DotNet("husky run --group verify");
-
-                if (Git($"status --porcelain").Count > 0)
-                {
-                    Assert.Fail("Uncommitted changes - run csharpier and prettier");
-                }
             });
 
     Target Clean =>

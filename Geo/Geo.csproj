@@ -1,45 +1,47 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <Copyright>Copyright © Simon Bartlett 2012</Copyright>
-        <NeutralLanguage>en</NeutralLanguage>
-        <Authors>Simon Bartlett</Authors>
-        <AssemblyName>Geo</AssemblyName>
-        <Version>1.1.1</Version>
-        <Description>A geospatial library for .NET</Description>
-        <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
-        <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/sibartlett/Geo</RepositoryUrl>
-        <DefineConstants>SIMPLE_JSON_TYPEINFO</DefineConstants>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <LangVersion>default</LangVersion>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <NoWarn/>
-        <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    </PropertyGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3'">
-        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0"/>
-        <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0"/>
-        <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0"/>
-        <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
-
-    <Target Name="Husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0">
-        <Exec Command="dotnet tool restore" StandardOutputImportance="Low" StandardErrorImportance="High" />
-        <Exec Command="dotnet husky install" StandardOutputImportance="Low" StandardErrorImportance="High" WorkingDirectory=".." />
-    </Target>
-
+  <PropertyGroup>
+    <Copyright>Copyright © Simon Bartlett 2012</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Authors>Simon Bartlett</Authors>
+    <AssemblyName>Geo</AssemblyName>
+    <Version>1.1.1</Version>
+    <Description>A geospatial library for .NET</Description>
+    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/sibartlett/Geo</RepositoryUrl>
+    <DefineConstants>SIMPLE_JSON_TYPEINFO</DefineConstants>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>default</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn />
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <Target Name="Husky" BeforeTargets="Restore;CollectPackageReferences" Condition="'$(HUSKY)' != 0">
+    <Exec
+      Command="dotnet tool restore"
+      StandardOutputImportance="Low"
+      StandardErrorImportance="High"
+    />
+    <Exec
+      Command="dotnet husky install"
+      StandardOutputImportance="Low"
+      StandardErrorImportance="High"
+      WorkingDirectory=".."
+    />
+  </Target>
 </Project>
