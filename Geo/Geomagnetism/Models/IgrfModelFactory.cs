@@ -5864,9 +5864,19 @@ public class IgrfModelFactory
             0.0,
         };
 
-        var models = new IgrfGeomagneticModel[23];
-        for (var i = 0; i < 23; i++)
+        // Each coefficient array holds one value per five-year epoch starting at 1900,
+        // followed by a trailing secular-variation rate (nT/yr) used to extrapolate beyond
+        // the final epoch. Derive the epoch count from the data (rather than hard-coding it)
+        // so that appending a new epoch to the tables extends the model coverage without
+        // touching this loop.
+        var epochCount = coefficientss[1, 0, 0].Length - 1;
+        var models = new IgrfGeomagneticModel[epochCount];
+        for (var i = 0; i < epochCount; i++)
         {
+            // The last epoch has no following epoch to difference against, so it uses the
+            // published trailing secular-variation value (which sits at index i + 1, just
+            // past the final absolute value).
+            var isFinalEpoch = i == epochCount - 1;
             var gnm = new double[14, 14];
             var hnm = new double[14, 14];
             var gtnm = new double[14, 14];
@@ -5875,19 +5885,22 @@ public class IgrfModelFactory
             for (var j = 0; j < 14; j++)
             for (var k = 0; k < 14; k++)
             {
-                // The secular-variation coefficient is the field's rate of change (nT/yr)
-                // across the model's five-year epoch, i.e. the slope between this epoch and
-                // the next. The calculator applies it as MainG + yearfrac * SecularG.
+                // The secular-variation coefficient is the field's rate of change (nT/yr),
+                // applied by the calculator as MainG + yearfrac * SecularG.
                 if (coefficientss[j, k, 0] != null && coefficientss[j, k, 0].Length > 0)
                 {
                     gnm[j, k] = coefficientss[j, k, 0][i];
-                    gtnm[j, k] = (coefficientss[j, k, 0][i + 1] - coefficientss[j, k, 0][i]) / 5;
+                    gtnm[j, k] = isFinalEpoch
+                        ? coefficientss[j, k, 0][i + 1]
+                        : (coefficientss[j, k, 0][i + 1] - coefficientss[j, k, 0][i]) / 5;
                 }
 
                 if (coefficientss[j, k, 1] != null && coefficientss[j, k, 1].Length > 0)
                 {
                     hnm[j, k] = coefficientss[j, k, 1][i];
-                    htnm[j, k] = (coefficientss[j, k, 1][i + 1] - coefficientss[j, k, 1][i]) / 5;
+                    htnm[j, k] = isFinalEpoch
+                        ? coefficientss[j, k, 1][i + 1]
+                        : (coefficientss[j, k, 1][i + 1] - coefficientss[j, k, 1][i]) / 5;
                 }
             }
 
