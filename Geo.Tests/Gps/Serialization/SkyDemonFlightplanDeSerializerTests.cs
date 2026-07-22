@@ -49,9 +49,7 @@ public class SkyDemonFlightplanDeSerializerTests : SerializerTestFixtureBase
     public void CanDeSerialize_returns_true_for_reference_file()
     {
         using var stream = OpenReference();
-        Assert.True(
-            new SkyDemonFlightplanDeSerializer().CanDeSerialize(new StreamWrapper(stream))
-        );
+        Assert.True(new SkyDemonFlightplanDeSerializer().CanDeSerialize(new StreamWrapper(stream)));
     }
 
     [Fact]
@@ -61,8 +59,8 @@ public class SkyDemonFlightplanDeSerializerTests : SerializerTestFixtureBase
     }
 
     [Fact]
-    public void DeSerialize_returns_null_for_malformed_xml()
+    public void CanDeSerialize_returns_false_for_malformed_xml()
     {
-        Assert.Null(new SkyDemonFlightplanDeSerializer().DeSerialize(Wrap("<broken")));
+        Assert.False(new SkyDemonFlightplanDeSerializer().CanDeSerialize(Wrap("<broken")));
     }
 }

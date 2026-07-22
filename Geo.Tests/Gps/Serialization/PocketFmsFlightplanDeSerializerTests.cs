@@ -61,8 +61,8 @@ public class PocketFmsFlightplanDeSerializerTests : SerializerTestFixtureBase
     }
 
     [Fact]
-    public void DeSerialize_returns_null_for_malformed_xml()
+    public void CanDeSerialize_returns_false_for_malformed_xml()
     {
-        Assert.Null(new PocketFmsFlightplanDeSerializer().DeSerialize(Wrap("<broken")));
+        Assert.False(new PocketFmsFlightplanDeSerializer().CanDeSerialize(Wrap("<broken")));
     }
 }
