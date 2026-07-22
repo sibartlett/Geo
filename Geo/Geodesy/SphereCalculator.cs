@@ -46,22 +46,21 @@ public class SphereCalculator : IGeodeticCalculator
 
     public Distance CalculateLength(Envelope envelope)
     {
-        var lat = 180 / envelope.MaxLat - envelope.MinLat;
-        var lon = 360 / envelope.MaxLon - envelope.MinLon;
-        if (envelope.MinLon > envelope.MaxLon)
-            lon = 1 - lon;
+        // Perimeter of the envelope: the two east-west arcs along the parallels
+        // at the min/max latitude, plus the two north-south meridian arcs at the
+        // sides. Fractions are of a full 360 degree great circle.
+        var latFraction = (envelope.MaxLat - envelope.MinLat) / 360;
+        var lonFraction = (envelope.MaxLon - envelope.MinLon) / 360;
 
-        var h1 = Radius * (1 - Math.Cos(envelope.MaxLat.ToRadians()));
-        var h2 = Radius * (1 - Math.Cos(envelope.MinLat.ToRadians()));
+        // Radius of the circle of latitude (parallel) at each latitude.
+        var r1 = Radius * Math.Cos(envelope.MaxLat.ToRadians());
+        var r2 = Radius * Math.Cos(envelope.MinLat.ToRadians());
 
-        var r1 = Math.Sqrt(h1 * (2 * Radius - h1));
-        var r2 = Math.Sqrt(h2 * (2 * Radius - h2));
+        var top = 2 * Math.PI * r1 * lonFraction;
+        var bottom = 2 * Math.PI * r2 * lonFraction;
+        var sides = 2 * Math.PI * Radius * latFraction * 2;
 
-        var c1 = 2 * Math.PI * r1 * lon;
-        var c2 = 2 * Math.PI * r2 * lon;
-        var c3 = 2 * Math.PI * Radius * lat * 2;
-
-        return new Distance(c1 + c2 + c3);
+        return new Distance(top + bottom + sides);
     }
 
     public Area CalculateArea(CoordinateSequence coordinates)
@@ -99,8 +98,11 @@ public class SphereCalculator : IGeodeticCalculator
 
     public Area CalculateArea(Envelope envelope)
     {
-        var h1 = Radius * (1 - Math.Cos(envelope.MaxLat.ToRadians()));
-        var h2 = Radius * (1 - Math.Cos(envelope.MinLat.ToRadians()));
+        // Area of the spherical zone between the two latitudes, scaled by the
+        // fraction of longitude the envelope spans:
+        //   2 * pi * R^2 * (sin(maxLat) - sin(minLat)) * (lonSpan / 360).
+        var h1 = Radius * (1 - Math.Sin(envelope.MaxLat.ToRadians()));
+        var h2 = Radius * (1 - Math.Sin(envelope.MinLat.ToRadians()));
         var zoneArea = 2 * Math.PI * Radius * (h2 - h1);
         var lonPercentage = (envelope.MaxLon - envelope.MinLon) / 360;
         return new Area(zoneArea * lonPercentage);
