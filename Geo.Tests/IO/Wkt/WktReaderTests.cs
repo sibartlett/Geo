@@ -164,6 +164,48 @@ public class WktReaderTests
     }
 
     [Fact]
+    public void Polygon_with_holes()
+    {
+        // Regression test for issue #30: a POLYGON with one or more interior
+        // rings (holes) used to throw "Invalid WKT String".
+        var reader = new WktReader();
+
+        var polygon = (Polygon)
+            reader.Read(
+                "POLYGON ("
+                    + "(-87.93939 41.98667, -87.93933 41.98729, -87.93906 41.98911, -87.93939 41.98667), "
+                    + "(-87.83493 41.98116, -87.83434 41.98115, -87.83433 41.98082, -87.83493 41.98116), "
+                    + "(-87.69615 41.69896, -87.69589 41.69161, -87.69574 41.69162, -87.69615 41.69896))"
+            );
+
+        Assert.Equal(
+            new Polygon(
+                new LinearRing(
+                    new Coordinate(41.98667, -87.93939),
+                    new Coordinate(41.98729, -87.93933),
+                    new Coordinate(41.98911, -87.93906),
+                    new Coordinate(41.98667, -87.93939)
+                ),
+                new LinearRing(
+                    new Coordinate(41.98116, -87.83493),
+                    new Coordinate(41.98115, -87.83434),
+                    new Coordinate(41.98082, -87.83433),
+                    new Coordinate(41.98116, -87.83493)
+                ),
+                new LinearRing(
+                    new Coordinate(41.69896, -87.69615),
+                    new Coordinate(41.69161, -87.69589),
+                    new Coordinate(41.69162, -87.69574),
+                    new Coordinate(41.69896, -87.69615)
+                )
+            ),
+            polygon
+        );
+
+        Assert.Equal(2, polygon.Holes.Count);
+    }
+
+    [Fact]
     public void Triangle()
     {
         var reader = new WktReader();
