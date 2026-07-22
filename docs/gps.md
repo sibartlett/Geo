@@ -25,6 +25,11 @@ var duration = track.GetDuration();       // TimeSpan
 var averageSpeed = track.GetAverageSpeed(); // Speed
 ```
 
+`Route`, `Track`, and `TrackSegment` also expose `ToLineString()`, and a
+`Waypoint` exposes its `Coordinate` and `Point`. These are the bridge from the
+GPS types to the [geometry](geometries.md) types, so you can serialize GPS data
+with any of the geometry writers (see the recipe below).
+
 ## Reading a file
 
 `GpsData.Parse` auto-detects the format from the stream and deserializes it,
@@ -64,6 +69,46 @@ using Geo.Gps.Serialization;
 
 using var stream = File.OpenRead("flight.igc");
 var data = new IgcDeSerializer().DeSerialize(new StreamWrapper(stream));
+```
+
+## Converting GPS data to geometries
+
+GPS types live in `Geo.Gps` and geometries live in `Geo.Geometries`, but they are
+easy to bridge: `Route`, `Track`, and `TrackSegment` each have a `ToLineString()`
+method, and a `Waypoint` exposes its `Coordinate` and `Point`. Once you have a
+geometry you can hand it to any geometry writer — [WKT](well-known-text.md),
+[WKB](well-known-binary.md), or [GeoJSON](geojson.md).
+
+### Recipe: GPX to GeoJSON
+
+```csharp
+using System.IO;
+using System.Linq;
+using Geo.Geometries;
+using Geo.Gps;
+using Geo.IO.GeoJson;
+
+using var stream = File.OpenRead("activity.gpx");
+GpsData data = GpsData.Parse(stream);
+
+// Turn the first recorded track into a LineString geometry...
+LineString line = data.Tracks[0].ToLineString();
+
+// ...and write it as GeoJSON.
+string geoJson = new GeoJsonWriter().Write(line);
+```
+
+The same `ToLineString()` bridge works for a planned `Route` or a single
+`TrackSegment`. To emit the individual waypoints as points instead, build a
+`MultiPoint` from their coordinates:
+
+```csharp
+using System.Linq;
+using Geo.Geometries;
+using Geo.IO.GeoJson;
+
+var points = new MultiPoint(data.Waypoints.Select(w => new Point(w.Coordinate)));
+string waypointJson = new GeoJsonWriter().Write(points);
 ```
 
 ## Writing GPX

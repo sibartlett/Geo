@@ -54,6 +54,7 @@ public class DocumentationExamplesTests
         private readonly Circle circle = new Circle(0, 0, 1000);
         private readonly Envelope envelope = new Envelope(0, 0, 10, 10);
         private readonly GpsData gpsData = new GpsData();
+        private readonly GpsData data = new GpsData();
         private readonly Stream myStream = Stream.Null;
         ";
 
