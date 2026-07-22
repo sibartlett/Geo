@@ -56,7 +56,7 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
     {
         if (ReferenceEquals(null, obj))
             return false;
-        return obj is Distance && Equals((Distance)obj);
+        return obj is Area && Equals((Area)obj);
     }
 
     public override int GetHashCode()

@@ -58,6 +58,61 @@ public class CircleTests
         Assert.True(maxLonError <= 0.002);
     }
 
+    [Fact]
+    public void GetArea_approximates_pi_r_squared()
+    {
+        const double radius = 111000;
+        var circle = new Circle(0, 20, radius);
+
+        var expected = Math.PI * radius * radius;
+
+        Assert.Equal(expected, circle.GetArea().SiValue, expected * 0.01);
+    }
+
+    [Fact]
+    public void GetLength_approximates_the_circumference()
+    {
+        const double radius = 111000;
+        var circle = new Circle(0, 20, radius);
+
+        var expected = 2 * Math.PI * radius;
+
+        Assert.Equal(expected, circle.GetLength().SiValue, expected * 0.01);
+    }
+
+    [Fact]
+    public void ToPolygon_produces_a_closed_ring_with_one_coordinate_per_side()
+    {
+        var polygon = new Circle(0, 20, 111000).ToPolygon(8);
+
+        Assert.False(polygon.IsEmpty);
+        Assert.True(polygon.Shell.IsClosed);
+        // eight vertices plus the repeated closing coordinate
+        Assert.Equal(9, polygon.Shell.Coordinates.Count);
+    }
+
+    [Fact]
+    public void ToPolygon_requires_at_least_three_sides()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Circle(0, 20, 111000).ToPolygon(2));
+    }
+
+    [Fact]
+    public void Empty_circles_report_empty()
+    {
+        Assert.True(new Circle().IsEmpty);
+        Assert.True(Circle.Empty.IsEmpty);
+        Assert.False(new Circle(0, 20, 111000).IsEmpty);
+    }
+
+    [Fact]
+    public void Equality_compares_center_and_radius()
+    {
+        Assert.True(new Circle(0, 20, 111000) == new Circle(0, 20, 111000));
+        Assert.True(new Circle(0, 20, 111000) != new Circle(0, 20, 222000));
+        Assert.True(new Circle(0, 20, 111000) != new Circle(1, 20, 111000));
+    }
+
     public double Distance(double nr1, double nr2)
     {
         return Math.Abs(nr1 - nr2);
