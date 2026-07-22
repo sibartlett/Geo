@@ -47,7 +47,7 @@ internal class JulianDate
 
         var m = month > 2 ? month : month + 12;
         var y = month > 2 ? year : year - 1;
-        var d = day + hour / 24.0 + minute / 1440.0 + (second + millisecond * 1000) / 86400.0;
+        var d = day + hour / 24.0 + minute / 1440.0 + (second + millisecond / 1000.0) / 86400.0;
         var b = isJulianDate ? 0 : 2 - y / 100 + y / 100 / 4;
 
         return (int)(365.25 * (y + 4716)) + (int)(30.6001 * (m + 1)) + d + b - 1524.5;
