@@ -43,6 +43,37 @@ public class WktReaderTests
     }
 
     [Fact]
+    public void Whitespace_only_input_returns_null()
+    {
+        var reader = new WktReader();
+
+        Assert.Null(reader.Read("   \t\r\n"));
+    }
+
+    [Theory]
+    [InlineData("POINT 1 2")] // missing opening parenthesis
+    [InlineData("POINT (1 $)")] // invalid character in the coordinate
+    [InlineData("LINESTRING (1 2,)")] // trailing comma with no coordinate
+    [InlineData("MULTIPOINT ((1 2)")] // token underflow: missing closing parenthesis
+    [InlineData("POLYGON (")] // truncated immediately after the opening parenthesis
+    public void Malformed_wkt_throws_serialization(string wkt)
+    {
+        var reader = new WktReader();
+
+        Assert.Throws<SerializationException>(() => reader.Read(wkt));
+    }
+
+    [Fact]
+    public void Truncated_geometry_throws_serialization()
+    {
+        var reader = new WktReader();
+
+        // Runs out of tokens before the closing parenthesis; must surface as a
+        // SerializationException rather than leaking an InvalidOperationException.
+        Assert.Throws<SerializationException>(() => reader.Read("POINT (1 2"));
+    }
+
+    [Fact]
     public void ExponentialNumber()
     {
         var reader = new WktReader();

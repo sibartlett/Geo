@@ -69,7 +69,7 @@ public class GeoJsonReader
             && typeString.ToLowerInvariant() == "featurecollection"
         )
         {
-            var features = obj["features"] as JsonArray;
+            var features = GetArray(obj, "features");
 
             if (features != null)
             {
@@ -122,6 +122,15 @@ public class GeoJsonReader
         return false;
     }
 
+    // JsonObject's indexer throws KeyNotFoundException for an absent key; use a safe
+    // lookup so a GeoJSON object missing "coordinates" / "geometries" / "features"
+    // fails the TryParse (and surfaces as a SerializationException) instead of leaking.
+    private static JsonArray GetArray(JsonObject obj, string key)
+    {
+        object value;
+        return obj.TryGetValue(key, out value) ? value as JsonArray : null;
+    }
+
     private bool TryParseGeometry(JsonObject obj, out object result)
     {
         result = null;
@@ -155,7 +164,7 @@ public class GeoJsonReader
     private bool TryParsePoint(JsonObject obj, out object result)
     {
         result = null;
-        var coordinates = obj["coordinates"] as JsonArray;
+        var coordinates = GetArray(obj, "coordinates");
         if (coordinates == null || coordinates.Count < 2)
             return false;
 
@@ -171,7 +180,7 @@ public class GeoJsonReader
 
     private bool TryParseLineString(JsonObject obj, out object result)
     {
-        var coordinates = obj["coordinates"] as JsonArray;
+        var coordinates = GetArray(obj, "coordinates");
         Coordinate[] co;
         if (coordinates != null && TryParseCoordinateArray(coordinates, out co))
         {
@@ -185,7 +194,7 @@ public class GeoJsonReader
 
     private bool TryParsePolygon(JsonObject obj, out object result)
     {
-        var coordinates = obj["coordinates"] as JsonArray;
+        var coordinates = GetArray(obj, "coordinates");
 
         Coordinate[][] temp;
         if (
@@ -207,7 +216,7 @@ public class GeoJsonReader
 
     private bool TryParseMultiPoint(JsonObject obj, out object result)
     {
-        var coordinates = obj["coordinates"] as JsonArray;
+        var coordinates = GetArray(obj, "coordinates");
         Coordinate[] co;
         if (coordinates != null && TryParseCoordinateArray(coordinates, out co))
         {
@@ -221,7 +230,7 @@ public class GeoJsonReader
 
     private bool TryParseMultiLineString(JsonObject obj, out object result)
     {
-        var coordinates = obj["coordinates"] as JsonArray;
+        var coordinates = GetArray(obj, "coordinates");
         Coordinate[][] co;
         if (coordinates != null && TryParseCoordinateArrayArray(coordinates, out co))
         {
@@ -235,7 +244,7 @@ public class GeoJsonReader
 
     private bool TryParseMultiPolygon(JsonObject obj, out object result)
     {
-        var coordinates = obj["coordinates"] as JsonArray;
+        var coordinates = GetArray(obj, "coordinates");
         Coordinate[][][] co;
         if (coordinates != null && TryParseCoordinateArrayArrayArray(coordinates, out co))
         {
@@ -255,7 +264,7 @@ public class GeoJsonReader
     private bool TryParseGeometryCollection(JsonObject obj, out object result)
     {
         result = null;
-        var geometries = obj["geometries"] as JsonArray;
+        var geometries = GetArray(obj, "geometries");
 
         if (geometries != null)
         {
