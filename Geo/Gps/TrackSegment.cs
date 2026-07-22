@@ -48,8 +48,10 @@ public class TrackSegment : IHasLength
 
     public TimeSpan GetDuration()
     {
-        if (GetFirstWaypoint().TimeUtc.HasValue && GetLastWaypoint().TimeUtc.HasValue)
-            return GetLastWaypoint().TimeUtc.Value - GetFirstWaypoint().TimeUtc.Value;
+        var first = GetFirstWaypoint();
+        var last = GetLastWaypoint();
+        if (first?.TimeUtc != null && last?.TimeUtc != null)
+            return last.TimeUtc.Value - first.TimeUtc.Value;
         return TimeSpan.Zero;
     }
 
