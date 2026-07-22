@@ -1,3 +1,4 @@
+using System;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -53,7 +54,14 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
                 doc = (T)_xmlSerializer.Deserialize(reader);
             }
         }
+        // XmlSerializer.Deserialize wraps malformed/unexpected XML in an
+        // InvalidOperationException (with an inner XmlException), so catch both to
+        // signal "cannot parse this document" by returning null.
         catch (XmlException)
+        {
+            return null;
+        }
+        catch (InvalidOperationException)
         {
             return null;
         }
