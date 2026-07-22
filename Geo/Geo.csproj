@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Copyright>Copyright © Simon Bartlett 2012</Copyright>
+    <Copyright>Copyright © Simon Bartlett</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
     <Authors>Simon Bartlett</Authors>
     <AssemblyName>Geo</AssemblyName>
     <Version>1.2.0</Version>
     <Description>A geospatial library for .NET</Description>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/sibartlett/Geo</PackageProjectUrl>
     <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/sibartlett/Geo</RepositoryUrl>
