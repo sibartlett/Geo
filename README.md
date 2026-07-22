@@ -9,7 +9,7 @@ coordinates on the surface of the Earth — rather than planar/projected data. I
 provides geometry and GPS types, serializers for common spatial and GPS file
 formats, and geodetic and geomagnetic calculations.
 
-[Wiki](https://github.com/sibartlett/Geo/wiki) · [Issues](https://github.com/sibartlett/Geo/issues) · [NuGet](https://nuget.org/packages/Geo)
+[Documentation](docs/) · [Issues](https://github.com/sibartlett/Geo/issues) · [NuGet](https://nuget.org/packages/Geo)
 
 ## Contents
 
