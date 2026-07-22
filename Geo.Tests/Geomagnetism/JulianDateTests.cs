@@ -63,11 +63,23 @@ public class JulianDateTests
     }
 
     [Fact]
+    public void JD_accounts_for_milliseconds()
+    {
+        var baseline = JulianDate.JD(2000, 1, 1, 12, 0, 0, 0);
+        var withMillis = JulianDate.JD(2000, 1, 1, 12, 0, 0, 500);
+
+        // 500 ms is half a second, i.e. 0.5 / 86400 of a day. (Subtracting two
+        // large Julian Dates limits the usable precision, but this still separates
+        // the correct ~5.8e-6 from the old millisecond*1000 bug's ~5.8.)
+        Assert.Equal(0.5 / 86400.0, withMillis - baseline, 8);
+    }
+
+    [Fact]
     public void JD_datetime_overload_matches_the_component_overload()
     {
-        var date = new DateTime(2012, 6, 15, 6, 30, 0, DateTimeKind.Utc);
+        var date = new DateTime(2012, 6, 15, 6, 30, 15, 250, DateTimeKind.Utc);
         var viaDateTime = JulianDate.JD(date);
-        var viaComponents = JulianDate.JD(2012, 6, 15, 6, 30, 0, 0);
+        var viaComponents = JulianDate.JD(2012, 6, 15, 6, 30, 15, 250);
 
         Assert.Equal(viaComponents, viaDateTime, 9);
     }
