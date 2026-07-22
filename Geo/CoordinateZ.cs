@@ -36,7 +36,7 @@ public class CoordinateZ : Coordinate, Is3D
 
         if (Latitude.Equals(other.Latitude))
         {
-            if ((options.PoleCoordiantesAreEqual && Latitude.Equals(90d)) || Latitude.Equals(-90d))
+            if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90d) || Latitude.Equals(-90d)))
                 return true;
 
             if (Longitude.Equals(other.Longitude))

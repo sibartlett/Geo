@@ -89,6 +89,23 @@ public class CoordinateTests
     }
 
     [Fact]
+    public void Equality_SouthPoleCoordinates()
+    {
+        Assert.True(
+            new Coordinate(-90, 0).Equals(
+                new Coordinate(-90, 180),
+                new SpatialEqualityOptions { PoleCoordiantesAreEqual = true }
+            )
+        );
+        Assert.False(
+            new Coordinate(-90, 0).Equals(
+                new Coordinate(-90, 180),
+                new SpatialEqualityOptions { PoleCoordiantesAreEqual = false }
+            )
+        );
+    }
+
+    [Fact]
     public void Equality_AntiMeridianCoordinates()
     {
         Assert.True(
