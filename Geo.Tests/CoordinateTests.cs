@@ -73,6 +73,106 @@ public class CoordinateTests
     }
 
     [Fact]
+    public void Equality_M_only_measure_toggle()
+    {
+        Assert.True(
+            new CoordinateM(0, 0, 0).Equals(
+                new CoordinateM(0, 0, 0),
+                new SpatialEqualityOptions { UseM = true }
+            )
+        );
+        Assert.False(
+            new CoordinateM(0, 0, 0).Equals(
+                new CoordinateM(0, 0, 10),
+                new SpatialEqualityOptions { UseM = true }
+            )
+        );
+        Assert.True(
+            new CoordinateM(0, 0, 0).Equals(
+                new CoordinateM(0, 0, 10),
+                new SpatialEqualityOptions { UseM = false }
+            )
+        );
+    }
+
+    [Fact]
+    public void Default_value_equality_holds_for_matching_coordinates()
+    {
+        var a = new Coordinate(1, 2);
+        var b = new Coordinate(1, 2);
+        var c = new Coordinate(3, 4);
+
+        Assert.True(a.Equals((object)b));
+        Assert.True(a == b);
+        Assert.False(a != b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+
+        Assert.False(a == c);
+        Assert.True(a != c);
+    }
+
+    [Fact]
+    public void Equality_operators_handle_null()
+    {
+        var coordinate = new Coordinate(1, 2);
+
+        Assert.True((Coordinate)null == (Coordinate)null);
+        Assert.False(coordinate == null);
+        Assert.False(null == coordinate);
+        Assert.True(coordinate != null);
+    }
+
+    [Fact]
+    public void Coordinates_of_different_dimensions_are_not_equal()
+    {
+        var options = new SpatialEqualityOptions();
+        var flat = new Coordinate(1, 2);
+        var z = new CoordinateZ(1, 2, 0);
+        var m = new CoordinateM(1, 2, 0);
+        var zm = new CoordinateZM(1, 2, 0, 0);
+
+        Assert.False(flat.Equals(z, options));
+        Assert.False(z.Equals(flat, options));
+        Assert.False(z.Equals(m, options));
+        Assert.False(m.Equals(z, options));
+        Assert.False(zm.Equals(z, options));
+        Assert.False(zm.Equals(flat, options));
+    }
+
+    [Fact]
+    public void GetHashCode_matches_equality_across_options()
+    {
+        // Elevation excluded when UseElevation is false.
+        var without3D = new SpatialEqualityOptions { UseElevation = false };
+        Assert.True(new CoordinateZ(1, 2, 100).Equals(new CoordinateZ(1, 2, 200), without3D));
+        Assert.Equal(
+            new CoordinateZ(1, 2, 100).GetHashCode(without3D),
+            new CoordinateZ(1, 2, 200).GetHashCode(without3D)
+        );
+
+        // Measure excluded when UseM is false (measure must not be gated on UseElevation).
+        var withoutM = new SpatialEqualityOptions { UseM = false };
+        Assert.True(new CoordinateM(1, 2, 100).Equals(new CoordinateM(1, 2, 200), withoutM));
+        Assert.Equal(
+            new CoordinateM(1, 2, 100).GetHashCode(withoutM),
+            new CoordinateM(1, 2, 200).GetHashCode(withoutM)
+        );
+
+        // Pole longitudes collapse to a single hash bucket.
+        var options = new SpatialEqualityOptions();
+        Assert.Equal(
+            new Coordinate(90, 0).GetHashCode(options),
+            new Coordinate(90, 150).GetHashCode(options)
+        );
+
+        // The two anti-meridian longitudes hash together.
+        Assert.Equal(
+            new Coordinate(4, 180).GetHashCode(options),
+            new Coordinate(4, -180).GetHashCode(options)
+        );
+    }
+
+    [Fact]
     public void Equality_PoleCoordinates()
     {
         Assert.True(
