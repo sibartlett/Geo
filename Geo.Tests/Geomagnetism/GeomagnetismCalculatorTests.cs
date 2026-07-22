@@ -61,7 +61,7 @@ public class GeomagnetismCalculatorTests
     [InlineData(40.0, -105.0, 2012)]
     [InlineData(-33.87, 151.21, 2010)]
     [InlineData(0, 0, 2013)]
-    public void Wmm_and_igrf_agree_on_field_direction(double lat, double lon, int year)
+    public void Wmm_and_igrf_agree(double lat, double lon, int year)
     {
         var date = new DateTime(year, 6, 1, 0, 0, 0, DateTimeKind.Utc);
         var coordinate = new Coordinate(lat, lon);
@@ -72,10 +72,19 @@ public class GeomagnetismCalculatorTests
         Assert.NotNull(wmm);
         Assert.NotNull(igrf);
 
-        // Declination and inclination describe the direction of the field; the two
-        // independent models should agree closely even though their coefficients differ.
+        // The two independent models should agree closely, in both the direction of the
+        // field (declination/inclination) and its magnitude (horizontal/total intensity),
+        // even though their coefficients differ. A wrong secular-variation term in the
+        // IGRF model factory previously inflated the intensities by (1 + years-into-epoch),
+        // so the intensity checks guard specifically against that regression.
         Assert.Equal(wmm.Declination, igrf.Declination, 0.5);
         Assert.Equal(wmm.Inclination, igrf.Inclination, 0.1);
+        Assert.Equal(
+            wmm.HorizontalIntensity,
+            igrf.HorizontalIntensity,
+            wmm.HorizontalIntensity * 0.02
+        );
+        Assert.Equal(wmm.TotalIntensity, igrf.TotalIntensity, wmm.TotalIntensity * 0.02);
     }
 
     [Fact]
