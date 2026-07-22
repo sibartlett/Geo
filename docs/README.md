@@ -14,10 +14,15 @@ example.
 
 - [Geodesy — distance, bearing, and lines](geodesy.md)
 - [Geomagnetism — declination, inclination, intensity](geomagnetism.md)
+- [Measure — distances, areas, and speeds](measure.md)
 
 ## GPS
 
 - [GPS data and file formats](gps.md)
+
+## Configuration
+
+- [GeoContext — ambient settings](geocontext.md)
 
 ## Serialization
 
