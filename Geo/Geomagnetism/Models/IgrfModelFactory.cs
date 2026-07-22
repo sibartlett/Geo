@@ -5875,24 +5875,19 @@ public class IgrfModelFactory
             for (var j = 0; j < 14; j++)
             for (var k = 0; k < 14; k++)
             {
+                // The secular-variation coefficient is the field's rate of change (nT/yr)
+                // across the model's five-year epoch, i.e. the slope between this epoch and
+                // the next. The calculator applies it as MainG + yearfrac * SecularG.
                 if (coefficientss[j, k, 0] != null && coefficientss[j, k, 0].Length > 0)
                 {
                     gnm[j, k] = coefficientss[j, k, 0][i];
-                    if (i == 22)
-                        gtnm[j, k] = coefficientss[j, k, 0][i + 1];
-                    else
-                        gtnm[j, k] =
-                            (coefficientss[j, k, 0][i + 1] - coefficientss[j, k, 0][i]) / 5;
+                    gtnm[j, k] = (coefficientss[j, k, 0][i + 1] - coefficientss[j, k, 0][i]) / 5;
                 }
 
                 if (coefficientss[j, k, 1] != null && coefficientss[j, k, 1].Length > 0)
                 {
                     hnm[j, k] = coefficientss[j, k, 1][i];
-                    if (i == 22)
-                        htnm[j, k] = coefficientss[j, k, 1][i + 1];
-                    else
-                        htnm[j, k] =
-                            (coefficientss[j, k, 1][i + 1] - coefficientss[j, k, 1][i]) / 5;
+                    htnm[j, k] = (coefficientss[j, k, 1][i + 1] - coefficientss[j, k, 1][i]) / 5;
                 }
             }
 
