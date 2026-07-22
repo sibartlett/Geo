@@ -77,7 +77,7 @@ public class CoordinateM : Coordinate, IsMeasured
 
             var hashCode = latitude.GetHashCode();
             hashCode = (hashCode * 397) ^ longitude.GetHashCode();
-            if (options.UseElevation)
+            if (options.UseM)
                 hashCode = (hashCode * 397) ^ Measure.GetHashCode();
             return hashCode;
         }
