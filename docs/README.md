@@ -10,6 +10,15 @@ example.
 - [Envelope](envelope.md)
 - [Geometries](geometries.md)
 
+## Calculations
+
+- [Geodesy — distance, bearing, and lines](geodesy.md)
+- [Geomagnetism — declination, inclination, intensity](geomagnetism.md)
+
+## GPS
+
+- [GPS data and file formats](gps.md)
+
 ## Serialization
 
 - [Well-Known Text (WKT)](well-known-text.md)
