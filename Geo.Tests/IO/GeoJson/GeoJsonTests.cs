@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using Geo.Geometries;
 using Geo.IO.GeoJson;
 using Xunit;
@@ -15,6 +18,34 @@ public class GeoJsonTests
         var geo = new Point(0, 0);
         Assert.Equal(@"{""type"":""Point"",""coordinates"":[0,0]}", geo.ToGeoJson());
         Assert.Equal(geo, reader.Read(geo.ToGeoJson()));
+    }
+
+    [Fact]
+    public void Read_null_stream_throws_argument_null()
+    {
+        Assert.Throws<ArgumentNullException>(() => new GeoJsonReader().Read((Stream)null));
+    }
+
+    [Fact]
+    public void Read_invalid_json_throws_serialization()
+    {
+        Assert.Throws<SerializationException>(() => new GeoJsonReader().Read("not valid json"));
+    }
+
+    [Fact]
+    public void Read_json_without_a_recognised_type_throws_serialization()
+    {
+        Assert.Throws<SerializationException>(() =>
+            new GeoJsonReader().Read(@"{""type"":""Nonsense""}")
+        );
+    }
+
+    [Fact]
+    public void TryRead_returns_false_for_invalid_json()
+    {
+        object result;
+        Assert.False(new GeoJsonReader().TryRead("not valid json", out result));
+        Assert.Null(result);
     }
 
     [Fact]
