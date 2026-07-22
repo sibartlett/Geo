@@ -24,6 +24,7 @@ public class TrackSegmentTests
         Assert.True(segment.IsEmpty());
         Assert.Null(segment.GetFirstWaypoint());
         Assert.Null(segment.GetLastWaypoint());
+        Assert.Equal(TimeSpan.Zero, segment.GetDuration());
     }
 
     [Fact]
