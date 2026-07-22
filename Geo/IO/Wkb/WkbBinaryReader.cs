@@ -35,6 +35,11 @@ internal class WkbBinaryReader : IDisposable
     public byte[] ReadBytes(int count)
     {
         var bytes = _reader.ReadBytes(count);
+        // BinaryReader.ReadBytes returns a short array at end of stream rather than
+        // throwing; surface that as EndOfStreamException so WkbReader can translate a
+        // truncated geometry into a SerializationException.
+        if (bytes.Length < count)
+            throw new EndOfStreamException();
         if (Encoding == WkbEncoding.BigEndian)
             Array.Reverse(bytes);
         return bytes;

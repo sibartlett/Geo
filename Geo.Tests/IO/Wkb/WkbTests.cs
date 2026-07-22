@@ -90,6 +90,14 @@ public class WkbTests
         Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
     }
 
+    [Fact]
+    public void Read_truncated_geometry_throws_serialization()
+    {
+        // A little-endian Point (type 1) header with no coordinate data following.
+        var bytes = new byte[] { 0x01, 1, 0, 0, 0 };
+        Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
+    }
+
     private void Test(string wkt)
     {
         var wktReader = new WktReader();
