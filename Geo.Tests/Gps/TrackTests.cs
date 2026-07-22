@@ -114,6 +114,12 @@ public class TrackTests
     }
 
     [Fact]
+    public void Duration_is_zero_for_an_empty_track()
+    {
+        Assert.Equal(TimeSpan.Zero, new Track().GetDuration());
+    }
+
+    [Fact]
     public void Duration_is_zero_when_timestamps_are_missing()
     {
         var track = new Track();
