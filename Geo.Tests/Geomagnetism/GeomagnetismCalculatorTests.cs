@@ -29,6 +29,72 @@ public class GeomagnetismCalculatorTests
     }
 
     [Theory]
+    // Regression baselines: the WMM field at London (51.5N, 0.12W, sea level) at the
+    // midpoint of each WMM epoch (1985-2030). The values were produced by the calculator
+    // and cross-checked against the independent IGRF model, which agrees to well within
+    // these tolerances, so a change to any single coefficient table is caught here.
+    // year, declination, inclination, horizontalIntensity, totalIntensity
+    [InlineData(1987, -4.7171, 66.4444, 19189.68, 48017.59)]
+    [InlineData(1992, -4.2724, 66.4411, 19250.06, 48162.19)]
+    [InlineData(1997, -3.686, 66.4476, 19254.21, 48185.19)]
+    [InlineData(2002, -2.815, 66.4502, 19324.39, 48365.86)]
+    [InlineData(2007, -2.0823, 66.4934, 19362.12, 48544.22)]
+    [InlineData(2012, -1.3507, 66.4638, 19426.71, 48648.51)]
+    [InlineData(2017, -0.518, 66.4508, 19475.72, 48745.89)]
+    [InlineData(2022, 0.4849, 66.495, 19534.14, 48978.71)]
+    [InlineData(2027, 1.3268, 66.5495, 19559.63, 49150.21)]
+    public void Wmm_matches_pinned_field_per_epoch(
+        int year,
+        double declination,
+        double inclination,
+        double horizontal,
+        double total
+    )
+    {
+        var result = new WmmGeomagnetismCalculator().TryCalculate(
+            new CoordinateZ(51.5, -0.12, 0),
+            new DateTime(year, 6, 15, 0, 0, 0, DateTimeKind.Utc)
+        );
+
+        Assert.NotNull(result);
+        Assert.Equal(declination, result.Declination, 0.01);
+        Assert.Equal(inclination, result.Inclination, 0.01);
+        Assert.Equal(horizontal, result.HorizontalIntensity, 0.5);
+        Assert.Equal(total, result.TotalIntensity, 0.5);
+    }
+
+    [Theory]
+    // Regression baselines for the IGRF model at London across historical epochs,
+    // spanning the 20th-century coefficient tables. Cross-checked against the physical
+    // record (London's declination shrank from ~16W in 1905 toward 0 today).
+    // year, declination, inclination, horizontalIntensity, totalIntensity
+    [InlineData(1905, -16.1415, 66.9549, 18519.73, 47309.91)]
+    [InlineData(1925, -13.0709, 66.8382, 18410.03, 46805.76)]
+    [InlineData(1945, -9.7546, 67.0557, 18329.84, 47019.26)]
+    [InlineData(1965, -7.514, 66.6746, 18811.95, 47510.68)]
+    [InlineData(1985, -5.1706, 66.411, 19208.43, 48000.35)]
+    [InlineData(2005, -2.3782, 66.4975, 19325.55, 48460.64)]
+    public void Igrf_matches_pinned_field_for_historical_epochs(
+        int year,
+        double declination,
+        double inclination,
+        double horizontal,
+        double total
+    )
+    {
+        var result = new IgrfGeomagnetismCalculator().TryCalculate(
+            new CoordinateZ(51.5, -0.12, 0),
+            new DateTime(year, 6, 15, 0, 0, 0, DateTimeKind.Utc)
+        );
+
+        Assert.NotNull(result);
+        Assert.Equal(declination, result.Declination, 0.01);
+        Assert.Equal(inclination, result.Inclination, 0.01);
+        Assert.Equal(horizontal, result.HorizontalIntensity, 0.5);
+        Assert.Equal(total, result.TotalIntensity, 0.5);
+    }
+
+    [Theory]
     // lat, lon, elevation(m), year
     [InlineData(51.5, -0.12, 0, 2012)] // London
     [InlineData(40.0, -105.0, 1600, 2012)] // Boulder (with elevation)
