@@ -6,7 +6,7 @@ namespace Geo.Tests.Geomagnetism;
 
 public class GeomagnetismCalculatorTests
 {
-    // A UTC date that both the WMM (1985-2030) and IGRF (1900-2015) model sets cover,
+    // A UTC date that both the WMM (1985-2030) and IGRF (1900-2030) model sets cover,
     // so the two calculators can be cross-checked against each other.
     private static readonly DateTime CommonDate = new(2012, 6, 15, 0, 0, 0, DateTimeKind.Utc);
 
@@ -61,6 +61,7 @@ public class GeomagnetismCalculatorTests
     [InlineData(40.0, -105.0, 2012)]
     [InlineData(-33.87, 151.21, 2010)]
     [InlineData(0, 0, 2013)]
+    [InlineData(51.5, -0.12, 2020)] // exercises the 2020-2025 epoch
     public void Wmm_and_igrf_agree(double lat, double lon, int year)
     {
         var date = new DateTime(year, 6, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -149,8 +150,10 @@ public class GeomagnetismCalculatorTests
     [Theory]
     [InlineData(2000, true)]
     [InlineData(2014, true)]
+    [InlineData(2020, true)]
+    [InlineData(2029, true)] // within the final 2025-2030 epoch
     [InlineData(1899, false)] // before IGRF coverage
-    [InlineData(2020, false)] // IGRF coverage in this build ends in 2015
+    [InlineData(2030, false)] // ValidTo is exclusive
     public void Igrf_model_selection_respects_epoch_bounds(int year, bool expected)
     {
         var success = new IgrfGeomagnetismCalculator().TryCalculate(
@@ -160,6 +163,26 @@ public class GeomagnetismCalculatorTests
         );
 
         Assert.Equal(expected, success);
+    }
+
+    [Theory]
+    [InlineData(1905)] // early epoch
+    [InlineData(1960)] // mid-century
+    [InlineData(2012)] // recent definitive epoch
+    [InlineData(2027)] // extrapolated via the final epoch's secular-variation term
+    public void Igrf_produces_physically_bounded_field(int year)
+    {
+        var result = new IgrfGeomagnetismCalculator().TryCalculate(
+            new Coordinate(51.5, -0.12),
+            new DateTime(year, 6, 1, 0, 0, 0, DateTimeKind.Utc)
+        );
+
+        Assert.NotNull(result);
+        // A correct spherical-harmonic synthesis stays within Earth's field magnitude;
+        // the previous secular-variation defect pushed these well past 100,000 nT.
+        Assert.InRange(result.TotalIntensity, 20000, 70000);
+        Assert.InRange(result.HorizontalIntensity, 0, 70000);
+        Assert.InRange(result.Inclination, -90, 90);
     }
 
     [Fact]
