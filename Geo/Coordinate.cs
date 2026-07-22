@@ -119,7 +119,7 @@ public class Coordinate : SpatialObject, IPosition
             var dir1 = Regex.IsMatch(match.Groups["Dir1"].Value, "[Ss]") ? -1d : 1d;
             var dir2 = Regex.IsMatch(match.Groups["Dir2"].Value, "[Ww]") ? -1d : 1d;
 
-            if (deg1 is <= 90 and >= -90 || deg2 is <= 180 and >= -180)
+            if (deg1 is <= 90 and >= -90 && deg2 is <= 180 and >= -180)
             {
                 result = new Coordinate(deg1 * dir1, deg2 * dir2);
                 return true;
