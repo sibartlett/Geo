@@ -1,4 +1,6 @@
-﻿using Geo.IO.Wkb;
+﻿using System;
+using System.Runtime.Serialization;
+using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 using Xunit;
 
@@ -60,6 +62,32 @@ public class WkbTests
         Test(
             "GEOMETRYCOLLECTION (LINESTRING ZM (45.89 23.9 0.45 34, 0 0 0.45 34), POLYGON ZM ((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1)))"
         );
+    }
+
+    [Fact]
+    public void Read_null_bytes_throws_argument_null()
+    {
+        Assert.Throws<ArgumentNullException>(() => new WkbReader().Read((byte[])null));
+    }
+
+    [Fact]
+    public void Read_null_stream_throws_argument_null()
+    {
+        Assert.Throws<ArgumentNullException>(() => new WkbReader().Read((System.IO.Stream)null));
+    }
+
+    [Fact]
+    public void Read_empty_bytes_returns_null()
+    {
+        Assert.Null(new WkbReader().Read(new byte[0]));
+    }
+
+    [Fact]
+    public void Read_unknown_geometry_type_throws_serialization()
+    {
+        // Little-endian byte order marker (0x01) followed by an unknown type code (99).
+        var bytes = new byte[] { 0x01, 99, 0, 0, 0 };
+        Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
     }
 
     private void Test(string wkt)

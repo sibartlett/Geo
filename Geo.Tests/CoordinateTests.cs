@@ -248,6 +248,24 @@ public class CoordinateTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new CoordinateM(1, 2, measure));
     }
 
+    [Theory]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    [InlineData(double.NegativeInfinity)]
+    public void CoordinateZM_rejects_non_finite_elevation(double elevation)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CoordinateZM(1, 2, elevation, 5));
+    }
+
+    [Theory]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    [InlineData(double.NegativeInfinity)]
+    public void CoordinateZM_rejects_non_finite_measure(double measure)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new CoordinateZM(1, 2, 3, measure));
+    }
+
     [Fact]
     public void GetBounds_is_a_degenerate_envelope_at_the_coordinate()
     {
