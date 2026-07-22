@@ -1,5 +1,4 @@
-﻿using System;
-using Geo.Geodesy;
+﻿using Geo.Geodesy;
 using Geo.Geometries;
 using Geo.Measure;
 using Xunit;
@@ -107,18 +106,29 @@ public class SpheroidCalculatorTests
         Assert.Equal(lon2, result.Coordinate2.Longitude, Millionth);
     }
 
-    [Theory(Skip = "Need to re-visit")]
-    [InlineData(30, 175, -30, -3.5)]
-    [InlineData(30, 176, -30, -3.5)]
-    public void Bug7(double lat1, double lon1, double lat2, double lon2)
+    // Regression test for https://github.com/sibartlett/Geo/issues/7:
+    // near-antipodal points (lat1 == -lat2) used to make Vincenty's inverse
+    // routine fail to converge and throw an ArithmeticException.
+    [Theory]
+    [InlineData(30, 175, -30, -3.5, 10736.730329, 269.755739, 89.755739)]
+    [InlineData(30, 176, -30, -3.5, 10761.582116, 269.874999, 89.874999)]
+    public void CalculateOrthodromicLine_converges_for_near_antipodal_points(
+        double lat1,
+        double lon1,
+        double lat2,
+        double lon2,
+        double distance,
+        double bearing12,
+        double bearing21
+    )
     {
         var calculator = new SpheroidCalculator(Spheroid.Wgs84);
         var result = calculator.CalculateOrthodromicLine(
             new Point(lat1, lon1),
             new Point(lat2, lon2)
         );
-        Console.WriteLine(result.Distance);
-        Console.WriteLine(result.Bearing12);
-        Console.WriteLine(result.Bearing21);
+        Assert.Equal(distance, result.Distance.ConvertTo(DistanceUnit.Nm).Value, Millionth);
+        Assert.Equal(bearing12, result.Bearing12, Millionth);
+        Assert.Equal(bearing21, result.Bearing21, Millionth);
     }
 }
