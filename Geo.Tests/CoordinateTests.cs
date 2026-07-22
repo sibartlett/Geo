@@ -171,6 +171,27 @@ public class CoordinateTests
     }
 
     [Theory]
+    [InlineData("91, 0")]
+    [InlineData("-91, 0")]
+    [InlineData("0, 181")]
+    [InlineData("0, -181")]
+    public void TryParse_returns_false_for_out_of_range_ordinates(string coordinate)
+    {
+        var success = Coordinate.TryParse(coordinate, out var result);
+
+        Assert.False(success);
+        Assert.Null(result);
+    }
+
+    [Theory]
+    [InlineData("91, 0")]
+    [InlineData("0, 181")]
+    public void TryParse_string_overload_returns_null_for_out_of_range_ordinates(string coordinate)
+    {
+        Assert.Null(Coordinate.TryParse(coordinate));
+    }
+
+    [Theory]
     [InlineData(91, 0)]
     [InlineData(-91, 0)]
     [InlineData(0, 181)]
