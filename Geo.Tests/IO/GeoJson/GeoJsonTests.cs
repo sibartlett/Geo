@@ -49,6 +49,27 @@ public class GeoJsonTests
     }
 
     [Fact]
+    public void TryRead_returns_false_for_valid_json_that_is_not_geojson()
+    {
+        object result;
+        Assert.False(new GeoJsonReader().TryRead(@"{""foo"":1}", out result));
+        Assert.Null(result);
+    }
+
+    [Theory]
+    [InlineData(@"{""type"":""Point""}")] // no coordinates member
+    [InlineData(@"{""type"":""Point"",""coordinates"":""nope""}")] // coordinates not an array
+    [InlineData(@"{""type"":""Point"",""coordinates"":[1]}")] // too few ordinates
+    [InlineData(@"{""type"":""GeometryCollection""}")] // no geometries member
+    [InlineData(@"{""type"":""FeatureCollection""}")] // no features member
+    [InlineData("[1,2,3]")] // a JSON array, not a GeoJSON object
+    [InlineData("null")] // JSON null
+    public void Read_malformed_geojson_throws_serialization(string json)
+    {
+        Assert.Throws<SerializationException>(() => new GeoJsonReader().Read(json));
+    }
+
+    [Fact]
     public void LineString()
     {
         var reader = new GeoJsonReader();

@@ -19,7 +19,7 @@ public class WktReader
             throw new ArgumentNullException("wkt");
 
         var tokens = new WktTokenQueue(_wktTokenizer.Tokenize(wkt));
-        return ParseGeometry(tokens);
+        return Parse(tokens);
     }
 
     public IGeometry Read(Stream stream)
@@ -30,7 +30,22 @@ public class WktReader
         using (var reader = new StreamReader(stream))
         {
             var tokens = new WktTokenQueue(_wktTokenizer.Tokenize(reader));
+            return Parse(tokens);
+        }
+    }
+
+    private IGeometry Parse(WktTokenQueue tokens)
+    {
+        try
+        {
             return ParseGeometry(tokens);
+        }
+        catch (InvalidOperationException)
+        {
+            // Running out of tokens (Queue.Dequeue / Enumerable.First on an empty
+            // sequence) means the WKT was truncated or otherwise malformed; surface it
+            // as a SerializationException like every other WKT parse failure.
+            throw new SerializationException("Invalid WKT string.");
         }
     }
 
