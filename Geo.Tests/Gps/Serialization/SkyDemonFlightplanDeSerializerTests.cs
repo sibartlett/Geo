@@ -63,4 +63,10 @@ public class SkyDemonFlightplanDeSerializerTests : SerializerTestFixtureBase
     {
         Assert.False(new SkyDemonFlightplanDeSerializer().CanDeSerialize(Wrap("<broken")));
     }
+
+    [Fact]
+    public void DeSerialize_returns_null_for_malformed_xml()
+    {
+        Assert.Null(new SkyDemonFlightplanDeSerializer().DeSerialize(Wrap("<broken")));
+    }
 }

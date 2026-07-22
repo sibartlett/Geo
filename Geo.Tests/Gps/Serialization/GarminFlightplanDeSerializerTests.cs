@@ -65,4 +65,10 @@ public class GarminFlightplanDeSerializerTests : SerializerTestFixtureBase
     {
         Assert.False(new GarminFlightplanDeSerializer().CanDeSerialize(Wrap("<broken")));
     }
+
+    [Fact]
+    public void DeSerialize_returns_null_for_malformed_xml()
+    {
+        Assert.Null(new GarminFlightplanDeSerializer().DeSerialize(Wrap("<broken")));
+    }
 }
