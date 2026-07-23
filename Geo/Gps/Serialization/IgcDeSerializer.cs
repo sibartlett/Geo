@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -42,7 +43,7 @@ public class IgcDeSerializer : IGpsFileDeSerializer
         streamWrapper.Position = 0;
         using (var reader = new StreamReader(streamWrapper))
         {
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
                 if (Regex.IsMatch(line, B_LINE_REGEX))
                     return true;
@@ -60,7 +61,7 @@ public class IgcDeSerializer : IGpsFileDeSerializer
         streamWrapper.Position = 0;
         using (var reader = new StreamReader(streamWrapper))
         {
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
             {
                 if (date == default)

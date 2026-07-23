@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml;
 
 namespace Geo.Gps.Serialization.Xml;

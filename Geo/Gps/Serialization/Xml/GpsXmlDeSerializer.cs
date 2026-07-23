@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Xml;
 using System.Xml.Serialization;
@@ -16,7 +17,7 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
     // lets malformed files (e.g. GPX exports without the default xmlns) parse
     // against the namespace-qualified models. Formats that do not need this
     // (or want strict matching) leave it null.
-    protected virtual string Namespace => null;
+    protected virtual string? Namespace => null;
 
     public bool CanDeSerialize(StreamWrapper streamWrapper)
     {
@@ -42,7 +43,7 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
         }
     }
 
-    public GpsData DeSerialize(StreamWrapper streamWrapper)
+    public GpsData? DeSerialize(StreamWrapper streamWrapper)
     {
         streamWrapper.Position = 0;
         T doc;
@@ -78,5 +79,5 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
     }
 
     protected abstract bool CanDeSerialize(XmlReader xml);
-    protected abstract GpsData DeSerialize(T xml);
+    protected abstract GpsData? DeSerialize(T xml);
 }
