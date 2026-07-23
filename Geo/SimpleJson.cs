@@ -1,3 +1,6 @@
+// Vendored third-party JSON parser; opted out of nullable analysis to keep it
+// in sync with upstream rather than annotating it.
+#nullable disable
 //-----------------------------------------------------------------------
 // <copyright file="SimpleJson.cs" company="The Outercurve Foundation">
 //    Copyright (c) 2011, The Outercurve Foundation.

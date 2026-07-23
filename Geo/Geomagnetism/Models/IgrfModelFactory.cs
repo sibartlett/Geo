@@ -5922,9 +5922,9 @@ public class IgrfModelFactory
     {
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
-        public double[,] MainCoefficientsG { get; set; }
-        public double[,] MainCoefficientsH { get; set; }
-        public double[,] SecularCoefficientsG { get; set; }
-        public double[,] SecularCoefficientsH { get; set; }
+        public double[,] MainCoefficientsG { get; set; } = null!;
+        public double[,] MainCoefficientsH { get; set; } = null!;
+        public double[,] SecularCoefficientsG { get; set; } = null!;
+        public double[,] SecularCoefficientsH { get; set; } = null!;
     }
 }

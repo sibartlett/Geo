@@ -2,7 +2,6 @@
 // http://williams.best.vwh.net/
 // https://github.com/geotools/geotools/blob/master/modules/library/referencing/src/main/java/org/geotools/referencing/datum/DefaultEllipsoid.java
 
-#nullable enable
 using System;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
