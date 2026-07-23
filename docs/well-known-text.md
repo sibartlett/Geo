@@ -11,6 +11,13 @@ IGeometry point = reader.Read("POINT (73.89 68.389)");   // reading a string
 IGeometry geometry = reader.Read(myStream);              // reading a stream
 ```
 
+`ReadAsync` reads the stream asynchronously (with an optional
+`CancellationToken`) before parsing:
+
+```csharp
+IGeometry geometry = await reader.ReadAsync(myStream);
+```
+
 ## Writing
 
 ```csharp

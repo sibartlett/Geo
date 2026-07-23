@@ -11,11 +11,26 @@ IGeometry geometry1 = reader.Read(new byte[] { /* ... */ }); // reading a byte a
 IGeometry geometry2 = reader.Read(myStream);                 // reading a stream
 ```
 
+`ReadAsync` reads the stream asynchronously (with an optional
+`CancellationToken`) before decoding:
+
+```csharp
+IGeometry geometry = await reader.ReadAsync(myStream);
+```
+
 ## Writing
 
 ```csharp
 var writer = new WkbWriter();
 byte[] bytes = writer.Write(new Point(68.389, 73.89));
+```
+
+`Write` also has an overload that writes to a stream, and `WriteAsync` writes
+to the destination stream asynchronously (with an optional
+`CancellationToken`):
+
+```csharp
+await writer.WriteAsync(new Point(68.389, 73.89), myStream);
 ```
 
 A number of settings are available to customise the output. The code below shows
