@@ -1,4 +1,5 @@
-﻿using Geo.Geodesy;
+﻿#nullable enable
+using Geo.Geodesy;
 using Geo.Geomagnetism.Models;
 
 namespace Geo.Geomagnetism;

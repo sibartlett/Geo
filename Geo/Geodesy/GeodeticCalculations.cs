@@ -1,4 +1,5 @@
-﻿using Geo.Abstractions.Interfaces;
+﻿#nullable enable
+using Geo.Abstractions.Interfaces;
 using Geo.Measure;
 
 namespace Geo.Geodesy;

@@ -1,5 +1,7 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Geodesy;
@@ -26,7 +28,7 @@ public class GeomagnetismCalculator
 
     public GeomagnetismCalculator(
         Spheroid spheroid,
-        IEnumerable<IGeomagneticModel> geomagneticModels
+        IEnumerable<IGeomagneticModel>? geomagneticModels
     )
     {
         _spheroid = spheroid;
@@ -36,24 +38,31 @@ public class GeomagnetismCalculator
 
     public List<IGeomagneticModel> Models { get; } = new();
 
-    public GeomagnetismResult TryCalculate(IPosition position, DateTimeOffset date)
+    public GeomagnetismResult? TryCalculate(IPosition position, DateTimeOffset date)
     {
         return TryCalculate(position, date.UtcDateTime);
     }
 
-    public GeomagnetismResult TryCalculate(IPosition position, DateTime utcDate)
+    public GeomagnetismResult? TryCalculate(IPosition position, DateTime utcDate)
     {
-        GeomagnetismResult result;
-        TryCalculate(position, utcDate, out result);
+        TryCalculate(position, utcDate, out var result);
         return result;
     }
 
-    public bool TryCalculate(IPosition position, DateTimeOffset date, out GeomagnetismResult result)
+    public bool TryCalculate(
+        IPosition position,
+        DateTimeOffset date,
+        [NotNullWhen(true)] out GeomagnetismResult? result
+    )
     {
         return TryCalculate(position, date.UtcDateTime, out result);
     }
 
-    public bool TryCalculate(IPosition position, DateTime utcDate, out GeomagnetismResult result)
+    public bool TryCalculate(
+        IPosition position,
+        DateTime utcDate,
+        [NotNullWhen(true)] out GeomagnetismResult? result
+    )
     {
         var coordinate = position.GetCoordinate();
         var coordinateZ =
