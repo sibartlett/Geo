@@ -22,17 +22,17 @@ public static class GeodeticCalculations
         );
     }
 
-    public static GeodeticLine CalculateShortestLine(this IPosition point1, IPosition point2)
+    public static GeodeticLine? CalculateShortestLine(this IPosition point1, IPosition point2)
     {
         return GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(point1, point2);
     }
 
-    public static GeodeticLine CalculateGreatCircleLine(this IPosition point1, IPosition point2)
+    public static GeodeticLine? CalculateGreatCircleLine(this IPosition point1, IPosition point2)
     {
         return GeoContext.Current.GeodeticCalculator.CalculateOrthodromicLine(point1, point2);
     }
 
-    public static GeodeticLine CalculateRhumbLine(this IPosition point1, IPosition point2)
+    public static GeodeticLine? CalculateRhumbLine(this IPosition point1, IPosition point2)
     {
         return GeoContext.Current.GeodeticCalculator.CalculateLoxodromicLine(point1, point2);
     }

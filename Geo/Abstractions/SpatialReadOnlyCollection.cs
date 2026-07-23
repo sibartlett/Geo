@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Geo.Abstractions.Interfaces;
@@ -13,7 +14,7 @@ public class SpatialReadOnlyCollection<TElement> : ReadOnlyCollection<TElement>,
 
     public bool IsEmpty => Count == 0;
 
-    public bool Equals(object obj, SpatialEqualityOptions options)
+    public bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as SpatialReadOnlyCollection<TElement>;
 
@@ -32,12 +33,12 @@ public class SpatialReadOnlyCollection<TElement> : ReadOnlyCollection<TElement>,
             .Aggregate(0, (current, result) => (current * 397) ^ result);
     }
 
-    public bool Equals2D(object obj)
+    public bool Equals2D(object? obj)
     {
         return Equals(obj, GeoContext.Current.EqualityOptions.To2D());
     }
 
-    public bool Equals3D(object obj)
+    public bool Equals3D(object? obj)
     {
         return Equals(obj, GeoContext.Current.EqualityOptions.To3D());
     }
@@ -47,12 +48,12 @@ public class SpatialReadOnlyCollection<TElement> : ReadOnlyCollection<TElement>,
         return GetHashCode(GeoContext.Current.EqualityOptions);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return Equals(obj, GeoContext.Current.EqualityOptions);
     }
 
-    public static bool Equals(object obj1, object obj2, SpatialEqualityOptions options)
+    public static bool Equals(object? obj1, object? obj2, SpatialEqualityOptions options)
     {
         var spatialObj = obj1 as ISpatialEquatable;
         if (!ReferenceEquals(null, spatialObj))

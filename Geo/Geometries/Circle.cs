@@ -95,7 +95,7 @@ public class Circle : Geometry, ISurface
         for (var i = 0; i < sides; i++)
         {
             var coord = GeoContext
-                .Current.GeodeticCalculator.CalculateOrthodromicLine(Center, angle * i, Radius)
+                .Current.GeodeticCalculator.CalculateOrthodromicLine(Center!, angle * i, Radius)
                 .Coordinate2;
             if (i == 0)
                 first = coord;

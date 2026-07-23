@@ -1,4 +1,5 @@
-﻿using Geo.IO.Wkb;
+﻿#nullable enable
+using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 
 namespace Geo.Abstractions.Interfaces;
@@ -8,7 +9,7 @@ public interface IGeometry : ISpatialEquatable, IGeoJsonObject
     bool IsEmpty { get; }
     bool Is3D { get; }
     bool IsMeasured { get; }
-    Envelope GetBounds();
+    Envelope? GetBounds();
 
     string ToWktString();
     string ToWktString(WktWriterSettings settings);
