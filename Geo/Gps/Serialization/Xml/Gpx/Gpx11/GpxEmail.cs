@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
@@ -6,8 +7,8 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 public class GpxEmail
 {
     [XmlAttribute]
-    public string id { get; set; }
+    public string? id { get; set; }
 
     [XmlAttribute]
-    public string domain { get; set; }
+    public string? domain { get; set; }
 }

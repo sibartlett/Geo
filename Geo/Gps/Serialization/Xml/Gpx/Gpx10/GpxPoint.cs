@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+#nullable enable
+using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx10;
 
@@ -6,9 +7,9 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx10;
 public class GpxPoint : GpxWaypointBase
 {
     [XmlElement(DataType = "anyURI")]
-    public string url { get; set; }
+    public string? url { get; set; }
 
-    public string urlname { get; set; }
+    public string? urlname { get; set; }
 
     public GpxFixType fix { get; set; }
 

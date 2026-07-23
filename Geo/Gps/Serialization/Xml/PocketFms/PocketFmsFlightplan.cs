@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -8,7 +9,7 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsFlightplan
 {
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsMeta META { get; set; }
+    public PocketFmsMeta? META { get; set; }
 
     //[XmlElement(Form=XmlSchemaForm.Unqualified)]
     //public PocketFmsFuel FUEL { get; set; }
@@ -17,7 +18,7 @@ public class PocketFmsFlightplan
     //public PocketFmsSupplementaryInformation SUPPLEMENTARYINFORMATION { get; set; }
 
     [XmlElement("LIB", Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsLib[] LIB { get; set; }
+    public PocketFmsLib[]? LIB { get; set; }
 
     //[XmlElement(Form=XmlSchemaForm.Unqualified)]
     //public PocketFmsAircraft AIRCRAFT { get; set; }

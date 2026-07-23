@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
@@ -6,7 +7,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 public class GpxWaypoint : GpxWaypointBase
 {
     [XmlElement("link")]
-    public GpxLink[] link { get; set; }
+    public GpxLink[]? link { get; set; }
 
     public GpxFixType fix { get; set; }
     //public extensionsType extensions { get; set; }

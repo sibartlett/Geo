@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -7,10 +8,10 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsLib
 {
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsPoint FromPoint { get; set; }
+    public PocketFmsPoint? FromPoint { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsPoint ToPoint { get; set; }
+    public PocketFmsPoint? ToPoint { get; set; }
 
     //[XmlElement(Form = XmlSchemaForm.Unqualified, DataType = "time")]
     //public System.DateTime ETAUTC { get; set; }

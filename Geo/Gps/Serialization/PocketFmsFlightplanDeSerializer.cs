@@ -1,4 +1,5 @@
-﻿using System.Xml;
+#nullable enable
+using System.Xml;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.PocketFms;
 
@@ -33,19 +34,19 @@ public class PocketFmsFlightplanDeSerializer : GpsXmlDeSerializer<PocketFmsFligh
         var route = new Route();
         route.Waypoints.Add(
             new Waypoint(
-                (double)xml.LIB[0].FromPoint.Latitude,
-                (double)xml.LIB[0].FromPoint.Longitude
+                (double)xml.LIB![0].FromPoint!.Latitude,
+                (double)xml.LIB[0].FromPoint!.Longitude
             )
         );
         foreach (var lib in xml.LIB)
             route.Waypoints.Add(
-                new Waypoint((double)lib.ToPoint.Latitude, (double)lib.ToPoint.Longitude)
+                new Waypoint((double)lib.ToPoint!.Latitude, (double)lib.ToPoint!.Longitude)
             );
 
         var data = new GpsData();
         data.Routes.Add(route);
 
-        data.Metadata.Attribute(x => x.Vehicle.Crew1, xml.META.PilotInCommand);
+        data.Metadata.Attribute(x => x.Vehicle.Crew1, xml.META!.PilotInCommand);
         data.Metadata.Attribute(x => x.Vehicle.Identifier, xml.META.AircraftIdentification);
         data.Metadata.Attribute(x => x.Vehicle.Model, xml.META.AircraftType);
 

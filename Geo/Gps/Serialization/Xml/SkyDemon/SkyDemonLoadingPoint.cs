@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.SkyDemon;
@@ -7,17 +8,17 @@ namespace Geo.Gps.Serialization.Xml.SkyDemon;
 public class SkyDemonLoadingPoint
 {
     [XmlAttribute]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [XmlAttribute]
-    public string LeverArm { get; set; }
+    public string? LeverArm { get; set; }
 
     [XmlAttribute]
-    public string LeverArmLat { get; set; }
+    public string? LeverArmLat { get; set; }
 
     [XmlAttribute]
-    public string DefaultValue { get; set; }
+    public string? DefaultValue { get; set; }
 
     [XmlAttribute]
-    public string Weight { get; set; }
+    public string? Weight { get; set; }
 }

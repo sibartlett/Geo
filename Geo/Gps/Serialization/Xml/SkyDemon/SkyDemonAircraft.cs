@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.SkyDemon;
@@ -22,7 +23,7 @@ public class SkyDemonAircraft
     //public string Name { get; set; }
 
     [XmlAttribute]
-    public string Registration { get; set; }
+    public string? Registration { get; set; }
 
     //[XmlAttribute]
     //public string FuelType { get; set; }
@@ -55,7 +56,7 @@ public class SkyDemonAircraft
     //public string EmptyArmLat { get; set; }
 
     [XmlAttribute]
-    public string Type { get; set; }
+    public string? Type { get; set; }
 
     //[XmlAttribute]
     //public string ColourMarkings { get; set; }

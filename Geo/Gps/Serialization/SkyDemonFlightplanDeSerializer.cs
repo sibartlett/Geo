@@ -1,3 +1,4 @@
+#nullable enable
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -21,9 +22,9 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
     private Route ConvertRoute(SkyDemonRoute route)
     {
         var result = new Route();
-        result.Waypoints.Add(ParseWaypoint(route.Start));
-        foreach (var rhumbLine in route.RhumbLineRoute)
-            result.Waypoints.Add(ParseWaypoint(rhumbLine.To));
+        result.Waypoints.Add(ParseWaypoint(route.Start!));
+        foreach (var rhumbLine in route.RhumbLineRoute!)
+            result.Waypoints.Add(ParseWaypoint(rhumbLine.To!));
         return result;
     }
 
@@ -55,7 +56,7 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
         return xml.Name == "DivelementsFlightPlanner";
     }
 
-    protected override GpsData DeSerialize(SkyDemonFlightplan xml)
+    protected override GpsData? DeSerialize(SkyDemonFlightplan xml)
     {
         if (xml == null)
             return null;

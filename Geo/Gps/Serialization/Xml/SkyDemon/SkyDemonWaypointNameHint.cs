@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.SkyDemon;
@@ -6,8 +7,8 @@ namespace Geo.Gps.Serialization.Xml.SkyDemon;
 public class SkyDemonWaypointNameHint
 {
     [XmlAttribute]
-    public string Location { get; set; }
+    public string? Location { get; set; }
 
     [XmlAttribute]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 }

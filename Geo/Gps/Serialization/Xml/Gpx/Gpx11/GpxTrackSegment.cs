@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
@@ -6,7 +7,7 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 public class GpxTrackSegment
 {
     [XmlElement("trkpt")]
-    public GpxWaypoint[] trkpt { get; set; }
+    public GpxWaypoint[]? trkpt { get; set; }
 
     //public extensionsType extensions { get; set; }
 }

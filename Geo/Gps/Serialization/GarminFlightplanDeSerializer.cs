@@ -1,4 +1,5 @@
-﻿using System.Linq;
+#nullable enable
+using System.Linq;
 using System.Xml;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.Garmin.Flightplan;
@@ -22,13 +23,13 @@ public class GarminFlightplanDeSerializer : GpsXmlDeSerializer<GarminFlightplan>
     protected override GpsData DeSerialize(GarminFlightplan xml)
     {
         var data = new GpsData();
-        foreach (var route in xml.route)
+        foreach (var route in xml.route!)
         {
             var rte = new Route();
             rte.Metadata.Attribute(x => x.Name, route.routename);
-            foreach (var point in route.routepoint)
+            foreach (var point in route.routepoint!)
             {
-                var wp = xml.waypointtable.Single(x => x.identifier == point.waypointidentifier);
+                var wp = xml.waypointtable!.Single(x => x.identifier == point.waypointidentifier);
                 rte.Waypoints.Add(new Waypoint(wp.lat, wp.lon));
             }
 

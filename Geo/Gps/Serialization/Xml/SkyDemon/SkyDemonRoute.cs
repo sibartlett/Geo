@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -7,7 +8,7 @@ namespace Geo.Gps.Serialization.Xml.SkyDemon;
 public class SkyDemonRoute
 {
     [XmlElement("RhumbLineRoute", Form = XmlSchemaForm.Unqualified)]
-    public SkyDemonRhumbLine[] RhumbLineRoute { get; set; }
+    public SkyDemonRhumbLine[]? RhumbLineRoute { get; set; }
 
     //[XmlElement("Alternate", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
     //public SkyDemonRhumbLine[] Alternate { get; set; }
@@ -17,10 +18,10 @@ public class SkyDemonRoute
     //public SkyDemonLoadingPoint[][] WeightBalance { get; set; }
 
     [XmlAttribute]
-    public string Start { get; set; }
+    public string? Start { get; set; }
 
     [XmlAttribute]
-    public string Level { get; set; }
+    public string? Level { get; set; }
 
     //[XmlAttribute]
     //public string CruiseProfile { get; set; }

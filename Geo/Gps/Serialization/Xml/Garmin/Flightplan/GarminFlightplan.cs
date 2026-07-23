@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+#nullable enable
+using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Garmin.Flightplan;
 
@@ -14,8 +15,8 @@ public class GarminFlightplan
 
     [XmlArray("waypoint-table")]
     [XmlArrayItem("waypoint", typeof(GarminWaypoint), IsNullable = false)]
-    public GarminWaypoint[] waypointtable { get; set; }
+    public GarminWaypoint[]? waypointtable { get; set; }
 
     [XmlElement("route")]
-    public GarminRoute[] route { get; set; }
+    public GarminRoute[]? route { get; set; }
 }

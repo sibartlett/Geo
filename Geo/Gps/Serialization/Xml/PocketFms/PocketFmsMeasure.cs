@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.PocketFms;
@@ -6,5 +7,5 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsMeasure<T> : PocketFmsValue<T>
 {
     [XmlAttribute]
-    public string Unit { get; set; }
+    public string? Unit { get; set; }
 }

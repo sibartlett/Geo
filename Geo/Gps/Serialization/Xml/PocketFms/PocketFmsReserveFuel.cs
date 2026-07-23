@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.PocketFms;
@@ -6,7 +7,7 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsReserveFuel : PocketFmsMeasureSpecified<decimal>
 {
     [XmlAttribute]
-    public string DurationUnit { get; set; }
+    public string? DurationUnit { get; set; }
 
     [XmlAttribute]
     public short Duration { get; set; }
