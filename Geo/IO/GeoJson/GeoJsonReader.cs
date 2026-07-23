@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 
@@ -18,6 +20,22 @@ public class GeoJsonReader
         using (var reader = new StreamReader(stream))
         {
             return Read(reader.ReadToEnd());
+        }
+    }
+
+    public async Task<IGeoJsonObject> ReadAsync(
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (stream == null)
+            throw new ArgumentNullException("stream");
+
+        cancellationToken.ThrowIfCancellationRequested();
+        using (var reader = new StreamReader(stream))
+        {
+            var json = await reader.ReadToEndAsync().ConfigureAwait(false);
+            return Read(json);
         }
     }
 
