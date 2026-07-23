@@ -121,6 +121,68 @@ public class CircleTests
         Assert.True(new Circle(0, 20, 111000) != new Circle(1, 20, 111000));
     }
 
+    [Fact]
+    public void Equality_via_object_overload_and_hashcode()
+    {
+        var circle = new Circle(0, 20, 111000);
+        var same = new Circle(0, 20, 111000);
+
+        Assert.True(circle.Equals((object)same));
+        Assert.False(circle.Equals((object?)null));
+        Assert.False(circle.Equals((object)"not a circle"));
+        Assert.Equal(circle.GetHashCode(), same.GetHashCode());
+    }
+
+    [Fact]
+    public void Equality_operators_handle_null()
+    {
+        var circle = new Circle(0, 20, 111000);
+
+        Assert.True((Circle)null == (Circle)null);
+        Assert.False(circle == null);
+        Assert.False(null == circle);
+        Assert.True(circle != null);
+    }
+
+    [Fact]
+    public void Center_constructed_with_elevation_is_3d_but_not_measured()
+    {
+        var circle = new Circle(1, 2, 300, 111000);
+
+        Assert.True(circle.Is3D);
+        Assert.False(circle.IsMeasured);
+        Assert.Equal(300, ((CoordinateZ)circle.Center).Elevation);
+        Assert.Equal(111000, circle.Radius);
+    }
+
+    [Fact]
+    public void Center_constructed_with_elevation_and_measure_is_3d_and_measured()
+    {
+        var circle = new Circle(1, 2, 300, 42, 111000);
+
+        Assert.True(circle.Is3D);
+        Assert.True(circle.IsMeasured);
+        var center = (CoordinateZM)circle.Center;
+        Assert.Equal(300, center.Elevation);
+        Assert.Equal(42, center.Measure);
+    }
+
+    [Fact]
+    public void Center_from_coordinate_constructor_reports_dimensions_from_the_centre()
+    {
+        var circle = new Circle(new Coordinate(1, 2), 111000);
+
+        Assert.False(circle.Is3D);
+        Assert.False(circle.IsMeasured);
+    }
+
+    [Fact]
+    public void Empty_circle_is_neither_3d_nor_measured()
+    {
+        Assert.False(new Circle().Is3D);
+        Assert.False(new Circle().IsMeasured);
+    }
+
     public double Distance(double nr1, double nr2)
     {
         return Math.Abs(nr1 - nr2);
