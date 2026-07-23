@@ -98,6 +98,49 @@ public class GeoJsonTests
     }
 
     [Fact]
+    public void Polygon_with_holes()
+    {
+        // Regression test for issue #31: a Polygon with interior rings (holes)
+        // used to throw "Invalid GeoJSON string". This is the GeoJSON
+        // counterpart of the WKT hole-parsing issue #30.
+        var reader = new GeoJsonReader();
+
+        var polygon = (Polygon)
+            reader.Read(
+                @"{""type"":""Polygon"",""coordinates"":["
+                    + @"[[-87.93939,41.98667],[-87.93933,41.98729],[-87.93906,41.98911],[-87.93939,41.98667]],"
+                    + @"[[-87.83493,41.98116],[-87.83434,41.98115],[-87.83433,41.98082],[-87.83493,41.98116]],"
+                    + @"[[-87.69615,41.69896],[-87.69589,41.69161],[-87.69574,41.69162],[-87.69615,41.69896]]]}"
+            );
+
+        Assert.Equal(
+            new Polygon(
+                new LinearRing(
+                    new Coordinate(41.98667, -87.93939),
+                    new Coordinate(41.98729, -87.93933),
+                    new Coordinate(41.98911, -87.93906),
+                    new Coordinate(41.98667, -87.93939)
+                ),
+                new LinearRing(
+                    new Coordinate(41.98116, -87.83493),
+                    new Coordinate(41.98115, -87.83434),
+                    new Coordinate(41.98082, -87.83433),
+                    new Coordinate(41.98116, -87.83493)
+                ),
+                new LinearRing(
+                    new Coordinate(41.69896, -87.69615),
+                    new Coordinate(41.69161, -87.69589),
+                    new Coordinate(41.69162, -87.69574),
+                    new Coordinate(41.69896, -87.69615)
+                )
+            ),
+            polygon
+        );
+
+        Assert.Equal(2, polygon.Holes.Count);
+    }
+
+    [Fact]
     public void MultiPoint()
     {
         var reader = new GeoJsonReader();
