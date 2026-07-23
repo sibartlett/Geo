@@ -15,7 +15,7 @@ IGeometry geometry = reader.Read(myStream);              // reading a stream
 `CancellationToken`) before parsing:
 
 ```csharp
-IGeometry geometry = await reader.ReadAsync(myStream);
+IGeometry geometry = await new WktReader().ReadAsync(myStream);
 ```
 
 ## Writing

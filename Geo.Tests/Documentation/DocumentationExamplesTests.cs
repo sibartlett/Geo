@@ -96,6 +96,7 @@ public class DocumentationExamplesTests
             "using System.Collections.Generic;",
             "using System.IO;",
             "using System.Linq;",
+            "using System.Threading.Tasks;",
             "using Geo;",
             "using Geo.Abstractions.Interfaces;",
             "using Geo.Geodesy;",
@@ -122,11 +123,15 @@ public class DocumentationExamplesTests
                     body.Append(line).Append('\n');
             }
 
+            // Snippets are wrapped in an async method so examples can use `await`
+            // to demonstrate the asynchronous APIs. Snippets that never await
+            // simply produce a (non-error) CS1998 warning, which the compile
+            // check ignores.
             methods
                 .Append("    // ")
                 .Append(snippets[i].File)
                 .Append('\n')
-                .Append("    void Snippet_")
+                .Append("    async Task Snippet_")
                 .Append(i)
                 .Append("()\n    {\n")
                 .Append(body)

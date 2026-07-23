@@ -15,7 +15,7 @@ IGeometry geometry2 = reader.Read(myStream);                 // reading a stream
 `CancellationToken`) before decoding:
 
 ```csharp
-IGeometry geometry = await reader.ReadAsync(myStream);
+IGeometry geometry = await new WkbReader().ReadAsync(myStream);
 ```
 
 ## Writing
@@ -30,7 +30,7 @@ to the destination stream asynchronously (with an optional
 `CancellationToken`):
 
 ```csharp
-await writer.WriteAsync(new Point(68.389, 73.89), myStream);
+await new WkbWriter().WriteAsync(new Point(68.389, 73.89), myStream);
 ```
 
 A number of settings are available to customise the output. The code below shows
