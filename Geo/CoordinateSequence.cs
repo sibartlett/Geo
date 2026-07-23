@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System.Linq;
 using Geo.Abstractions;
 
@@ -27,7 +28,7 @@ public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
 
     public bool IsClosed => Count > 2 && this[0].Equals(this[Count - 1]);
 
-    public Envelope GetBounds()
+    public Envelope? GetBounds()
     {
         return IsEmpty
             ? null
@@ -41,7 +42,7 @@ public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
 
     public IEnumerable<LineSegment> ToLineSegments()
     {
-        Coordinate last = null;
+        Coordinate? last = null;
         foreach (var coordinate in this)
         {
             if (last != null)
@@ -52,7 +53,7 @@ public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
 
     #region Equality methods
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return base.Equals(obj);
     }
@@ -62,14 +63,14 @@ public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
         return base.GetHashCode();
     }
 
-    public static bool operator ==(CoordinateSequence left, CoordinateSequence right)
+    public static bool operator ==(CoordinateSequence? left, CoordinateSequence? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(CoordinateSequence left, CoordinateSequence right)
+    public static bool operator !=(CoordinateSequence? left, CoordinateSequence? right)
     {
         return !(left == right);
     }
