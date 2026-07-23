@@ -201,7 +201,7 @@ public class GeoJsonWriter
 
     private double[] WriteCoordinate(IPosition position)
     {
-        var coordinate = position.GetCoordinate();
+        var coordinate = position.Coordinate;
         var pointZM = coordinate as CoordinateZM;
         if (pointZM != null)
             return new[]

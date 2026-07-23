@@ -55,7 +55,7 @@ public class GeomagnetismCalculator
 
     public bool TryCalculate(IPosition position, DateTime utcDate, out GeomagnetismResult result)
     {
-        var coordinate = position.GetCoordinate();
+        var coordinate = position.Coordinate;
         var coordinateZ =
             coordinate as CoordinateZ
             ?? new CoordinateZ(coordinate.Latitude, coordinate.Longitude, 0);

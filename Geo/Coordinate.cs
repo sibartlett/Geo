@@ -45,9 +45,9 @@ public class Coordinate : SpatialObject, IPosition
 
     public virtual bool IsMeasured => false;
 
-    Coordinate IPosition.GetCoordinate()
+    Coordinate IPosition.Coordinate
     {
-        return this;
+        get => this;
     }
 
     public override string ToString()

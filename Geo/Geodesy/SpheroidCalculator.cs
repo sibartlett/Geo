@@ -25,8 +25,8 @@ public class SpheroidCalculator : IGeodeticCalculator
 
     public GeodeticLine CalculateOrthodromicLine(IPosition point, double heading, double distance)
     {
-        var lat1 = point.GetCoordinate().Latitude.ToRadians();
-        var lon1 = point.GetCoordinate().Longitude.ToRadians();
+        var lat1 = point.Coordinate.Latitude.ToRadians();
+        var lon1 = point.Coordinate.Longitude.ToRadians();
         var faz = heading.ToRadians();
 
         // glat1 initial geodetic latitude in radians N positive
@@ -94,7 +94,7 @@ public class SpheroidCalculator : IGeodeticCalculator
         var baz = modcrs(Math.Atan2(sa, b) + Math.PI);
 
         return new GeodeticLine(
-            new Coordinate(point.GetCoordinate().Latitude, point.GetCoordinate().Longitude),
+            new Coordinate(point.Coordinate.Latitude, point.Coordinate.Longitude),
             new Coordinate(glat2.ToDegrees(), glon2.ToDegrees()),
             distance,
             heading,
@@ -108,8 +108,8 @@ public class SpheroidCalculator : IGeodeticCalculator
         if (result == null)
             return null;
         return new GeodeticLine(
-            position1.GetCoordinate(),
-            position2.GetCoordinate(),
+            position1.Coordinate,
+            position2.Coordinate,
             result[0],
             result[1],
             result[2]
@@ -118,8 +118,8 @@ public class SpheroidCalculator : IGeodeticCalculator
 
     public GeodeticLine CalculateLoxodromicLine(IPosition position1, IPosition position2)
     {
-        var point1 = position1.GetCoordinate();
-        var point2 = position2.GetCoordinate();
+        var point1 = position1.Coordinate;
+        var point2 = position2.Coordinate;
         var lat1 = point1.Latitude;
         var lon1 = point1.Longitude;
         var lat2 = point2.Latitude;
@@ -281,8 +281,8 @@ public class SpheroidCalculator : IGeodeticCalculator
 
     private double[] CalculateOrthodromicLineInternal(IPosition position1, IPosition position2)
     {
-        var point1 = position1.GetCoordinate();
-        var point2 = position2.GetCoordinate();
+        var point1 = position1.Coordinate;
+        var point2 = position2.Coordinate;
 
         if (
             Math.Abs(point1.Latitude - point2.Latitude) < double.Epsilon

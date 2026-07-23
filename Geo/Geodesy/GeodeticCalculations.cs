@@ -8,7 +8,7 @@ public static class GeodeticCalculations
     public static double CalculateMeridionalParts(this IPosition point)
     {
         return GeoContext.Current.GeodeticCalculator.CalculateMeridionalParts(
-            point.GetCoordinate().Latitude
+            point.Coordinate.Latitude
         );
     }
 
@@ -16,7 +16,7 @@ public static class GeodeticCalculations
     {
         return new Distance(
             GeoContext.Current.GeodeticCalculator.CalculateMeridionalDistance(
-                point.GetCoordinate().Latitude
+                point.Coordinate.Latitude
             )
         );
     }

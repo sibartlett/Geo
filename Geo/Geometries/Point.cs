@@ -38,11 +38,6 @@ public class Point : Geometry, IPosition
 
     public override bool IsMeasured => Coordinate != null && Coordinate.IsMeasured;
 
-    Coordinate IPosition.GetCoordinate()
-    {
-        return Coordinate;
-    }
-
     public override Envelope GetBounds()
     {
         return Coordinate.GetBounds();
