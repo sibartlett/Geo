@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Geo.Abstractions.Interfaces;
 
 namespace Geo.Measure;
@@ -52,7 +53,7 @@ public struct Distance : IMeasure, IEquatable<Distance>, IComparable<Distance>
         return SiValue.Equals(other.SiValue);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
             return false;

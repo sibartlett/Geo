@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using Geo.Abstractions.Interfaces;
 
@@ -52,7 +53,7 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
         return SiValue.Equals(other.SiValue);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
             return false;

@@ -1,4 +1,5 @@
-﻿namespace Geo.Measure;
+﻿#nullable enable
+namespace Geo.Measure;
 
 public static class SpeedUnitExtensions
 {
