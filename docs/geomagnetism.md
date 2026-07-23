@@ -55,6 +55,9 @@ If you are working with device sensors that use an **ENU (East, North, Up)**
 frame (as Android and iOS do), convert with:
 
 ```csharp
+var result = new WmmGeomagnetismCalculator()
+    .TryCalculate(london, new DateTime(2020, 1, 1));
+
 double east = result.Y;
 double north = result.X;
 double up = -result.Z;
