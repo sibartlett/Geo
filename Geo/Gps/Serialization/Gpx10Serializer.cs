@@ -1,4 +1,5 @@
-﻿using System;
+#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -137,7 +138,7 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
                     foreach (var trksegTrkpt in trkType.trkseg.Where(seg => seg.trkpt != null))
                     {
                         var segment = new TrackSegment();
-                        foreach (var wptType in trksegTrkpt.trkpt)
+                        foreach (var wptType in trksegTrkpt.trkpt!)
                             segment.Waypoints.Add(ConvertWaypoint(wptType));
                         track.Segments.Add(segment);
                     }
@@ -156,7 +157,7 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
                 route.Metadata.Attribute(x => x.Description, rteType.desc);
                 route.Metadata.Attribute(x => x.Comment, rteType.cmt);
 
-                foreach (var wptType in rteType.rtept)
+                foreach (var wptType in rteType.rtept!)
                     route.Waypoints.Add(ConvertWaypoint(wptType));
                 data.Routes.Add(route);
             }
