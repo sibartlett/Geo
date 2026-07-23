@@ -1,4 +1,3 @@
-#nullable enable
 namespace Geo.Abstractions.Interfaces;
 
 public interface IPosition

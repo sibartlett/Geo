@@ -1,4 +1,3 @@
-#nullable enable
 using Geo.Geodesy;
 using Geo.Geometries;
 using Geo.Measure;

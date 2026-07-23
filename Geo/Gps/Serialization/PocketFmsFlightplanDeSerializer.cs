@@ -1,4 +1,3 @@
-#nullable enable
 using System.Xml;
 using Geo.Gps.Serialization.Xml;
 using Geo.Gps.Serialization.Xml.PocketFms;

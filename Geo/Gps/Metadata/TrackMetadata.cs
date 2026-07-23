@@ -1,4 +1,3 @@
-#nullable enable
 namespace Geo.Gps.Metadata;
 
 public class TrackMetadata : Metadata<TrackMetadata.MetadataKeys>
