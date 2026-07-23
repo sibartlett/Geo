@@ -29,6 +29,7 @@ example.
 - [Well-Known Text (WKT)](well-known-text.md)
 - [Well-Known Binary (WKB)](well-known-binary.md)
 - [GeoJSON](geojson.md)
+- [Detecting and parsing geo strings](parsing.md)
 
 > These pages were migrated from the project wiki. Pages covering integrations
 > that are no longer part of the library (Spatial4n and RavenDB) were dropped
