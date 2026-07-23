@@ -83,6 +83,10 @@ Coordinates come in four flavours: `Coordinate` (lat/lon), `CoordinateZ`
 | WKB (Well-Known Binary) | ✓ | ✓ |
 | GeoJSON                 | ✓ | ✓ |
 
+Don't know a string's format up front? `GeoFormat.Detect` / `GeoFormat.TryParse`
+sniff whether it is a coordinate pair, WKT, or GeoJSON and parse it — see the
+[parsing guide](docs/parsing.md).
+
 ### Serialize / deserialize GPS files
 
 | Format | Read | Write |

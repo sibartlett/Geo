@@ -70,3 +70,6 @@ var coordinate = Coordinate.Parse("12 34.56'N 123 45.55'E");
 var maybe = Coordinate.TryParse("12 34.56'N 123 45.55'E");     // returns null on failure
 if (Coordinate.TryParse("...", out var parsed)) { /* ... */ }
 ```
+
+If you don't know whether a string is a coordinate pair, WKT, or GeoJSON, use
+[`GeoFormat`](parsing.md) to detect the format and parse it in one step.
