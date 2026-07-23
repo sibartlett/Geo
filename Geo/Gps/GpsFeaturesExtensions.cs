@@ -1,3 +1,4 @@
+#nullable enable
 namespace Geo.Gps;
 
 public static class GpsFeaturesExtensions

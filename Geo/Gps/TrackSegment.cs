@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,12 +32,12 @@ public class TrackSegment : IHasLength
         return Waypoints.Count == 0;
     }
 
-    public Waypoint GetFirstWaypoint()
+    public Waypoint? GetFirstWaypoint()
     {
         return IsEmpty() ? default : Waypoints[0];
     }
 
-    public Waypoint GetLastWaypoint()
+    public Waypoint? GetLastWaypoint()
     {
         return IsEmpty() ? default : Waypoints[Waypoints.Count - 1];
     }
@@ -63,11 +64,11 @@ public class TrackSegment : IHasLength
             );
 
         var waypoints = new List<Waypoint>();
-        Waypoint lastWaypoint = null;
+        Waypoint? lastWaypoint = null;
         foreach (var waypoint in Waypoints)
             if (
                 lastWaypoint == null
-                || Math.Abs((waypoint.TimeUtc.Value - lastWaypoint.TimeUtc.Value).TotalSeconds)
+                || Math.Abs((waypoint.TimeUtc!.Value - lastWaypoint.TimeUtc!.Value).TotalSeconds)
                     >= seconds
             )
             {

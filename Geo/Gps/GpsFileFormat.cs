@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 
 namespace Geo.Gps;
 
@@ -19,5 +20,5 @@ public class GpsFileFormat
 
     public string Extension { get; }
     public string Name { get; }
-    public Uri SpecificationUri { get; }
+    public Uri? SpecificationUri { get; }
 }

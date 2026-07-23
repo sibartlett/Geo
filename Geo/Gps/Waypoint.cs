@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Measure;
@@ -29,7 +30,7 @@ public class Waypoint : IHasLength
         TimeUtc = dateTime;
     }
 
-    public Waypoint(Point point, string name, string comment, string description)
+    public Waypoint(Point point, string? name, string? comment, string? description)
     {
         Name = name;
         Comment = comment;
@@ -40,9 +41,9 @@ public class Waypoint : IHasLength
     public Waypoint(
         Point point,
         DateTime? dateTime,
-        string name,
-        string comment,
-        string description
+        string? name,
+        string? comment,
+        string? description
     )
     {
         Name = name;
@@ -52,14 +53,14 @@ public class Waypoint : IHasLength
         TimeUtc = dateTime;
     }
 
-    public string Name { get; }
-    public string Comment { get; }
-    public string Description { get; }
+    public string? Name { get; }
+    public string? Comment { get; }
+    public string? Description { get; }
 
     public Point Point { get; set; }
     public DateTime? TimeUtc { get; set; }
 
-    public Coordinate Coordinate => Point.Coordinate;
+    public Coordinate Coordinate => Point.Coordinate!;
 
     public Distance GetLength()
     {
@@ -68,6 +69,6 @@ public class Waypoint : IHasLength
 
     public LineString ToLineString()
     {
-        return new LineString(Point.Coordinate);
+        return new LineString(Point.Coordinate!);
     }
 }

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,12 +30,12 @@ public class Track : IHasLength
         return new LineString(Segments.SelectMany(x => x.Waypoints).Select(x => x.Coordinate));
     }
 
-    public TrackSegment GetFirstSegment()
+    public TrackSegment? GetFirstSegment()
     {
         return Segments.Count == 0 ? default : Segments[0];
     }
 
-    public TrackSegment GetLastSegment()
+    public TrackSegment? GetLastSegment()
     {
         return Segments.Count == 0 ? default : Segments[Segments.Count - 1];
     }
@@ -44,13 +45,13 @@ public class Track : IHasLength
         return Segments.SelectMany(x => x.Waypoints);
     }
 
-    public Waypoint GetFirstWaypoint()
+    public Waypoint? GetFirstWaypoint()
     {
         var segment = GetFirstSegment();
         return segment == null ? default : segment.GetFirstWaypoint();
     }
 
-    public Waypoint GetLastWaypoint()
+    public Waypoint? GetLastWaypoint()
     {
         var segment = GetLastSegment();
         return segment == null ? default : segment.GetLastWaypoint();

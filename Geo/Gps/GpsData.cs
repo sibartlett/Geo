@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -71,14 +72,14 @@ public class GpsData
             .ThenBy(x => x.Name);
     }
 
-    public static GpsData Parse(Stream stream)
+    public static GpsData? Parse(Stream stream)
     {
         var gpsStream = new StreamWrapper(stream);
         var parser = FileParsers.FirstOrDefault(x => x.CanDeSerialize(gpsStream));
         return parser == null ? null : parser.DeSerialize(gpsStream);
     }
 
-    public static async Task<GpsData> ParseAsync(
+    public static async Task<GpsData?> ParseAsync(
         Stream stream,
         CancellationToken cancellationToken = default
     )
