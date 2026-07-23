@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 
@@ -31,6 +33,22 @@ public class WktReader
         {
             var tokens = new WktTokenQueue(_wktTokenizer.Tokenize(reader));
             return Parse(tokens);
+        }
+    }
+
+    public async Task<IGeometry> ReadAsync(
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (stream == null)
+            throw new ArgumentNullException("stream");
+
+        cancellationToken.ThrowIfCancellationRequested();
+        using (var reader = new StreamReader(stream))
+        {
+            var wkt = await reader.ReadToEndAsync().ConfigureAwait(false);
+            return Read(wkt);
         }
     }
 

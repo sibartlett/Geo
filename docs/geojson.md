@@ -15,6 +15,13 @@ var reader = new GeoJsonReader();
 IGeoJsonObject point = reader.Read("{ \"type\": \"Point\", \"coordinates\": [100.0, 0.0] }");
 ```
 
+`Read` also has an overload that reads from a stream, and `ReadAsync` reads
+the stream asynchronously (with an optional `CancellationToken`):
+
+```csharp
+IGeoJsonObject geometry = await new GeoJsonReader().ReadAsync(myStream);
+```
+
 ## Writing
 
 ```csharp

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Geo.Gps.Metadata;
 
 namespace Geo.Gps.Serialization.Xml;
@@ -10,6 +12,25 @@ public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSeria
     public void Serialize(GpsData data, Stream stream)
     {
         _xmlSerializer.Serialize(stream, SerializeInternal(data));
+    }
+
+    // XmlSerializer has no asynchronous Serialize, so the document is written to
+    // an in-memory buffer synchronously and only the copy to the destination
+    // stream is performed asynchronously.
+    public async Task SerializeAsync(
+        GpsData data,
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        using (var tempStream = new MemoryStream())
+        {
+            _xmlSerializer.Serialize(tempStream, SerializeInternal(data));
+            tempStream.Position = 0;
+            await tempStream
+                .CopyToAsync(stream, 16 * 1024, cancellationToken)
+                .ConfigureAwait(false);
+        }
     }
 
     public string Serialize(GpsData data)

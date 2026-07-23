@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 
@@ -31,11 +33,21 @@ public class WkbWriter
 
     public void Write(IGeometry geometry, Stream stream)
     {
-        using (var tempStream = new MemoryStream())
-        {
-            WriteInternal(geometry, tempStream);
-            tempStream.CopyTo(stream);
-        }
+        var bytes = Write(geometry);
+        stream.Write(bytes, 0, bytes.Length);
+    }
+
+    // Encoding is CPU-bound and buffered in memory; only writing the encoded
+    // bytes to the destination stream is genuine I/O, so that is the part made
+    // asynchronous.
+    public async Task WriteAsync(
+        IGeometry geometry,
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var bytes = Write(geometry);
+        await stream.WriteAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
     }
 
     private void WriteInternal(IGeometry geometry, Stream stream)

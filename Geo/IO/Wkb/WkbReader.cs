@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 
@@ -18,6 +20,25 @@ public class WkbReader
         using (var stream = new MemoryStream(bytes))
         {
             return Read(stream);
+        }
+    }
+
+    // WKB is read incrementally through a BinaryReader, which has no async API, so
+    // the source stream is buffered into memory asynchronously up front and the
+    // (CPU-bound) decoding then runs against that buffer.
+    public async Task<IGeometry> ReadAsync(
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (stream == null)
+            throw new ArgumentNullException("stream");
+
+        using (var buffer = new MemoryStream())
+        {
+            await stream.CopyToAsync(buffer, 16 * 1024, cancellationToken).ConfigureAwait(false);
+            buffer.Position = 0;
+            return Read(buffer);
         }
     }
 

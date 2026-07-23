@@ -49,6 +49,15 @@ foreach (var fix in track.GetAllFixes()) // every Waypoint across the track's se
 }
 ```
 
+`GpsData.ParseAsync` is the asynchronous counterpart. It reads the source
+stream into memory without blocking (honouring an optional
+`CancellationToken`) before detecting the format and parsing:
+
+```csharp
+using var stream = File.OpenRead("activity.gpx");
+GpsData data = await GpsData.ParseAsync(stream);
+```
+
 ### Supported formats
 
 | Format | Read | Write |
@@ -123,6 +132,17 @@ data.Waypoints.Add(new Waypoint(51.5074, -0.1278));
 
 string gpx11 = data.ToGpx();     // GPX 1.1 (default)
 string gpx10 = data.ToGpx(1m);   // GPX 1.0
+```
+
+To write GPX straight to a stream, use a serializer directly. `Serialize`
+writes synchronously and `SerializeAsync` writes to the destination stream
+without blocking (with an optional `CancellationToken`):
+
+```csharp
+using Geo.Gps.Serialization;
+
+using var stream = File.Create("activity.gpx");
+await new Gpx11Serializer().SerializeAsync(data, stream);
 ```
 
 A `Waypoint` can be constructed from a latitude/longitude pair, optionally with

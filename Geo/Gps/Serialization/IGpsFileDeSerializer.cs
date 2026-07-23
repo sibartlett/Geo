@@ -1,4 +1,6 @@
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Geo.Gps.Serialization;
 
@@ -14,4 +16,5 @@ public interface IGpsFileSerializer : IGpsFileDeSerializer
 {
     string Serialize(GpsData data);
     void Serialize(GpsData data, Stream stream);
+    Task SerializeAsync(GpsData data, Stream stream, CancellationToken cancellationToken = default);
 }

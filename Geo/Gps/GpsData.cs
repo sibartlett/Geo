@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Geo.Gps.Metadata;
 using Geo.Gps.Serialization;
 
@@ -72,6 +74,18 @@ public class GpsData
     public static GpsData Parse(Stream stream)
     {
         var gpsStream = new StreamWrapper(stream);
+        var parser = FileParsers.FirstOrDefault(x => x.CanDeSerialize(gpsStream));
+        return parser == null ? null : parser.DeSerialize(gpsStream);
+    }
+
+    public static async Task<GpsData> ParseAsync(
+        Stream stream,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var gpsStream = await StreamWrapper
+            .CreateAsync(stream, cancellationToken)
+            .ConfigureAwait(false);
         var parser = FileParsers.FirstOrDefault(x => x.CanDeSerialize(gpsStream));
         return parser == null ? null : parser.DeSerialize(gpsStream);
     }
