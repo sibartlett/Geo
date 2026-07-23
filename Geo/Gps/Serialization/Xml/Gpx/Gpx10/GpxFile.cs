@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx10;
@@ -11,25 +12,25 @@ public class GpxFile : GpxMetadataBase
         version = "1.0";
     }
 
-    public string author { get; set; }
+    public string? author { get; set; }
 
-    public string email { get; set; }
+    public string? email { get; set; }
 
     [XmlElement(DataType = "anyURI")]
-    public string url { get; set; }
+    public string? url { get; set; }
 
-    public string urlname { get; set; }
+    public string? urlname { get; set; }
 
-    public GpxBounds bounds { get; set; }
+    public GpxBounds? bounds { get; set; }
 
     [XmlElement("wpt")]
-    public GpxPoint[] wpt { get; set; }
+    public GpxPoint[]? wpt { get; set; }
 
     [XmlElement("rte")]
-    public GpxRoute[] rte { get; set; }
+    public GpxRoute[]? rte { get; set; }
 
     [XmlElement("trk")]
-    public GpxTrack[] trk { get; set; }
+    public GpxTrack[]? trk { get; set; }
 
     //[XmlAnyElement]
     //public XmlElement[] Any { get; set; }
@@ -38,5 +39,5 @@ public class GpxFile : GpxMetadataBase
     public string version { get; set; }
 
     [XmlAttribute]
-    public string creator { get; set; }
+    public string? creator { get; set; }
 }

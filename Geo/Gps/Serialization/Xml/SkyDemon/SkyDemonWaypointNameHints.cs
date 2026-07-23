@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -7,5 +8,5 @@ namespace Geo.Gps.Serialization.Xml.SkyDemon;
 public class SkyDemonWaypointNameHints
 {
     [XmlElement("Hint", Form = XmlSchemaForm.Unqualified)]
-    public SkyDemonWaypointNameHint[] Hint { get; set; }
+    public SkyDemonWaypointNameHint[]? Hint { get; set; }
 }

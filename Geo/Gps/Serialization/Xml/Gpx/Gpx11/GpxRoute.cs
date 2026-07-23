@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
@@ -6,12 +7,12 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 public class GpxRoute : GpxRteTrkBase
 {
     [XmlElement("link")]
-    public GpxLink[] link { get; set; }
+    public GpxLink[]? link { get; set; }
 
-    public string type { get; set; }
+    public string? type { get; set; }
 
     //public extensionsType extensions { get; set; }
 
     [XmlElement("rtept")]
-    public GpxWaypoint[] rtept { get; set; }
+    public GpxWaypoint[]? rtept { get; set; }
 }

@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.SkyDemon;
@@ -6,11 +7,11 @@ namespace Geo.Gps.Serialization.Xml.SkyDemon;
 public class SkyDemonRhumbLine
 {
     [XmlAttribute]
-    public string To { get; set; }
+    public string? To { get; set; }
 
     [XmlAttribute]
-    public string Level { get; set; }
+    public string? Level { get; set; }
 
     [XmlAttribute]
-    public string LevelChange { get; set; }
+    public string? LevelChange { get; set; }
 }

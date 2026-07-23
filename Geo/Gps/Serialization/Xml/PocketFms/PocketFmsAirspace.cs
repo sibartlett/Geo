@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -7,53 +8,53 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsAirspace
 {
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsAirspaceEntryExitPoint AirspaceEntryPoint { get; set; }
+    public PocketFmsAirspaceEntryExitPoint? AirspaceEntryPoint { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsAirspaceEntryExitPoint AirspaceExitPoint { get; set; }
+    public PocketFmsAirspaceEntryExitPoint? AirspaceExitPoint { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceName { get; set; }
+    public string? AirspaceName { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceType { get; set; }
+    public string? AirspaceType { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceComm1 { get; set; }
+    public string? AirspaceComm1 { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceComm2 { get; set; }
+    public string? AirspaceComm2 { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceCommName { get; set; }
+    public string? AirspaceCommName { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceCommAuth { get; set; }
+    public string? AirspaceCommAuth { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceLowerAltFt { get; set; }
+    public string? AirspaceLowerAltFt { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceUpperAltFt { get; set; }
+    public string? AirspaceUpperAltFt { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceClass { get; set; }
+    public string? AirspaceClass { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceClassRemarks { get; set; }
+    public string? AirspaceClassRemarks { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceSUASIdentifier { get; set; }
+    public string? AirspaceSUASIdentifier { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceRemarks { get; set; }
+    public string? AirspaceRemarks { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceActivity { get; set; }
+    public string? AirspaceActivity { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceActiveFromDateTime { get; set; }
+    public string? AirspaceActiveFromDateTime { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AirspaceActiveUpToDateTime { get; set; }
+    public string? AirspaceActiveUpToDateTime { get; set; }
 }

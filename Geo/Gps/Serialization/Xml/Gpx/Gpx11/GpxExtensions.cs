@@ -1,4 +1,5 @@
-﻿using System.Xml;
+#nullable enable
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
@@ -7,5 +8,5 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 public class GpxExtensions
 {
     [XmlAnyElement]
-    public XmlElement[] Any { get; set; }
+    public XmlElement[]? Any { get; set; }
 }

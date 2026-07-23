@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Xml.Serialization;
 
@@ -10,5 +11,5 @@ public class PocketFMSFlightplanTimeMeasure
     public DateTime Value { get; set; }
 
     [XmlAttribute]
-    public string Unit { get; set; }
+    public string? Unit { get; set; }
 }

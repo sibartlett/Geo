@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.SkyDemon;
@@ -6,17 +7,17 @@ namespace Geo.Gps.Serialization.Xml.SkyDemon;
 public class SkyDemonClimbProfile
 {
     [XmlAttribute]
-    public string FpmSL { get; set; }
+    public string? FpmSL { get; set; }
 
     [XmlAttribute]
-    public string FpmSC { get; set; }
+    public string? FpmSC { get; set; }
 
     [XmlAttribute]
-    public string IndicatedAirspeed { get; set; }
+    public string? IndicatedAirspeed { get; set; }
 
     [XmlAttribute]
-    public string FuelBurnSL { get; set; }
+    public string? FuelBurnSL { get; set; }
 
     [XmlAttribute]
-    public string FuelBurnSC { get; set; }
+    public string? FuelBurnSC { get; set; }
 }

@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -34,14 +35,14 @@ public class PocketFmsSuitableDefinitions
     public sbyte MusthaveNonPrecisionApproach { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsMeasure<decimal> MinimumHardRunwayLength { get; set; }
+    public PocketFmsMeasure<decimal>? MinimumHardRunwayLength { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsMeasure<decimal> MinimumSoftRunwayLength { get; set; }
+    public PocketFmsMeasure<decimal>? MinimumSoftRunwayLength { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsMeasure<decimal> MinimumCloudbase { get; set; }
+    public PocketFmsMeasure<decimal>? MinimumCloudbase { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsMeasure<decimal> MaximumCrosswind { get; set; }
+    public PocketFmsMeasure<decimal>? MaximumCrosswind { get; set; }
 }

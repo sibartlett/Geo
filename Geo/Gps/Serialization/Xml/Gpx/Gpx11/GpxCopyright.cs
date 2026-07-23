@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+#nullable enable
+using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 
@@ -6,11 +7,11 @@ namespace Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 public class GpxCopyright
 {
     [XmlElement(DataType = "gYear")]
-    public string year { get; set; }
+    public string? year { get; set; }
 
     [XmlElement(DataType = "anyURI")]
-    public string license { get; set; }
+    public string? license { get; set; }
 
     [XmlAttribute]
-    public string author { get; set; }
+    public string? author { get; set; }
 }

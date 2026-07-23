@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -7,7 +8,7 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsSupplementaryInformation
 {
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsMeasure<string> Endurance { get; set; }
+    public PocketFmsMeasure<string>? Endurance { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
     public sbyte POB { get; set; }
@@ -58,14 +59,14 @@ public class PocketFmsSupplementaryInformation
     public sbyte bDinghies { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string DinghiesNumber { get; set; }
+    public string? DinghiesNumber { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string DinghiesCapacity { get; set; }
+    public string? DinghiesCapacity { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
     public sbyte bDinghiesCover { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string DinghiesCoverColor { get; set; }
+    public string? DinghiesCoverColor { get; set; }
 }

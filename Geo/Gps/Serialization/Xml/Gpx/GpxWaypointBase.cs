@@ -1,4 +1,5 @@
-﻿using System;
+#nullable enable
+using System;
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.Gpx;
@@ -25,23 +26,23 @@ public abstract class GpxWaypointBase
     [XmlIgnore]
     public bool geoidheightSpecified { get; set; }
 
-    public string name { get; set; }
+    public string? name { get; set; }
 
-    public string cmt { get; set; }
+    public string? cmt { get; set; }
 
-    public string desc { get; set; }
+    public string? desc { get; set; }
 
-    public string src { get; set; }
+    public string? src { get; set; }
 
-    public string sym { get; set; }
+    public string? sym { get; set; }
 
-    public string type { get; set; }
+    public string? type { get; set; }
 
     [XmlIgnore]
     public bool fixSpecified { get; set; }
 
     [XmlElement(DataType = "nonNegativeInteger")]
-    public string sat { get; set; }
+    public string? sat { get; set; }
 
     public decimal hdop { get; set; }
 
@@ -64,7 +65,7 @@ public abstract class GpxWaypointBase
     public bool ageofdgpsdataSpecified { get; set; }
 
     [XmlElement(DataType = "integer")]
-    public string dgpsid { get; set; }
+    public string? dgpsid { get; set; }
 
     [XmlAttribute]
     public decimal lat { get; set; }

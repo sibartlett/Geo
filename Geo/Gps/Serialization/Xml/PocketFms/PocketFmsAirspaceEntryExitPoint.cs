@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -14,7 +15,7 @@ public class PocketFmsAirspaceEntryExitPoint
     public decimal Longitude { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFMSFlightplanTimeMeasure ETECUMMULATIVE { get; set; }
+    public PocketFMSFlightplanTimeMeasure? ETECUMMULATIVE { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified, DataType = "time")]
     public DateTime ETAUTC { get; set; }

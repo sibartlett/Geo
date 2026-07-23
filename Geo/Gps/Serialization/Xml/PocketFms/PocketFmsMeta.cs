@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -31,7 +32,7 @@ public class PocketFmsMeta
     //public PocketFmsDepartureArrival Arrival { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AircraftIdentification { get; set; }
+    public string? AircraftIdentification { get; set; }
 
     //[XmlElement(Form=XmlSchemaForm.Unqualified)]
     //public string RoutingString { get; set; }
@@ -43,7 +44,7 @@ public class PocketFmsMeta
     //public string FlightType { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string AircraftType { get; set; }
+    public string? AircraftType { get; set; }
 
     //[XmlElement(Form=XmlSchemaForm.Unqualified)]
     //public string WakeTurbulence { get; set; }
@@ -58,7 +59,7 @@ public class PocketFmsMeta
     //public string AircraftColorAndMarkings { get; set; }
 
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public string PilotInCommand { get; set; }
+    public string? PilotInCommand { get; set; }
 
     //[XmlElement(Form=XmlSchemaForm.Unqualified)]
     //public string PilotInCommandCompany { get; set; }

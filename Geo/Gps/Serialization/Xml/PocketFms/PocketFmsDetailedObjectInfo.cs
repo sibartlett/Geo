@@ -1,4 +1,5 @@
-﻿using System.Xml.Schema;
+#nullable enable
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.PocketFms;
@@ -7,13 +8,13 @@ namespace Geo.Gps.Serialization.Xml.PocketFms;
 public class PocketFmsDetailedObjectInfo
 {
     [XmlElement(Form = XmlSchemaForm.Unqualified)]
-    public PocketFmsAirportData AirportData { get; set; }
+    public PocketFmsAirportData? AirportData { get; set; }
 
     [XmlArray(Form = XmlSchemaForm.Unqualified)]
     [XmlArrayItem("COMM", Form = XmlSchemaForm.Unqualified, IsNullable = false)]
-    public PocketFmsComm[] Communications { get; set; }
+    public PocketFmsComm[]? Communications { get; set; }
 
     [XmlArray(Form = XmlSchemaForm.Unqualified)]
     [XmlArrayItem("Remark", Form = XmlSchemaForm.Unqualified, IsNullable = false)]
-    public PocketFmsRemark[] Remarks { get; set; }
+    public PocketFmsRemark[]? Remarks { get; set; }
 }

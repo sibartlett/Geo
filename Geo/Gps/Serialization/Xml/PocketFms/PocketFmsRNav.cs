@@ -1,3 +1,4 @@
+#nullable enable
 using System.Xml.Serialization;
 
 namespace Geo.Gps.Serialization.Xml.PocketFms;
@@ -9,7 +10,7 @@ public class PocketFmsRNav
     public decimal BEACONRADIAL { get; set; }
 
     [XmlAttribute]
-    public string BEACONIDENT { get; set; }
+    public string? BEACONIDENT { get; set; }
 
     [XmlAttribute]
     public decimal BEACONFREQUENCY { get; set; }
