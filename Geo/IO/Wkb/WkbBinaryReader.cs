@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 
 namespace Geo.IO.Wkb;
@@ -19,7 +20,7 @@ internal class WkbBinaryReader : IDisposable
 
     public void Dispose()
     {
-        if (_reader != null && !_disposed)
+        if (!_disposed)
         {
             _disposed = true;
             _reader.Dispose();

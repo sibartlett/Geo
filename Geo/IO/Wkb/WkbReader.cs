@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Geo.IO.Wkb;
 
 public class WkbReader
 {
-    public IGeometry Read(byte[] bytes)
+    public IGeometry? Read(byte[] bytes)
     {
         if (bytes == null)
             throw new ArgumentNullException("bytes");
@@ -26,7 +27,7 @@ public class WkbReader
     // WKB is read incrementally through a BinaryReader, which has no async API, so
     // the source stream is buffered into memory asynchronously up front and the
     // (CPU-bound) decoding then runs against that buffer.
-    public async Task<IGeometry> ReadAsync(
+    public async Task<IGeometry?> ReadAsync(
         Stream stream,
         CancellationToken cancellationToken = default
     )
@@ -42,7 +43,7 @@ public class WkbReader
         }
     }
 
-    public IGeometry Read(Stream stream)
+    public IGeometry? Read(Stream stream)
     {
         if (stream == null)
             throw new ArgumentNullException("stream");
