@@ -24,6 +24,8 @@ The supported formats are reported by the `GeoStringFormat` enum:
 `TryParse` returns both the parsed value and the format it detected:
 
 ```csharp
+var input = "POINT (30 10)";
+
 if (GeoFormat.TryParse(input, out object result, out GeoStringFormat format))
 {
     switch (format)
@@ -47,6 +49,7 @@ coordinate string, an `IGeometry` for WKT, and an `IGeoJsonObject` for GeoJSON.
 A throwing variant is also available:
 
 ```csharp
+var input = "POINT (30 10)";
 object result = GeoFormat.Parse(input);   // throws FormatException on an unknown format
 ```
 
