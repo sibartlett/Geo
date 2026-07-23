@@ -22,10 +22,32 @@ public class GeomagnetismCalculatorTests
         );
 
         Assert.NotNull(result);
-        Assert.Equal(-1.3507, result.Declination, 0.01);
-        Assert.Equal(66.4638, result.Inclination, 0.01);
-        Assert.Equal(19426.71, result.HorizontalIntensity, 0.5);
-        Assert.Equal(48648.51, result.TotalIntensity, 0.5);
+        Assert.Equal(-1.3504, result.Declination, 0.01);
+        Assert.Equal(66.4641, result.Inclination, 0.01);
+        Assert.Equal(19428.21, result.HorizontalIntensity, 0.5);
+        Assert.Equal(48652.75, result.TotalIntensity, 0.5);
+    }
+
+    [Fact]
+    public void Wmm2015v2_matches_noaa_online_calculator_for_issue_38()
+    {
+        // Regression for https://github.com/sibartlett/Geo/issues/38.
+        // The original WMM2015 coefficients produced a field that differed from NOAA's
+        // online calculator by ~35 nT / ~0.05 deg for this point/date, because NOAA
+        // replaced WMM2015 with WMM2015v2 in 2018. With the v2 coefficients (and the
+        // model reference radius of 6371.2 km), the library now reproduces the NOAA
+        // online calculator values quoted in the issue.
+        var result = new WmmGeomagnetismCalculator().TryCalculate(
+            new Coordinate(32.9, -96.1),
+            new DateTime(2019, 7, 19, 0, 0, 0, DateTimeKind.Utc)
+        );
+
+        Assert.NotNull(result);
+        // NOAA online calculator / WMM2015v2 reference values for 2019-07-19.
+        Assert.Equal(2.7375, result.Declination, 0.01);
+        Assert.Equal(23206.9, result.X, 1.0);
+        Assert.Equal(1109.7, result.Y, 1.0);
+        Assert.Equal(42766.7, result.Z, 1.0);
     }
 
     [Theory]
@@ -33,16 +55,18 @@ public class GeomagnetismCalculatorTests
     // midpoint of each WMM epoch (1985-2030). The values were produced by the calculator
     // and cross-checked against the independent IGRF model, which agrees to well within
     // these tolerances, so a change to any single coefficient table is caught here.
+    // The 2017 row uses the WMM2015v2 coefficients (NOAA's out-of-cycle correction of the
+    // original WMM2015), which is why its declination differs from the original model.
     // year, declination, inclination, horizontalIntensity, totalIntensity
-    [InlineData(1987, -4.7171, 66.4444, 19189.68, 48017.59)]
-    [InlineData(1992, -4.2724, 66.4411, 19250.06, 48162.19)]
-    [InlineData(1997, -3.686, 66.4476, 19254.21, 48185.19)]
-    [InlineData(2002, -2.815, 66.4502, 19324.39, 48365.86)]
-    [InlineData(2007, -2.0823, 66.4934, 19362.12, 48544.22)]
-    [InlineData(2012, -1.3507, 66.4638, 19426.71, 48648.51)]
-    [InlineData(2017, -0.518, 66.4508, 19475.72, 48745.89)]
-    [InlineData(2022, 0.4849, 66.495, 19534.14, 48978.71)]
-    [InlineData(2027, 1.3268, 66.5495, 19559.63, 49150.21)]
+    [InlineData(1987, -4.7168, 66.4446, 19191.15, 48021.69)]
+    [InlineData(1992, -4.272, 66.4413, 19251.55, 48166.33)]
+    [InlineData(1997, -3.6857, 66.4478, 19255.69, 48189.34)]
+    [InlineData(2002, -2.8147, 66.4504, 19325.88, 48370.05)]
+    [InlineData(2007, -2.082, 66.4936, 19363.61, 48548.43)]
+    [InlineData(2012, -1.3504, 66.4641, 19428.21, 48652.75)]
+    [InlineData(2017, -0.4536, 66.4565, 19483.59, 48776.62)]
+    [InlineData(2022, 0.4853, 66.4953, 19535.65, 48983.0)]
+    [InlineData(2027, 1.3272, 66.5498, 19561.14, 49154.53)]
     public void Wmm_matches_pinned_field_per_epoch(
         int year,
         double declination,
@@ -68,12 +92,12 @@ public class GeomagnetismCalculatorTests
     // spanning the 20th-century coefficient tables. Cross-checked against the physical
     // record (London's declination shrank from ~16W in 1905 toward 0 today).
     // year, declination, inclination, horizontalIntensity, totalIntensity
-    [InlineData(1905, -16.1415, 66.9549, 18519.73, 47309.91)]
-    [InlineData(1925, -13.0709, 66.8382, 18410.03, 46805.76)]
-    [InlineData(1945, -9.7546, 67.0557, 18329.84, 47019.26)]
-    [InlineData(1965, -7.514, 66.6746, 18811.95, 47510.68)]
-    [InlineData(1985, -5.1706, 66.411, 19208.43, 48000.35)]
-    [InlineData(2005, -2.3782, 66.4975, 19325.55, 48460.64)]
+    [InlineData(1905, -16.1416, 66.955, 18521.14, 47313.77)]
+    [InlineData(1925, -13.0708, 66.8384, 18411.43, 46809.62)]
+    [InlineData(1945, -9.7544, 67.0559, 18331.21, 47023.17)]
+    [InlineData(1965, -7.5137, 66.6748, 18813.39, 47514.67)]
+    [InlineData(1985, -5.1703, 66.4112, 19209.91, 48004.45)]
+    [InlineData(2005, -2.3779, 66.4978, 19327.04, 48464.84)]
     public void Igrf_matches_pinned_field_for_historical_epochs(
         int year,
         double declination,

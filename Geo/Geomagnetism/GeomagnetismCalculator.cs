@@ -8,6 +8,11 @@ namespace Geo.Geomagnetism;
 
 public class GeomagnetismCalculator
 {
+    // Geomagnetic reference radius (km) used by the WMM and IGRF spherical-harmonic
+    // expansions. This is a fixed constant defined by the models themselves, not the
+    // WGS-84 mean radius of the spheroid used for the geodetic-to-geocentric conversion.
+    private const double GeomagneticReferenceRadius = 6371.2;
+
     private readonly Spheroid _spheroid;
 
     public GeomagnetismCalculator()
@@ -137,7 +142,7 @@ public class GeomagnetismCalculator
         double bRadial = 0.0,
             bTheta = 0.0,
             bPhi = 0.0;
-        var fn0 = _spheroid.MeanRadius / 1000 / r;
+        var fn0 = GeomagneticReferenceRadius / r;
         var fn = fn0 * fn0;
 
         double[] sm = new double[bound],
