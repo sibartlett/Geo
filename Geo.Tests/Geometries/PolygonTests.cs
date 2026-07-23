@@ -35,6 +35,13 @@ public class PolygonTests
     }
 
     [Fact]
+    public void Empty_polygon_has_no_bounds()
+    {
+        Assert.Null(new Polygon().GetBounds());
+        Assert.Null(Polygon.Empty.GetBounds());
+    }
+
+    [Fact]
     public void GetArea_is_positive_for_a_real_polygon()
     {
         var polygon = new Polygon(Square(1));

@@ -40,7 +40,7 @@ public class Polygon : Geometry, ISurface
 
     public override Envelope? GetBounds()
     {
-        return Shell!.GetBounds();
+        return Shell?.GetBounds();
     }
 
     public Area GetArea()

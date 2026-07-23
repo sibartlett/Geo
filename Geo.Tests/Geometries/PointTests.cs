@@ -52,6 +52,13 @@ public class PointTests
     }
 
     [Fact]
+    public void Empty_point_has_no_bounds()
+    {
+        Assert.Null(new Point().GetBounds());
+        Assert.Null(Point.Empty.GetBounds());
+    }
+
+    [Fact]
     public void Equality_compares_coordinates()
     {
         Assert.True(new Point(1, 2) == new Point(1, 2));

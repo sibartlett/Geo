@@ -44,9 +44,9 @@ public class Point : Geometry, IPosition
         return Coordinate!;
     }
 
-    public override Envelope GetBounds()
+    public override Envelope? GetBounds()
     {
-        return Coordinate!.GetBounds();
+        return Coordinate?.GetBounds();
     }
 
     #region Equality methods

@@ -50,9 +50,12 @@ public class Circle : Geometry, ISurface
     public Coordinate? Center { get; }
     public double Radius { get; }
 
-    public override Envelope GetBounds()
+    public override Envelope? GetBounds()
     {
-        var center = Center!;
+        if (Center == null)
+            return null;
+
+        var center = Center;
         var latitudinalRadiusDeg = Radius / (Constants.NauticalMile * 60);
         var longditudinalRadiusDeg =
             Radius / (Constants.NauticalMile * 60) * Math.Cos(center.Latitude.ToRadians());
