@@ -42,7 +42,23 @@ one for the date you pass.
 | `Inclination` | Dip angle, in degrees |
 | `TotalIntensity` | Total field strength, in nanoteslas |
 | `HorizontalIntensity` | Horizontal field strength, in nanoteslas |
-| `X`, `Y`, `Z` | North, east, and vertical field components |
+| `X`, `Y`, `Z` | North, east, and downward field components (see below) |
+
+### Component coordinate frame
+
+`X`, `Y`, and `Z` are given in the **NED (North, East, Down)** geodetic
+reference frame used by the World Magnetic Model — `X` points north, `Y`
+points east, and `Z` points down (positive towards the centre of the Earth),
+all in nanoteslas.
+
+If you are working with device sensors that use an **ENU (East, North, Up)**
+frame (as Android and iOS do), convert with:
+
+```csharp
+double east = result.Y;
+double north = result.X;
+double up = -result.Z;
+```
 
 There are also `out`-parameter overloads that return a `bool` indicating
 success:
