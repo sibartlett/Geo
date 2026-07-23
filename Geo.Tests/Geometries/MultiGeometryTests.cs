@@ -1,3 +1,4 @@
+using System;
 using Geo.Geometries;
 using Xunit;
 
@@ -83,5 +84,53 @@ public class MultiGeometryTests
 
         Assert.True(a.Equals(b));
         Assert.False(a.Equals(c));
+    }
+
+    [Fact]
+    public void GeometryCollection_is_not_equal_to_null_or_a_different_count()
+    {
+        var a = new GeometryCollection(new Point(0, 0), new Point(1, 1));
+        var shorter = new GeometryCollection(new Point(0, 0));
+
+        Assert.False(a.Equals(null));
+        Assert.False(a.Equals("not a collection"));
+        Assert.False(a.Equals(shorter));
+    }
+
+    [Fact]
+    public void GeometryCollection_hashcode_matches_for_equal_collections()
+    {
+        var a = new GeometryCollection(new Point(0, 0), new Point(1, 1));
+        var b = new GeometryCollection(new Point(0, 0), new Point(1, 1));
+
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
+
+    [Fact]
+    public void LinearRing_must_be_closed()
+    {
+        // A non-empty ring whose last coordinate does not repeat the first is invalid.
+        Assert.Throws<ArgumentException>(() =>
+            new LinearRing(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1))
+        );
+    }
+
+    [Fact]
+    public void Triangle_rejects_a_degenerate_shell()
+    {
+        Assert.Throws<ArgumentException>(() => new Triangle(new LinearRing()));
+    }
+
+    [Fact]
+    public void Triangle_from_three_points_closes_the_ring()
+    {
+        var triangle = new Triangle(
+            new Coordinate(0, 0),
+            new Coordinate(1, 0),
+            new Coordinate(0, 1)
+        );
+
+        Assert.True(triangle.Shell.IsClosed);
+        Assert.Equal(4, triangle.Shell.Coordinates.Count);
     }
 }
