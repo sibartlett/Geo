@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System.Linq;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
@@ -14,7 +15,7 @@ public class GeometryCollection : Geometry
         Geometries = new SpatialReadOnlyCollection<IGeometry>(new IGeometry[0]);
     }
 
-    public GeometryCollection(IEnumerable<IGeometry> geometries)
+    public GeometryCollection(IEnumerable<IGeometry>? geometries)
     {
         var items = (geometries ?? new IGeometry[0]).ToList();
         Geometries = new SpatialReadOnlyCollection<IGeometry>(items);
@@ -37,9 +38,9 @@ public class GeometryCollection : Geometry
         get { return Geometries.Any(x => x.IsMeasured); }
     }
 
-    public override Envelope GetBounds()
+    public override Envelope? GetBounds()
     {
-        Envelope envelope = null;
+        Envelope? envelope = null;
         foreach (var geometry in Geometries)
             if (envelope == null)
                 envelope = geometry.GetBounds();
@@ -50,7 +51,7 @@ public class GeometryCollection : Geometry
 
     #region Equality methods
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as GeometryCollection;
 
@@ -63,7 +64,7 @@ public class GeometryCollection : Geometry
         return !Geometries.Where((t, i) => !t.Equals(other.Geometries[i], options)).Any();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return base.Equals(obj);
     }

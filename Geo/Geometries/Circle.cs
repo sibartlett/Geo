@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
@@ -46,20 +47,21 @@ public class Circle : Geometry, ISurface
         Radius = radius;
     }
 
-    public Coordinate Center { get; }
+    public Coordinate? Center { get; }
     public double Radius { get; }
 
     public override Envelope GetBounds()
     {
+        var center = Center!;
         var latitudinalRadiusDeg = Radius / (Constants.NauticalMile * 60);
         var longditudinalRadiusDeg =
-            Radius / (Constants.NauticalMile * 60) * Math.Cos(Center.Latitude.ToRadians());
+            Radius / (Constants.NauticalMile * 60) * Math.Cos(center.Latitude.ToRadians());
 
         return new Envelope(
-            Center.Latitude - latitudinalRadiusDeg,
-            Center.Longitude - longditudinalRadiusDeg,
-            Center.Latitude + latitudinalRadiusDeg,
-            Center.Longitude + longditudinalRadiusDeg
+            center.Latitude - latitudinalRadiusDeg,
+            center.Longitude - longditudinalRadiusDeg,
+            center.Latitude + latitudinalRadiusDeg,
+            center.Longitude + longditudinalRadiusDeg
         );
     }
 
@@ -86,7 +88,7 @@ public class Circle : Geometry, ISurface
 
         var angle = -360d / sides;
         var coordinates = new List<Coordinate>();
-        Coordinate first = null;
+        Coordinate? first = null;
         for (var i = 0; i < sides; i++)
         {
             var coord = GeoContext
@@ -97,13 +99,13 @@ public class Circle : Geometry, ISurface
             coordinates.Add(coord);
         }
 
-        coordinates.Add(first);
+        coordinates.Add(first!);
         return new Polygon(new LinearRing(coordinates));
     }
 
     #region Equality methods
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as Circle;
         return !ReferenceEquals(null, other)
@@ -111,7 +113,7 @@ public class Circle : Geometry, ISurface
             && Equals(Center, other.Center, options);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return base.Equals(obj);
     }
@@ -130,14 +132,14 @@ public class Circle : Geometry, ISurface
         }
     }
 
-    public static bool operator ==(Circle left, Circle right)
+    public static bool operator ==(Circle? left, Circle? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(Circle left, Circle right)
+    public static bool operator !=(Circle? left, Circle? right)
     {
         return !(left == right);
     }
