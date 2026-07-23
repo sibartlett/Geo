@@ -1,4 +1,5 @@
-﻿namespace Geo;
+﻿#nullable enable
+namespace Geo;
 
 public class SpatialEqualityOptions
 {

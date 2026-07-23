@@ -1,4 +1,5 @@
-﻿using Geo.Abstractions.Interfaces;
+﻿#nullable enable
+using Geo.Abstractions.Interfaces;
 using Geo.Geodesy;
 using Geo.Geomagnetism;
 
@@ -6,7 +7,7 @@ namespace Geo;
 
 public class GeoContext
 {
-    private static GeoContext _current;
+    private static GeoContext? _current;
 
     public GeoContext()
         : this(Spheroid.Default) { }

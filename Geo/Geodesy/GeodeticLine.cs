@@ -40,9 +40,8 @@ public class GeodeticLine : LineSegment
     {
         unchecked
         {
-            var hashCode = Coordinate1 != null ? Coordinate1.GetHashCode(options) : 0;
-            hashCode =
-                (hashCode * 397) ^ (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
+            var hashCode = Coordinate1.GetHashCode(options);
+            hashCode = (hashCode * 397) ^ Coordinate2.GetHashCode(options);
             hashCode = (hashCode * 397) ^ Distance.GetHashCode();
             hashCode = (hashCode * 397) ^ Bearing12.GetHashCode();
             hashCode = (hashCode * 397) ^ Bearing21.GetHashCode();
