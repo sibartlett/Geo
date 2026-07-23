@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -24,7 +25,7 @@ internal class WktTokenQueue : Queue<WktToken>
         if (Count == 0)
             return false;
         var token = Peek();
-        return token.Type == WktTokenType.String && token.Value.ToUpperInvariant() == value;
+        return token.Type == WktTokenType.String && token.Value!.ToUpperInvariant() == value;
     }
 
     public WktToken Dequeue(WktTokenType type)

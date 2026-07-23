@@ -1,4 +1,5 @@
-﻿namespace Geo.IO.Wkt;
+﻿#nullable enable
+namespace Geo.IO.Wkt;
 
 internal struct WktToken
 {
@@ -17,5 +18,5 @@ internal struct WktToken
     }
 
     public WktTokenType Type { get; }
-    public string Value { get; }
+    public string? Value { get; }
 }
