@@ -11,6 +11,13 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
     public abstract GpsFileFormat[] FileFormats { get; }
     public abstract GpsFeatures SupportedFeatures { get; }
 
+    // When non-null, elements read from documents that are missing a namespace
+    // are treated as belonging to this namespace during deserialization. This
+    // lets malformed files (e.g. GPX exports without the default xmlns) parse
+    // against the namespace-qualified models. Formats that do not need this
+    // (or want strict matching) leave it null.
+    protected virtual string Namespace => null;
+
     public bool CanDeSerialize(StreamWrapper streamWrapper)
     {
         try
@@ -23,9 +30,8 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
                 )
             )
             {
-                if (_xmlSerializer.CanDeserialize(reader))
-                    if (reader.MoveToContent() == XmlNodeType.Element)
-                        return CanDeSerialize(reader);
+                if (reader.MoveToContent() == XmlNodeType.Element)
+                    return CanDeSerialize(reader);
             }
 
             return false;
@@ -51,7 +57,9 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
                 )
             )
             {
-                doc = (T)_xmlSerializer.Deserialize(reader);
+                var effectiveReader =
+                    Namespace == null ? reader : new NamespaceCoercingXmlReader(reader, Namespace);
+                doc = (T)_xmlSerializer.Deserialize(effectiveReader);
             }
         }
         // XmlSerializer.Deserialize wraps malformed/unexpected XML in an

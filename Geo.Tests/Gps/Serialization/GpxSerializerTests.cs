@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Text;
 using Geo.Abstractions.Interfaces;
 using Geo.Gps;
@@ -42,6 +43,50 @@ public class GpxSerializerTests : SerializerTestFixtureBase
                 Assert.Fail(fileInfo.Name);
             }
         }
+    }
+
+    [Fact]
+    public void Gpx_without_namespace_is_parsed_as_gpx11()
+    {
+        var gpx10 = new Gpx10Serializer();
+        var gpx11 = new Gpx11Serializer();
+        var fileInfo = GetReferenceFileDirectory("gpx").EnumerateFiles("no-namespace.gpx").Single();
+
+        using var stream = new FileStream(fileInfo.FullName, FileMode.Open);
+        var streamWrapper = new StreamWrapper(stream);
+
+        // A missing default xmlns must not be claimed by the 1.0 serializer...
+        Assert.False(gpx10.CanDeSerialize(streamWrapper));
+        // ...but should be recognised and parsed by the 1.1 serializer.
+        Assert.True(gpx11.CanDeSerialize(streamWrapper));
+
+        var data = gpx11.DeSerialize(streamWrapper);
+        Assert.NotNull(data);
+        Assert.Equal("runtastic", data.Tracks.Single().Metadata.Attribute(x => x.Name));
+        Assert.Equal(3, data.Tracks.Single().Segments.Single().Waypoints.Count);
+    }
+
+    [Fact]
+    public void Gpx_without_namespace_is_parsed_as_gpx10_when_version_is_1_0()
+    {
+        var gpx10 = new Gpx10Serializer();
+        var gpx11 = new Gpx11Serializer();
+        var fileInfo = GetReferenceFileDirectory("gpx")
+            .EnumerateFiles("no-namespace-10.gpx")
+            .Single();
+
+        using var stream = new FileStream(fileInfo.FullName, FileMode.Open);
+        var streamWrapper = new StreamWrapper(stream);
+
+        // version="1.0" on a namespaceless root routes to the 1.0 serializer...
+        Assert.True(gpx10.CanDeSerialize(streamWrapper));
+        // ...and not the 1.1 serializer.
+        Assert.False(gpx11.CanDeSerialize(streamWrapper));
+
+        var data = gpx10.DeSerialize(streamWrapper);
+        Assert.NotNull(data);
+        Assert.Equal("legacy track", data.Tracks.Single().Metadata.Attribute(x => x.Name));
+        Assert.Equal(3, data.Tracks.Single().Segments.Single().Waypoints.Count);
     }
 
     private void Compare(Gpx10Serializer serializer, GpsData data, string gpxData)
