@@ -24,9 +24,17 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
 
     public override GpsFeatures SupportedFeatures => GpsFeatures.All;
 
+    protected override string Namespace => "http://www.topografix.com/GPX/1/1";
+
     protected override bool CanDeSerialize(XmlReader xml)
     {
-        return xml.NamespaceURI == "http://www.topografix.com/GPX/1/1";
+        if (xml.LocalName != "gpx")
+            return false;
+        if (xml.NamespaceURI == Namespace)
+            return true;
+        // Missing namespace: fall back to the version attribute, defaulting to
+        // 1.1 when it is absent so namespaceless files still parse.
+        return string.IsNullOrEmpty(xml.NamespaceURI) && xml.GetAttribute("version") != "1.0";
     }
 
     protected override GpsData DeSerialize(GpxFile xml)
