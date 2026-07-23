@@ -1,5 +1,7 @@
-﻿using System;
+#nullable enable
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -41,18 +43,16 @@ public class GeoJsonReader
 
     public IGeoJsonObject Read(string json)
     {
-        object obj;
-        if (TryRead(json, out obj))
+        if (TryRead(json, out var obj))
             return (IGeoJsonObject)obj;
         throw new SerializationException("Invalid GeoJSON string");
     }
 
-    public bool TryRead(string json, out object result)
+    public bool TryRead(string json, [NotNullWhen(true)] out object? result)
     {
         result = null;
-        object obj;
 
-        if (!SimpleJson.TryDeserializeObject(json, out obj))
+        if (!SimpleJson.TryDeserializeObject(json, out var obj))
             return false;
 
         if (obj is JsonObject)
@@ -68,9 +68,9 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseTypeString(JsonObject obj, out string result)
+    private bool TryParseTypeString(JsonObject? obj, out string? result)
     {
-        object type = null;
+        object? type = null;
         if (obj != null)
             obj.TryGetValue("type", out type);
 
@@ -78,20 +78,19 @@ public class GeoJsonReader
         return type != null;
     }
 
-    private bool TryParseFeatureCollection(JsonObject obj, out object result)
+    private bool TryParseFeatureCollection(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         result = null;
-        string typeString;
         if (
-            TryParseTypeString(obj, out typeString)
-            && typeString.ToLowerInvariant() == "featurecollection"
+            TryParseTypeString(obj, out var typeString)
+            && typeString!.ToLowerInvariant() == "featurecollection"
         )
         {
             var features = GetArray(obj, "features");
 
             if (features != null)
             {
-                var temp = new object[features.Count];
+                var temp = new object?[features.Count];
                 for (var index = 0; index < features.Count; index++)
                 {
                     var geometry = features[index];
@@ -107,30 +106,29 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseFeature(JsonObject obj, out object result)
+    private bool TryParseFeature(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
-        string typeString;
-        if (TryParseTypeString(obj, out typeString) && typeString.ToLowerInvariant() == "feature")
+        if (
+            TryParseTypeString(obj, out var typeString)
+            && typeString!.ToLowerInvariant() == "feature"
+        )
         {
-            object geometry;
-            object geo = null;
-            object prop;
-            Dictionary<string, object> pr = null;
+            object? geo = null;
+            Dictionary<string, object?>? pr = null;
 
-            if (obj.TryGetValue("geometry", out geometry))
+            if (obj.TryGetValue("geometry", out var geometry))
                 TryParseGeometry((JsonObject)geometry, out geo);
 
-            if (obj.TryGetValue("properties", out prop) && prop is JsonObject)
+            if (obj.TryGetValue("properties", out var prop) && prop is JsonObject)
             {
                 var props = (JsonObject)prop;
                 if (props.Count > 0)
                     pr = props.ToDictionary(x => x.Key, x => SantizeJsonObjects(x.Value));
             }
 
-            result = new Feature((IGeometry)geo, pr);
+            result = new Feature((IGeometry?)geo, pr);
 
-            object id;
-            if (obj.TryGetValue("id", out id))
+            if (obj.TryGetValue("id", out var id))
                 ((Feature)result).Id = SantizeJsonObjects(id);
 
             return true;
@@ -143,20 +141,18 @@ public class GeoJsonReader
     // JsonObject's indexer throws KeyNotFoundException for an absent key; use a safe
     // lookup so a GeoJSON object missing "coordinates" / "geometries" / "features"
     // fails the TryParse (and surfaces as a SerializationException) instead of leaking.
-    private static JsonArray GetArray(JsonObject obj, string key)
+    private static JsonArray? GetArray(JsonObject obj, string key)
     {
-        object value;
-        return obj.TryGetValue(key, out value) ? value as JsonArray : null;
+        return obj.TryGetValue(key, out var value) ? value as JsonArray : null;
     }
 
-    private bool TryParseGeometry(JsonObject obj, out object result)
+    private bool TryParseGeometry(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         result = null;
-        string typeString;
-        if (!TryParseTypeString(obj, out typeString))
+        if (!TryParseTypeString(obj, out var typeString))
             return false;
 
-        typeString = typeString.ToLowerInvariant();
+        typeString = typeString!.ToLowerInvariant();
 
         switch (typeString)
         {
@@ -179,15 +175,14 @@ public class GeoJsonReader
         }
     }
 
-    private bool TryParsePoint(JsonObject obj, out object result)
+    private bool TryParsePoint(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         result = null;
         var coordinates = GetArray(obj, "coordinates");
         if (coordinates == null || coordinates.Count < 2)
             return false;
 
-        Coordinate coordinate;
-        if (TryParseCoordinate(coordinates, out coordinate))
+        if (TryParseCoordinate(coordinates, out var coordinate))
         {
             result = new Point(coordinate);
             return true;
@@ -196,11 +191,10 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseLineString(JsonObject obj, out object result)
+    private bool TryParseLineString(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         var coordinates = GetArray(obj, "coordinates");
-        Coordinate[] co;
-        if (coordinates != null && TryParseCoordinateArray(coordinates, out co))
+        if (coordinates != null && TryParseCoordinateArray(coordinates, out var co))
         {
             result = new LineString(co);
             return true;
@@ -210,15 +204,14 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParsePolygon(JsonObject obj, out object result)
+    private bool TryParsePolygon(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         var coordinates = GetArray(obj, "coordinates");
 
-        Coordinate[][] temp;
         if (
             coordinates != null
             && coordinates.Count > 0
-            && TryParseCoordinateArrayArray(coordinates, out temp)
+            && TryParseCoordinateArrayArray(coordinates, out var temp)
         )
         {
             result = new Polygon(
@@ -232,11 +225,10 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseMultiPoint(JsonObject obj, out object result)
+    private bool TryParseMultiPoint(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         var coordinates = GetArray(obj, "coordinates");
-        Coordinate[] co;
-        if (coordinates != null && TryParseCoordinateArray(coordinates, out co))
+        if (coordinates != null && TryParseCoordinateArray(coordinates, out var co))
         {
             result = new MultiPoint(co.Select(x => new Point(x)));
             return true;
@@ -246,11 +238,10 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseMultiLineString(JsonObject obj, out object result)
+    private bool TryParseMultiLineString(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         var coordinates = GetArray(obj, "coordinates");
-        Coordinate[][] co;
-        if (coordinates != null && TryParseCoordinateArrayArray(coordinates, out co))
+        if (coordinates != null && TryParseCoordinateArrayArray(coordinates, out var co))
         {
             result = new MultiLineString(co.Select(x => new LineString(x)));
             return true;
@@ -260,11 +251,10 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseMultiPolygon(JsonObject obj, out object result)
+    private bool TryParseMultiPolygon(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         var coordinates = GetArray(obj, "coordinates");
-        Coordinate[][][] co;
-        if (coordinates != null && TryParseCoordinateArrayArrayArray(coordinates, out co))
+        if (coordinates != null && TryParseCoordinateArrayArrayArray(coordinates, out var co))
         {
             result = new MultiPolygon(
                 co.Select(x => new Polygon(
@@ -279,14 +269,14 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseGeometryCollection(JsonObject obj, out object result)
+    private bool TryParseGeometryCollection(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
         result = null;
         var geometries = GetArray(obj, "geometries");
 
         if (geometries != null)
         {
-            var temp = new object[geometries.Count];
+            var temp = new object?[geometries.Count];
             for (var index = 0; index < geometries.Count; index++)
             {
                 var geometry = geometries[index];
@@ -301,7 +291,10 @@ public class GeoJsonReader
         return false;
     }
 
-    private bool TryParseCoordinate(JsonArray coordinates, out Coordinate result)
+    private bool TryParseCoordinate(
+        JsonArray? coordinates,
+        [NotNullWhen(true)] out Coordinate? result
+    )
     {
         result = null;
         if (coordinates == null || coordinates.Count < 2)
@@ -332,7 +325,10 @@ public class GeoJsonReader
         return true;
     }
 
-    private bool TryParseCoordinateArray(JsonArray coordinates, out Coordinate[] result)
+    private bool TryParseCoordinateArray(
+        JsonArray? coordinates,
+        [NotNullWhen(true)] out Coordinate[]? result
+    )
     {
         result = null;
         if (coordinates == null)
@@ -344,13 +340,20 @@ public class GeoJsonReader
 
         var tempResult = new Coordinate[coordinates.Count];
         for (var index = 0; index < coordinates.Count; index++)
-            if (!TryParseCoordinate((JsonArray)coordinates[index], out tempResult[index]))
+        {
+            if (!TryParseCoordinate((JsonArray)coordinates[index], out var coordinate))
                 return false;
+            tempResult[index] = coordinate;
+        }
+
         result = tempResult;
         return true;
     }
 
-    private bool TryParseCoordinateArrayArray(JsonArray coordinates, out Coordinate[][] result)
+    private bool TryParseCoordinateArrayArray(
+        JsonArray? coordinates,
+        [NotNullWhen(true)] out Coordinate[][]? result
+    )
     {
         result = null;
         if (coordinates == null)
@@ -362,15 +365,19 @@ public class GeoJsonReader
 
         var tempResult = new Coordinate[coordinates.Count][];
         for (var index = 0; index < coordinates.Count; index++)
-            if (!TryParseCoordinateArray((JsonArray)coordinates[index], out tempResult[index]))
+        {
+            if (!TryParseCoordinateArray((JsonArray)coordinates[index], out var coordinate))
                 return false;
+            tempResult[index] = coordinate;
+        }
+
         result = tempResult;
         return true;
     }
 
     private bool TryParseCoordinateArrayArrayArray(
-        JsonArray coordinates,
-        out Coordinate[][][] result
+        JsonArray? coordinates,
+        [NotNullWhen(true)] out Coordinate[][][]? result
     )
     {
         result = null;
@@ -383,13 +390,17 @@ public class GeoJsonReader
 
         var tempResult = new Coordinate[coordinates.Count][][];
         for (var index = 0; index < coordinates.Count; index++)
-            if (!TryParseCoordinateArrayArray((JsonArray)coordinates[index], out tempResult[index]))
+        {
+            if (!TryParseCoordinateArrayArray((JsonArray)coordinates[index], out var coordinate))
                 return false;
+            tempResult[index] = coordinate;
+        }
+
         result = tempResult;
         return true;
     }
 
-    public object SantizeJsonObjects(object obj)
+    public object? SantizeJsonObjects(object? obj)
     {
         var jsonArray = obj as JsonArray;
         if (jsonArray != null)

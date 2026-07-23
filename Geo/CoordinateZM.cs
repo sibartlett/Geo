@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Geo.Abstractions.Interfaces;
 
 namespace Geo;
@@ -27,7 +28,7 @@ public class CoordinateZM : Coordinate, Is3D, IsMeasured
 
     #region Equality methods
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as Coordinate;
 
@@ -63,7 +64,7 @@ public class CoordinateZM : Coordinate, Is3D, IsMeasured
         return false;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return Equals(obj, GeoContext.Current.EqualityOptions);
     }

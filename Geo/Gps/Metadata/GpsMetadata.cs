@@ -1,3 +1,4 @@
+#nullable enable
 namespace Geo.Gps.Metadata;
 
 public class GpsMetadata : Metadata<GpsMetadata.MetadataKeys>

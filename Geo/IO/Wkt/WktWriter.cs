@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿#nullable enable
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using Geo.Abstractions.Interfaces;
@@ -130,7 +131,7 @@ public class WktWriter
         }
 
         builder.Append("(");
-        AppendCoordinate(builder, point.Coordinate);
+        AppendCoordinate(builder, point.Coordinate!);
         builder.Append(")");
     }
 
@@ -188,7 +189,7 @@ public class WktWriter
         }
 
         builder.Append("(");
-        AppendLineStringInner(builder, polygon.Shell.Coordinates);
+        AppendLineStringInner(builder, polygon.Shell!.Coordinates);
         for (var i = 0; i < polygon.Holes.Count; i++)
         {
             builder.Append(", ");

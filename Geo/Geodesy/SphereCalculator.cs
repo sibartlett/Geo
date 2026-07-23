@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Geo.Abstractions;
 
 namespace Geo;
@@ -26,7 +27,7 @@ public class LineSegment : SpatialObject
 
     #region Equality methods
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as LineSegment;
         return !ReferenceEquals(null, other)
@@ -38,12 +39,11 @@ public class LineSegment : SpatialObject
     {
         unchecked
         {
-            return ((Coordinate1 != null ? Coordinate1.GetHashCode(options) : 0) * 397)
-                ^ (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
+            return (Coordinate1.GetHashCode(options) * 397) ^ Coordinate2.GetHashCode(options);
         }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return base.Equals(obj);
     }
@@ -53,14 +53,14 @@ public class LineSegment : SpatialObject
         return base.GetHashCode();
     }
 
-    public static bool operator ==(LineSegment left, LineSegment right)
+    public static bool operator ==(LineSegment? left, LineSegment? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(LineSegment left, LineSegment right)
+    public static bool operator !=(LineSegment? left, LineSegment? right)
     {
         return !(left == right);
     }

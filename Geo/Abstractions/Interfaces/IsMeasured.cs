@@ -1,4 +1,5 @@
-﻿namespace Geo.Abstractions.Interfaces;
+﻿#nullable enable
+namespace Geo.Abstractions.Interfaces;
 
 public interface IsMeasured
 {

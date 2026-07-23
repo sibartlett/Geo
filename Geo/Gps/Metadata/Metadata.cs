@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -12,20 +13,19 @@ public abstract class Metadata<TKeys> : Dictionary<string, string>
         _metadataKeys = metadataKeys;
     }
 
-    public string Attribute(Func<TKeys, string> attribute)
+    public string? Attribute(Func<TKeys, string> attribute)
     {
         var key = attribute(_metadataKeys);
-        string result;
-        TryGetValue(key, out result);
+        TryGetValue(key, out var result);
         return result;
     }
 
-    public void Attribute(Func<TKeys, string> attribute, string value)
+    public void Attribute(Func<TKeys, string> attribute, string? value)
     {
         if (!string.IsNullOrWhiteSpace(value))
         {
             var key = attribute(_metadataKeys);
-            this[key] = value.Trim();
+            this[key] = value!.Trim();
         }
     }
 

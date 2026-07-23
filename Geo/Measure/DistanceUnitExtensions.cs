@@ -1,3 +1,4 @@
+#nullable enable
 namespace Geo.Measure;
 
 public static class DistanceUnitExtensions

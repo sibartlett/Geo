@@ -1,4 +1,5 @@
-﻿using Geo.Abstractions.Interfaces;
+﻿#nullable enable
+using Geo.Abstractions.Interfaces;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkb;
 using Geo.IO.Wkt;
@@ -7,7 +8,7 @@ namespace Geo.Abstractions;
 
 public abstract class Geometry : SpatialObject, IGeometry
 {
-    public abstract Envelope GetBounds();
+    public abstract Envelope? GetBounds();
     public abstract bool IsEmpty { get; }
     public abstract bool Is3D { get; }
     public abstract bool IsMeasured { get; }

@@ -1,4 +1,6 @@
+#nullable enable
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Geo.IO.GeoJson;
 using Geo.IO.Wkt;
 
@@ -64,7 +66,11 @@ public static class GeoFormat
     /// <see cref="GeoStringFormat.Unknown" />.
     /// </param>
     /// <returns><c>true</c> if the string was recognised and parsed; otherwise <c>false</c>.</returns>
-    public static bool TryParse(string input, out object result, out GeoStringFormat format)
+    public static bool TryParse(
+        string input,
+        [NotNullWhen(true)] out object? result,
+        out GeoStringFormat format
+    )
     {
         result = null;
         format = GeoStringFormat.Unknown;
@@ -124,7 +130,7 @@ public static class GeoFormat
         return '\0';
     }
 
-    private static bool TryCoordinate(string input, out object result)
+    private static bool TryCoordinate(string input, [NotNullWhen(true)] out object? result)
     {
         if (Coordinate.TryParse(input, out var coordinate))
         {
@@ -136,7 +142,7 @@ public static class GeoFormat
         return false;
     }
 
-    private static bool TryWkt(string input, out object result)
+    private static bool TryWkt(string input, [NotNullWhen(true)] out object? result)
     {
         try
         {
@@ -156,7 +162,7 @@ public static class GeoFormat
         return false;
     }
 
-    private static bool TryGeoJson(string input, out object result)
+    private static bool TryGeoJson(string input, [NotNullWhen(true)] out object? result)
     {
         try
         {

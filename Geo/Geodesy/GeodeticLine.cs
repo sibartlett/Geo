@@ -1,4 +1,5 @@
-﻿using Geo.Measure;
+﻿#nullable enable
+using Geo.Measure;
 
 namespace Geo.Geodesy;
 
@@ -24,7 +25,7 @@ public class GeodeticLine : LineSegment
 
     #region Equality methods
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as GeodeticLine;
         return !ReferenceEquals(null, other)
@@ -39,9 +40,8 @@ public class GeodeticLine : LineSegment
     {
         unchecked
         {
-            var hashCode = Coordinate1 != null ? Coordinate1.GetHashCode(options) : 0;
-            hashCode =
-                (hashCode * 397) ^ (Coordinate2 != null ? Coordinate2.GetHashCode(options) : 0);
+            var hashCode = Coordinate1.GetHashCode(options);
+            hashCode = (hashCode * 397) ^ Coordinate2.GetHashCode(options);
             hashCode = (hashCode * 397) ^ Distance.GetHashCode();
             hashCode = (hashCode * 397) ^ Bearing12.GetHashCode();
             hashCode = (hashCode * 397) ^ Bearing21.GetHashCode();
@@ -49,7 +49,7 @@ public class GeodeticLine : LineSegment
         }
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return base.Equals(obj);
     }
@@ -59,14 +59,14 @@ public class GeodeticLine : LineSegment
         return base.GetHashCode();
     }
 
-    public static bool operator ==(GeodeticLine left, GeodeticLine right)
+    public static bool operator ==(GeodeticLine? left, GeodeticLine? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(GeodeticLine left, GeodeticLine right)
+    public static bool operator !=(GeodeticLine? left, GeodeticLine? right)
     {
         return !(left == right);
     }

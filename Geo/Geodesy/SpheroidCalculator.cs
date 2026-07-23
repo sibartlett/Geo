@@ -2,6 +2,7 @@
 // http://williams.best.vwh.net/
 // https://github.com/geotools/geotools/blob/master/modules/library/referencing/src/main/java/org/geotools/referencing/datum/DefaultEllipsoid.java
 
+#nullable enable
 using System;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
@@ -102,7 +103,7 @@ public class SpheroidCalculator : IGeodeticCalculator
         );
     }
 
-    public GeodeticLine CalculateOrthodromicLine(IPosition position1, IPosition position2)
+    public GeodeticLine? CalculateOrthodromicLine(IPosition position1, IPosition position2)
     {
         var result = CalculateOrthodromicLineInternal(position1, position2);
         if (result == null)
@@ -116,7 +117,7 @@ public class SpheroidCalculator : IGeodeticCalculator
         );
     }
 
-    public GeodeticLine CalculateLoxodromicLine(IPosition position1, IPosition position2)
+    public GeodeticLine? CalculateLoxodromicLine(IPosition position1, IPosition position2)
     {
         var point1 = position1.GetCoordinate();
         var point2 = position2.GetCoordinate();
@@ -279,7 +280,7 @@ public class SpheroidCalculator : IGeodeticCalculator
         return mod(x + Math.PI / 2, 2 * Math.PI) - Math.PI / 2;
     }
 
-    private double[] CalculateOrthodromicLineInternal(IPosition position1, IPosition position2)
+    private double[]? CalculateOrthodromicLineInternal(IPosition position1, IPosition position2)
     {
         var point1 = position1.GetCoordinate();
         var point2 = position2.GetCoordinate();

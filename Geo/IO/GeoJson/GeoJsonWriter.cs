@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Geo.Abstractions.Interfaces;
@@ -54,7 +55,7 @@ public class GeoJsonWriter
         return SimpleJson.SerializeObject(WriteFeatureCollection(featureCollection));
     }
 
-    private Dictionary<string, object> WriteGeometry(IGeometry geometry)
+    private Dictionary<string, object?> WriteGeometry(IGeometry geometry)
     {
         var point = geometry as Point;
         if (point != null)
@@ -94,36 +95,36 @@ public class GeoJsonWriter
         );
     }
 
-    private Dictionary<string, object> WritePoint(Point point)
+    private Dictionary<string, object?> WritePoint(Point point)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "Point" },
             { "coordinates", WriteCoordinate(point) },
         };
     }
 
-    private Dictionary<string, object> WriteLineString(LineString lineString)
+    private Dictionary<string, object?> WriteLineString(LineString lineString)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "LineString" },
             { "coordinates", WriteCoordinates(lineString.Coordinates) },
         };
     }
 
-    private Dictionary<string, object> WritePolygon(Polygon polygon)
+    private Dictionary<string, object?> WritePolygon(Polygon polygon)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "Polygon" },
             { "coordinates", WriteCoordinates(polygon) },
         };
     }
 
-    private Dictionary<string, object> WriteMultiPoint(MultiPoint multiPoint)
+    private Dictionary<string, object?> WriteMultiPoint(MultiPoint multiPoint)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "MultiPoint" },
             {
@@ -133,9 +134,9 @@ public class GeoJsonWriter
         };
     }
 
-    private Dictionary<string, object> WriteMultiLineString(MultiLineString multiLineString)
+    private Dictionary<string, object?> WriteMultiLineString(MultiLineString multiLineString)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "MultiLineString" },
             {
@@ -148,9 +149,9 @@ public class GeoJsonWriter
         };
     }
 
-    private Dictionary<string, object> WriteMultiPolygon(MultiPolygon multiPolygon)
+    private Dictionary<string, object?> WriteMultiPolygon(MultiPolygon multiPolygon)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "MultiPolygon" },
             {
@@ -160,26 +161,26 @@ public class GeoJsonWriter
         };
     }
 
-    private Dictionary<string, object> WriteGeometryCollection(
+    private Dictionary<string, object?> WriteGeometryCollection(
         GeometryCollection geometryCollection
     )
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "GeometryCollection" },
             { "geometries", geometryCollection.Geometries.Select(WriteGeometry).ToArray() },
         };
     }
 
-    private Dictionary<string, object> WriteFeature(Feature feature)
+    private Dictionary<string, object?> WriteFeature(Feature feature)
     {
-        var result = new Dictionary<string, object>
+        var result = new Dictionary<string, object?>
         {
             { "type", "Feature" },
             { "geometry", feature.Geometry == null ? null : WriteGeometry(feature.Geometry) },
         };
 
-        if (feature.Properties != null && feature.Properties.Count > 0)
+        if (feature.Properties.Count > 0)
             result.Add("properties", feature.Properties);
         else
             result.Add("properties", null);
@@ -190,9 +191,9 @@ public class GeoJsonWriter
         return result;
     }
 
-    private Dictionary<string, object> WriteFeatureCollection(FeatureCollection featureCollection)
+    private Dictionary<string, object?> WriteFeatureCollection(FeatureCollection featureCollection)
     {
-        return new Dictionary<string, object>
+        return new Dictionary<string, object?>
         {
             { "type", "FeatureCollection" },
             { "features", featureCollection.Features.Select(WriteFeature).ToArray() },
@@ -225,7 +226,7 @@ public class GeoJsonWriter
 
     private IEnumerable<IEnumerable<double[]>> WriteCoordinates(Polygon polygon)
     {
-        yield return WriteCoordinates(polygon.Shell.Coordinates);
+        yield return WriteCoordinates(polygon.Shell!.Coordinates);
         foreach (var hole in polygon.Holes)
             yield return WriteCoordinates(hole.Coordinates);
     }

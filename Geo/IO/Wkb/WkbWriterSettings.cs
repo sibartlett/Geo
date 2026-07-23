@@ -1,4 +1,5 @@
-﻿namespace Geo.IO.Wkb;
+﻿#nullable enable
+namespace Geo.IO.Wkb;
 
 public class WkbWriterSettings
 {

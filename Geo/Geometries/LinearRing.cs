@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 
 namespace Geo.Geometries;
@@ -16,7 +17,7 @@ public class LinearRing : LineString
     public LinearRing(params Coordinate[] coordinates)
         : this(new CoordinateSequence(coordinates)) { }
 
-    public LinearRing(CoordinateSequence coordinates)
+    public LinearRing(CoordinateSequence? coordinates)
         : base(coordinates)
     {
         if (coordinates != null && !coordinates.IsEmpty && !coordinates.IsClosed)

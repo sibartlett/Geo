@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Geo.Abstractions.Interfaces;
@@ -31,7 +32,7 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
         return GeoContext.Current.GeodeticCalculator.CalculateLength(this);
     }
 
-    public Envelope Combine(Envelope other)
+    public Envelope Combine(Envelope? other)
     {
         if (other == null)
             return this;
@@ -50,7 +51,7 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
             || GetExtremeCoordinates().Any(envelope.Contains);
     }
 
-    public bool Contains(Envelope envelope)
+    public bool Contains(Envelope? envelope)
     {
         return envelope != null
             && envelope.MinLat > MinLat
@@ -67,7 +68,7 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
             && coordinate.Longitude < MaxLon;
     }
 
-    public bool Contains(IGeometry geometry)
+    public bool Contains(IGeometry? geometry)
     {
         return geometry != null && Contains(geometry.GetBounds());
     }
@@ -86,7 +87,7 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
 
     #region Equality methods
 
-    public bool Equals(Envelope other)
+    public bool Equals(Envelope? other)
     {
         return !ReferenceEquals(null, other)
             && MinLat.Equals(other.MinLat)
@@ -95,7 +96,7 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
             && MaxLon.Equals(other.MaxLon);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
             return false;
@@ -118,14 +119,14 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
         }
     }
 
-    public static bool operator ==(Envelope left, Envelope right)
+    public static bool operator ==(Envelope? left, Envelope? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(Envelope left, Envelope right)
+    public static bool operator !=(Envelope? left, Envelope? right)
     {
         return !(left == right);
     }

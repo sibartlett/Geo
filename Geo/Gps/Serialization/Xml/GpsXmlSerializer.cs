@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -51,7 +52,7 @@ public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSeria
     {
         var value = data.Metadata.Attribute(attribute);
         if (!string.IsNullOrWhiteSpace(value))
-            action(xml, value);
+            action(xml, value!);
     }
 
     protected void SerializeTrackMetadata<TTrack>(
@@ -63,7 +64,7 @@ public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSeria
     {
         var value = data.Metadata.Attribute(attribute);
         if (!string.IsNullOrWhiteSpace(value))
-            action(xml, value);
+            action(xml, value!);
     }
 
     protected void SerializeRouteMetadata<TRoute>(
@@ -75,7 +76,7 @@ public abstract class GpsXmlSerializer<T> : GpsXmlDeSerializer<T>, IGpsFileSeria
     {
         var value = data.Metadata.Attribute(attribute);
         if (!string.IsNullOrWhiteSpace(value))
-            action(xml, value);
+            action(xml, value!);
     }
 
     private class EncodingStringWriter : StringWriter

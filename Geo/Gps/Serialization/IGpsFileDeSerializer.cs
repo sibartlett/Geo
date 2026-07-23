@@ -1,3 +1,4 @@
+#nullable enable
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ public interface IGpsFileDeSerializer
     GpsFileFormat[] FileFormats { get; }
     GpsFeatures SupportedFeatures { get; }
     bool CanDeSerialize(StreamWrapper streamWrapper);
-    GpsData DeSerialize(StreamWrapper streamWrapper);
+    GpsData? DeSerialize(StreamWrapper streamWrapper);
 }
 
 public interface IGpsFileSerializer : IGpsFileDeSerializer

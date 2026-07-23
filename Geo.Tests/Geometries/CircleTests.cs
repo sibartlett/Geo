@@ -59,6 +59,14 @@ public class CircleTests
     }
 
     [Fact]
+    public void Empty_circle_has_no_bounds()
+    {
+        Assert.True(new Circle().IsEmpty);
+        Assert.Null(new Circle().GetBounds());
+        Assert.Null(Circle.Empty.GetBounds());
+    }
+
+    [Fact]
     public void GetArea_approximates_pi_r_squared()
     {
         const double radius = 111000;

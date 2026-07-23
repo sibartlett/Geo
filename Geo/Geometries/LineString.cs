@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+using System.Collections.Generic;
 using System.Linq;
 using Geo.Abstractions;
 using Geo.Abstractions.Interfaces;
@@ -19,7 +20,7 @@ public class LineString : Geometry, ICurve
     public LineString(params Coordinate[] coordinates)
         : this(new CoordinateSequence(coordinates)) { }
 
-    public LineString(CoordinateSequence coordinates)
+    public LineString(CoordinateSequence? coordinates)
     {
         Coordinates = coordinates ?? new CoordinateSequence();
     }
@@ -28,7 +29,7 @@ public class LineString : Geometry, ICurve
 
     public Coordinate this[int index] => Coordinates[index];
 
-    public override Envelope GetBounds()
+    public override Envelope? GetBounds()
     {
         return IsEmpty
             ? null
@@ -55,7 +56,7 @@ public class LineString : Geometry, ICurve
 
     #region Equality methods
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return base.Equals(obj);
     }
@@ -65,7 +66,7 @@ public class LineString : Geometry, ICurve
         return base.GetHashCode();
     }
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as LineString;
         return !ReferenceEquals(null, other) && Equals(Coordinates, other.Coordinates, options);
@@ -73,17 +74,17 @@ public class LineString : Geometry, ICurve
 
     public override int GetHashCode(SpatialEqualityOptions options)
     {
-        return Coordinates != null ? Coordinates.GetHashCode(options) : 0;
+        return Coordinates.GetHashCode(options);
     }
 
-    public static bool operator ==(LineString left, LineString right)
+    public static bool operator ==(LineString? left, LineString? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(LineString left, LineString right)
+    public static bool operator !=(LineString? left, LineString? right)
     {
         return !(left == right);
     }

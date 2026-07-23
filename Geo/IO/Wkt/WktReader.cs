@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -15,7 +16,7 @@ public class WktReader
 {
     private readonly WktTokenizer _wktTokenizer = new();
 
-    public IGeometry Read(string wkt)
+    public IGeometry? Read(string wkt)
     {
         if (wkt == null)
             throw new ArgumentNullException("wkt");
@@ -24,7 +25,7 @@ public class WktReader
         return Parse(tokens);
     }
 
-    public IGeometry Read(Stream stream)
+    public IGeometry? Read(Stream stream)
     {
         if (stream == null)
             throw new ArgumentNullException("stream");
@@ -36,7 +37,7 @@ public class WktReader
         }
     }
 
-    public async Task<IGeometry> ReadAsync(
+    public async Task<IGeometry?> ReadAsync(
         Stream stream,
         CancellationToken cancellationToken = default
     )
@@ -52,7 +53,7 @@ public class WktReader
         }
     }
 
-    private IGeometry Parse(WktTokenQueue tokens)
+    private IGeometry? Parse(WktTokenQueue tokens)
     {
         try
         {
@@ -67,7 +68,7 @@ public class WktReader
         }
     }
 
-    private IGeometry ParseGeometry(WktTokenQueue tokens)
+    private IGeometry? ParseGeometry(WktTokenQueue tokens)
     {
         if (tokens.Count == 0)
             return null;
@@ -76,7 +77,7 @@ public class WktReader
 
         if (token.Type == WktTokenType.String)
         {
-            var value = token.Value.ToUpperInvariant();
+            var value = token.Value!.ToUpperInvariant();
             if (value == "POINT")
                 return ParsePoint(tokens);
             if (value == "LINESTRING")
@@ -286,12 +287,12 @@ public class WktReader
         tokens.Dequeue(WktTokenType.LeftParenthesis);
 
         var geometries = new List<IGeometry>();
-        geometries.Add(ParseGeometry(tokens));
+        geometries.Add(ParseGeometry(tokens)!);
 
         while (tokens.NextTokenIs(WktTokenType.Comma))
         {
             tokens.Dequeue();
-            geometries.Add(ParseGeometry(tokens));
+            geometries.Add(ParseGeometry(tokens)!);
         }
 
         tokens.Dequeue(WktTokenType.RightParenthesis);
@@ -302,10 +303,10 @@ public class WktReader
     private Coordinate ParseCoordinate(WktTokenQueue tokens, WktDimensions dimensions)
     {
         var token = tokens.Dequeue(WktTokenType.Number);
-        var x = double.Parse(token.Value, CultureInfo.InvariantCulture);
+        var x = double.Parse(token.Value!, CultureInfo.InvariantCulture);
 
         token = tokens.Dequeue(WktTokenType.Number);
-        var y = double.Parse(token.Value, CultureInfo.InvariantCulture);
+        var y = double.Parse(token.Value!, CultureInfo.InvariantCulture);
 
         var z = double.NaN;
         var m = double.NaN;
@@ -344,7 +345,7 @@ public class WktReader
             if (tokens.NextTokenIs(WktTokenType.Number))
             {
                 var token = tokens.Dequeue(WktTokenType.Number);
-                doubles.Add(double.Parse(token.Value, CultureInfo.InvariantCulture));
+                doubles.Add(double.Parse(token.Value!, CultureInfo.InvariantCulture));
             }
             else if (tokens.NextTokenIs(double.NaN.ToString(CultureInfo.InvariantCulture)))
             {
@@ -360,7 +361,7 @@ public class WktReader
         return doubles;
     }
 
-    private CoordinateSequence ParseCoordinateSequence(
+    private CoordinateSequence? ParseCoordinateSequence(
         WktTokenQueue tokens,
         WktDimensions dimensions
     )
@@ -390,7 +391,7 @@ public class WktReader
         var token = tokens.Peek();
         if (token.Type == WktTokenType.String)
         {
-            var value = token.Value.ToUpperInvariant();
+            var value = token.Value!.ToUpperInvariant();
             if (value == "Z")
             {
                 tokens.Dequeue();

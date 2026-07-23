@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -25,7 +26,7 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
         streamWrapper.Position = 0;
         using (var reader = new StreamReader(streamWrapper))
         {
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
                 if (Regex.IsMatch(line, FIX_SENTENCE) || Regex.IsMatch(line, WPT_SENTENCE))
                     return true;
@@ -41,7 +42,7 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
         streamWrapper.Position = 0;
         using (var reader = new StreamReader(streamWrapper))
         {
-            string line;
+            string? line;
             while ((line = reader.ReadLine()) != null)
             {
                 if (ParseFix(line, trackSegment))

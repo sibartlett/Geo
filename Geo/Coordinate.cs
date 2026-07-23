@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Geo.Abstractions;
@@ -68,21 +70,19 @@ public class Coordinate : SpatialObject, IPosition
         if (string.IsNullOrWhiteSpace(coordinate))
             throw new ArgumentException("Value was empty", "coordinate");
 
-        Coordinate result;
-        if (!TryParse(coordinate, out result))
+        if (!TryParse(coordinate, out var result))
             throw new FormatException("Coordinate (" + coordinate + ") is not a supported format.");
 
         return result;
     }
 
-    public static Coordinate TryParse(string coordinate)
+    public static Coordinate? TryParse(string coordinate)
     {
-        Coordinate result;
-        TryParse(coordinate, out result);
+        TryParse(coordinate, out var result);
         return result;
     }
 
-    public static bool TryParse(string coordinate, out Coordinate result)
+    public static bool TryParse(string coordinate, [NotNullWhen(true)] out Coordinate? result)
     {
         var match = Regex.Match(coordinate, CoordinateRegex);
 
@@ -132,7 +132,7 @@ public class Coordinate : SpatialObject, IPosition
 
     #region Equality methods
 
-    public override bool Equals(object obj, SpatialEqualityOptions options)
+    public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as Coordinate;
 
@@ -161,7 +161,7 @@ public class Coordinate : SpatialObject, IPosition
         return false;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return Equals(obj, GeoContext.Current.EqualityOptions);
     }
@@ -189,14 +189,14 @@ public class Coordinate : SpatialObject, IPosition
         }
     }
 
-    public static bool operator ==(Coordinate left, Coordinate right)
+    public static bool operator ==(Coordinate? left, Coordinate? right)
     {
         if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
             return true;
         return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
     }
 
-    public static bool operator !=(Coordinate left, Coordinate right)
+    public static bool operator !=(Coordinate? left, Coordinate? right)
     {
         return !(left == right);
     }

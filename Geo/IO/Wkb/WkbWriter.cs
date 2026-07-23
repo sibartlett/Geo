@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#nullable enable
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -165,7 +166,7 @@ public class WkbWriter
         {
             WriteEncoding(writer, _settings.Encoding);
             WriteGeometryType(point, WkbGeometryType.Point, writer);
-            WriteCoordinate(point.Coordinate, writer);
+            WriteCoordinate(point.Coordinate!, writer);
         }
     }
 
@@ -199,7 +200,7 @@ public class WkbWriter
         else
         {
             writer.Write((uint)(1 + polygon.Holes.Count));
-            WriteCoordinates(polygon.Shell.Coordinates, writer);
+            WriteCoordinates(polygon.Shell!.Coordinates, writer);
 
             foreach (var hole in polygon.Holes)
                 WriteCoordinates(hole.Coordinates, writer);

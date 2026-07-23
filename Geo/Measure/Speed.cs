@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using Geo.Abstractions.Interfaces;
 
 namespace Geo.Measure;
@@ -69,7 +70,7 @@ public struct Speed : IMeasure, IEquatable<Speed>, IComparable<Speed>
         return SiValue.Equals(other.SiValue);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
             return false;
