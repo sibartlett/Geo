@@ -67,6 +67,41 @@ var withHole = new Polygon(shell: outerRing, holes: innerRing);
 Though it is not enforced, it is advised that the exterior ring is CCW
 (counter-clockwise) and the interior rings/holes are CW (clockwise).
 
+### Ordering an unsorted set of coordinates into a ring
+
+If you have a bag of coordinates that *should* form a polygon shell but are not in
+boundary order, `OrderClockwise` / `OrderCounterClockwise` (in `Geo.Linq`) sort them
+around their centroid so they trace the boundary:
+
+```csharp
+using Geo.Linq;
+
+var unsorted = new[]
+{
+    new Coordinate(10, 10),
+    new Coordinate(0, 0),
+    new Coordinate(10, 0),
+    new Coordinate(0, 10),
+};
+
+var ordered = unsorted.OrderCounterClockwise().ToList();
+ordered.Add(ordered[0]);            // close the ring (first == last)
+
+var shell = new LinearRing(ordered);
+var poly = new Polygon(shell);
+```
+
+The ordering is derived from each coordinate's bearing from the average of all the
+vertices, so it reliably recovers the boundary of a **convex** set (such as the corners
+of a bounding box); a concave set has more than one valid ordering. `GetWindingOrder`
+reports the winding of an already-ordered ring (or `null` if it encloses no area):
+
+```csharp
+using Geo.Linq;
+
+WindingOrder? winding = polygon.Shell.Coordinates.GetWindingOrder();
+```
+
 ## Triangle
 
 A `Polygon` whose shell is limited to 3 distinct points. Similar to the OGC
