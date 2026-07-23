@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#nullable enable
+using System.IO;
 using Geo.Abstractions.Interfaces;
 
 namespace Geo.IO.GeoJson;
