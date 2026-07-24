@@ -162,10 +162,19 @@ public class WkbWriter
 
     private void WritePoint(Point point, WkbBinaryWriter writer)
     {
-        if (!point.IsEmpty)
+        WriteEncoding(writer, _settings.Encoding);
+        WriteGeometryType(point, WkbGeometryType.Point, writer);
+
+        if (point.IsEmpty)
         {
-            WriteEncoding(writer, _settings.Encoding);
-            WriteGeometryType(point, WkbGeometryType.Point, writer);
+            // WKB has no empty flag for a point, so an empty point is encoded as a 2D
+            // point with NaN ordinates, matching NTS/GEOS/PostGIS. WriteGeometryType has
+            // already written the 2D Point type code for the empty geometry.
+            writer.Write(double.NaN);
+            writer.Write(double.NaN);
+        }
+        else
+        {
             WriteCoordinate(point.Coordinate!, writer);
         }
     }
@@ -211,9 +220,8 @@ public class WkbWriter
     {
         WriteEncoding(writer, _settings.Encoding);
         WriteGeometryType(multipoint, WkbGeometryType.MultiPoint, writer);
-        var points = multipoint.Geometries.Cast<Point>().Where(x => !x.IsEmpty).ToList();
-        writer.Write((uint)points.Count);
-        foreach (var point in points)
+        writer.Write((uint)multipoint.Geometries.Count);
+        foreach (var point in multipoint.Geometries.Cast<Point>())
             Write(point, writer);
     }
 
@@ -239,9 +247,8 @@ public class WkbWriter
     {
         WriteEncoding(writer, _settings.Encoding);
         WriteGeometryType(collection, WkbGeometryType.GeometryCollection, writer);
-        var geometries = collection.Geometries.Where(x => !(x is Point) || !x.IsEmpty).ToList();
-        writer.Write((uint)geometries.Count);
-        foreach (var geometry in geometries)
+        writer.Write((uint)collection.Geometries.Count);
+        foreach (var geometry in collection.Geometries)
             Write(geometry, writer);
     }
 
