@@ -110,6 +110,17 @@ public class WktReaderTests
     }
 
     [Fact]
+    public void Point_with_null_ordinate_placeholder_reads_as_measured()
+    {
+        var reader = new WktReader();
+
+        // Without a dimension flag, an XYM coordinate is written positionally
+        // with a NaN placeholder in the Z slot; it must read back as XYM.
+        var xym = reader.Read("POINT (0.0 65.9 NaN 5)");
+        Assert.Equal(new Point(new CoordinateM(65.9, 0, 5)), xym);
+    }
+
+    [Fact]
     public void LineString()
     {
         var reader = new WktReader();

@@ -62,9 +62,6 @@ public struct Speed : IMeasure, IEquatable<Speed>, IComparable<Speed>
         return SiValue < other.SiValue ? -1 : 1;
     }
 
-    //TODO
-    //http://confluence.jetbrains.net/display/ReSharper/Compare+of+float+numbers+by+equality+operator
-
     public bool Equals(Speed other)
     {
         return SiValue.Equals(other.SiValue);
