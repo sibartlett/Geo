@@ -6,7 +6,7 @@ namespace Geo.Geometries;
 
 public class MultiPoint : GeometryCollection
 {
-    public static new readonly MultiPoint Empty = new();
+    public static new MultiPoint Empty => new();
 
     public MultiPoint() { }
 

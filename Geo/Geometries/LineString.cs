@@ -9,7 +9,7 @@ namespace Geo.Geometries;
 
 public class LineString : Geometry, ICurve
 {
-    public static readonly LineString Empty = new();
+    public static LineString Empty => new();
 
     public LineString()
         : this(new CoordinateSequence()) { }

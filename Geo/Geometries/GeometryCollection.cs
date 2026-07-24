@@ -8,7 +8,7 @@ namespace Geo.Geometries;
 
 public class GeometryCollection : Geometry
 {
-    public static readonly GeometryCollection Empty = new();
+    public static GeometryCollection Empty => new();
 
     public GeometryCollection()
     {

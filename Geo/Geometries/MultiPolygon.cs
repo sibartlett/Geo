@@ -8,7 +8,7 @@ namespace Geo.Geometries;
 
 public class MultiPolygon : GeometryCollection, IMultiSurface
 {
-    public static new readonly MultiPolygon Empty = new();
+    public static new MultiPolygon Empty => new();
 
     public MultiPolygon() { }
 
