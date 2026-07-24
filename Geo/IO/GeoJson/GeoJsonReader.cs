@@ -407,7 +407,7 @@ public class GeoJsonReader
 
         var jsonObject = obj as JsonObject;
         if (jsonObject != null)
-            return jsonObject.ToDictionary(x => x.Key, x => SantizeJsonObjects(x));
+            return jsonObject.ToDictionary(x => x.Key, x => SantizeJsonObjects(x.Value));
 
         return obj;
     }
