@@ -18,23 +18,26 @@ public class EnvelopeTests
     }
 
     [Fact]
-    public void Contains_coordinate_uses_strict_interior()
+    public void Contains_coordinate_includes_the_boundary()
     {
         var envelope = new Envelope(0, 0, 10, 10);
 
         Assert.True(envelope.Contains(new Coordinate(5, 5)));
-        Assert.False(envelope.Contains(new Coordinate(0, 0)));
-        Assert.False(envelope.Contains(new Coordinate(5, 10)));
+        // Corner and edge coordinates lie on the boundary and are contained.
+        Assert.True(envelope.Contains(new Coordinate(0, 0)));
+        Assert.True(envelope.Contains(new Coordinate(5, 10)));
         Assert.False(envelope.Contains(new Coordinate(20, 20)));
     }
 
     [Fact]
-    public void Contains_envelope_requires_a_strictly_smaller_envelope()
+    public void Contains_envelope_includes_the_boundary()
     {
         var envelope = new Envelope(0, 0, 10, 10);
 
         Assert.True(envelope.Contains(new Envelope(1, 1, 9, 9)));
-        Assert.False(envelope.Contains(new Envelope(0, 0, 10, 10)));
+        // An envelope contains itself and one that touches its edges.
+        Assert.True(envelope.Contains(new Envelope(0, 0, 10, 10)));
+        Assert.True(envelope.Contains(new Envelope(0, 0, 5, 5)));
         Assert.False(envelope.Contains(new Envelope(-1, -1, 11, 11)));
         Assert.False(envelope.Contains((Envelope)null));
     }
@@ -72,6 +75,63 @@ public class EnvelopeTests
 
         Assert.True(envelope.Intersects(new Envelope(5, 5, 15, 15)));
         Assert.False(envelope.Intersects(new Envelope(20, 20, 30, 30)));
+    }
+
+    [Fact]
+    public void Intersects_is_true_for_a_cross_shaped_overlap()
+    {
+        // A box and a horizontal bar that passes through it. They clearly overlap,
+        // yet neither envelope has a corner inside the other.
+        var box = new Envelope(0, 0, 10, 10);
+        var bar = new Envelope(3, -5, 7, 15);
+
+        Assert.True(box.Intersects(bar));
+        Assert.True(bar.Intersects(box));
+    }
+
+    [Fact]
+    public void Intersects_is_symmetric()
+    {
+        var a = new Envelope(0, 0, 10, 10);
+        var b = new Envelope(5, 5, 15, 15);
+
+        Assert.Equal(a.Intersects(b), b.Intersects(a));
+    }
+
+    [Fact]
+    public void Intersects_is_true_for_an_identical_envelope()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        Assert.True(envelope.Intersects(new Envelope(0, 0, 10, 10)));
+    }
+
+    [Fact]
+    public void Intersects_is_true_for_a_contained_envelope()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        Assert.True(envelope.Intersects(new Envelope(2, 2, 8, 8)));
+        Assert.True(new Envelope(2, 2, 8, 8).Intersects(envelope));
+    }
+
+    [Fact]
+    public void Intersects_is_true_when_envelopes_touch_along_an_edge()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        Assert.True(envelope.Intersects(new Envelope(0, 10, 10, 20)));
+    }
+
+    [Fact]
+    public void Intersects_is_false_when_only_one_axis_overlaps()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        // Longitudes overlap but latitudes are disjoint.
+        Assert.False(envelope.Intersects(new Envelope(20, 5, 30, 15)));
+        // Latitudes overlap but longitudes are disjoint.
+        Assert.False(envelope.Intersects(new Envelope(5, 20, 15, 30)));
     }
 
     [Fact]

@@ -1,7 +1,5 @@
 ﻿#nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Measure;
 
@@ -47,42 +45,41 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
 
     public bool Intersects(Envelope envelope)
     {
-        return envelope.GetExtremeCoordinates().Any(Contains)
-            || GetExtremeCoordinates().Any(envelope.Contains);
+        // Two axis-aligned envelopes overlap when their latitude spans overlap and
+        // their longitude spans overlap. Testing the spans directly (rather than
+        // whether a corner of one lies inside the other) correctly handles cross-shaped
+        // overlaps, where neither envelope has a corner inside the other, as well as
+        // identical envelopes and envelopes that touch along an edge.
+        return MinLat <= envelope.MaxLat
+            && MaxLat >= envelope.MinLat
+            && MinLon <= envelope.MaxLon
+            && MaxLon >= envelope.MinLon;
     }
 
     public bool Contains(Envelope? envelope)
     {
+        // Inclusive of the boundary: an envelope contains one whose span lies within
+        // its own, edges included, so an envelope contains itself (matching the OGC
+        // convention and consistent with Intersects).
         return envelope != null
-            && envelope.MinLat > MinLat
-            && envelope.MaxLat < MaxLat
-            && envelope.MinLon > MinLon
-            && envelope.MaxLon < MaxLon;
+            && envelope.MinLat >= MinLat
+            && envelope.MaxLat <= MaxLat
+            && envelope.MinLon >= MinLon
+            && envelope.MaxLon <= MaxLon;
     }
 
     public bool Contains(Coordinate coordinate)
     {
-        return coordinate.Latitude > MinLat
-            && coordinate.Latitude < MaxLat
-            && coordinate.Longitude > MinLon
-            && coordinate.Longitude < MaxLon;
+        // Inclusive of the boundary: a coordinate on an edge or corner is contained.
+        return coordinate.Latitude >= MinLat
+            && coordinate.Latitude <= MaxLat
+            && coordinate.Longitude >= MinLon
+            && coordinate.Longitude <= MaxLon;
     }
 
     public bool Contains(IGeometry? geometry)
     {
         return geometry != null && Contains(geometry.GetBounds());
-    }
-
-    private IEnumerable<Coordinate> GetExtremeCoordinates()
-    {
-        return new[]
-        {
-            new Coordinate(MinLat, MinLon),
-            new Coordinate(MaxLat, MinLon),
-            new Coordinate(MaxLat, MaxLon),
-            new Coordinate(MinLat, MaxLon),
-            new Coordinate(MinLat, MinLon),
-        };
     }
 
     #region Equality methods
