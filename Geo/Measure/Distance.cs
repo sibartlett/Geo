@@ -45,9 +45,6 @@ public struct Distance : IMeasure, IEquatable<Distance>, IComparable<Distance>
         return SiValue < other.SiValue ? -1 : 1;
     }
 
-    //TODO
-    //http://confluence.jetbrains.net/display/ReSharper/Compare+of+float+numbers+by+equality+operator
-
     public bool Equals(Distance other)
     {
         return SiValue.Equals(other.SiValue);

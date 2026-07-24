@@ -44,9 +44,6 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
         return SiValue < other.SiValue ? -1 : 1;
     }
 
-    //TODO
-    //http://confluence.jetbrains.net/display/ReSharper/Compare+of+float+numbers+by+equality+operator
-
     public bool Equals(Area other)
     {
         return SiValue.Equals(other.SiValue);
