@@ -256,6 +256,10 @@ public class WktReaderTests
             points
         );
 
+        var withEmptyMember = reader.Read("GEOMETRYCOLLECTION (POINT EMPTY, POINT (0.0 65.9))");
+        Assert.Equal(new GeometryCollection(new Point(), new Point(65.9, 0)), withEmptyMember);
+        Assert.True(((GeometryCollection)withEmptyMember!).Geometries[0].IsEmpty);
+
         var empty = reader.Read("GEOMETRYCOLLECTION ZM EMPTY");
         Assert.Equal(new GeometryCollection(), empty);
     }

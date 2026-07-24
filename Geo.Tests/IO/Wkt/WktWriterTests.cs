@@ -7,6 +7,26 @@ namespace Geo.Tests.IO.Wkt;
 public class WktWriterTests
 {
     [Fact]
+    public void Empty_point_members_survive_a_write_then_read_round_trip()
+    {
+        var writer = new WktWriter();
+        var reader = new WktReader();
+
+        var multiPoint = new MultiPoint(new Point(), new Point(65.9, 0), new Point());
+        var multiPointResult = (MultiPoint)reader.Read(writer.Write(multiPoint))!;
+        Assert.Equal(3, multiPointResult.Geometries.Count);
+        Assert.True(multiPointResult.Geometries[0].IsEmpty);
+        Assert.True(multiPointResult.Geometries[2].IsEmpty);
+        Assert.Equal(multiPoint, multiPointResult);
+
+        var collection = new GeometryCollection(new Point(), new Point(65.9, 0));
+        var collectionResult = (GeometryCollection)reader.Read(writer.Write(collection))!;
+        Assert.Equal(2, collectionResult.Geometries.Count);
+        Assert.True(collectionResult.Geometries[0].IsEmpty);
+        Assert.Equal(collection, collectionResult);
+    }
+
+    [Fact]
     public void Point()
     {
         var writer = new WktWriter();
