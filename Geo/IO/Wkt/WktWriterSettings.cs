@@ -10,7 +10,6 @@ public class WktWriterSettings
         LinearRing = false;
         Triangle = false;
         DimensionFlag = true;
-        //TODO: Review whether we need NullOrdinate setting
         NullOrdinate = double.NaN.ToString(CultureInfo.InvariantCulture);
         MaxDimesions = 4;
         ConvertCirclesToRegularPolygons = false;

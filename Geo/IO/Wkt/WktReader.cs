@@ -347,9 +347,12 @@ public class WktReader
                 var token = tokens.Dequeue(WktTokenType.Number);
                 doubles.Add(double.Parse(token.Value!, CultureInfo.InvariantCulture));
             }
-            else if (tokens.NextTokenIs(double.NaN.ToString(CultureInfo.InvariantCulture)))
+            else if (
+                tokens.NextTokenIs(
+                    double.NaN.ToString(CultureInfo.InvariantCulture).ToUpperInvariant()
+                )
+            )
             {
-                //TODO: Review this
                 tokens.Dequeue(WktTokenType.String);
                 doubles.Add(double.NaN);
             }

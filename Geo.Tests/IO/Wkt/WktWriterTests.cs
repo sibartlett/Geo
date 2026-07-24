@@ -28,6 +28,21 @@ public class WktWriterTests
     }
 
     [Fact]
+    public void Point_measured_without_dimension_flag_round_trips()
+    {
+        var settings = new WktWriterSettings { DimensionFlag = false };
+        var writer = new WktWriter(settings);
+
+        // With no dimension flag to mark the measure, the Z slot is filled
+        // with the null-ordinate placeholder so the M value keeps its position.
+        var point = new Point(new CoordinateM(65.9, 0, 5));
+        var xym = writer.Write(point);
+        Assert.Equal("POINT (0 65.9 NaN 5)", xym);
+
+        Assert.Equal(point, new WktReader().Read(xym));
+    }
+
+    [Fact]
     public void LineString()
     {
         var writer = new WktWriter();
