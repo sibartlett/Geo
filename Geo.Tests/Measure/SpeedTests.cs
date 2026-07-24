@@ -83,4 +83,61 @@ public class SpeedTests
         Assert.True(new Speed(10).Equals((object)new Speed(10)));
         Assert.Equal(0, new Speed(10).CompareTo(new Speed(10)));
     }
+
+    [Fact]
+    public void Inclusive_comparison_operators_reflect_magnitude()
+    {
+        Assert.True(new Speed(20) >= new Speed(10));
+        Assert.True(new Speed(10) >= new Speed(10));
+        Assert.False(new Speed(10) >= new Speed(20));
+
+        Assert.True(new Speed(10) <= new Speed(20));
+        Assert.True(new Speed(10) <= new Speed(10));
+        Assert.False(new Speed(20) <= new Speed(10));
+    }
+
+    [Fact]
+    public void CompareTo_orders_by_si_value()
+    {
+        Assert.Equal(-1, new Speed(10).CompareTo(new Speed(20)));
+        Assert.Equal(1, new Speed(20).CompareTo(new Speed(10)));
+    }
+
+    [Fact]
+    public void Equal_speeds_share_a_hash_code()
+    {
+        Assert.Equal(new Speed(12.5).GetHashCode(), new Speed(12.5).GetHashCode());
+    }
+
+    [Fact]
+    public void Boxed_equality_only_matches_other_speeds()
+    {
+        object boxed = new Speed(10);
+
+        Assert.True(new Speed(10).Equals(boxed));
+        Assert.False(new Speed(10).Equals((object)new Speed(20)));
+        Assert.False(new Speed(10).Equals((object)"10"));
+        Assert.False(new Speed(10).Equals(null));
+    }
+
+    [Fact]
+    public void ToString_formats_the_value_in_its_unit()
+    {
+        Assert.Equal(new Speed(10).ToString(), new Speed(10).ToString(SpeedUnit.Ms));
+        // ToString(unit) expresses the same underlying speed in the requested unit.
+        Assert.Equal(
+            new Speed(1).ConvertTo(SpeedUnit.Kph).ToString(),
+            new Speed(1).ToString(SpeedUnit.Kph)
+        );
+    }
+
+    [Fact]
+    public void Explicit_conversions_from_numeric_types_store_metres_per_second()
+    {
+        Assert.Equal(5, ((Speed)5).SiValue);
+        Assert.Equal(5, ((Speed)5L).SiValue);
+        Assert.Equal(5, ((Speed)5d).SiValue);
+        Assert.Equal(5, ((Speed)5f).SiValue);
+        Assert.Equal(5, ((Speed)5m).SiValue);
+    }
 }

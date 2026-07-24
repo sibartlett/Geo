@@ -89,6 +89,30 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.Equal(3, data.Tracks.Single().Segments.Single().Waypoints.Count);
     }
 
+    [Fact]
+    public void Gpx11_serializes_and_round_trips_full_metadata()
+    {
+        var data = new GpsData();
+        data.Metadata.Attribute(x => x.Software, "Geo.Tests");
+        data.Metadata.Attribute(x => x.Name, "Sample track");
+        data.Metadata.Attribute(x => x.Description, "A sample description");
+        data.Metadata.Attribute(x => x.Keywords, "hiking, sample, gpx");
+        data.Metadata.Attribute(x => x.Link, "https://example.com/track");
+        data.Metadata.Attribute(x => x.Author.Name, "Ada Lovelace");
+        data.Metadata.Attribute(x => x.Author.Email, "ada@example.com");
+        data.Metadata.Attribute(x => x.Author.Link, "https://example.com/ada");
+        data.Metadata.Attribute(x => x.Copyright.Author, "Ada Lovelace");
+        data.Metadata.Attribute(x => x.Copyright.License, "CC-BY-4.0");
+        data.Metadata.Attribute(x => x.Copyright.Year, "2026");
+
+        var gpx11 = new Gpx11Serializer();
+        var gpxData = gpx11.Serialize(data);
+
+        // Every metadata field written above must survive a serialize/deserialize round-trip.
+        Assert.Contains("<metadata>", gpxData);
+        Compare(gpx11, data, gpxData);
+    }
+
     private void Compare(Gpx10Serializer serializer, GpsData data, string gpxData)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpxData));

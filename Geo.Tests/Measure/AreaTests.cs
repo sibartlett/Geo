@@ -55,6 +55,55 @@ public class AreaTests
         Assert.False(new Area(100).Equals((object)new Distance(100)));
     }
 
+    [Fact]
+    public void Unit_constructor_converts_value_to_si_and_exposes_it_in_unit()
+    {
+        var area = new Area(2, DistanceUnit.Km);
+
+        Assert.Equal(2000, area.SiValue);
+        Assert.Equal(DistanceUnit.Km, area.Unit);
+        Assert.Equal(2, area.Value, 1e-9);
+    }
+
+    [Fact]
+    public void ConvertTo_expresses_the_value_in_the_requested_unit()
+    {
+        var converted = new Area(2000).ConvertTo(DistanceUnit.Km);
+
+        Assert.Equal(2, converted.Value, 1e-9);
+        Assert.Equal(DistanceUnit.Km, converted.Unit);
+    }
+
+    [Fact]
+    public void ToString_formats_the_value_in_its_unit()
+    {
+        Assert.Equal(new Area(2000).ToString(), new Area(2000).ToString(DistanceUnit.M));
+        Assert.Equal(
+            new Area(2000).ConvertTo(DistanceUnit.Km).ToString(),
+            new Area(2000).ToString(DistanceUnit.Km)
+        );
+    }
+
+    [Fact]
+    public void Explicit_conversions_from_numeric_types_store_square_metres()
+    {
+        Assert.Equal(5, ((Area)5).SiValue);
+        Assert.Equal(5, ((Area)5L).SiValue);
+        Assert.Equal(5, ((Area)5d).SiValue);
+        Assert.Equal(5, ((Area)5f).SiValue);
+        Assert.Equal(5, ((Area)5m).SiValue);
+    }
+
+    [Fact]
+    public void Inclusive_comparison_operators_reflect_magnitude()
+    {
+        Assert.True(new Area(400) >= new Area(100));
+        Assert.False(new Area(100) >= new Area(400));
+        Assert.True(new Area(100) <= new Area(400));
+        Assert.False(new Area(400) <= new Area(100));
+        Assert.Equal(-1, new Area(100).CompareTo(new Area(400)));
+    }
+
     [Theory]
     [InlineData(1_000_000, AreaUnit.Km, 1)]
     [InlineData(1, AreaUnit.M, 1)]
