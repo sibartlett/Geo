@@ -75,6 +75,63 @@ public class EnvelopeTests
     }
 
     [Fact]
+    public void Intersects_is_true_for_a_cross_shaped_overlap()
+    {
+        // A box and a horizontal bar that passes through it. They clearly overlap,
+        // yet neither envelope has a corner inside the other.
+        var box = new Envelope(0, 0, 10, 10);
+        var bar = new Envelope(3, -5, 7, 15);
+
+        Assert.True(box.Intersects(bar));
+        Assert.True(bar.Intersects(box));
+    }
+
+    [Fact]
+    public void Intersects_is_symmetric()
+    {
+        var a = new Envelope(0, 0, 10, 10);
+        var b = new Envelope(5, 5, 15, 15);
+
+        Assert.Equal(a.Intersects(b), b.Intersects(a));
+    }
+
+    [Fact]
+    public void Intersects_is_true_for_an_identical_envelope()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        Assert.True(envelope.Intersects(new Envelope(0, 0, 10, 10)));
+    }
+
+    [Fact]
+    public void Intersects_is_true_for_a_contained_envelope()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        Assert.True(envelope.Intersects(new Envelope(2, 2, 8, 8)));
+        Assert.True(new Envelope(2, 2, 8, 8).Intersects(envelope));
+    }
+
+    [Fact]
+    public void Intersects_is_true_when_envelopes_touch_along_an_edge()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        Assert.True(envelope.Intersects(new Envelope(0, 10, 10, 20)));
+    }
+
+    [Fact]
+    public void Intersects_is_false_when_only_one_axis_overlaps()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+
+        // Longitudes overlap but latitudes are disjoint.
+        Assert.False(envelope.Intersects(new Envelope(20, 5, 30, 15)));
+        // Latitudes overlap but longitudes are disjoint.
+        Assert.False(envelope.Intersects(new Envelope(5, 20, 15, 30)));
+    }
+
+    [Fact]
     public void Equality_compares_all_four_bounds()
     {
         var a = new Envelope(0, 0, 10, 10);
