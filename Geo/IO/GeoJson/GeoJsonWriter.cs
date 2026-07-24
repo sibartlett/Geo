@@ -42,17 +42,17 @@ public class GeoJsonWriter
 
     public string Write(IGeometry geometry)
     {
-        return SimpleJson.SerializeObject(WriteGeometry(geometry));
+        return Json.Serialize(WriteGeometry(geometry));
     }
 
     public string Write(Feature feature)
     {
-        return SimpleJson.SerializeObject(WriteFeature(feature));
+        return Json.Serialize(WriteFeature(feature));
     }
 
     public string Write(FeatureCollection featureCollection)
     {
-        return SimpleJson.SerializeObject(WriteFeatureCollection(featureCollection));
+        return Json.Serialize(WriteFeatureCollection(featureCollection));
     }
 
     private Dictionary<string, object?> WriteGeometry(IGeometry geometry)
