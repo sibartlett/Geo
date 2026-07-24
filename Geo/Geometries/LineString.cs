@@ -47,7 +47,7 @@ public class LineString : Geometry, ICurve
 
     public override bool IsMeasured => Coordinates.HasM;
 
-    public bool IsClosed => !IsEmpty && Coordinates[0].Equals(Coordinates[Coordinates.Count - 1]);
+    public bool IsClosed => Coordinates.IsClosed;
 
     public Distance GetLength()
     {

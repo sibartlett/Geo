@@ -103,4 +103,22 @@ public class LineStringTests
 
         Assert.True(ring.IsEmpty);
     }
+
+    [Fact]
+    public void LinearRing_requires_at_least_four_coordinates()
+    {
+        // A closed sequence of three coordinates repeats the first point but does not
+        // enclose an area; OGC/NTS require a ring to have zero or at least four points.
+        Assert.Throws<ArgumentException>(() =>
+            new LinearRing(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(0, 0))
+        );
+    }
+
+    [Fact]
+    public void A_single_coordinate_line_string_is_not_closed()
+    {
+        var line = new LineString(new Coordinate(0, 0));
+
+        Assert.False(line.IsClosed);
+    }
 }

@@ -26,7 +26,7 @@ public class CoordinateSequence : SpatialReadOnlyCollection<Coordinate>
         get { return this.Any(x => x.IsMeasured); }
     }
 
-    public bool IsClosed => Count > 2 && this[0].Equals(this[Count - 1]);
+    public bool IsClosed => Count > 1 && this[0].Equals(this[Count - 1]);
 
     public Envelope? GetBounds()
     {

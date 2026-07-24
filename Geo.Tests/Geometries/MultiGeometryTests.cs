@@ -133,4 +133,20 @@ public class MultiGeometryTests
         Assert.True(triangle.Shell.IsClosed);
         Assert.Equal(4, triangle.Shell.Coordinates.Count);
     }
+
+    [Fact]
+    public void Triangle_rejects_a_closed_ring_that_is_not_four_points()
+    {
+        // A closed five-point ring is a valid polygon but not a valid triangle, which
+        // must be a closed ring of exactly four coordinates.
+        var shell = new LinearRing(
+            new Coordinate(0, 0),
+            new Coordinate(1, 0),
+            new Coordinate(1, 1),
+            new Coordinate(0, 1),
+            new Coordinate(0, 0)
+        );
+
+        Assert.Throws<ArgumentException>(() => new Triangle(shell));
+    }
 }
