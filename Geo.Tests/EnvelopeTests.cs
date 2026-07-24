@@ -18,23 +18,26 @@ public class EnvelopeTests
     }
 
     [Fact]
-    public void Contains_coordinate_uses_strict_interior()
+    public void Contains_coordinate_includes_the_boundary()
     {
         var envelope = new Envelope(0, 0, 10, 10);
 
         Assert.True(envelope.Contains(new Coordinate(5, 5)));
-        Assert.False(envelope.Contains(new Coordinate(0, 0)));
-        Assert.False(envelope.Contains(new Coordinate(5, 10)));
+        // Corner and edge coordinates lie on the boundary and are contained.
+        Assert.True(envelope.Contains(new Coordinate(0, 0)));
+        Assert.True(envelope.Contains(new Coordinate(5, 10)));
         Assert.False(envelope.Contains(new Coordinate(20, 20)));
     }
 
     [Fact]
-    public void Contains_envelope_requires_a_strictly_smaller_envelope()
+    public void Contains_envelope_includes_the_boundary()
     {
         var envelope = new Envelope(0, 0, 10, 10);
 
         Assert.True(envelope.Contains(new Envelope(1, 1, 9, 9)));
-        Assert.False(envelope.Contains(new Envelope(0, 0, 10, 10)));
+        // An envelope contains itself and one that touches its edges.
+        Assert.True(envelope.Contains(new Envelope(0, 0, 10, 10)));
+        Assert.True(envelope.Contains(new Envelope(0, 0, 5, 5)));
         Assert.False(envelope.Contains(new Envelope(-1, -1, 11, 11)));
         Assert.False(envelope.Contains((Envelope)null));
     }

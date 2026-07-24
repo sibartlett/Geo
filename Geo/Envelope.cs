@@ -58,19 +58,23 @@ public class Envelope : IHasArea, IHasLength, IEquatable<Envelope>
 
     public bool Contains(Envelope? envelope)
     {
+        // Inclusive of the boundary: an envelope contains one whose span lies within
+        // its own, edges included, so an envelope contains itself (matching the OGC
+        // convention and consistent with Intersects).
         return envelope != null
-            && envelope.MinLat > MinLat
-            && envelope.MaxLat < MaxLat
-            && envelope.MinLon > MinLon
-            && envelope.MaxLon < MaxLon;
+            && envelope.MinLat >= MinLat
+            && envelope.MaxLat <= MaxLat
+            && envelope.MinLon >= MinLon
+            && envelope.MaxLon <= MaxLon;
     }
 
     public bool Contains(Coordinate coordinate)
     {
-        return coordinate.Latitude > MinLat
-            && coordinate.Latitude < MaxLat
-            && coordinate.Longitude > MinLon
-            && coordinate.Longitude < MaxLon;
+        // Inclusive of the boundary: a coordinate on an edge or corner is contained.
+        return coordinate.Latitude >= MinLat
+            && coordinate.Latitude <= MaxLat
+            && coordinate.Longitude >= MinLon
+            && coordinate.Longitude <= MaxLon;
     }
 
     public bool Contains(IGeometry? geometry)
