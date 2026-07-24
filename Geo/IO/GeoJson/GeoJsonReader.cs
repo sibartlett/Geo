@@ -51,7 +51,7 @@ public class GeoJsonReader
     {
         result = null;
 
-        if (!SimpleJson.TryDeserializeObject(json, out var obj))
+        if (!Json.TryParse(json, out var obj))
             return false;
 
         if (obj is JsonObject)
