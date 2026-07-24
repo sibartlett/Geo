@@ -6,7 +6,7 @@ namespace Geo.Geometries;
 
 public class LinearRing : LineString
 {
-    public static new readonly LinearRing Empty = new();
+    public static new LinearRing Empty => new();
 
     public LinearRing()
         : this(new CoordinateSequence()) { }

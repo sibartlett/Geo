@@ -9,7 +9,7 @@ namespace Geo.Geometries;
 
 public class Polygon : Geometry, ISurface
 {
-    public static readonly Polygon Empty = new();
+    public static Polygon Empty => new();
 
     public Polygon()
         : this((LinearRing?)null) { }

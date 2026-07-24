@@ -14,6 +14,18 @@ public class PointTests
     }
 
     [Fact]
+    public void Empty_returns_a_fresh_instance_that_cannot_corrupt_the_shared_state()
+    {
+        // Point.Coordinate is mutable, so Empty must hand out a new instance each time;
+        // mutating one must not turn a later Point.Empty into a non-empty point.
+        var first = Point.Empty;
+        first.Coordinate = new Coordinate(1, 2);
+
+        Assert.NotSame(first, Point.Empty);
+        Assert.True(Point.Empty.IsEmpty);
+    }
+
+    [Fact]
     public void Two_argument_constructor_is_neither_3d_nor_measured()
     {
         var point = new Point(1, 2);

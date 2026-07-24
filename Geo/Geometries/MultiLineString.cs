@@ -8,7 +8,7 @@ namespace Geo.Geometries;
 
 public class MultiLineString : GeometryCollection, IMultiCurve
 {
-    public static new readonly MultiLineString Empty = new();
+    public static new MultiLineString Empty => new();
 
     public MultiLineString() { }
 

@@ -6,7 +6,7 @@ namespace Geo.Geometries;
 
 public class Point : Geometry, IPosition
 {
-    public static readonly Point Empty = new();
+    public static Point Empty => new();
 
     public Point()
         : this(null) { }

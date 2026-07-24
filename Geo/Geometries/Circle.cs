@@ -9,7 +9,7 @@ namespace Geo.Geometries;
 
 public class Circle : Geometry, ISurface
 {
-    public static readonly Circle Empty = new();
+    public static Circle Empty => new();
 
     public Circle()
     {

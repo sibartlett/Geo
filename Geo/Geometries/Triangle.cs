@@ -6,7 +6,7 @@ namespace Geo.Geometries;
 
 public class Triangle : Polygon
 {
-    public static new readonly Triangle Empty = new();
+    public static new Triangle Empty => new();
 
     public Triangle() { }
 
