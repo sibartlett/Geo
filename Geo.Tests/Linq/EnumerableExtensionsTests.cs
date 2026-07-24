@@ -189,4 +189,81 @@ public class EnumerableExtensionsTests
         Assert.Throws<ArgumentNullException>(() => coordinates.OrderCounterClockwise());
         Assert.Throws<ArgumentNullException>(() => coordinates.GetWindingOrder());
     }
+
+    [Fact]
+    public void GetWindingOrder_is_correct_across_the_antimeridian()
+    {
+        // A narrow box straddling the 180th meridian (lon 175 .. -175). A planar
+        // shoelace on raw longitudes would span ~350 degrees and get this wrong.
+        var counterClockwise = new List<Coordinate>
+        {
+            new(0, 175),
+            new(0, -175),
+            new(10, -175),
+            new(10, 175),
+        };
+
+        Assert.Equal(WindingOrder.CounterClockwise, counterClockwise.GetWindingOrder());
+
+        counterClockwise.Reverse();
+        Assert.Equal(WindingOrder.Clockwise, counterClockwise.GetWindingOrder());
+    }
+
+    [Fact]
+    public void OrderCounterClockwise_orders_box_corners_across_the_antimeridian()
+    {
+        // The four corners of a box straddling the date line, out of order.
+        var shuffled = new List<Coordinate>
+        {
+            new(10, 175),
+            new(0, -175),
+            new(0, 175),
+            new(10, -175),
+        };
+
+        var ordered = shuffled.OrderCounterClockwise().ToList();
+
+        Assert.Equal(WindingOrder.CounterClockwise, ordered.GetWindingOrder());
+
+        // Consecutive corners of an axis-aligned box share exactly one ordinate; a wrong
+        // ordering would connect diagonal corners (which share neither).
+        for (var i = 0; i < ordered.Count; i++)
+        {
+            var current = ordered[i];
+            var next = ordered[(i + 1) % ordered.Count];
+            var sharesLatitude = current.Latitude.Equals(next.Latitude);
+            var sharesLongitude = current.Longitude.Equals(next.Longitude);
+            Assert.True(sharesLatitude ^ sharesLongitude);
+        }
+    }
+
+    [Fact]
+    public void GetWindingOrder_handles_a_ring_enclosing_the_north_pole()
+    {
+        // A cap around the North Pole, sampled at a constant latitude. A planar shoelace
+        // reads this as zero area (every vertex has the same latitude) and reports null;
+        // measured on the sphere it correctly encloses the pole.
+        var counterClockwise = new List<Coordinate>
+        {
+            new(80, 0),
+            new(80, 90),
+            new(80, 180),
+            new(80, -90),
+        };
+
+        Assert.Equal(WindingOrder.CounterClockwise, counterClockwise.GetWindingOrder());
+
+        counterClockwise.Reverse();
+        Assert.Equal(WindingOrder.Clockwise, counterClockwise.GetWindingOrder());
+    }
+
+    [Fact]
+    public void OrderCounterClockwise_orders_a_cap_around_the_south_pole()
+    {
+        var shuffled = new List<Coordinate> { new(-85, 120), new(-85, -120), new(-85, 0) };
+
+        var ordered = shuffled.OrderCounterClockwise();
+
+        Assert.Equal(WindingOrder.CounterClockwise, ordered.GetWindingOrder());
+    }
 }

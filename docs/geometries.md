@@ -91,10 +91,17 @@ var shell = new LinearRing(ordered);
 var poly = new Polygon(shell);
 ```
 
-The ordering is derived from each coordinate's bearing from the average of all the
-vertices, so it reliably recovers the boundary of a **convex** set (such as the corners
-of a bounding box); a concave set has more than one valid ordering. `GetWindingOrder`
-reports the winding of an already-ordered ring (or `null` if it encloses no area):
+The ordering is computed on the unit sphere (each coordinate's azimuth around the
+centroid direction), so it is correct **across the antimeridian and around the poles** —
+not just a flat lon/lat approximation. It reliably recovers the boundary of a **convex**
+set (such as the corners of a bounding box); a concave set has more than one valid
+ordering, so the result may not be the one you had in mind.
+
+`GetWindingOrder` reports the winding of an already-ordered ring, viewed from outside the
+sphere. It too is measured spherically (signed spherical area), so a ring that crosses the
+date line or even encloses a pole is handled correctly. It returns `null` for a degenerate
+ring — fewer than three coordinates, one that encloses no area (points on a great circle),
+or vertices spread over more than a hemisphere with no well-defined centre:
 
 ```csharp
 using Geo.Linq;
