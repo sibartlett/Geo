@@ -80,7 +80,10 @@ public class SphereCalculator : IGeodeticCalculator
             area = area * Radius * Radius / 2.0;
         }
 
-        return new Area(area);
+        // The formula yields a signed area whose sign depends on the ring's winding
+        // order. Callers (e.g. Polygon.GetArea, which subtracts hole areas from the
+        // shell area) expect a non-negative magnitude, so return the absolute value.
+        return new Area(Math.Abs(area));
     }
 
     public Area CalculateArea(Circle circle)

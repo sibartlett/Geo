@@ -58,6 +58,42 @@ public class PolygonTests
         Assert.True(withHole.GetArea().SiValue < withoutHole.GetArea().SiValue);
     }
 
+    // A counter-clockwise ring (the GeoJSON/OGC exterior-ring convention), which is
+    // the opposite winding to Square above.
+    private static LinearRing SquareCounterClockwise(double size)
+    {
+        return new LinearRing(
+            new Coordinate(0, 0),
+            new Coordinate(0, size),
+            new Coordinate(size, size),
+            new Coordinate(size, 0),
+            new Coordinate(0, 0)
+        );
+    }
+
+    [Fact]
+    public void GetArea_is_positive_regardless_of_shell_winding()
+    {
+        // Both windings describe the same square, so the area must be positive
+        // and identical either way.
+        var clockwise = new Polygon(Square(10)).GetArea().SiValue;
+        var counterClockwise = new Polygon(SquareCounterClockwise(10)).GetArea().SiValue;
+
+        Assert.True(counterClockwise > 0);
+        Assert.Equal(clockwise, counterClockwise, clockwise * 1e-9);
+    }
+
+    [Fact]
+    public void A_hole_reduces_the_area_of_a_standards_wound_polygon()
+    {
+        // GeoJSON/OGC winding: counter-clockwise shell, clockwise hole.
+        var withoutHole = new Polygon(SquareCounterClockwise(10));
+        var withHole = new Polygon(SquareCounterClockwise(10), Square(5));
+
+        Assert.True(withHole.GetArea().SiValue > 0);
+        Assert.True(withHole.GetArea().SiValue < withoutHole.GetArea().SiValue);
+    }
+
     [Fact]
     public void Empty_polygons_are_equal()
     {

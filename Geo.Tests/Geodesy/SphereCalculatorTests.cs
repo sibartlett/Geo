@@ -97,6 +97,37 @@ public class SphereCalculatorTests
         Assert.Equal(expected, result.SiValue, expected * 1e-9);
     }
 
+    [Fact]
+    public void Ring_area_is_a_positive_magnitude_regardless_of_winding_order()
+    {
+        var calculator = new SphereCalculator(Radius);
+
+        // Same square traversed counter-clockwise (the GeoJSON/OGC exterior-ring
+        // convention) and clockwise. Area is a magnitude, so both must be positive
+        // and equal.
+        var counterClockwise = new CoordinateSequence(
+            new Coordinate(0, 0),
+            new Coordinate(0, 10),
+            new Coordinate(10, 10),
+            new Coordinate(10, 0),
+            new Coordinate(0, 0)
+        );
+        var clockwise = new CoordinateSequence(
+            new Coordinate(0, 0),
+            new Coordinate(10, 0),
+            new Coordinate(10, 10),
+            new Coordinate(0, 10),
+            new Coordinate(0, 0)
+        );
+
+        var ccw = calculator.CalculateArea(counterClockwise).SiValue;
+        var cw = calculator.CalculateArea(clockwise).SiValue;
+
+        Assert.True(ccw > 0);
+        Assert.True(cw > 0);
+        Assert.Equal(cw, ccw, ccw * 1e-9);
+    }
+
     [Theory]
     [InlineData(0, 0, 1, 1, 444763.38338824594)]
     [InlineData(0, 0, 10, 10, 4430910.158223232)]
