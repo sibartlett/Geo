@@ -139,7 +139,15 @@ public class WkbReader
 
     private Point ReadPoint(WkbBinaryReader reader, WkbDimensions dimensions)
     {
-        return new Point(ReadCoordinate(reader, dimensions));
+        var coordinate = ReadCoordinate(reader, dimensions);
+
+        // A point whose position ordinates are all NaN encodes POINT EMPTY, matching
+        // NTS/GEOS/PostGIS. Return a fresh empty point rather than the shared singleton,
+        // since Point.Coordinate is mutable.
+        if (double.IsNaN(coordinate.Latitude) && double.IsNaN(coordinate.Longitude))
+            return new Point();
+
+        return new Point(coordinate);
     }
 
     private LineString ReadLineString(WkbBinaryReader reader, WkbDimensions dimensions)

@@ -54,3 +54,13 @@ There is also a static factory for settings that are compatible with NTS/JTS:
 ```csharp
 var writer = new WkbWriter(WkbWriterSettings.NtsCompatible);
 ```
+
+## Empty geometries
+
+WKB carries no dedicated flag for an empty point, so — following the convention
+used by NTS/JTS, GEOS and PostGIS — an empty `Point` is written as a 2D point
+whose ordinates are both `NaN`, and a point read back with all-`NaN` ordinates
+is returned as an empty `Point`. Empty points are also preserved as members of a
+`MultiPoint` or `GeometryCollection` (they are not dropped), so a collection
+keeps its cardinality across a round trip. All other empty geometries use their
+natural zero-length encoding (an empty ring/coordinate count).

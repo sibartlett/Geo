@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Serialization;
+using Geo.Geometries;
 using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 using Xunit;
@@ -11,7 +13,7 @@ public class WkbTests
     [Fact]
     public void Point()
     {
-        //Test("POINT EMPTY");
+        Test("POINT EMPTY");
         Test("POINT (45.89 23.9)");
         Test("POINT Z (45.89 23.9 0.45)");
         Test("POINT M (45.89 23.9 34)");
@@ -98,6 +100,48 @@ public class WkbTests
         Test(
             "GEOMETRYCOLLECTION (LINESTRING ZM (45.89 23.9 0.45 34, 0 0 0.45 34), POLYGON ZM ((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1)))"
         );
+    }
+
+    [Fact]
+    public void Empty_point_round_trips_as_a_non_empty_wkb_record()
+    {
+        // WKB has no empty flag for a point, so an empty point is encoded as a 2D point
+        // with NaN ordinates (never zero bytes) and read back as an empty point.
+        var wkb = new WkbWriter().Write(new Point());
+
+        Assert.NotEmpty(wkb);
+
+        var result = new WkbReader().Read(wkb);
+
+        Assert.NotNull(result);
+        Assert.True(result!.IsEmpty);
+        Assert.IsType<Point>(result);
+    }
+
+    [Fact]
+    public void Empty_points_are_preserved_inside_a_multipoint()
+    {
+        var multiPoint = new MultiPoint(new Point(1, 2), new Point(), new Point(3, 4));
+
+        var wkb = new WkbWriter().Write(multiPoint);
+        var result = (MultiPoint)new WkbReader().Read(wkb)!;
+
+        Assert.Equal(3, result.Geometries.Count);
+        Assert.True(result.Geometries.ElementAt(1).IsEmpty);
+        Assert.Equal(multiPoint, result);
+    }
+
+    [Fact]
+    public void Empty_points_are_preserved_inside_a_geometry_collection()
+    {
+        var collection = new GeometryCollection(new Point(), new Point(5, 6));
+
+        var wkb = new WkbWriter().Write(collection);
+        var result = (GeometryCollection)new WkbReader().Read(wkb)!;
+
+        Assert.Equal(2, result.Geometries.Count);
+        Assert.True(result.Geometries.ElementAt(0).IsEmpty);
+        Assert.Equal(collection, result);
     }
 
     [Fact]
