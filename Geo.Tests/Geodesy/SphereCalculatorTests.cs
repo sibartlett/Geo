@@ -1,5 +1,6 @@
 using System;
 using Geo.Geodesy;
+using Geo.Geometries;
 using Xunit;
 
 namespace Geo.Tests.Geodesy;
@@ -44,6 +45,55 @@ public class SphereCalculatorTests
         var result = calculator.CalculateArea(new Envelope(minLat, minLon, maxLat, maxLon));
 
         Assert.True(result.SiValue > 0);
+        Assert.Equal(expected, result.SiValue, expected * 1e-9);
+    }
+
+    [Fact]
+    public void Circle_area_of_a_cap_is_the_spherical_cap_area()
+    {
+        var calculator = new SphereCalculator(Radius);
+
+        // Spherical cap area = 2 * pi * R * h, with h = R * (1 - cos(r / R)).
+        var capRadius = 100000d;
+        var h = Radius * (1 - Math.Cos(capRadius / Radius));
+        var expected = 2 * Math.PI * Radius * h;
+
+        var result = calculator.CalculateArea(new Circle(0, 0, capRadius));
+
+        Assert.Equal(expected, result.SiValue, expected * 1e-9);
+    }
+
+    [Fact]
+    public void Circle_area_is_zero_when_radius_is_not_positive()
+    {
+        var calculator = new SphereCalculator(Radius);
+
+        Assert.Equal(0d, calculator.CalculateArea(new Circle(0, 0, 0)).SiValue);
+        Assert.Equal(0d, calculator.CalculateArea(new Circle(0, 0, -1)).SiValue);
+    }
+
+    [Fact]
+    public void Circle_area_is_zero_when_radius_exceeds_half_the_great_circle()
+    {
+        var calculator = new SphereCalculator(Radius);
+
+        // Any radius beyond pi * R covers more than the whole sphere, so it is rejected.
+        var tooLarge = Math.PI * Radius + 1;
+
+        Assert.Equal(0d, calculator.CalculateArea(new Circle(0, 0, tooLarge)).SiValue);
+    }
+
+    [Fact]
+    public void Circle_length_is_the_circumference_of_the_cap()
+    {
+        var calculator = new SphereCalculator(Radius);
+
+        var capRadius = 100000d;
+        var h = Radius * (1 - Math.Cos(capRadius / Radius));
+        var expected = 2 * Math.PI * Math.Sqrt(h * (2 * Radius - h));
+
+        var result = calculator.CalculateLength(new Circle(0, 0, capRadius));
+
         Assert.Equal(expected, result.SiValue, expected * 1e-9);
     }
 

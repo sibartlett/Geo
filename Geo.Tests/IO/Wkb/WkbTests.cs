@@ -49,6 +49,42 @@ public class WkbTests
     }
 
     [Fact]
+    public void MultiPoint()
+    {
+        Test("MULTIPOINT EMPTY");
+        Test("MULTIPOINT ((45.89 23.9), (0 0))");
+        Test("MULTIPOINT Z ((45.89 23.9 0.45), (0 0 0.45))");
+        Test("MULTIPOINT M ((45.89 23.9 34), (0 0 34))");
+        Test("MULTIPOINT ZM ((45.89 23.9 0.45 34), (0 0 0.45 34))");
+    }
+
+    [Fact]
+    public void MultiLineString()
+    {
+        Test("MULTILINESTRING EMPTY");
+        Test("MULTILINESTRING ((45.89 23.9, 0 0), (1 1, 2 2))");
+        Test("MULTILINESTRING Z ((45.89 23.9 0.45, 0 0 0.45), (1 1 3, 2 2 3))");
+        Test("MULTILINESTRING M ((45.89 23.9 34, 0 0 34), (1 1 5, 2 2 5))");
+        Test("MULTILINESTRING ZM ((45.89 23.9 0.45 34, 0 0 0.45 34), (1 1 3 5, 2 2 3 5))");
+    }
+
+    [Fact]
+    public void MultiPolygon()
+    {
+        Test("MULTIPOLYGON EMPTY");
+        Test("MULTIPOLYGON (((0 0, 1 0, 0 1, 0 0)), ((10 10, 11 10, 10 11, 10 10)))");
+        Test(
+            "MULTIPOLYGON Z (((0 0 2, 1 0 2, 0 1 2, 0 0 2)), ((10 10 2, 11 10 2, 10 11 2, 10 10 2)))"
+        );
+        Test(
+            "MULTIPOLYGON M (((0 0 -1, 1 0 -1, 0 1 -1, 0 0 -1)), ((10 10 -1, 11 10 -1, 10 11 -1, 10 10 -1)))"
+        );
+        Test(
+            "MULTIPOLYGON ZM (((0 0 2 -1, 1 0 2 -1, 0 1 2 -1, 0 0 2 -1)), ((10 10 2 -1, 11 10 2 -1, 10 11 2 -1, 10 10 2 -1)))"
+        );
+    }
+
+    [Fact]
     public void GeometryCollection()
     {
         Test("GEOMETRYCOLLECTION (LINESTRING EMPTY, POLYGON EMPTY)");
