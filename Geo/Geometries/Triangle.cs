@@ -19,7 +19,7 @@ public class Triangle : Polygon
     public Triangle(LinearRing shell, IEnumerable<LinearRing> holes)
         : base(shell, holes)
     {
-        if (!shell.IsClosed && shell.Coordinates.Count != 4)
+        if (!shell.IsClosed || shell.Coordinates.Count != 4)
             throw new ArgumentException("The Coordinate Sequence is not valid for a triangle.");
     }
 }

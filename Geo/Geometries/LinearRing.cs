@@ -20,9 +20,17 @@ public class LinearRing : LineString
     public LinearRing(CoordinateSequence? coordinates)
         : base(coordinates)
     {
-        if (coordinates != null && !coordinates.IsEmpty && !coordinates.IsClosed)
-            throw new ArgumentException(
-                "The Coordinate Sequence must be closed to form a Linear Ring"
-            );
+        if (coordinates != null && !coordinates.IsEmpty)
+        {
+            if (coordinates.Count < 4)
+                throw new ArgumentException(
+                    "A Linear Ring must have either zero or at least four coordinates"
+                );
+
+            if (!coordinates.IsClosed)
+                throw new ArgumentException(
+                    "The Coordinate Sequence must be closed to form a Linear Ring"
+                );
+        }
     }
 }
