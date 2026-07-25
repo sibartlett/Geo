@@ -89,6 +89,15 @@ public class Coordinate : SpatialObject, IPosition
 
     public static bool TryParse(string coordinate, [NotNullWhen(true)] out Coordinate? result)
     {
+        // TryParse reports failure rather than throwing, so a null input is just
+        // another value that does not parse. Parse still rejects it up front with
+        // an ArgumentNullException.
+        if (coordinate == null)
+        {
+            result = default;
+            return false;
+        }
+
         var match = Regex.Match(coordinate, CoordinateRegex);
 
         if (match.Success)

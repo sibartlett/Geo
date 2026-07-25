@@ -94,6 +94,12 @@ public class Circle : Geometry, ISurface
         if (sides < 3)
             throw new ArgumentOutOfRangeException("sides", "Must be greater than 2.");
 
+        // An empty circle has no centre to project the vertices from, so it becomes
+        // the empty polygon rather than dereferencing the centre. This keeps the
+        // WKT/WKB/GeoJSON writers, which convert circles to polygons, from throwing.
+        if (IsEmpty)
+            return Polygon.Empty;
+
         var angle = -360d / sides;
         var coordinates = new List<Coordinate>();
         Coordinate? first = null;
