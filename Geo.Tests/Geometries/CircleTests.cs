@@ -46,15 +46,18 @@ public class CircleTests
     }
 
     [Fact]
-    public void An_60Degree_CircleWith_111000M_RadiusShouldBeAboutOneDegreeWide()
+    public void An_60Degree_CircleWith_111000M_RadiusShouldBeAboutFourDegreesWide()
     {
         var circle = new Circle(60, 20, 111000);
         var bounds = circle.GetBounds();
 
-        var minLonError = Distance(19.5, bounds.MinLon);
+        // At 60N a degree of longitude spans only cos(60) = half the metres of a degree
+        // of latitude, so a circle that is ~2 degrees tall is ~4 degrees wide (about two
+        // degrees either side of the centre).
+        var minLonError = Distance(18.002, bounds.MinLon);
         Assert.True(minLonError <= 0.002);
 
-        var maxLonError = Distance(20.5, bounds.MaxLon);
+        var maxLonError = Distance(21.998, bounds.MaxLon);
         Assert.True(maxLonError <= 0.002);
     }
 
