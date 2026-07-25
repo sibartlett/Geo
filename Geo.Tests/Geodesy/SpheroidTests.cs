@@ -65,4 +65,41 @@ public class SpheroidTests
         Assert.Equal(Spheroid.Wgs84.Name, Spheroid.Default.Name);
         Assert.Equal(Spheroid.Wgs84.EquatorialAxis, Spheroid.Default.EquatorialAxis);
     }
+
+    [Fact]
+    public void Authalic_radius_is_the_published_value()
+    {
+        // The equal-area radius of WGS-84 is a published constant (R2 in NIMA TR8350.2).
+        Assert.Equal(6371007.181, Spheroid.Wgs84.AuthalicRadius, 1e-3);
+    }
+
+    [Fact]
+    public void Authalic_radius_of_a_sphere_is_its_own_radius()
+    {
+        var sphere = new Spheroid("Sphere", 6371000d, double.PositiveInfinity);
+
+        Assert.Equal(6371000d, sphere.AuthalicRadius, 1e-6);
+    }
+
+    [Theory]
+    [InlineData(298.257223563)]
+    [InlineData(297)]
+    [InlineData(294.9786982)]
+    [InlineData(50)]
+    public void Authalic_radius_lies_between_the_two_axes(double inverseFlattening)
+    {
+        // An equal-area sphere has to sit between the flattened and unflattened extremes.
+        var spheroid = new Spheroid("test", 6378137d, inverseFlattening);
+
+        Assert.InRange(spheroid.AuthalicRadius, spheroid.PolarAxis, spheroid.EquatorialAxis);
+    }
+
+    [Fact]
+    public void Authalic_radius_scales_with_the_spheroid()
+    {
+        var full = new Spheroid("full", 6378137d, 298.257223563d);
+        var half = new Spheroid("half", 6378137d / 2, 298.257223563d);
+
+        Assert.Equal(full.AuthalicRadius / 2, half.AuthalicRadius, 1e-6);
+    }
 }

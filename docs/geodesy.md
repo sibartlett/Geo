@@ -91,6 +91,11 @@ Built-in spheroids include `Spheroid.Wgs84` (the default), `Spheroid.Grs80`,
 `Spheroid.International1924`, and `Spheroid.Clarke1866`. You can also construct a
 custom one with `new Spheroid(name, equatorialAxis, inverseFlattening)`.
 
+Alongside its defining parameters, `Spheroid` exposes derived quantities:
+`PolarAxis`, `Eccentricity`, `MeanRadius`, and `AuthalicRadius` — the radius of
+the sphere with the same surface area, which is the sphere area calculations
+reduce to, so that they answer for the spheroid you configured.
+
 The `Distance` and `Area` result types (from the `Geo.Measure` namespace) carry
 their value in S.I. units and convert to others via `ConvertTo`, e.g.
 `distance.ConvertTo(DistanceUnit.Nm).Value`.
