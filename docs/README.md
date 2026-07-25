@@ -4,6 +4,10 @@ Geo is a geospatial library for .NET; its main focus is the geographical domain.
 See the [project README](../README.md) for installation and a quick-start
 example.
 
+## About
+
+- [Geo vs. NetTopologySuite — which should I use?](geo-vs-nts.md)
+
 ## Core types
 
 - [Coordinate](coordinate.md)
