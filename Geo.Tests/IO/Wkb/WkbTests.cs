@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using Geo.Geometries;
@@ -198,5 +199,75 @@ public class WkbTests
             var geometry2 = wkbReader.Read(wkb);
             Assert.Equal(geometry, geometry2);
         }
+    }
+
+    [Fact]
+    public void Read_from_a_non_seekable_stream()
+    {
+        // A network, pipe or compression stream cannot seek. Reading WKB from one must
+        // return the geometry, not silently decide the stream holds no data.
+        var expected = new Point(23.9, 45.89);
+        var bytes = new WkbWriter().Write(expected);
+
+        var geometry = new WkbReader().Read(new NonSeekableStream(bytes));
+
+        Assert.Equal(expected, geometry);
+    }
+
+    [Fact]
+    public void Read_from_an_empty_non_seekable_stream_returns_null()
+    {
+        Assert.Null(new WkbReader().Read(new NonSeekableStream(new byte[0])));
+    }
+
+    [Fact]
+    public void Read_from_a_stream_that_returns_short_reads()
+    {
+        // A stream is free to satisfy a read with fewer bytes than were asked for
+        // without being at its end; the reader must keep reading rather than treat the
+        // short read as a truncated geometry.
+        var expected = new Point(23.9, 45.89);
+        var bytes = new WkbWriter().Write(expected);
+
+        var geometry = new WkbReader().Read(new NonSeekableStream(bytes, 3));
+
+        Assert.Equal(expected, geometry);
+    }
+
+    // A read-only stream that reports CanSeek == false, and optionally caps how many
+    // bytes a single read will return.
+    private sealed class NonSeekableStream : Stream
+    {
+        private readonly MemoryStream _inner;
+        private readonly int _maxRead;
+
+        public NonSeekableStream(byte[] data, int maxRead = int.MaxValue)
+        {
+            _inner = new MemoryStream(data);
+            _maxRead = maxRead;
+        }
+
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => throw new NotSupportedException();
+        public override long Position
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        public override int Read(byte[] buffer, int offset, int count) =>
+            _inner.Read(buffer, offset, Math.Min(count, _maxRead));
+
+        public override void Flush() { }
+
+        public override long Seek(long offset, SeekOrigin origin) =>
+            throw new NotSupportedException();
+
+        public override void SetLength(long value) => throw new NotSupportedException();
+
+        public override void Write(byte[] buffer, int offset, int count) =>
+            throw new NotSupportedException();
     }
 }

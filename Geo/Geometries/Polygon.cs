@@ -45,6 +45,11 @@ public class Polygon : Geometry, ISurface
 
     public Area GetArea()
     {
+        // An empty polygon has a null shell, so guard before dereferencing it: it
+        // encloses nothing, and dereferencing the shell would throw instead.
+        if (IsEmpty)
+            return new Area(0d);
+
         var calculator = GeoContext.Current.GeodeticCalculator;
         var area = calculator.CalculateArea(Shell!.Coordinates);
         return Holes.Aggregate(

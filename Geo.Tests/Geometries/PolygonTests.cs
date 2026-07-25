@@ -145,4 +145,22 @@ public class PolygonTests
         Assert.True(new Triangle().IsEmpty);
         Assert.True(Triangle.Empty.IsEmpty);
     }
+
+    [Fact]
+    public void Empty_polygon_has_zero_area()
+    {
+        // An empty polygon has a null shell; asking for its area must report that it
+        // encloses nothing rather than dereferencing the missing shell.
+        Assert.Equal(0d, new Polygon().GetArea().SiValue);
+        Assert.Equal(0d, Polygon.Empty.GetArea().SiValue);
+        Assert.Equal(0d, new Triangle().GetArea().SiValue);
+    }
+
+    [Fact]
+    public void MultiPolygon_area_skips_empty_members()
+    {
+        var multiPolygon = new MultiPolygon(new Polygon(Square(10)), Polygon.Empty);
+
+        Assert.Equal(new Polygon(Square(10)).GetArea().SiValue, multiPolygon.GetArea().SiValue);
+    }
 }
