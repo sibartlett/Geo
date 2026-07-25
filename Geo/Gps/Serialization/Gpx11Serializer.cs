@@ -158,12 +158,24 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
             x => x.Author.Email,
             (gpx, s) =>
             {
+                // GPX 1.1 splits an address into an id and a domain, so one that has no
+                // '@' to split on - or nothing on either side of it - cannot be written
+                // at all. Leave the element out rather than indexing past the end of the
+                // split and taking the whole serialization down with it.
+                var at = s.IndexOf('@');
+                if (at <= 0 || at == s.Length - 1)
+                    return;
+
                 if (gpx.metadata == null)
                     gpx.metadata = new GpxMetadata();
                 if (gpx.metadata.author == null)
                     gpx.metadata.author = new GpxPerson();
-                var parts = s.Split('@');
-                gpx.metadata.author.email = new GpxEmail { id = parts[0], domain = parts[1] };
+
+                gpx.metadata.author.email = new GpxEmail
+                {
+                    id = s.Substring(0, at),
+                    domain = s.Substring(at + 1),
+                };
             }
         );
 

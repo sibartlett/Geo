@@ -17,8 +17,8 @@ public class SpeedTests
 
     [Theory]
     [InlineData(1, SpeedUnit.Ms, 1)]
-    [InlineData(1, SpeedUnit.Knots, 0.514444444)]
-    [InlineData(1, SpeedUnit.Kph, 0.277778)]
+    [InlineData(1, SpeedUnit.Knots, 1852d / 3600d)]
+    [InlineData(1, SpeedUnit.Kph, 1000d / 3600d)]
     [InlineData(1, SpeedUnit.Mph, 0.44704)]
     public void Unit_constructor_converts_to_si_metres_per_second(
         double value,
@@ -64,6 +64,22 @@ public class SpeedTests
 
         // 1 m/s is roughly 3.6 km/h.
         Assert.Equal(3.6, converted.Value, 1e-2);
+    }
+
+    [Theory]
+    [InlineData(10, SpeedUnit.Kph, 36)]
+    [InlineData(1, SpeedUnit.Kph, 3.6)]
+    [InlineData(1852d / 3600d, SpeedUnit.Knots, 1)]
+    [InlineData(1609.344 / 3600d, SpeedUnit.Mph, 1)]
+    public void ConvertTo_uses_the_exact_definition_of_the_unit(
+        double metresPerSecond,
+        SpeedUnit unit,
+        double expected
+    )
+    {
+        // The unit factors are exact ratios, not rounded decimals, so a round number of
+        // metres per second converts to a round number in the target unit.
+        Assert.Equal(expected, new Speed(metresPerSecond).ConvertTo(unit).Value, 1e-12);
     }
 
     [Fact]

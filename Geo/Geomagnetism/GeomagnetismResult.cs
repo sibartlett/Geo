@@ -10,9 +10,11 @@ public class GeomagnetismResult
     {
         Date = date;
         Coordinate = coordinate;
-        if (Math.Abs(x - 0.0) < double.Epsilon * 2 || Math.Abs(y - 0.0) < double.Epsilon * 2)
-            return;
 
+        // No guard against a zero component is needed: Math.Atan2 is defined for a zero
+        // argument (and for both being zero), so the angles come out at 0 on their own.
+        // Bailing out instead threw away the components that were fine - a field pointing
+        // straight down, with x and y at zero, reported no field at all.
         X = x;
         Y = y;
         Z = z;

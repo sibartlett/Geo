@@ -26,43 +26,11 @@ public class CoordinateZM : Coordinate, Is3D, IsMeasured
     public double Elevation { get; }
     public double Measure { get; }
 
+    internal override double? ElevationOrNull => Elevation;
+
+    internal override double? MeasureOrNull => Measure;
+
     #region Equality methods
-
-    public override bool Equals(object? obj, SpatialEqualityOptions options)
-    {
-        var other = obj as Coordinate;
-
-        if (ReferenceEquals(null, other))
-            return false;
-
-        var other2 = other as CoordinateZM;
-        if (ReferenceEquals(null, other2))
-            return false;
-
-        if (options.UseElevation && !Elevation.Equals(other2.Elevation))
-            return false;
-
-        if (options.UseM && !Measure.Equals(other2.Measure))
-            return false;
-
-        if (Latitude.Equals(other.Latitude))
-        {
-            if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90d) || Latitude.Equals(-90d)))
-                return true;
-
-            if (Longitude.Equals(other.Longitude))
-                return true;
-
-            if (options.AntiMeridianCoordinatesAreEqual)
-                if (
-                    (Longitude.Equals(180) && other.Longitude.Equals(-180))
-                    || (Longitude.Equals(-180) && other.Longitude.Equals(180))
-                )
-                    return true;
-        }
-
-        return false;
-    }
 
     public override bool Equals(object? obj)
     {

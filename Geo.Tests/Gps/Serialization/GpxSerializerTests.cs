@@ -113,6 +113,42 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Compare(gpx11, data, gpxData);
     }
 
+    [Theory]
+    [InlineData("nobody")] // no '@' to split on
+    [InlineData("@example.com")] // nothing before the '@'
+    [InlineData("ada@")] // nothing after it
+    public void Gpx11_serializes_an_author_email_it_cannot_split(string email)
+    {
+        // GPX 1.1 carries an address as a separate id and domain, so one that cannot be
+        // split into the two is left out - it must not take the whole document with it.
+        var data = new GpsData();
+        data.Metadata.Attribute(x => x.Author.Name, "Ada Lovelace");
+        data.Metadata.Attribute(x => x.Author.Email, email);
+
+        var gpx = new Gpx11Serializer().Serialize(data);
+
+        Assert.Contains("Ada Lovelace", gpx);
+        Assert.DoesNotContain("<email", gpx);
+    }
+
+    [Fact]
+    public void Gpx11_splits_an_author_email_at_its_first_at_sign()
+    {
+        var data = new GpsData();
+        data.Metadata.Attribute(x => x.Author.Email, "ada@example.com");
+
+        var gpx11 = new Gpx11Serializer();
+        var gpx = gpx11.Serialize(data);
+
+        Assert.Contains("id=\"ada\"", gpx);
+        Assert.Contains("domain=\"example.com\"", gpx);
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var roundTripped = gpx11.DeSerialize(new StreamWrapper(stream));
+
+        Assert.Equal("ada@example.com", roundTripped.Metadata.Attribute(x => x.Author.Email));
+    }
+
     [Fact]
     public void Gpx11_route_without_route_points_is_parsed()
     {

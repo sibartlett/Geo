@@ -19,7 +19,7 @@ public class DistanceTests
     [InlineData(1, DistanceUnit.M, 1)]
     [InlineData(1, DistanceUnit.Km, 1000)]
     [InlineData(1, DistanceUnit.Nm, 1852)]
-    [InlineData(1, DistanceUnit.Mile, 1609.34)]
+    [InlineData(1, DistanceUnit.Mile, 1609.344)]
     [InlineData(1, DistanceUnit.Ft, 0.3048)]
     public void Unit_constructor_converts_to_si_metres(
         double value,
@@ -37,7 +37,7 @@ public class DistanceTests
     [Theory]
     [InlineData(1000, DistanceUnit.Km, 1)]
     [InlineData(1852, DistanceUnit.Nm, 1)]
-    [InlineData(1609.34, DistanceUnit.Mile, 1)]
+    [InlineData(1609.344, DistanceUnit.Mile, 1)]
     [InlineData(0.3048, DistanceUnit.Ft, 1)]
     public void ConvertTo_expresses_the_value_in_the_requested_unit(
         double metres,

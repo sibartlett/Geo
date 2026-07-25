@@ -37,22 +37,34 @@ public class GeomagnetismResultTests
     [Theory]
     [InlineData(0, 100)]
     [InlineData(19000, 0)]
-    public void A_zero_x_or_y_component_leaves_the_derived_field_unset(double x, double y)
+    public void A_zero_x_or_y_component_is_still_a_field(double x, double y)
     {
-        var result = new GeomagnetismResult(Location, Date, x, y, 45000);
+        const double z = 45000;
 
-        // The constructor short-circuits before assigning any component, so every
-        // derived quantity stays at its default of zero, while the location and date
-        // are still recorded.
-        Assert.Equal(0, result.X);
-        Assert.Equal(0, result.Y);
-        Assert.Equal(0, result.Z);
-        Assert.Equal(0, result.HorizontalIntensity);
-        Assert.Equal(0, result.TotalIntensity);
-        Assert.Equal(0, result.Declination);
-        Assert.Equal(0, result.Inclination);
+        var result = new GeomagnetismResult(Location, Date, x, y, z);
+
+        var expectedH = Math.Sqrt(x * x + y * y);
+
+        Assert.Equal(x, result.X);
+        Assert.Equal(y, result.Y);
+        Assert.Equal(z, result.Z);
+        Assert.Equal(expectedH, result.HorizontalIntensity, 6);
+        Assert.Equal(Math.Sqrt(x * x + y * y + z * z), result.TotalIntensity, 6);
+        Assert.Equal(ToDegrees(Math.Atan2(y, x)), result.Declination, 9);
+        Assert.Equal(ToDegrees(Math.Atan2(z, expectedH)), result.Inclination, 9);
         Assert.Same(Location, result.Coordinate);
         Assert.Equal(Date, result.Date);
+    }
+
+    [Fact]
+    public void A_field_pointing_straight_down_keeps_its_vertical_component()
+    {
+        var result = new GeomagnetismResult(Location, Date, 0, 0, 45000);
+
+        Assert.Equal(45000, result.Z);
+        Assert.Equal(45000, result.TotalIntensity, 6);
+        Assert.Equal(0, result.HorizontalIntensity, 6);
+        Assert.Equal(90, result.Inclination, 9);
     }
 
     [Fact]

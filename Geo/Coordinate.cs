@@ -47,6 +47,16 @@ public class Coordinate : SpatialObject, IPosition
 
     public virtual bool IsMeasured => false;
 
+    /// <summary>
+    /// The elevation this coordinate carries, or <c>null</c> when it carries none.
+    /// </summary>
+    internal virtual double? ElevationOrNull => null;
+
+    /// <summary>
+    /// The measure this coordinate carries, or <c>null</c> when it carries none.
+    /// </summary>
+    internal virtual double? MeasureOrNull => null;
+
     Coordinate IPosition.GetCoordinate()
     {
         return this;
@@ -160,16 +170,44 @@ public class Coordinate : SpatialObject, IPosition
 
     #region Equality methods
 
+    // Every coordinate type compares the same way, so the comparison lives here rather
+    // than being repeated (and drifting) in CoordinateZ/CoordinateM/CoordinateZM.
     public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
         var other = obj as Coordinate;
 
-        if (ReferenceEquals(null, other))
+        return !ReferenceEquals(null, other)
+            && OrdinatesEqual(other, options)
+            && PositionEquals(other, options);
+    }
+
+    /// <summary>
+    /// Compares the elevation and the measure, each only when <paramref name="options" />
+    /// asks for it.
+    /// </summary>
+    /// <remarks>
+    /// An ordinate that is being compared has to be present on both sides or absent from
+    /// both, so under the default options a <see cref="CoordinateZ" /> is still not the
+    /// same as a plain <see cref="Coordinate" />. An ordinate that is <em>not</em> being
+    /// compared is ignored entirely, which is what lets a 2D comparison match a
+    /// <see cref="CoordinateZ" /> against a <see cref="Coordinate" /> at the same
+    /// position - exactly what <see cref="GetHashCode(SpatialEqualityOptions)" /> has
+    /// always done, and what <see cref="Linq.EnumerableExtensions.Distinct2D" /> and
+    /// <see cref="Linq.Spatial2DComparer{TSource}" /> need in order to work at all.
+    /// </remarks>
+    private bool OrdinatesEqual(Coordinate other, SpatialEqualityOptions options)
+    {
+        if (options.UseElevation && !Nullable.Equals(ElevationOrNull, other.ElevationOrNull))
             return false;
 
-        if (other.Is3D || other.IsMeasured)
+        if (options.UseM && !Nullable.Equals(MeasureOrNull, other.MeasureOrNull))
             return false;
 
+        return true;
+    }
+
+    private bool PositionEquals(Coordinate other, SpatialEqualityOptions options)
+    {
         if (Latitude.Equals(other.Latitude))
         {
             if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90d) || Latitude.Equals(-90d)))

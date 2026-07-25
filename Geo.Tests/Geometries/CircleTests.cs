@@ -61,6 +61,81 @@ public class CircleTests
         Assert.True(maxLonError <= 0.002);
     }
 
+    [Theory]
+    [InlineData(89.5, 100000)] // reaches over the north pole
+    [InlineData(-89.5, 100000)] // reaches over the south pole
+    [InlineData(89.9, 100000)] // longitudinal half-span would be several turns
+    [InlineData(0, 40000000)] // larger than the earth
+    public void Bounds_of_a_circle_that_reaches_a_pole_stay_inside_the_valid_range(
+        double latitude,
+        double radius
+    )
+    {
+        var bounds = new Circle(latitude, 0, radius).GetBounds();
+
+        Assert.InRange(bounds.MinLat, -90, 90);
+        Assert.InRange(bounds.MaxLat, -90, 90);
+        Assert.InRange(bounds.MinLon, -180, 180);
+        Assert.InRange(bounds.MaxLon, -180, 180);
+
+        // Every meridian runs through a circle that covers a pole, so its box has to
+        // span the whole longitude range rather than a slice of it.
+        Assert.Equal(-180, bounds.MinLon);
+        Assert.Equal(180, bounds.MaxLon);
+    }
+
+    [Fact]
+    public void Bounds_of_a_circle_crossing_the_anti_meridian_span_every_longitude()
+    {
+        // An envelope runs west to east, so it cannot describe a wrapped box; the whole
+        // range is the smallest one it can express that still contains the circle.
+        var bounds = new Circle(0, 179.9, 100000).GetBounds();
+
+        Assert.Equal(-180, bounds.MinLon);
+        Assert.Equal(180, bounds.MaxLon);
+    }
+
+    [Fact]
+    public void Bounds_widen_towards_the_pole_without_ever_leaving_the_valid_range()
+    {
+        var previousWidth = 0d;
+
+        foreach (var latitude in new[] { 0d, 30d, 45d, 60d, 75d, 80d, 85d, 88d, 89d })
+        {
+            var bounds = new Circle(latitude, 20, 100000).GetBounds();
+
+            Assert.InRange(bounds.MinLat, -90, 90);
+            Assert.InRange(bounds.MaxLat, -90, 90);
+            Assert.InRange(bounds.MinLon, -180, 180);
+            Assert.InRange(bounds.MaxLon, -180, 180);
+
+            // The parallels converge towards the pole, so the same metric radius covers
+            // more of them the further north the circle sits.
+            var width = bounds.MaxLon - bounds.MinLon;
+            Assert.True(width > previousWidth, "width did not grow at " + latitude);
+            previousWidth = width;
+        }
+    }
+
+    [Fact]
+    public void Longitudinal_bounds_reach_the_meridians_tangent_to_the_circle()
+    {
+        // The widest meridians a circle touches are at asin(sin r / cos lat) from its
+        // centre, not the r / cos(lat) small-angle approximation, which understates them.
+        const double latitude = 80;
+        var radiusDeg = 100000 / (1852d * 60);
+        var bounds = new Circle(latitude, 20, 100000).GetBounds();
+
+        var expected =
+            Math.Asin(Math.Sin(radiusDeg * Math.PI / 180) / Math.Cos(latitude * Math.PI / 180))
+            * 180
+            / Math.PI;
+
+        Assert.Equal(20 - expected, bounds.MinLon, 9);
+        Assert.Equal(20 + expected, bounds.MaxLon, 9);
+        Assert.True(expected > radiusDeg / Math.Cos(latitude * Math.PI / 180));
+    }
+
     [Fact]
     public void Empty_circle_has_no_bounds()
     {

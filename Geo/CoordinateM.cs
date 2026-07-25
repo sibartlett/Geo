@@ -19,40 +19,9 @@ public class CoordinateM : Coordinate, IsMeasured
 
     public double Measure { get; }
 
+    internal override double? MeasureOrNull => Measure;
+
     #region Equality methods
-
-    public override bool Equals(object? obj, SpatialEqualityOptions options)
-    {
-        var other = obj as Coordinate;
-
-        if (ReferenceEquals(null, other))
-            return false;
-
-        var other2 = other as CoordinateM;
-        if (ReferenceEquals(null, other2))
-            return false;
-
-        if (options.UseM && !Measure.Equals(other2.Measure))
-            return false;
-
-        if (Latitude.Equals(other.Latitude))
-        {
-            if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90d) || Latitude.Equals(-90d)))
-                return true;
-
-            if (Longitude.Equals(other.Longitude))
-                return true;
-
-            if (options.AntiMeridianCoordinatesAreEqual)
-                if (
-                    (Longitude.Equals(180) && other.Longitude.Equals(-180))
-                    || (Longitude.Equals(-180) && other.Longitude.Equals(180))
-                )
-                    return true;
-        }
-
-        return false;
-    }
 
     public override bool Equals(object? obj)
     {
