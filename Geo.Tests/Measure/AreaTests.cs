@@ -58,30 +58,34 @@ public class AreaTests
     [Fact]
     public void Unit_constructor_converts_value_to_si_and_exposes_it_in_unit()
     {
-        var area = new Area(2, DistanceUnit.Km);
+        // 2 km² is 2,000,000 m² — an area unit scales by the square of the linear factor,
+        // not the linear factor itself (which would give 2000).
+        var area = new Area(2, AreaUnit.Km);
 
-        Assert.Equal(2000, area.SiValue);
-        Assert.Equal(DistanceUnit.Km, area.Unit);
+        Assert.Equal(2_000_000, area.SiValue);
+        Assert.Equal(AreaUnit.Km, area.Unit);
         Assert.Equal(2, area.Value, 1e-9);
     }
 
     [Fact]
     public void ConvertTo_expresses_the_value_in_the_requested_unit()
     {
-        var converted = new Area(2000).ConvertTo(DistanceUnit.Km);
+        // 2,000,000 m² is 2 km²; ConvertTo returns another Area, not a Distance.
+        Area converted = new Area(2_000_000).ConvertTo(AreaUnit.Km);
 
         Assert.Equal(2, converted.Value, 1e-9);
-        Assert.Equal(DistanceUnit.Km, converted.Unit);
+        Assert.Equal(AreaUnit.Km, converted.Unit);
     }
 
     [Fact]
     public void ToString_formats_the_value_in_its_unit()
     {
-        Assert.Equal(new Area(2000).ToString(), new Area(2000).ToString(DistanceUnit.M));
+        Assert.Equal(new Area(2000).ToString(), new Area(2000).ToString(AreaUnit.M));
         Assert.Equal(
-            new Area(2000).ConvertTo(DistanceUnit.Km).ToString(),
-            new Area(2000).ToString(DistanceUnit.Km)
+            new Area(2_000_000).ConvertTo(AreaUnit.Km).ToString(),
+            new Area(2_000_000).ToString(AreaUnit.Km)
         );
+        Assert.Equal("1 km²", new Area(1_000_000).ToString(AreaUnit.Km));
     }
 
     [Fact]

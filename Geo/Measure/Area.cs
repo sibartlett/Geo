@@ -5,26 +5,26 @@ namespace Geo.Measure;
 
 public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
 {
-    public Area(double metres)
+    public Area(double squareMetres)
     {
-        SiValue = metres;
-        Unit = DistanceUnit.M;
+        SiValue = squareMetres;
+        Unit = AreaUnit.M;
     }
 
-    public Area(double value, DistanceUnit unit)
+    public Area(double value, AreaUnit unit)
     {
-        SiValue = value.ConvertFrom(unit).To(DistanceUnit.M);
+        SiValue = value.ConvertFrom(unit).To(AreaUnit.M);
         Unit = unit;
     }
 
     public double Value => SiValue.ConvertTo(Unit);
     public double SiValue { get; }
 
-    public DistanceUnit Unit { get; }
+    public AreaUnit Unit { get; }
 
-    public Distance ConvertTo(DistanceUnit unit)
+    public Area ConvertTo(AreaUnit unit)
     {
-        return new Distance(SiValue.ConvertTo(unit), unit);
+        return new Area(SiValue.ConvertTo(unit), unit);
     }
 
     public override string ToString()
@@ -32,7 +32,7 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
         return UnitMetadata.For(Unit).Format(Value);
     }
 
-    public string ToString(DistanceUnit unit)
+    public string ToString(AreaUnit unit)
     {
         return ConvertTo(unit).ToString();
     }
@@ -61,29 +61,29 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
         return SiValue.GetHashCode();
     }
 
-    public static explicit operator Area(int metersPerSecond)
+    public static explicit operator Area(int squareMetres)
     {
-        return new Area(metersPerSecond);
+        return new Area(squareMetres);
     }
 
-    public static explicit operator Area(long metersPerSecond)
+    public static explicit operator Area(long squareMetres)
     {
-        return new Area(metersPerSecond);
+        return new Area(squareMetres);
     }
 
-    public static explicit operator Area(double metersPerSecond)
+    public static explicit operator Area(double squareMetres)
     {
-        return new Area(metersPerSecond);
+        return new Area(squareMetres);
     }
 
-    public static explicit operator Area(float metersPerSecond)
+    public static explicit operator Area(float squareMetres)
     {
-        return new Area(metersPerSecond);
+        return new Area(squareMetres);
     }
 
-    public static explicit operator Area(decimal metersPerSecond)
+    public static explicit operator Area(decimal squareMetres)
     {
-        return new Area((double)metersPerSecond);
+        return new Area((double)squareMetres);
     }
 
     public static bool operator ==(Area left, Area right)
