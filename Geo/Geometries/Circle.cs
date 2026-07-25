@@ -56,7 +56,24 @@ public class Circle : Geometry, ISurface
             return null;
 
         var center = Center;
-        var latitudinalRadiusDeg = Math.Abs(Radius) / (Constants.NauticalMile * 60);
+
+        // The circle is the set of points a geodesic Radius away from the centre on the
+        // ambient spheroid - the surface ToPolygon projects its own vertices onto - so
+        // the box has to be measured on that spheroid too. Treating one nautical mile as
+        // one arcminute assumed a sphere of 6366707 m, which is larger than the meridian
+        // the circle actually runs along, and left the box about half a percent too
+        // short: a 100 km circle on the equator reached 0.90437 degrees north while its
+        // bounds stopped at 0.89993, excluding its own vertices.
+        //
+        // The angular radius is taken over the spheroid's smallest radius of curvature,
+        // a(1-e^2) - the meridional one at the equator. No arc of a given length subtends
+        // a larger angle anywhere on the surface, so this cannot understate the box in
+        // any direction, at any latitude.
+        var spheroid = GeoContext.Current.Spheroid;
+        var angularRadius =
+            Math.Abs(Radius)
+            / (spheroid.EquatorialAxis * (1 - spheroid.Eccentricity * spheroid.Eccentricity));
+        var latitudinalRadiusDeg = angularRadius.ToDegrees();
 
         var minLat = center.Latitude - latitudinalRadiusDeg;
         var maxLat = center.Latitude + latitudinalRadiusDeg;
@@ -74,7 +91,7 @@ public class Circle : Geometry, ISurface
         // it, at asin(sin r / cos lat) from the centre - not r / cos(lat), which is only
         // its small-angle approximation and understates the box near the poles.
         var longitudinalRadiusDeg = Math.Asin(
-                Math.Sin(latitudinalRadiusDeg.ToRadians()) / Math.Cos(center.Latitude.ToRadians())
+                Math.Sin(angularRadius) / Math.Cos(center.Latitude.ToRadians())
             )
             .ToDegrees();
 
