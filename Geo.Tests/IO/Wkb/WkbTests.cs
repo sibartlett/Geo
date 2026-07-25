@@ -179,6 +179,85 @@ public class WkbTests
         Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
     }
 
+    [Fact]
+    public void Sequence_mixing_2d_and_3d_coordinates_round_trips()
+    {
+        // Regression: the type code is derived from the geometry (Is3D is an "any
+        // coordinate" test) while the ordinates used to be written per coordinate, so
+        // the 2D coordinate wrote 8 bytes fewer than the Z type code promised and the
+        // reader ran off the end of the geometry.
+        TestRoundTrip(new LineString(new CoordinateZ(0, 0, 10), new Coordinate(1, 1)));
+        TestRoundTrip(new LineString(new Coordinate(0, 0), new CoordinateZ(1, 1, 20)));
+    }
+
+    [Fact]
+    public void Sequence_mixing_measured_and_unmeasured_coordinates_round_trips()
+    {
+        TestRoundTrip(new LineString(new CoordinateM(0, 0, 5), new Coordinate(1, 1)));
+        TestRoundTrip(new LineString(new CoordinateZ(0, 0, 10), new CoordinateM(1, 1, 5)));
+        TestRoundTrip(new LineString(new CoordinateZM(0, 0, 1, 2), new CoordinateZ(1, 1, 3)));
+    }
+
+    [Fact]
+    public void Polygon_takes_its_dimensions_from_its_holes_as_well_as_its_shell()
+    {
+        // Regression: Polygon.Is3D reports only the shell, so a polygon whose
+        // elevations live in a hole declared itself two-dimensional and then wrote
+        // three ordinates per hole coordinate. That misaligns the reader rather than
+        // merely truncating it, because the ring boundaries land in the wrong place.
+        var flat = new LinearRing(
+            new Coordinate(0, 0),
+            new Coordinate(0, 3),
+            new Coordinate(3, 3),
+            new Coordinate(0, 0)
+        );
+        var raised = new LinearRing(
+            new CoordinateZ(1, 1, 7),
+            new CoordinateZ(1, 2, 7),
+            new CoordinateZ(2, 2, 7),
+            new CoordinateZ(1, 1, 7)
+        );
+
+        TestRoundTrip(new Polygon(flat, raised));
+        TestRoundTrip(new Polygon(raised, flat));
+        TestRoundTrip(new MultiPolygon(new Polygon(flat), new Polygon(raised)));
+    }
+
+    [Fact]
+    public void Mixed_dimension_collection_round_trips()
+    {
+        TestRoundTrip(new GeometryCollection(new Point(0, 0, 5), new Point(1, 1)));
+        TestRoundTrip(new MultiPoint(new Point(0, 0, 5), new Point(1, 1)));
+    }
+
+    [Fact]
+    public void Padded_coordinate_declares_the_dimensions_of_its_type_code()
+    {
+        // The geometry must be exactly as long as its type code says: a Z line of two
+        // points is 1 + 4 + 4 + 2 * 24 bytes, whichever coordinates carry elevations.
+        var mixed = new WkbWriter().Write(
+            new LineString(new CoordinateZ(0, 0, 10), new Coordinate(1, 1))
+        );
+        var uniform = new WkbWriter().Write(
+            new LineString(new CoordinateZ(0, 0, 10), new CoordinateZ(1, 1, 20))
+        );
+
+        Assert.Equal(1002u, BitConverter.ToUInt32(mixed, 1));
+        Assert.Equal(57, mixed.Length);
+        Assert.Equal(uniform.Length, mixed.Length);
+    }
+
+    private void TestRoundTrip(Geo.Abstractions.Interfaces.IGeometry geometry)
+    {
+        var wkb = new WkbWriter(new WkbWriterSettings { Triangle = true }).Write(geometry);
+        Assert.Equal(geometry, new WkbReader().Read(wkb));
+
+        var bigEndian = new WkbWriter(
+            new WkbWriterSettings { Encoding = WkbEncoding.BigEndian, Triangle = true }
+        ).Write(geometry);
+        Assert.Equal(geometry, new WkbReader().Read(bigEndian));
+    }
+
     private void Test(string wkt)
     {
         var wktReader = new WktReader();

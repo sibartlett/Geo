@@ -140,30 +140,46 @@ public class WkbWriter
         );
     }
 
-    private void WriteCoordinate(Coordinate coordinate, WkbBinaryWriter writer)
+    // Every coordinate writes exactly the ordinates the type code declared, whether or
+    // not it carries them. A coordinate that lacks one is padded with NaN, which is how
+    // an absent ordinate is already spelled in this format (see WritePoint) and what
+    // WkbReader reads back as "not 3D"/"not measured", so a sequence mixing 2D and 3D
+    // coordinates survives the round-trip unchanged. Writing each coordinate's own
+    // ordinates instead would leave the geometry shorter than its type code promises,
+    // and the reader would run off the end of it or mistake the following bytes for
+    // the rest of the coordinate.
+    private void WriteCoordinate(
+        Coordinate coordinate,
+        GeometryDimensions dimensions,
+        WkbBinaryWriter writer
+    )
     {
         writer.Write(coordinate.Longitude);
         writer.Write(coordinate.Latitude);
 
-        if (coordinate.Is3D && _settings.MaxDimesions > 2)
-            writer.Write(((Is3D)coordinate).Elevation);
+        if (dimensions.Has3D)
+            writer.Write(coordinate is Is3D elevation ? elevation.Elevation : double.NaN);
 
-        if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
-            writer.Write(((IsMeasured)coordinate).Measure);
+        if (dimensions.HasMeasure)
+            writer.Write(coordinate is IsMeasured measure ? measure.Measure : double.NaN);
     }
 
-    private void WriteCoordinates(CoordinateSequence coordinates, WkbBinaryWriter writer)
+    private void WriteCoordinates(
+        CoordinateSequence coordinates,
+        GeometryDimensions dimensions,
+        WkbBinaryWriter writer
+    )
     {
         writer.Write((uint)coordinates.Count);
 
         foreach (var coordinate in coordinates)
-            WriteCoordinate(coordinate, writer);
+            WriteCoordinate(coordinate, dimensions, writer);
     }
 
     private void WritePoint(Point point, WkbBinaryWriter writer)
     {
         WriteEncoding(writer, _settings.Encoding);
-        WriteGeometryType(point, WkbGeometryType.Point, writer);
+        var dimensions = WriteGeometryType(point, WkbGeometryType.Point, writer);
 
         if (point.IsEmpty)
         {
@@ -175,32 +191,36 @@ public class WkbWriter
         }
         else
         {
-            WriteCoordinate(point.Coordinate!, writer);
+            WriteCoordinate(point.Coordinate!, dimensions, writer);
         }
     }
 
     private void WriteLineString(LineString lineString, WkbBinaryWriter writer)
     {
         WriteEncoding(writer, _settings.Encoding);
-        WriteGeometryType(lineString, WkbGeometryType.LineString, writer);
-        WriteCoordinates(lineString.Coordinates, writer);
+        var dimensions = WriteGeometryType(lineString, WkbGeometryType.LineString, writer);
+        WriteCoordinates(lineString.Coordinates, dimensions, writer);
     }
 
     private void WritePolygon(Polygon polygon, WkbBinaryWriter writer)
     {
         WriteEncoding(writer, _settings.Encoding);
-        WriteGeometryType(polygon, WkbGeometryType.Polygon, writer);
-        WritePolygonInner(polygon, writer);
+        var dimensions = WriteGeometryType(polygon, WkbGeometryType.Polygon, writer);
+        WritePolygonInner(polygon, dimensions, writer);
     }
 
     private void WriteTriangle(Triangle triangle, WkbBinaryWriter writer)
     {
         WriteEncoding(writer, _settings.Encoding);
-        WriteGeometryType(triangle, WkbGeometryType.Triangle, writer);
-        WritePolygonInner(triangle, writer);
+        var dimensions = WriteGeometryType(triangle, WkbGeometryType.Triangle, writer);
+        WritePolygonInner(triangle, dimensions, writer);
     }
 
-    private void WritePolygonInner(Polygon polygon, WkbBinaryWriter writer)
+    private void WritePolygonInner(
+        Polygon polygon,
+        GeometryDimensions dimensions,
+        WkbBinaryWriter writer
+    )
     {
         if (polygon.IsEmpty)
         {
@@ -209,10 +229,10 @@ public class WkbWriter
         else
         {
             writer.Write((uint)(1 + polygon.Holes.Count));
-            WriteCoordinates(polygon.Shell!.Coordinates, writer);
+            WriteCoordinates(polygon.Shell!.Coordinates, dimensions, writer);
 
             foreach (var hole in polygon.Holes)
-                WriteCoordinates(hole.Coordinates, writer);
+                WriteCoordinates(hole.Coordinates, dimensions, writer);
         }
     }
 
@@ -252,27 +272,24 @@ public class WkbWriter
             Write(geometry, writer);
     }
 
-    private void WriteGeometryType(
+    // Returns the dimensions the type code just declared, so that the coordinates
+    // written after it are guaranteed to carry the same ordinates.
+    private GeometryDimensions WriteGeometryType(
         IGeometry geometry,
         WkbGeometryType baseType,
         WkbBinaryWriter writer
     )
     {
-        if (geometry.IsEmpty)
-        {
-            writer.Write((uint)baseType);
-        }
-        else
-        {
-            var typeCode = (uint)baseType;
+        var dimensions = GeometryDimensions.For(geometry).Limit(_settings.MaxDimesions);
+        var typeCode = (uint)baseType;
 
-            if (geometry.Is3D && _settings.MaxDimesions > 2)
-                typeCode += 1000;
+        if (dimensions.Has3D)
+            typeCode += 1000;
 
-            if (geometry.IsMeasured && _settings.MaxDimesions > 3)
-                typeCode += 2000;
+        if (dimensions.HasMeasure)
+            typeCode += 2000;
 
-            writer.Write(typeCode);
-        }
+        writer.Write(typeCode);
+        return dimensions;
     }
 }

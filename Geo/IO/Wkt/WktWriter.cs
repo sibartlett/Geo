@@ -116,13 +116,11 @@ public class WktWriter
 
     private void AppendPoint(StringBuilder builder, Point point)
     {
-        builder.Append("POINT");
-        AppendDimensions(builder, point);
-        builder.Append(" ");
-        AppendPointInner(builder, point);
+        var dimensions = AppendTypeAndDimensions(builder, "POINT", point);
+        AppendPointInner(builder, point, dimensions);
     }
 
-    private void AppendPointInner(StringBuilder builder, Point point)
+    private void AppendPointInner(StringBuilder builder, Point point, GeometryDimensions dimensions)
     {
         if (point.IsEmpty)
         {
@@ -131,27 +129,27 @@ public class WktWriter
         }
 
         builder.Append("(");
-        AppendCoordinate(builder, point.Coordinate!);
+        AppendCoordinate(builder, point.Coordinate!, dimensions);
         builder.Append(")");
     }
 
     private void AppendLineString(StringBuilder builder, LineString lineString)
     {
-        builder.Append("LINESTRING");
-        AppendDimensions(builder, lineString);
-        builder.Append(" ");
-        AppendLineStringInner(builder, lineString.Coordinates);
+        var dimensions = AppendTypeAndDimensions(builder, "LINESTRING", lineString);
+        AppendLineStringInner(builder, lineString.Coordinates, dimensions);
     }
 
     private void AppendLinearRing(StringBuilder builder, LinearRing linearRing)
     {
-        builder.Append("LINEARRING");
-        AppendDimensions(builder, linearRing);
-        builder.Append(" ");
-        AppendLineStringInner(builder, linearRing.Coordinates);
+        var dimensions = AppendTypeAndDimensions(builder, "LINEARRING", linearRing);
+        AppendLineStringInner(builder, linearRing.Coordinates, dimensions);
     }
 
-    private void AppendLineStringInner(StringBuilder builder, CoordinateSequence lineString)
+    private void AppendLineStringInner(
+        StringBuilder builder,
+        CoordinateSequence lineString,
+        GeometryDimensions dimensions
+    )
     {
         if (lineString.IsEmpty)
         {
@@ -160,27 +158,27 @@ public class WktWriter
         }
 
         builder.Append("(");
-        AppendCoordinates(builder, lineString);
+        AppendCoordinates(builder, lineString, dimensions);
         builder.Append(")");
     }
 
     private void AppendPolygon(StringBuilder builder, Polygon polygon)
     {
-        builder.Append("POLYGON");
-        AppendDimensions(builder, polygon);
-        builder.Append(" ");
-        AppendPolygonInner(builder, polygon);
+        var dimensions = AppendTypeAndDimensions(builder, "POLYGON", polygon);
+        AppendPolygonInner(builder, polygon, dimensions);
     }
 
     private void AppendTriangle(StringBuilder builder, Triangle polygon)
     {
-        builder.Append("TRIANGLE");
-        AppendDimensions(builder, polygon);
-        builder.Append(" ");
-        AppendPolygonInner(builder, polygon);
+        var dimensions = AppendTypeAndDimensions(builder, "TRIANGLE", polygon);
+        AppendPolygonInner(builder, polygon, dimensions);
     }
 
-    private void AppendPolygonInner(StringBuilder builder, Polygon polygon)
+    private void AppendPolygonInner(
+        StringBuilder builder,
+        Polygon polygon,
+        GeometryDimensions dimensions
+    )
     {
         if (polygon.IsEmpty)
         {
@@ -189,11 +187,11 @@ public class WktWriter
         }
 
         builder.Append("(");
-        AppendLineStringInner(builder, polygon.Shell!.Coordinates);
+        AppendLineStringInner(builder, polygon.Shell!.Coordinates, dimensions);
         for (var i = 0; i < polygon.Holes.Count; i++)
         {
             builder.Append(", ");
-            AppendLineStringInner(builder, polygon.Holes[i].Coordinates);
+            AppendLineStringInner(builder, polygon.Holes[i].Coordinates, dimensions);
         }
 
         builder.Append(")");
@@ -201,20 +199,19 @@ public class WktWriter
 
     private void AppendMultiPoint(StringBuilder builder, MultiPoint multiPoint)
     {
-        builder.Append("MULTIPOINT");
         if (multiPoint.IsEmpty)
         {
-            builder.Append(" EMPTY");
+            builder.Append("MULTIPOINT EMPTY");
             return;
         }
 
-        AppendDimensions(builder, multiPoint);
-        builder.Append(" (");
+        var dimensions = AppendTypeAndDimensions(builder, "MULTIPOINT", multiPoint);
+        builder.Append("(");
         for (var i = 0; i < multiPoint.Geometries.Count; i++)
         {
             if (i > 0)
                 builder.Append(", ");
-            AppendPointInner(builder, (Point)multiPoint.Geometries[i]);
+            AppendPointInner(builder, (Point)multiPoint.Geometries[i], dimensions);
         }
 
         builder.Append(")");
@@ -222,20 +219,23 @@ public class WktWriter
 
     private void AppendMultiLineString(StringBuilder builder, MultiLineString multiLineString)
     {
-        builder.Append("MULTILINESTRING");
         if (multiLineString.IsEmpty)
         {
-            builder.Append(" EMPTY");
+            builder.Append("MULTILINESTRING EMPTY");
             return;
         }
 
-        AppendDimensions(builder, multiLineString);
-        builder.Append(" (");
+        var dimensions = AppendTypeAndDimensions(builder, "MULTILINESTRING", multiLineString);
+        builder.Append("(");
         for (var i = 0; i < multiLineString.Geometries.Count; i++)
         {
             if (i > 0)
                 builder.Append(", ");
-            AppendLineStringInner(builder, ((LineString)multiLineString.Geometries[i]).Coordinates);
+            AppendLineStringInner(
+                builder,
+                ((LineString)multiLineString.Geometries[i]).Coordinates,
+                dimensions
+            );
         }
 
         builder.Append(")");
@@ -243,20 +243,19 @@ public class WktWriter
 
     private void AppendMultiPolygon(StringBuilder builder, MultiPolygon multiPolygon)
     {
-        builder.Append("MULTIPOLYGON");
         if (multiPolygon.IsEmpty)
         {
-            builder.Append(" EMPTY");
+            builder.Append("MULTIPOLYGON EMPTY");
             return;
         }
 
-        AppendDimensions(builder, multiPolygon);
-        builder.Append(" (");
+        var dimensions = AppendTypeAndDimensions(builder, "MULTIPOLYGON", multiPolygon);
+        builder.Append("(");
         for (var i = 0; i < multiPolygon.Geometries.Count; i++)
         {
             if (i > 0)
                 builder.Append(", ");
-            AppendPolygonInner(builder, (Polygon)multiPolygon.Geometries[i]);
+            AppendPolygonInner(builder, (Polygon)multiPolygon.Geometries[i], dimensions);
         }
 
         builder.Append(")");
@@ -267,92 +266,110 @@ public class WktWriter
         GeometryCollection geometryCollection
     )
     {
-        builder.Append("GEOMETRYCOLLECTION");
         if (geometryCollection.IsEmpty)
         {
-            builder.Append(" EMPTY");
+            builder.Append("GEOMETRYCOLLECTION EMPTY");
             return;
         }
 
-        AppendDimensions(builder, geometryCollection);
-        builder.Append(" (");
+        AppendTypeAndDimensions(builder, "GEOMETRYCOLLECTION", geometryCollection);
+        builder.Append("(");
         for (var i = 0; i < geometryCollection.Geometries.Count; i++)
         {
             if (i > 0)
                 builder.Append(", ");
+            // Each member carries its own type and dimension tag, so it declares its
+            // own ordinates rather than inheriting the collection's.
             AppendGeometry(builder, geometryCollection.Geometries[i]);
         }
 
         builder.Append(")");
     }
 
-    private void AppendDimensions(StringBuilder builder, IGeometry geometry)
+    // Writes the geometry type and its dimension tag, and returns the dimensions that
+    // tag declared so every coordinate written afterwards carries the same ordinates.
+    // A single tag covers the whole geometry - including a polygon's holes and the
+    // members of a multi-geometry - so the dimensions have to be taken across all of
+    // their coordinates, not just the first sequence reached.
+    private GeometryDimensions AppendTypeAndDimensions(
+        StringBuilder builder,
+        string type,
+        IGeometry geometry
+    )
     {
-        if (_settings.DimensionFlag && _settings.MaxDimesions > 2)
+        var dimensions = GeometryDimensions.For(geometry).Limit(_settings.MaxDimesions);
+
+        builder.Append(type);
+
+        if (_settings.DimensionFlag)
         {
-            if (geometry.Is3D || geometry.IsMeasured)
+            if (dimensions.Has3D || dimensions.HasMeasure)
                 builder.Append(" ");
 
-            if (geometry.Is3D && _settings.MaxDimesions > 2)
+            if (dimensions.Has3D)
                 builder.Append("Z");
 
-            if (geometry.IsMeasured && _settings.MaxDimesions > 3)
+            if (dimensions.HasMeasure)
                 builder.Append("M");
         }
+
+        builder.Append(" ");
+        return dimensions;
     }
 
-    private void AppendCoordinates(StringBuilder builder, CoordinateSequence coordinates)
+    private void AppendCoordinates(
+        StringBuilder builder,
+        CoordinateSequence coordinates,
+        GeometryDimensions dimensions
+    )
     {
         for (var i = 0; i < coordinates.Count; i++)
         {
             if (i > 0)
                 builder.Append(", ");
-            AppendCoordinate(builder, coordinates[i]);
+            AppendCoordinate(builder, coordinates[i], dimensions);
         }
     }
 
-    private void AppendCoordinate(StringBuilder builder, Coordinate coordinate)
+    // Every coordinate writes the ordinates the dimension tag declared, whether or not
+    // it carries them, so that a sequence mixing 2D and 3D coordinates does not produce
+    // a geometry whose points disagree with its own tag. A coordinate missing an
+    // ordinate gets NullOrdinate ("NaN" by default), which is what the reader takes
+    // back as an absent ordinate.
+    private void AppendCoordinate(
+        StringBuilder builder,
+        Coordinate coordinate,
+        GeometryDimensions dimensions
+    )
     {
         builder.Append(coordinate.Longitude.ToString(CultureInfo.InvariantCulture));
         builder.Append(" ");
         builder.Append(coordinate.Latitude.ToString(CultureInfo.InvariantCulture));
 
-        if (_settings.DimensionFlag)
-        {
-            if (coordinate.Is3D && _settings.MaxDimesions > 2)
-            {
-                builder.Append(" ");
-                builder.Append(((Is3D)coordinate).Elevation.ToString(CultureInfo.InvariantCulture));
-            }
+        // With no dimension tag to say whether a third ordinate is an elevation or a
+        // measure, a measured geometry has to fill the elevation slot as well to keep
+        // the measure in fourth position.
+        var appendElevation =
+            dimensions.Has3D || (!_settings.DimensionFlag && dimensions.HasMeasure);
 
-            if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
-            {
-                builder.Append(" ");
-                builder.Append(
-                    ((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture)
-                );
-            }
+        if (appendElevation)
+        {
+            builder.Append(" ");
+            builder.Append(
+                coordinate is Is3D elevation
+                    ? elevation.Elevation.ToString(CultureInfo.InvariantCulture)
+                    : _settings.NullOrdinate
+            );
         }
-        else
-        {
-            if (coordinate.Is3D && _settings.MaxDimesions > 2)
-            {
-                builder.Append(" ");
-                builder.Append(((Is3D)coordinate).Elevation.ToString(CultureInfo.InvariantCulture));
-            }
-            else if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
-            {
-                builder.Append(" ");
-                builder.Append(_settings.NullOrdinate);
-            }
 
-            if (coordinate.IsMeasured && _settings.MaxDimesions > 3)
-            {
-                builder.Append(" ");
-                builder.Append(
-                    ((IsMeasured)coordinate).Measure.ToString(CultureInfo.InvariantCulture)
-                );
-            }
+        if (dimensions.HasMeasure)
+        {
+            builder.Append(" ");
+            builder.Append(
+                coordinate is IsMeasured measure
+                    ? measure.Measure.ToString(CultureInfo.InvariantCulture)
+                    : _settings.NullOrdinate
+            );
         }
     }
 }
