@@ -1,4 +1,5 @@
-﻿using Geo.Geodesy;
+﻿using System;
+using Geo.Geodesy;
 using Geo.Geometries;
 using Geo.Measure;
 using Xunit;
@@ -131,6 +132,151 @@ public class SpheroidCalculatorTests
         Assert.Equal(bearing12, result.Bearing12, Millionth);
         Assert.Equal(bearing21, result.Bearing21, Millionth);
     }
+
+    #region Areas and lengths answer for the spheroid they were given
+
+    // These used to be handed to a hardcoded sphere of the WGS-84 mean radius, so the
+    // Spheroid passed to the constructor made no difference to any of them: a planet half
+    // the size returned bit-identical areas.
+
+    [Fact]
+    public void Envelope_area_of_the_whole_world_is_the_spheroids_surface_area()
+    {
+        // 2*pi*a^2 + pi*(b^2/e)*ln((1+e)/(1-e)), the closed form for an oblate spheroid.
+        var spheroid = Spheroid.Wgs84;
+        var e = spheroid.Eccentricity;
+        var b = spheroid.PolarAxis;
+        var expected =
+            2 * Math.PI * spheroid.EquatorialAxis * spheroid.EquatorialAxis
+            + Math.PI * (b * b / e) * Math.Log((1 + e) / (1 - e));
+
+        var area = new SpheroidCalculator(spheroid)
+            .CalculateArea(new Envelope(-90, -180, 90, 180))
+            .SiValue;
+
+        Assert.Equal(expected, area, expected * 1e-12);
+    }
+
+    [Fact]
+    public void Envelope_perimeter_of_the_whole_world_is_the_meridian_circumference()
+    {
+        // North pole to south pole and back: the sides are the whole meridian, and the
+        // parallels at the poles have no length at all.
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+
+        var expected = 4 * calculator.CalculateMeridionalDistance(90);
+        var perimeter = calculator.CalculateLength(new Envelope(-90, -180, 90, 180)).SiValue;
+
+        Assert.Equal(expected, perimeter, expected * 1e-12);
+    }
+
+    [Theory]
+    [InlineData(0, 10)]
+    [InlineData(40, 50)]
+    [InlineData(-60, -50)]
+    [InlineData(80, 89)]
+    public void Ring_area_around_a_box_matches_the_envelopes_own_area(double minLat, double maxLat)
+    {
+        // Two independent routes to the same number - the zone formula and the ring
+        // formula with authalic latitudes - which must agree.
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+
+        var envelope = calculator.CalculateArea(new Envelope(minLat, 0, maxLat, 10)).SiValue;
+        var ring = calculator
+            .CalculateArea(
+                new CoordinateSequence(
+                    new Coordinate(minLat, 0),
+                    new Coordinate(minLat, 10),
+                    new Coordinate(maxLat, 10),
+                    new Coordinate(maxLat, 0),
+                    new Coordinate(minLat, 0)
+                )
+            )
+            .SiValue;
+
+        Assert.Equal(envelope, ring, envelope * 1e-12);
+    }
+
+    [Fact]
+    public void A_smaller_planet_has_proportionally_smaller_areas_and_lengths()
+    {
+        var full = new SpheroidCalculator(new Spheroid("full", 6378137, 298.257223563));
+        var half = new SpheroidCalculator(new Spheroid("half", 6378137d / 2, 298.257223563));
+        var envelope = new Envelope(0, 0, 10, 10);
+        var ring = new CoordinateSequence(
+            new Coordinate(0, 0),
+            new Coordinate(0, 10),
+            new Coordinate(10, 10),
+            new Coordinate(10, 0),
+            new Coordinate(0, 0)
+        );
+
+        // Area goes with the square of the radius, length with the radius itself.
+        Assert.Equal(
+            full.CalculateArea(envelope).SiValue / 4,
+            half.CalculateArea(envelope).SiValue,
+            full.CalculateArea(envelope).SiValue * 1e-12
+        );
+        Assert.Equal(
+            full.CalculateArea(ring).SiValue / 4,
+            half.CalculateArea(ring).SiValue,
+            full.CalculateArea(ring).SiValue * 1e-12
+        );
+        Assert.Equal(
+            full.CalculateLength(envelope).SiValue / 2,
+            half.CalculateLength(envelope).SiValue,
+            full.CalculateLength(envelope).SiValue * 1e-12
+        );
+    }
+
+    [Fact]
+    public void Different_datums_give_different_answers()
+    {
+        var envelope = new Envelope(0, 0, 10, 10);
+        var wgs84 = new SpheroidCalculator(Spheroid.Wgs84);
+        var clarke = new SpheroidCalculator(Spheroid.Clarke1866);
+        var international = new SpheroidCalculator(Spheroid.International1924);
+
+        Assert.NotEqual(
+            wgs84.CalculateArea(envelope).SiValue,
+            clarke.CalculateArea(envelope).SiValue
+        );
+        Assert.NotEqual(
+            wgs84.CalculateArea(envelope).SiValue,
+            international.CalculateArea(envelope).SiValue
+        );
+        Assert.NotEqual(
+            wgs84.CalculateLength(envelope).SiValue,
+            clarke.CalculateLength(envelope).SiValue
+        );
+
+        // ... but they are all the same planet, so only just.
+        Assert.Equal(
+            wgs84.CalculateArea(envelope).SiValue,
+            clarke.CalculateArea(envelope).SiValue,
+            wgs84.CalculateArea(envelope).SiValue * 0.001
+        );
+    }
+
+    [Fact]
+    public void An_envelope_with_no_extent_encloses_nothing()
+    {
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+
+        foreach (var latitude in new[] { -90d, -45, 0, 45, 90 })
+        {
+            Assert.Equal(
+                0,
+                calculator.CalculateArea(new Envelope(latitude, 5, latitude, 5)).SiValue
+            );
+            Assert.Equal(
+                0,
+                calculator.CalculateArea(new Envelope(latitude, 0, latitude, 10)).SiValue
+            );
+        }
+    }
+
+    #endregion
 
     [Fact]
     public void Direct_solution_reports_the_back_azimuth_in_degrees()

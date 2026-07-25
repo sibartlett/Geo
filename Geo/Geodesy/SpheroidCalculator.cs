@@ -11,7 +11,10 @@ namespace Geo.Geodesy;
 
 public class SpheroidCalculator : IGeodeticCalculator
 {
-    private readonly SphereCalculator _sphereCalculator = new();
+    // A geodesic circle on a spheroid has no elementary area or circumference, so those
+    // two are worked out on the sphere that has the same surface area as this spheroid -
+    // built from it, so that they answer for the datum in use rather than for a fixed one.
+    private readonly SphereCalculator _authalicSphere;
 
     public SpheroidCalculator()
         : this(Spheroid.Default) { }
@@ -19,6 +22,7 @@ public class SpheroidCalculator : IGeodeticCalculator
     public SpheroidCalculator(Spheroid spheroid)
     {
         Spheroid = spheroid;
+        _authalicSphere = new SphereCalculator(spheroid.AuthalicRadius);
     }
 
     public Spheroid Spheroid { get; }
@@ -183,7 +187,7 @@ public class SpheroidCalculator : IGeodeticCalculator
 
     public Distance CalculateLength(Circle circle)
     {
-        return _sphereCalculator.CalculateLength(circle);
+        return _authalicSphere.CalculateLength(circle);
     }
 
     public Distance CalculateLength(CoordinateSequence coordinates)
@@ -199,9 +203,40 @@ public class SpheroidCalculator : IGeodeticCalculator
         return new Distance(distance);
     }
 
+    /// <summary>
+    /// The perimeter of an envelope on the spheroid: two meridian arcs down the sides, and
+    /// the two parallels closing the top and the bottom.
+    /// </summary>
     public Distance CalculateLength(Envelope envelope)
     {
-        return _sphereCalculator.CalculateLength(envelope);
+        // The sides run along meridians, whose arc the spheroid already knows how to
+        // measure; the top and bottom run along parallels, whose radius is the
+        // prime-vertical radius of curvature foreshortened by the latitude.
+        var sides =
+            2
+            * (
+                CalculateMeridionalDistance(envelope.MaxLat)
+                - CalculateMeridionalDistance(envelope.MinLat)
+            );
+
+        var longitudeSpan = (envelope.MaxLon - envelope.MinLon).ToRadians();
+        var top = longitudeSpan * ParallelRadius(envelope.MaxLat);
+        var bottom = longitudeSpan * ParallelRadius(envelope.MinLat);
+
+        return new Distance(sides + top + bottom);
+    }
+
+    /// <summary>
+    /// The radius of the circle of latitude (the parallel) at <paramref name="latitude" />.
+    /// </summary>
+    private double ParallelRadius(double latitude)
+    {
+        var lat = latitude.ToRadians();
+        var sinLat = Math.Sin(lat);
+        var eccentricitySquared = Spheroid.Eccentricity * Spheroid.Eccentricity;
+        var primeVertical =
+            Spheroid.EquatorialAxis / Math.Sqrt(1 - eccentricitySquared * sinLat * sinLat);
+        return primeVertical * Math.Cos(lat);
     }
 
     public double CalculateMeridionalParts(double latitude)
@@ -244,19 +279,49 @@ public class SpheroidCalculator : IGeodeticCalculator
         return dist * Spheroid.EquatorialAxis;
     }
 
+    /// <summary>
+    /// The area enclosed by a closed ring on the spheroid.
+    /// </summary>
     public Area CalculateArea(CoordinateSequence coordinates)
     {
-        return _sphereCalculator.CalculateArea(coordinates);
+        // The spherical formula, with each latitude replaced by its authalic counterpart
+        // and the equal-area radius standing in for the sphere's. That substitution is
+        // area-preserving by construction, so what comes out is the spheroid's own area
+        // rather than a sphere's approximation of it.
+        var area = 0.0;
+        if (coordinates.Count > 3 && coordinates.IsClosed)
+        {
+            for (var i = 0; i < coordinates.Count - 1; i++)
+            {
+                var p1 = coordinates[i];
+                var p2 = coordinates[i + 1];
+                area +=
+                    (p2.Longitude - p1.Longitude).ToRadians()
+                    * (2 + Spheroid.AuthalicSine(p1.Latitude) + Spheroid.AuthalicSine(p2.Latitude));
+            }
+
+            area = area * Spheroid.AuthalicRadius * Spheroid.AuthalicRadius / 2.0;
+        }
+
+        // Signed by the ring's winding order; callers want the magnitude.
+        return new Area(Math.Abs(area));
     }
 
     public Area CalculateArea(Circle circle)
     {
-        return _sphereCalculator.CalculateArea(circle);
+        return _authalicSphere.CalculateArea(circle);
     }
 
+    /// <summary>
+    /// The area of an envelope on the spheroid: the zone between its two parallels, over
+    /// the span of longitude it covers.
+    /// </summary>
     public Area CalculateArea(Envelope envelope)
     {
-        return _sphereCalculator.CalculateArea(envelope);
+        var longitudeSpan = (envelope.MaxLon - envelope.MinLon).ToRadians();
+        var zone = Spheroid.AuthalicSine(envelope.MaxLat) - Spheroid.AuthalicSine(envelope.MinLat);
+
+        return new Area(longitudeSpan * Spheroid.AuthalicRadius * Spheroid.AuthalicRadius * zone);
     }
 
     private double mod(double x, double y)
