@@ -101,6 +101,20 @@ public class PolygonTests
     }
 
     [Fact]
+    public void Empty_polygon_is_not_equal_to_a_non_empty_polygon()
+    {
+        var empty = new Polygon();
+        var nonEmpty = new Polygon(Square(10));
+
+        // The empty side has a null shell; comparing it must return false rather than
+        // throwing, and the result must be symmetric.
+        Assert.False(empty.Equals(nonEmpty));
+        Assert.False(nonEmpty.Equals(empty));
+        Assert.False(empty == nonEmpty);
+        Assert.False(nonEmpty == empty);
+    }
+
+    [Fact]
     public void Equality_compares_shell_and_holes()
     {
         var a = new Polygon(Square(10));
