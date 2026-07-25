@@ -303,4 +303,22 @@ public class GeoJsonReaderWriterTests
 
         Assert.Null(feature.Geometry);
     }
+
+    [Theory]
+    // an unknown geometry type
+    [InlineData("{\"type\":\"Feature\",\"geometry\":{\"type\":\"Bogus\",\"coordinates\":[1,2]}}")]
+    // a known type whose coordinates are missing
+    [InlineData("{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\"}}")]
+    // a known type whose coordinates are the wrong shape
+    [InlineData(
+        "{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[1,2]}}"
+    )]
+    public void Feature_with_a_geometry_that_does_not_parse_does_not_parse(string json)
+    {
+        // A feature that carries a geometry it cannot read is malformed. Handing back a
+        // feature with a null geometry would make it indistinguishable from a genuinely
+        // unlocated one, silently losing whatever the document actually said.
+        Assert.False(new GeoJsonReader().TryRead(json, out _));
+        Assert.Throws<SerializationException>(() => new GeoJsonReader().Read(json));
+    }
 }

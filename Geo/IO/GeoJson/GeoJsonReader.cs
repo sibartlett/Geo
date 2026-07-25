@@ -120,19 +120,19 @@ public class GeoJsonReader
             Dictionary<string, object?>? pr = null;
 
             // "geometry" may legitimately be null (an unlocated feature). Anything
-            // else that is not a JSON object is malformed: fail the parse rather
-            // than letting the cast throw out of a TryParse, or silently discarding
-            // the value.
+            // else that does not parse as a geometry is malformed - whether it is not
+            // a JSON object at all or an object of an unknown type - so fail the parse
+            // rather than letting the cast throw out of a TryParse, or handing back a
+            // feature that has quietly lost the geometry it was given.
             if (obj.TryGetValue("geometry", out var geometry) && geometry != null)
-            {
-                if (!(geometry is JsonObject geometryObject))
+                if (
+                    !(geometry is JsonObject geometryObject)
+                    || !TryParseGeometry(geometryObject, out geo)
+                )
                 {
                     result = null;
                     return false;
                 }
-
-                TryParseGeometry(geometryObject, out geo);
-            }
 
             if (obj.TryGetValue("properties", out var prop) && prop is JsonObject)
             {

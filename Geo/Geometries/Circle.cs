@@ -56,21 +56,38 @@ public class Circle : Geometry, ISurface
             return null;
 
         var center = Center;
-        var latitudinalRadiusDeg = Radius / (Constants.NauticalMile * 60);
-        // A degree of longitude spans metresPerDegree * cos(latitude) metres, so the
-        // parallels converge towards the poles. Converting a fixed metric radius into
-        // degrees of longitude therefore divides by cos(latitude): the east-west extent
-        // of the box grows with latitude (it equals the latitudinal extent at the
-        // equator and widens beyond it), rather than shrinking.
-        var longditudinalRadiusDeg =
-            Radius / (Constants.NauticalMile * 60) / Math.Cos(center.Latitude.ToRadians());
+        var latitudinalRadiusDeg = Math.Abs(Radius) / (Constants.NauticalMile * 60);
 
-        return new Envelope(
-            center.Latitude - latitudinalRadiusDeg,
-            center.Longitude - longditudinalRadiusDeg,
-            center.Latitude + latitudinalRadiusDeg,
-            center.Longitude + longditudinalRadiusDeg
-        );
+        var minLat = center.Latitude - latitudinalRadiusDeg;
+        var maxLat = center.Latitude + latitudinalRadiusDeg;
+
+        // A circle that reaches a pole has no bounded longitude span - every meridian
+        // runs through it - and its latitudes run past the pole, which is not a position
+        // any coordinate can hold. Clamp to the pole and span the whole range instead of
+        // handing back an envelope no coordinate could ever sit inside.
+        if (minLat <= -90 || maxLat >= 90)
+            return new Envelope(Math.Max(minLat, -90), -180, Math.Min(maxLat, 90), 180);
+
+        // A degree of longitude spans metresPerDegree * cos(latitude) metres, so the
+        // parallels converge towards the poles and the east-west extent of the box grows
+        // with latitude. The widest meridians the circle touches are the ones tangent to
+        // it, at asin(sin r / cos lat) from the centre - not r / cos(lat), which is only
+        // its small-angle approximation and understates the box near the poles.
+        var longitudinalRadiusDeg = Math.Asin(
+                Math.Sin(latitudinalRadiusDeg.ToRadians()) / Math.Cos(center.Latitude.ToRadians())
+            )
+            .ToDegrees();
+
+        var minLon = center.Longitude - longitudinalRadiusDeg;
+        var maxLon = center.Longitude + longitudinalRadiusDeg;
+
+        // An envelope's longitudes run west to east, so it cannot describe a box that
+        // wraps across the anti-meridian. A circle that does gets the whole range, which
+        // still contains it, rather than a box that silently excludes half of it.
+        if (minLon < -180 || maxLon > 180)
+            return new Envelope(minLat, -180, maxLat, 180);
+
+        return new Envelope(minLat, minLon, maxLat, maxLon);
     }
 
     public Area GetArea()

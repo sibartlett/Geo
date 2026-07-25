@@ -11,7 +11,7 @@ public enum AreaUnit
     [Unit("km²", 1000 * 1000)]
     Km = 2,
 
-    [Unit("mi²", 1609.34 * 1609.34)]
+    [Unit("mi²", 1609.344 * 1609.344)]
     Mile = 3,
 
     [Unit("ft²", 0.3048 * 0.3048)]
