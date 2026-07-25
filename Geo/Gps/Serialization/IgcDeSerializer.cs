@@ -72,10 +72,14 @@ public class IgcDeSerializer : IGpsFileDeSerializer
                         var d = int.Parse(match.Groups["d"].Value, CultureInfo.InvariantCulture);
                         var m = int.Parse(match.Groups["m"].Value, CultureInfo.InvariantCulture);
                         var y = int.Parse(match.Groups["y"].Value, CultureInfo.InvariantCulture);
-                        var yn = int.Parse(
-                            DateTime.UtcNow.ToString("yy"),
-                            CultureInfo.InvariantCulture
-                        );
+                        // The pivot for the file's two-digit year is the current year's
+                        // own last two digits, taken from the Gregorian year directly.
+                        // Formatting "yy" reads it through the current culture's
+                        // calendar, so under a non-Gregorian default (th-TH's Buddhist
+                        // calendar, ar-SA's Umm al-Qura) the pivot came from a different
+                        // era entirely and every fix in the file landed decades out: a
+                        // 2026 flight was dated 1983 under th-TH.
+                        var yn = DateTime.UtcNow.Year % 100;
                         if (y > yn)
                             yn += 100;
                         var yd = yn - y;

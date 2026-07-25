@@ -264,6 +264,60 @@ public class WktReaderTests
     }
 
     [Fact]
+    public void Triangle_is_read_back_as_a_triangle()
+    {
+        var reader = new WktReader();
+
+        // A triangle is its own geometry type, not a polygon that happens to have three
+        // sides: reading it as a plain Polygon lost the type, so it could not be written
+        // back out as TRIANGLE.
+        Assert.IsType<Geo.Geometries.Triangle>(
+            reader.Read("TRIANGLE ((0.0 65.9, -34.5 9, -20 40, 0 65.9))")
+        );
+        Assert.IsType<Geo.Geometries.Triangle>(reader.Read("TRIANGLE EMPTY"));
+
+        // And with the type kept, a triangle survives a WKT round-trip.
+        var settings = new WktWriterSettings { Triangle = true };
+        var wkt = "TRIANGLE ((0 65.9, -34.5 9, -20 40, 0 65.9))";
+        Assert.Equal(wkt, new WktWriter(settings).Write(reader.Read(wkt)));
+    }
+
+    [Fact]
+    public void Triangle_whose_ring_is_not_a_triangle_is_rejected()
+    {
+        var reader = new WktReader();
+
+        // Read as a plain Polygon the ring went unchecked, and a four-sided "triangle"
+        // was accepted without complaint.
+        Assert.Throws<SerializationException>(() =>
+            reader.Read("TRIANGLE ((0 0, 1 1, 2 2, 3 3, 0 0))")
+        );
+    }
+
+    [Theory]
+    // a latitude past the pole
+    [InlineData("POINT (0 95)")]
+    // a longitude past the anti-meridian
+    [InlineData("POINT (181 0)")]
+    // an out-of-range ordinate inside a nested geometry
+    [InlineData("GEOMETRYCOLLECTION (POINT (0 95))")]
+    // a ring that does not close
+    [InlineData("POLYGON ((0 0, 1 1, 2 2, 3 3))")]
+    // a ring with too few coordinates
+    [InlineData("POLYGON ((0 0, 1 1, 0 0))")]
+    // numbers the tokenizer accepts but double.Parse does not
+    [InlineData("POINT (1-2 3)")]
+    [InlineData("POINT (1.2.3 4)")]
+    public void Malformed_wkt_is_reported_as_a_serialization_exception(string wkt)
+    {
+        // The argument at fault is the WKT, not anything the caller passed, so a
+        // malformed document is reported like every other WKT parse failure rather than
+        // escaping as an argument or format exception naming a parameter the caller
+        // never supplied.
+        Assert.Throws<SerializationException>(() => new WktReader().Read(wkt));
+    }
+
+    [Fact]
     public void GeometryCollection()
     {
         var reader = new WktReader();

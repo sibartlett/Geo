@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Geo.Gps.Serialization;
@@ -85,5 +87,34 @@ public class IgcDeSerializerTests : SerializerTestFixtureBase
         Assert.NotNull(result);
         Assert.Empty(result.Tracks);
         Assert.Empty(result.Waypoints);
+    }
+
+    [Theory]
+    [InlineData("en-GB")]
+    // Calendars whose current year is not the Gregorian one.
+    [InlineData("th-TH")]
+    [InlineData("ar-SA")]
+    public void Two_digit_year_is_resolved_independently_of_the_current_culture(string culture)
+    {
+        // HFDTE160701 -> 16 July 2001. The pivot for the file's two-digit year is the
+        // current Gregorian year's last two digits; read through the current culture's
+        // calendar instead it came from a different era, and every fix in the file
+        // landed decades out.
+        var previous = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            var file = GetReferenceFileDirectory("igc").GetFiles().First(x => x.Name == "igc2.igc");
+            using var stream = new FileStream(file.FullName, FileMode.Open);
+            var result = new IgcDeSerializer().DeSerialize(new StreamWrapper(stream));
+
+            var first = result.Tracks[0].Segments[0].Waypoints[0];
+            Assert.Equal(new DateTime(2001, 7, 16, 16, 2, 40), first.TimeUtc);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previous;
+        }
     }
 }

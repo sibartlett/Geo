@@ -66,6 +66,17 @@ public class WktReader
             // as a SerializationException like every other WKT parse failure.
             throw new SerializationException("Invalid WKT string.");
         }
+        // A number the tokenizer accepted but double.Parse will not ("1-2", "1.2.3"),
+        // or an ordinate the coordinate and geometry constructors reject outright - a
+        // latitude past the pole, a ring that does not close, a triangle that is not a
+        // triangle. The argument at fault is the WKT, not anything the caller passed,
+        // so these are reported like every other decoding failure rather than escaping
+        // as an argument or format exception naming a parameter the caller never
+        // supplied. WkbReader and GooglePolylineEncoder do the same.
+        catch (Exception ex) when (ex is ArgumentException or FormatException or OverflowException)
+        {
+            throw new SerializationException("Invalid WKT string.", ex);
+        }
     }
 
     private IGeometry? ParseGeometry(WktTokenQueue tokens)
@@ -146,28 +157,47 @@ public class WktReader
         return ParsePolygonInner(tokens, dimensions);
     }
 
+    // A TRIANGLE is its own geometry type, not a polygon that happens to have three
+    // sides: it validates its ring and it is written back out as TRIANGLE. Reading one
+    // as a plain Polygon lost the type on the way in, so a triangle could not survive a
+    // WKT round-trip and the ring went unchecked. WkbReader already reads it this way.
     private Polygon ParseTriangle(WktTokenQueue tokens)
     {
         tokens.Dequeue("TRIANGLE");
         var dimensions = ParseDimensions(tokens);
-        return ParsePolygonInner(tokens, dimensions);
+
+        var rings = ParseRings(tokens, dimensions);
+        if (rings == null)
+            return Triangle.Empty;
+
+        return new Triangle(rings[0], rings.Skip(1));
     }
 
     private Polygon ParsePolygonInner(WktTokenQueue tokens, WktDimensions dimensions)
     {
+        var rings = ParseRings(tokens, dimensions);
+        if (rings == null)
+            return Polygon.Empty;
+
+        return new Polygon(rings[0], rings.Skip(1));
+    }
+
+    /// <summary>
+    /// The parenthesised ring list shared by POLYGON and TRIANGLE, or <c>null</c> when
+    /// the geometry is EMPTY.
+    /// </summary>
+    private List<LinearRing>? ParseRings(WktTokenQueue tokens, WktDimensions dimensions)
+    {
         if (tokens.NextTokenIs("EMPTY"))
         {
             tokens.Dequeue();
-            return Polygon.Empty;
+            return null;
         }
 
         tokens.Dequeue(WktTokenType.LeftParenthesis);
         var linestrings = ParseLineStrings(tokens, dimensions);
         tokens.Dequeue(WktTokenType.RightParenthesis);
-        return new Polygon(
-            new LinearRing(linestrings.First().Coordinates),
-            linestrings.Skip(1).Select(x => new LinearRing(x.Coordinates))
-        );
+        return linestrings.Select(x => new LinearRing(x.Coordinates)).ToList();
     }
 
     private List<LineString> ParseLineStrings(WktTokenQueue tokens, WktDimensions dimensions)

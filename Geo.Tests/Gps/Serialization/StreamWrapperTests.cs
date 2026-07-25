@@ -37,6 +37,19 @@ public class StreamWrapperTests
     }
 
     [Fact]
+    public void Buffered_stream_starts_at_the_beginning_of_what_it_buffered()
+    {
+        var wrapper = new StreamWrapper(new NonSeekableStream(Bytes("buffered content")));
+
+        // Left where the copy finished, the wrapper read as empty until something
+        // happened to seek it first - unlike a wrapper over a seekable stream, and
+        // unlike CreateAsync, which has always rewound.
+        Assert.Equal(0, wrapper.Position);
+        using var reader = new StreamReader(wrapper, Encoding.UTF8, false, 1024, true);
+        Assert.Equal("buffered content", reader.ReadToEnd());
+    }
+
+    [Fact]
     public async Task CreateAsync_buffers_the_source_and_rewinds_to_the_start()
     {
         var inner = new NonSeekableStream(Bytes("async content"));
