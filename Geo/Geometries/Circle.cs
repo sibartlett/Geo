@@ -57,8 +57,13 @@ public class Circle : Geometry, ISurface
 
         var center = Center;
         var latitudinalRadiusDeg = Radius / (Constants.NauticalMile * 60);
+        // A degree of longitude spans metresPerDegree * cos(latitude) metres, so the
+        // parallels converge towards the poles. Converting a fixed metric radius into
+        // degrees of longitude therefore divides by cos(latitude): the east-west extent
+        // of the box grows with latitude (it equals the latitudinal extent at the
+        // equator and widens beyond it), rather than shrinking.
         var longditudinalRadiusDeg =
-            Radius / (Constants.NauticalMile * 60) * Math.Cos(center.Latitude.ToRadians());
+            Radius / (Constants.NauticalMile * 60) / Math.Cos(center.Latitude.ToRadians());
 
         return new Envelope(
             center.Latitude - latitudinalRadiusDeg,
