@@ -72,8 +72,11 @@ public class Polygon : Geometry, ISurface
         if (ReferenceEquals(null, other))
             return false;
 
-        if (IsEmpty && other.IsEmpty)
-            return true;
+        // An empty polygon has a null shell, so guard before dereferencing it: two
+        // empties are equal, an empty and a non-empty never are (and comparing their
+        // shells would throw on the empty side).
+        if (IsEmpty || other.IsEmpty)
+            return IsEmpty && other.IsEmpty;
 
         return Shell!.Equals(other.Shell, options)
             && Holes.Count == other.Holes.Count
