@@ -25,6 +25,13 @@ internal class WkbBinaryReader : IDisposable
     public bool HasData { get; }
     public WkbEncoding Encoding { get; private set; }
 
+    /// <summary>
+    /// How many bytes the geometry read so far has consumed. The stream itself cannot
+    /// be asked once reading is done, because it has been closed by then, and it may
+    /// not be seekable in the first place.
+    /// </summary>
+    public long BytesRead { get; private set; }
+
     public void Dispose()
     {
         if (!_disposed)
@@ -50,6 +57,7 @@ internal class WkbBinaryReader : IDisposable
             bytes[0] = (byte)_pushback;
             _pushback = -1;
             offset = 1;
+            BytesRead++;
         }
 
         // A single read can return fewer bytes than asked for without being at the end
@@ -63,6 +71,7 @@ internal class WkbBinaryReader : IDisposable
             if (read <= 0)
                 throw new EndOfStreamException();
             offset += read;
+            BytesRead += read;
         }
 
         if (Encoding == WkbEncoding.BigEndian)
@@ -72,6 +81,8 @@ internal class WkbBinaryReader : IDisposable
 
     private byte ReadByte()
     {
+        BytesRead++;
+
         if (_pushback < 0)
             return _reader.ReadByte();
 

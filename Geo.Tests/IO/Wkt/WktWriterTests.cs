@@ -291,4 +291,101 @@ public class WktWriterTests
         var empty = writer.Write(new MultiPolygon());
         Assert.Equal("MULTIPOLYGON EMPTY", empty);
     }
+
+    // ---- Mixed dimensionality ----------------------------------------------
+
+    [Fact]
+    public void Coordinates_are_padded_to_the_declared_dimensions()
+    {
+        // Regression: the dimension tag comes from the geometry (Is3D is an "any
+        // coordinate" test) while the ordinates used to be written per coordinate, so
+        // the tag and the points disagreed and the WKT was invalid.
+        var writer = new WktWriter();
+
+        Assert.Equal(
+            "LINESTRING Z (0 0 10, 1 1 NaN)",
+            writer.Write(new LineString(new CoordinateZ(0, 0, 10), new Coordinate(1, 1)))
+        );
+        Assert.Equal(
+            "LINESTRING ZM (0 0 10 NaN, 1 1 NaN 5)",
+            writer.Write(new LineString(new CoordinateZ(0, 0, 10), new CoordinateM(1, 1, 5)))
+        );
+    }
+
+    [Fact]
+    public void Polygon_tag_covers_its_holes_as_well_as_its_shell()
+    {
+        // Polygon.Is3D reports only the shell, so a polygon whose elevations live in a
+        // hole used to be tagged two-dimensional while writing three ordinates for
+        // every hole coordinate.
+        var flat = new LinearRing(
+            new Coordinate(0, 0),
+            new Coordinate(0, 3),
+            new Coordinate(3, 3),
+            new Coordinate(0, 0)
+        );
+        var raised = new LinearRing(
+            new CoordinateZ(1, 1, 7),
+            new CoordinateZ(1, 2, 7),
+            new CoordinateZ(2, 2, 7),
+            new CoordinateZ(1, 1, 7)
+        );
+
+        Assert.Equal(
+            "POLYGON Z ((0 0 NaN, 3 0 NaN, 3 3 NaN, 0 0 NaN), (1 1 7, 2 1 7, 2 2 7, 1 1 7))",
+            new WktWriter().Write(new Polygon(flat, raised))
+        );
+    }
+
+    [Fact]
+    public void Multi_geometry_tag_covers_every_member()
+    {
+        // One tag covers all the members, so they must all write its ordinates.
+        var writer = new WktWriter();
+
+        Assert.Equal(
+            "MULTIPOINT Z ((0 0 5), (1 1 NaN))",
+            writer.Write(new MultiPoint(new Point(0, 0, 5), new Point(1, 1)))
+        );
+        Assert.Equal(
+            "MULTILINESTRING Z ((0 0 5, 1 1 5), (2 2 NaN, 3 3 NaN))",
+            writer.Write(
+                new MultiLineString(
+                    new LineString(new CoordinateZ(0, 0, 5), new CoordinateZ(1, 1, 5)),
+                    new LineString(new Coordinate(2, 2), new Coordinate(3, 3))
+                )
+            )
+        );
+    }
+
+    [Fact]
+    public void Mixed_dimension_geometries_round_trip()
+    {
+        var reader = new WktReader();
+        var writer = new WktWriter();
+        var ntsWriter = new WktWriter(WktWriterSettings.NtsCompatible);
+
+        var geometries = new Geo.Abstractions.Interfaces.IGeometry[]
+        {
+            new LineString(new CoordinateZ(0, 0, 10), new Coordinate(1, 1)),
+            new LineString(new CoordinateM(0, 0, 5), new Coordinate(1, 1)),
+            new LineString(new CoordinateZM(0, 0, 1, 2), new CoordinateZ(1, 1, 3)),
+        };
+
+        foreach (var geometry in geometries)
+        {
+            Assert.Equal(geometry, reader.Read(writer.Write(geometry)));
+            Assert.Equal(geometry, reader.Read(ntsWriter.Write(geometry)));
+        }
+    }
+
+    [Fact]
+    public void Measured_geometry_beyond_max_dimensions_writes_no_tag()
+    {
+        // MaxDimesions = 3 drops the measure, so there is no dimension left to tag and
+        // no separator to write for it either.
+        var writer = new WktWriter(new WktWriterSettings { MaxDimesions = 3 });
+
+        Assert.Equal("POINT (0 65.9)", writer.Write(new Point(new CoordinateM(65.9, 0, 5))));
+    }
 }
