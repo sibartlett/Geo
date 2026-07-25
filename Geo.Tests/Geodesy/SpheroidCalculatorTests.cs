@@ -131,4 +131,35 @@ public class SpheroidCalculatorTests
         Assert.Equal(bearing12, result.Bearing12, Millionth);
         Assert.Equal(bearing21, result.Bearing21, Millionth);
     }
+
+    [Fact]
+    public void Direct_solution_reports_the_back_azimuth_in_degrees()
+    {
+        // Setting off due east from the equator, the way back is due west. The back
+        // azimuth used to be left in radians, so this returned 4.712389 - a number small
+        // enough to pass for a bearing, which is exactly why it went unnoticed.
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+
+        var result = calculator.CalculateOrthodromicLine(new Point(0, 0), 90, 100000);
+
+        Assert.Equal(270, result.Bearing21, Millionth);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(45)]
+    [InlineData(90)]
+    [InlineData(135)]
+    [InlineData(270)]
+    public void Direct_and_inverse_solutions_agree_on_both_bearings(double heading)
+    {
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+        var start = new Point(51.5, -0.1);
+
+        var direct = calculator.CalculateOrthodromicLine(start, heading, 100000);
+        var inverse = calculator.CalculateOrthodromicLine(start, direct.Coordinate2);
+
+        Assert.Equal(direct.Bearing12, inverse.Bearing12, Millionth);
+        Assert.Equal(direct.Bearing21, inverse.Bearing21, Millionth);
+    }
 }

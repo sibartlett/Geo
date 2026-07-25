@@ -91,7 +91,7 @@ public class SpheroidCalculator : IGeodeticCalculator
         c = ((-3 * c2a + 4) * Spheroid.Flattening + 4) * c2a * Spheroid.Flattening / 16;
         d = ((e * cy * c + cz) * sy * c + y) * sa;
         var glon2 = modlon(lon1 + x - (1 - c) * d * Spheroid.Flattening); // fix date line problems
-        var baz = modcrs(Math.Atan2(sa, b) + Math.PI);
+        var baz = modcrs(Math.Atan2(sa, b) + Math.PI).ToDegrees();
 
         return new GeodeticLine(
             new Coordinate(point.GetCoordinate().Latitude, point.GetCoordinate().Longitude),
