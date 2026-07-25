@@ -113,6 +113,16 @@ public class GeoJsonReaderWriterTests
     }
 
     [Fact]
+    public void Converts_empty_circle_to_the_empty_polygon()
+    {
+        var writer = new GeoJsonWriter(
+            new GeoJsonWriterSettings { ConvertCirclesToRegularPolygons = true, CircleSides = 4 }
+        );
+
+        Assert.Equal("{\"type\":\"Polygon\",\"coordinates\":[]}", writer.Write(Circle.Empty));
+    }
+
+    [Fact]
     public void Writing_circle_without_conversion_throws_serialization()
     {
         Assert.Throws<SerializationException>(() =>
@@ -199,5 +209,98 @@ public class GeoJsonReaderWriterTests
     public void Nts_compatible_settings_are_available()
     {
         Assert.NotNull(GeoJsonWriterSettings.NtsCompatible);
+    }
+
+    // ---- 8. Empty geometries -----------------------------------------------
+
+    [Fact]
+    public void Writes_and_reads_empty_point()
+    {
+        var writer = new GeoJsonWriter();
+
+        Assert.Equal("{\"type\":\"Point\",\"coordinates\":[]}", writer.Write(Point.Empty));
+        Assert.Equal(Point.Empty, new GeoJsonReader().Read(writer.Write(Point.Empty)));
+    }
+
+    [Fact]
+    public void Writes_and_reads_empty_polygon()
+    {
+        var writer = new GeoJsonWriter();
+
+        Assert.Equal("{\"type\":\"Polygon\",\"coordinates\":[]}", writer.Write(Polygon.Empty));
+        Assert.Equal(Polygon.Empty, new GeoJsonReader().Read(writer.Write(Polygon.Empty)));
+    }
+
+    [Fact]
+    public void Writes_and_reads_multi_point_containing_an_empty_point()
+    {
+        var writer = new GeoJsonWriter();
+        var multiPoint = new MultiPoint(new Point(1, 2), Point.Empty);
+
+        Assert.Equal(
+            "{\"type\":\"MultiPoint\",\"coordinates\":[[2,1],[]]}",
+            writer.Write(multiPoint)
+        );
+        Assert.Equal(multiPoint, new GeoJsonReader().Read(writer.Write(multiPoint)));
+    }
+
+    [Fact]
+    public void Writes_and_reads_multi_polygon_containing_an_empty_polygon()
+    {
+        var writer = new GeoJsonWriter();
+        var multiPolygon = new MultiPolygon(Polygon.Empty);
+
+        Assert.Equal(
+            "{\"type\":\"MultiPolygon\",\"coordinates\":[[]]}",
+            writer.Write(multiPolygon)
+        );
+        Assert.Equal(multiPolygon, new GeoJsonReader().Read(writer.Write(multiPolygon)));
+    }
+
+    [Fact]
+    public void Writes_feature_with_an_empty_geometry()
+    {
+        Assert.Equal(
+            "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[]},\"properties\":null}",
+            new Feature(Polygon.Empty).ToGeoJson()
+        );
+    }
+
+    // ---- 9. Malformed input is reported, not thrown from ---------------------
+
+    [Fact]
+    public void Feature_collection_with_a_non_object_feature_does_not_parse()
+    {
+        Assert.False(
+            new GeoJsonReader().TryRead("{\"type\":\"FeatureCollection\",\"features\":[1]}", out _)
+        );
+    }
+
+    [Fact]
+    public void Geometry_collection_with_a_non_object_geometry_does_not_parse()
+    {
+        Assert.False(
+            new GeoJsonReader().TryRead(
+                "{\"type\":\"GeometryCollection\",\"geometries\":[1]}",
+                out _
+            )
+        );
+    }
+
+    [Fact]
+    public void Feature_with_a_non_object_geometry_does_not_parse()
+    {
+        Assert.False(new GeoJsonReader().TryRead("{\"type\":\"Feature\",\"geometry\":1}", out _));
+    }
+
+    [Fact]
+    public void Feature_with_a_null_geometry_is_unlocated()
+    {
+        var feature = (Feature)
+            new GeoJsonReader().Read(
+                "{\"type\":\"Feature\",\"geometry\":null,\"properties\":null}"
+            );
+
+        Assert.Null(feature.Geometry);
     }
 }

@@ -113,6 +113,42 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Compare(gpx11, data, gpxData);
     }
 
+    [Fact]
+    public void Gpx11_route_without_route_points_is_parsed()
+    {
+        // <rtept> is optional in the GPX schema, so a route carrying only metadata
+        // is valid and must not fault the parser.
+        var gpx =
+            "<?xml version=\"1.0\"?>"
+            + "<gpx version=\"1.1\" creator=\"Geo.Tests\" xmlns=\"http://www.topografix.com/GPX/1/1\">"
+            + "<rte><name>empty route</name></rte>"
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx11Serializer().DeSerialize(new StreamWrapper(stream));
+
+        Assert.NotNull(data);
+        Assert.Equal("empty route", data.Routes.Single().Metadata.Attribute(x => x.Name));
+        Assert.Empty(data.Routes.Single().Waypoints);
+    }
+
+    [Fact]
+    public void Gpx10_route_without_route_points_is_parsed()
+    {
+        var gpx =
+            "<?xml version=\"1.0\"?>"
+            + "<gpx version=\"1.0\" creator=\"Geo.Tests\" xmlns=\"http://www.topografix.com/GPX/1/0\">"
+            + "<rte><name>empty route</name></rte>"
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx10Serializer().DeSerialize(new StreamWrapper(stream));
+
+        Assert.NotNull(data);
+        Assert.Equal("empty route", data.Routes.Single().Metadata.Attribute(x => x.Name));
+        Assert.Empty(data.Routes.Single().Waypoints);
+    }
+
     private void Compare(Gpx10Serializer serializer, GpsData data, string gpxData)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpxData));

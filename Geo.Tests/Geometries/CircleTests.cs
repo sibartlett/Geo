@@ -186,6 +186,14 @@ public class CircleTests
         Assert.False(new Circle().IsMeasured);
     }
 
+    [Fact]
+    public void Empty_circle_converts_to_the_empty_polygon()
+    {
+        // An empty circle has no centre to project vertices from; the writers that
+        // convert circles to polygons rely on this rather than faulting.
+        Assert.True(Circle.Empty.ToPolygon().IsEmpty);
+    }
+
     public double Distance(double nr1, double nr2)
     {
         return Math.Abs(nr1 - nr2);

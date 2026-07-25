@@ -156,8 +156,11 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
                 route.Metadata.Attribute(x => x.Description, rteType.desc);
                 route.Metadata.Attribute(x => x.Comment, rteType.cmt);
 
-                foreach (var wptType in rteType.rtept!)
-                    route.Waypoints.Add(ConvertWaypoint(wptType));
+                // <rtept> is optional in the GPX schema, so a route may carry only
+                // metadata; the element is absent (null) rather than an empty array.
+                if (rteType.rtept != null)
+                    foreach (var wptType in rteType.rtept)
+                        route.Waypoints.Add(ConvertWaypoint(wptType));
                 data.Routes.Add(route);
             }
     }

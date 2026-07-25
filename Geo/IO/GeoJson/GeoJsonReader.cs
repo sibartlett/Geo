@@ -92,8 +92,12 @@ public class GeoJsonReader
                 var temp = new object?[features.Count];
                 for (var index = 0; index < features.Count; index++)
                 {
-                    var geometry = features[index];
-                    if (!TryParseFeature((JsonObject)geometry, out temp[index]))
+                    // An element that is not a JSON object is not a feature; fail the
+                    // parse rather than letting the cast throw out of a TryParse.
+                    if (
+                        !(features[index] is JsonObject feature)
+                        || !TryParseFeature(feature, out temp[index])
+                    )
                         return false;
                 }
 
@@ -115,8 +119,20 @@ public class GeoJsonReader
             object? geo = null;
             Dictionary<string, object?>? pr = null;
 
-            if (obj.TryGetValue("geometry", out var geometry))
-                TryParseGeometry((JsonObject)geometry, out geo);
+            // "geometry" may legitimately be null (an unlocated feature). Anything
+            // else that is not a JSON object is malformed: fail the parse rather
+            // than letting the cast throw out of a TryParse, or silently discarding
+            // the value.
+            if (obj.TryGetValue("geometry", out var geometry) && geometry != null)
+            {
+                if (!(geometry is JsonObject geometryObject))
+                {
+                    result = null;
+                    return false;
+                }
+
+                TryParseGeometry(geometryObject, out geo);
+            }
 
             if (obj.TryGetValue("properties", out var prop) && prop is JsonObject)
             {
@@ -178,8 +194,16 @@ public class GeoJsonReader
     {
         result = null;
         var coordinates = GetArray(obj, "coordinates");
-        if (coordinates == null || coordinates.Count < 2)
+        if (coordinates == null)
             return false;
+
+        // An empty coordinates array is the empty point, as written by GeoJsonWriter
+        // (and by NTS/GEOS/PostGIS).
+        if (coordinates.Count == 0)
+        {
+            result = Point.Empty;
+            return true;
+        }
 
         if (TryParseCoordinate(coordinates, out var coordinate))
         {
@@ -207,16 +231,9 @@ public class GeoJsonReader
     {
         var coordinates = GetArray(obj, "coordinates");
 
-        if (
-            coordinates != null
-            && coordinates.Count > 0
-            && TryParseCoordinateArrayArray(coordinates, out var temp)
-        )
+        if (coordinates != null && TryParseCoordinateArrayArray(coordinates, out var temp))
         {
-            result = new Polygon(
-                new LinearRing(temp[0]),
-                temp.Skip(1).Select(x => new LinearRing(x))
-            );
+            result = BuildPolygon(temp);
             return true;
         }
 
@@ -224,17 +241,43 @@ public class GeoJsonReader
         return false;
     }
 
+    // An empty ring array is the empty polygon, as written by GeoJsonWriter (and by
+    // NTS/GEOS/PostGIS); building one would otherwise index past the end of the array.
+    private static Polygon BuildPolygon(Coordinate[][] rings)
+    {
+        if (rings.Length == 0)
+            return Polygon.Empty;
+
+        return new Polygon(new LinearRing(rings[0]), rings.Skip(1).Select(x => new LinearRing(x)));
+    }
+
     private bool TryParseMultiPoint(JsonObject obj, [NotNullWhen(true)] out object? result)
     {
+        result = null;
         var coordinates = GetArray(obj, "coordinates");
-        if (coordinates != null && TryParseCoordinateArray(coordinates, out var co))
+        if (coordinates == null || !coordinates.All(x => x is JsonArray))
+            return false;
+
+        var points = new Point[coordinates.Count];
+        for (var index = 0; index < coordinates.Count; index++)
         {
-            result = new MultiPoint(co.Select(x => new Point(x)));
-            return true;
+            var element = (JsonArray)coordinates[index];
+
+            // An empty coordinates array is the empty point, as written by
+            // GeoJsonWriter for a multi-point containing one.
+            if (element.Count == 0)
+            {
+                points[index] = Point.Empty;
+                continue;
+            }
+
+            if (!TryParseCoordinate(element, out var coordinate))
+                return false;
+            points[index] = new Point(coordinate);
         }
 
-        result = null;
-        return false;
+        result = new MultiPoint(points);
+        return true;
     }
 
     private bool TryParseMultiLineString(JsonObject obj, [NotNullWhen(true)] out object? result)
@@ -255,12 +298,7 @@ public class GeoJsonReader
         var coordinates = GetArray(obj, "coordinates");
         if (coordinates != null && TryParseCoordinateArrayArrayArray(coordinates, out var co))
         {
-            result = new MultiPolygon(
-                co.Select(x => new Polygon(
-                    new LinearRing(x.First()),
-                    x.Skip(1).Select(c => new LinearRing(c))
-                ))
-            );
+            result = new MultiPolygon(co.Select(BuildPolygon));
             return true;
         }
 
@@ -278,8 +316,12 @@ public class GeoJsonReader
             var temp = new object?[geometries.Count];
             for (var index = 0; index < geometries.Count; index++)
             {
-                var geometry = geometries[index];
-                if (!TryParseGeometry((JsonObject)geometry, out temp[index]))
+                // An element that is not a JSON object is not a geometry; fail the
+                // parse rather than letting the cast throw out of a TryParse.
+                if (
+                    !(geometries[index] is JsonObject geometry)
+                    || !TryParseGeometry(geometry, out temp[index])
+                )
                     return false;
             }
 

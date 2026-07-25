@@ -203,6 +203,13 @@ public class GeoJsonWriter
     private double[] WriteCoordinate(IPosition position)
     {
         var coordinate = position.GetCoordinate();
+
+        // An empty point has no coordinate at all. GeoJSON has no explicit empty
+        // marker, so it is written as an empty coordinates array (the convention
+        // used by NTS/GEOS/PostGIS); dereferencing the coordinate would throw.
+        if (coordinate == null)
+            return new double[0];
+
         var pointZM = coordinate as CoordinateZM;
         if (pointZM != null)
             return new[]
@@ -226,6 +233,11 @@ public class GeoJsonWriter
 
     private IEnumerable<IEnumerable<double[]>> WriteCoordinates(Polygon polygon)
     {
+        // An empty polygon has a null shell, so it is written as an empty ring
+        // array rather than dereferencing the shell.
+        if (polygon.IsEmpty)
+            yield break;
+
         yield return WriteCoordinates(polygon.Shell!.Coordinates);
         foreach (var hole in polygon.Holes)
             yield return WriteCoordinates(hole.Coordinates);

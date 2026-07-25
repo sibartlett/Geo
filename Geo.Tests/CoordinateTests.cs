@@ -271,6 +271,17 @@ public class CoordinateTests
         Assert.NotNull(Coordinate.TryParse("1, 2"));
     }
 
+    [Fact]
+    public void TryParse_returns_false_for_null_input()
+    {
+        // TryParse reports failure rather than throwing, unlike Parse.
+        var success = Coordinate.TryParse(null, out var result);
+
+        Assert.False(success);
+        Assert.Null(result);
+        Assert.Null(Coordinate.TryParse(null));
+    }
+
     [Theory]
     [InlineData("91, 0")]
     [InlineData("-91, 0")]
