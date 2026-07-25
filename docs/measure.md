@@ -81,6 +81,7 @@ miles²), `Ft` (ft²).
 first:
 
 ```csharp
+Area area = envelope.GetArea();
 area.ToString();               // e.g. "1000000 m²"
 area.ToString(AreaUnit.Km);    // e.g. "1 km²"
 ```
