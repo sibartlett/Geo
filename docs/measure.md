@@ -58,17 +58,35 @@ double mph = average.ConvertTo(SpeedUnit.Mph).Value;
 
 `Area` stores square metres internally (`SiValue`) and is what area calculations
 return (for example `Envelope.GetArea()` and
-`IGeodeticCalculator.CalculateArea`).
+`IGeodeticCalculator.CalculateArea`). It converts to other units with
+`ConvertTo`, using `AreaUnit` (not `DistanceUnit`) so the conversion scales by
+the **square** of the linear factor.
 
 ```csharp
 using Geo.Measure;
 
 Area area = envelope.GetArea();
 double squareMetres = area.SiValue;
+double squareKm = area.ConvertTo(AreaUnit.Km).Value;
+
+// Construct in a specific unit (2 km² = 2,000,000 m²):
+var field = new Area(2, AreaUnit.Km);
+double m2 = field.SiValue;            // 2000000
 ```
 
-> Note: `Area` is currently modelled on `DistanceUnit` and its `SiValue` is in
-> square metres. Prefer working with `SiValue` (m²) directly.
+`AreaUnit` values: `M` (m²), `Nm` (nautical miles²), `Km` (km²), `Mile` (statute
+miles²), `Ft` (ft²).
+
+`ToString()` formats with the measurement's unit; `ToString(unit)` converts
+first:
+
+```csharp
+area.ToString();               // e.g. "1000000 m²"
+area.ToString(AreaUnit.Km);    // e.g. "1 km²"
+```
+
+Like `Distance`, `Area` values support arithmetic (`+`, `-`) and comparison
+operators, all evaluated on the underlying square-metre value.
 
 ## Converting bare doubles
 
