@@ -83,6 +83,31 @@ public class WktReaderTests
     }
 
     [Fact]
+    public void Exponential_number_with_positive_exponent_sign()
+    {
+        var reader = new WktReader();
+
+        // Some producers (including .NET's own double.ToString for large magnitudes)
+        // write the exponent with an explicit '+' sign. The tokenizer must accept it.
+        var xy = reader.Read("POINT (1.5E+01 2)");
+        Assert.Equal(new Point(2, 1.5E+01), xy);
+
+        // A large magnitude (which forces the '+' exponent form) round-trips through
+        // an elevation, where no coordinate range limit applies.
+        var z = reader.Read("POINT Z (1 2 1.5E+21)");
+        Assert.Equal(new Point(2, 1, 1.5E+21), z);
+    }
+
+    [Fact]
+    public void Leading_positive_sign()
+    {
+        var reader = new WktReader();
+
+        var point = reader.Read("POINT (+1 +2)");
+        Assert.Equal(new Point(2, 1), point);
+    }
+
+    [Fact]
     public void Point()
     {
         var reader = new WktReader();
