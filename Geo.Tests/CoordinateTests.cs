@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Xunit;
 
 namespace Geo.Tests;
@@ -370,5 +371,58 @@ public class CoordinateTests
     public void GetBounds_is_a_degenerate_envelope_at_the_coordinate()
     {
         Assert.Equal(new Envelope(12, 34, 12, 34), new Coordinate(12, 34).GetBounds());
+    }
+
+    [Theory]
+    [InlineData("de-DE")]
+    [InlineData("fr-FR")]
+    [InlineData("en-US")]
+    [InlineData("")]
+    public void Parse_is_independent_of_the_current_culture(string culture)
+    {
+        // Cultures that swap the roles of '.' and ',' must not change how the degrees,
+        // minutes and seconds of a coordinate are read.
+        using (new CultureScope(culture))
+        {
+            var result = Coordinate.Parse("12 34.56'N 123 45.55'E");
+
+            Assert.Equal(12.576, result.Latitude);
+            Assert.Equal(123.75916666666667, result.Longitude);
+        }
+    }
+
+    [Theory]
+    [InlineData("de-DE")]
+    [InlineData("fr-FR")]
+    [InlineData("en-US")]
+    [InlineData("")]
+    public void ToString_round_trips_through_Parse_in_any_culture(string culture)
+    {
+        // A culture that writes the decimal separator as a comma would otherwise collide
+        // with the comma separating the two ordinates.
+        using (new CultureScope(culture))
+        {
+            var coordinate = new Coordinate(51.5, -0.12);
+
+            var result = Coordinate.Parse(coordinate.ToString());
+
+            Assert.Equal(coordinate.Latitude, result.Latitude);
+            Assert.Equal(coordinate.Longitude, result.Longitude);
+        }
+    }
+
+    private sealed class CultureScope : IDisposable
+    {
+        private readonly CultureInfo _original = CultureInfo.CurrentCulture;
+
+        public CultureScope(string culture)
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
+        }
+
+        public void Dispose()
+        {
+            CultureInfo.CurrentCulture = _original;
+        }
     }
 }

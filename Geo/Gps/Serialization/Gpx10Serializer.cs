@@ -17,7 +17,7 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
         {
             return new[]
             {
-                new GpsFileFormat("gps", "GPX 1.0", "http://www.topografix.com/GPX/1/0/gpx.xsd"),
+                new GpsFileFormat("gpx", "GPX 1.0", "http://www.topografix.com/GPX/1/0/gpx.xsd"),
             };
         }
     }

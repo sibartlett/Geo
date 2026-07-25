@@ -54,7 +54,12 @@ public class Coordinate : SpatialObject, IPosition
 
     public override string ToString()
     {
-        return Latitude + ", " + Longitude;
+        // Invariant culture, so the output stays parseable by Parse/TryParse: a culture
+        // that writes the decimal separator as a comma would otherwise collide with the
+        // comma separating the two ordinates ("51,5, -0,12").
+        return Latitude.ToString(CultureInfo.InvariantCulture)
+            + ", "
+            + Longitude.ToString(CultureInfo.InvariantCulture);
     }
 
     public Envelope GetBounds()
@@ -99,10 +104,10 @@ public class Coordinate : SpatialObject, IPosition
             else
                 dir = 1.0;
 
-            if (double.TryParse(match.Groups["Min1"].Value, out temp))
+            if (TryParseOrdinatePart(match, "Min1", out temp))
                 deg1 += dir * temp / 60;
 
-            if (double.TryParse(match.Groups["Sec1"].Value, out temp))
+            if (TryParseOrdinatePart(match, "Sec1", out temp))
                 deg1 += dir * temp / 3600;
 
             if (deg2 < 0.0)
@@ -110,10 +115,10 @@ public class Coordinate : SpatialObject, IPosition
             else
                 dir = 1.0;
 
-            if (double.TryParse(match.Groups["Min2"].Value, out temp))
+            if (TryParseOrdinatePart(match, "Min2", out temp))
                 deg2 += dir * temp / 60;
 
-            if (double.TryParse(match.Groups["Sec2"].Value, out temp))
+            if (TryParseOrdinatePart(match, "Sec2", out temp))
                 deg2 += dir * temp / 3600;
 
             var dir1 = Regex.IsMatch(match.Groups["Dir1"].Value, "[Ss]") ? -1d : 1d;
@@ -128,6 +133,20 @@ public class Coordinate : SpatialObject, IPosition
 
         result = default;
         return false;
+    }
+
+    // The minutes and seconds groups must be read with the same invariant culture as the
+    // degrees group above. Left to the current culture they would parse a decimal point
+    // as a thousands separator wherever the comma and point are swapped, turning
+    // "51 30.5' N" into 51 degrees 305 minutes — five degrees, or ~550 km, adrift.
+    private static bool TryParseOrdinatePart(Match match, string group, out double value)
+    {
+        return double.TryParse(
+            match.Groups[group].Value,
+            NumberStyles.Float | NumberStyles.AllowThousands,
+            CultureInfo.InvariantCulture,
+            out value
+        );
     }
 
     #region Equality methods

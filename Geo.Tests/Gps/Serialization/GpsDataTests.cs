@@ -186,4 +186,17 @@ public class GpsDataTests : SerializerTestFixtureBase
         Assert.DoesNotContain("IGC", names); // Tracks only
         Assert.DoesNotContain("Garmin Flightplan", names); // Routes only
     }
+
+    [Fact]
+    public void SupportedGpsFileFormats_report_the_gpx_extension_for_gpx()
+    {
+        var extensions = GpsData
+            .SupportedGpsFileFormats()
+            .Where(x => x.Name.StartsWith("GPX"))
+            .Select(x => x.Extension)
+            .ToList();
+
+        Assert.NotEmpty(extensions);
+        Assert.All(extensions, x => Assert.Equal("gpx", x));
+    }
 }
