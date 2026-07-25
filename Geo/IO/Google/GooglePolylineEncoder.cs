@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -26,8 +27,14 @@ public class GooglePolylineEncoder
 
         foreach (var coordinate in lineString.Coordinates)
         {
-            var late5 = (int)(coordinate.Latitude * CoordinateFactor);
-            var lnge5 = (int)(coordinate.Longitude * CoordinateFactor);
+            // The Google polyline algorithm rounds the scaled ordinate to the nearest
+            // integer; truncating with a plain (int) cast loses the last digit for
+            // common coordinates (e.g. 1.234567) and produces output that disagrees
+            // with Google's reference encoder by one unit in the last place.
+            var late5 = (int)
+                Math.Round(coordinate.Latitude * CoordinateFactor, MidpointRounding.AwayFromZero);
+            var lnge5 = (int)
+                Math.Round(coordinate.Longitude * CoordinateFactor, MidpointRounding.AwayFromZero);
 
             EncodeNumber(builder, late5 - plat);
             EncodeNumber(builder, lnge5 - plng);
