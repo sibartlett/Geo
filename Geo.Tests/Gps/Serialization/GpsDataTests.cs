@@ -170,4 +170,20 @@ public class GpsDataTests : SerializerTestFixtureBase
         Assert.DoesNotContain("IGC", names); // Tracks only
         Assert.DoesNotContain("Garmin Flightplan", names); // Routes only
     }
+
+    [Fact]
+    public void SupportedGpsFileFormats_for_tracks_and_waypoints_excludes_track_only_igc()
+    {
+        // A combined request must only return formats that support every requested feature.
+        // IGC supports tracks but not waypoints, so it cannot store this combination.
+        var names = GpsData
+            .SupportedGpsFileFormats(GpsFeatures.TracksAndWaypoints)
+            .Select(x => x.Name)
+            .ToList();
+
+        Assert.Contains("NMEA", names); // Tracks and Waypoints
+        Assert.Contains("GPX 1.1", names); // Supports every feature
+        Assert.DoesNotContain("IGC", names); // Tracks only
+        Assert.DoesNotContain("Garmin Flightplan", names); // Routes only
+    }
 }

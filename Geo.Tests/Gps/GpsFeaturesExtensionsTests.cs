@@ -13,7 +13,14 @@ public class GpsFeaturesExtensionsTests
     [InlineData(GpsFeatures.RoutesAndTracks, GpsFeatures.Waypoints, false)]
     [InlineData(GpsFeatures.RoutesAndTracks, GpsFeatures.Routes, true)]
     [InlineData(GpsFeatures.TracksAndWaypoints, GpsFeatures.Tracks, true)]
-    public void Contains_reports_whether_any_requested_flag_is_set(
+    // A combined request requires every flag to be present: a format that supports only
+    // one of the requested features must not be reported as containing the whole set.
+    [InlineData(GpsFeatures.TracksAndWaypoints, GpsFeatures.TracksAndWaypoints, true)]
+    [InlineData(GpsFeatures.Tracks, GpsFeatures.TracksAndWaypoints, false)]
+    [InlineData(GpsFeatures.Waypoints, GpsFeatures.TracksAndWaypoints, false)]
+    [InlineData(GpsFeatures.RoutesAndTracks, GpsFeatures.All, false)]
+    [InlineData(GpsFeatures.All, GpsFeatures.All, true)]
+    public void Contains_reports_whether_all_requested_flags_are_set(
         GpsFeatures supported,
         GpsFeatures requested,
         bool expected
