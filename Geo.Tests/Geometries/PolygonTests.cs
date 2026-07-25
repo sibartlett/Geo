@@ -163,4 +163,49 @@ public class PolygonTests
 
         Assert.Equal(new Polygon(Square(10)).GetArea().SiValue, multiPolygon.GetArea().SiValue);
     }
+
+    [Fact]
+    public void Dimensions_come_from_the_holes_as_well_as_the_shell()
+    {
+        // Regression: consulting the shell alone made a polygon whose elevations or
+        // measures live in a hole describe itself as two-dimensional, which in turn
+        // made the writers declare dimensions their coordinates did not carry.
+        var flat = new LinearRing(
+            new Coordinate(0, 0),
+            new Coordinate(0, 3),
+            new Coordinate(3, 3),
+            new Coordinate(0, 0)
+        );
+        var raised = new LinearRing(
+            new CoordinateZ(1, 1, 7),
+            new CoordinateZ(1, 2, 7),
+            new CoordinateZ(2, 2, 7),
+            new CoordinateZ(1, 1, 7)
+        );
+        var measured = new LinearRing(
+            new CoordinateM(1, 1, 7),
+            new CoordinateM(1, 2, 7),
+            new CoordinateM(2, 2, 7),
+            new CoordinateM(1, 1, 7)
+        );
+
+        Assert.True(new Polygon(flat, raised).Is3D);
+        Assert.True(new Polygon(raised, flat).Is3D);
+        Assert.False(new Polygon(flat, flat).Is3D);
+
+        Assert.True(new Polygon(flat, measured).IsMeasured);
+        Assert.True(new Polygon(measured, flat).IsMeasured);
+        Assert.False(new Polygon(flat, flat).IsMeasured);
+
+        // A collection sees through to them as well, since it reports the dimensions of
+        // any member.
+        Assert.True(new MultiPolygon(new Polygon(flat, raised)).Is3D);
+    }
+
+    [Fact]
+    public void Empty_polygon_has_no_dimensions()
+    {
+        Assert.False(Polygon.Empty.Is3D);
+        Assert.False(Polygon.Empty.IsMeasured);
+    }
 }

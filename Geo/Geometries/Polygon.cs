@@ -34,9 +34,14 @@ public class Polygon : Geometry, ISurface
 
     public override bool IsEmpty => Shell == null || Shell.IsEmpty;
 
-    public override bool Is3D => !IsEmpty && Shell!.Is3D;
+    // A polygon's holes are as much a part of it as its shell, so - like every other
+    // geometry here - it reports the dimensions of any coordinate it holds, not just
+    // those of the first sequence. Consulting the shell alone made a polygon whose
+    // elevations live in a hole describe itself as two-dimensional.
+    public override bool Is3D => !IsEmpty && (Shell!.Is3D || Holes.Any(x => x.Is3D));
 
-    public override bool IsMeasured => !IsEmpty && Shell!.IsMeasured;
+    public override bool IsMeasured =>
+        !IsEmpty && (Shell!.IsMeasured || Holes.Any(x => x.IsMeasured));
 
     public override Envelope? GetBounds()
     {

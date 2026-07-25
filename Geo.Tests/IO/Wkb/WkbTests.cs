@@ -247,6 +247,63 @@ public class WkbTests
         Assert.Equal(uniform.Length, mixed.Length);
     }
 
+    [Fact]
+    public void Ring_that_cannot_form_a_linear_ring_is_reported_as_serialization()
+    {
+        // A polygon of one ring of three coordinates. The bytes are structurally
+        // complete, so the failure comes from LinearRing rejecting the ring, which used
+        // to surface as an ArgumentException out of a WKB read.
+        var bytes = new byte[] { 1, 3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0 }
+            .Concat(new byte[3 * 2 * 8])
+            .ToArray();
+
+        var ex = Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
+
+    [Fact]
+    public void Coordinate_outside_the_valid_range_is_reported_as_serialization()
+    {
+        var bytes = new byte[] { 1, 1, 0, 0, 0 }
+            .Concat(BitConverter.GetBytes(0d))
+            .Concat(BitConverter.GetBytes(500d)) // latitude past the pole
+            .ToArray();
+
+        var ex = Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
+        Assert.IsType<ArgumentOutOfRangeException>(ex.InnerException);
+    }
+
+    [Fact]
+    public void Trailing_bytes_after_a_geometry_are_reported()
+    {
+        var point = new WkbWriter().Write(new Point(1, 2));
+        var withTrailer = point.Concat(new byte[] { 9, 9, 9 }).ToArray();
+
+        Assert.Throws<SerializationException>(() => new WkbReader().Read(withTrailer));
+
+        // A stream is not held to that: it may carry the geometry alongside whatever
+        // else the caller has put there.
+        Assert.NotNull(new WkbReader().Read(new MemoryStream(withTrailer)));
+    }
+
+    [Fact]
+    public void Overstated_coordinate_count_runs_out_of_stream_rather_than_memory()
+    {
+        // The count is read straight off the input, so it must not be used to size an
+        // allocation: these two ask for 4 billion and 500 million coordinates from a
+        // geometry that carries one.
+        foreach (var count in new[] { uint.MaxValue, 500_000_000u })
+        {
+            var bytes = new byte[] { 1, 2, 0, 0, 0 }
+                .Concat(BitConverter.GetBytes(count))
+                .Concat(BitConverter.GetBytes(0d))
+                .Concat(BitConverter.GetBytes(0d))
+                .ToArray();
+
+            Assert.Throws<SerializationException>(() => new WkbReader().Read(bytes));
+        }
+    }
+
     private void TestRoundTrip(Geo.Abstractions.Interfaces.IGeometry geometry)
     {
         var wkb = new WkbWriter(new WkbWriterSettings { Triangle = true }).Write(geometry);

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -20,7 +21,19 @@ public class WkbReader
 
         using (var stream = new MemoryStream(bytes))
         {
-            return Read(stream);
+            var geometry = Read(stream, out var bytesRead);
+
+            // A byte array holds the geometry and nothing else, so anything left over
+            // means it does not contain what it claims to. A stream is deliberately not
+            // held to this standard: a caller may hand over one that carries the
+            // geometry alongside whatever else it is already carrying.
+            if (geometry != null && bytesRead != bytes.Length)
+                throw new SerializationException(
+                    (bytes.Length - bytesRead).ToString(CultureInfo.InvariantCulture)
+                        + " bytes remain after the end of the WKB geometry."
+                );
+
+            return geometry;
         }
     }
 
@@ -45,8 +58,15 @@ public class WkbReader
 
     public IGeometry? Read(Stream stream)
     {
+        return Read(stream, out _);
+    }
+
+    private IGeometry? Read(Stream stream, out long bytesRead)
+    {
         if (stream == null)
             throw new ArgumentNullException("stream");
+
+        bytesRead = 0;
 
         using (var reader = new WkbBinaryReader(stream))
         {
@@ -55,13 +75,25 @@ public class WkbReader
 
             try
             {
-                return ReadGeometry(reader);
+                var geometry = ReadGeometry(reader);
+                bytesRead = reader.BytesRead;
+                return geometry;
             }
             catch (EndOfStreamException)
             {
                 throw new SerializationException(
                     "End of stream reached before end of valid WKB geometry."
                 );
+            }
+            // Malformed bytes reach the geometry and coordinate constructors as
+            // impossible values - a latitude past the pole, a ring that does not close -
+            // which reject them as bad arguments. The argument actually at fault is the
+            // WKB, so these are reported like every other decoding failure rather than
+            // surfacing as an argument exception naming a parameter the caller never
+            // supplied.
+            catch (ArgumentException ex)
+            {
+                throw new SerializationException("Invalid WKB geometry.", ex);
             }
         }
     }
@@ -88,12 +120,20 @@ public class WkbReader
         return new Coordinate(y, x);
     }
 
+    // Counts are read straight off the input, so they cannot be trusted to size a list:
+    // a four-byte header would otherwise be able to demand an arbitrarily large
+    // allocation before a single coordinate had been read, and a count above
+    // int.MaxValue turns negative on the way to a capacity or a loop bound. Counts are
+    // kept unsigned and the list grows into whatever actually arrives, so an
+    // overstated count runs out of stream rather than out of memory.
+    private const int MaxPreallocatedCount = 1024;
+
     private CoordinateSequence ReadCoordinates(WkbBinaryReader reader, WkbDimensions dimensions)
     {
-        var pointCount = (int)reader.ReadUInt32();
+        var pointCount = reader.ReadUInt32();
 
-        var result = new List<Coordinate>(pointCount);
-        for (var i = 0; i < pointCount; i++)
+        var result = new List<Coordinate>((int)Math.Min(pointCount, MaxPreallocatedCount));
+        for (var i = 0u; i < pointCount; i++)
             result.Add(ReadCoordinate(reader, dimensions));
 
         return new CoordinateSequence(result);
@@ -174,17 +214,17 @@ public class WkbReader
     private List<LinearRing> ReadPolygonInner(WkbBinaryReader reader, WkbDimensions dimensions)
     {
         var result = new List<LinearRing>();
-        var ringsCount = (int)reader.ReadUInt32();
-        for (var i = 0; i < ringsCount; i++)
+        var ringsCount = reader.ReadUInt32();
+        for (var i = 0u; i < ringsCount; i++)
             result.Add(new LinearRing(ReadCoordinates(reader, dimensions)));
         return result;
     }
 
     private MultiPoint ReadMultiPoint(WkbBinaryReader reader, WkbDimensions dimensions)
     {
-        var pointsCount = (int)reader.ReadUInt32();
+        var pointsCount = reader.ReadUInt32();
         var points = new List<Point>();
-        for (var i = 0; i < pointsCount; i++)
+        for (var i = 0u; i < pointsCount; i++)
         {
             var point = ReadGeometry(reader) as Point;
             if (point != null)
@@ -198,9 +238,9 @@ public class WkbReader
 
     private MultiLineString ReadMultiLineString(WkbBinaryReader reader, WkbDimensions dimensions)
     {
-        var pointsCount = (int)reader.ReadUInt32();
+        var pointsCount = reader.ReadUInt32();
         var lineStrings = new List<LineString>();
-        for (var i = 0; i < pointsCount; i++)
+        for (var i = 0u; i < pointsCount; i++)
         {
             var lineString = ReadGeometry(reader) as LineString;
             if (lineString != null)
@@ -214,9 +254,9 @@ public class WkbReader
 
     private MultiPolygon ReadMultiPolygon(WkbBinaryReader reader, WkbDimensions dimensions)
     {
-        var pointsCount = (int)reader.ReadUInt32();
+        var pointsCount = reader.ReadUInt32();
         var polygons = new List<Polygon>();
-        for (var i = 0; i < pointsCount; i++)
+        for (var i = 0u; i < pointsCount; i++)
         {
             var polygon = ReadGeometry(reader) as Polygon;
             if (polygon != null)
@@ -230,9 +270,9 @@ public class WkbReader
 
     private GeometryCollection ReadGeometryCollection(WkbBinaryReader reader)
     {
-        var pointsCount = (int)reader.ReadUInt32();
+        var pointsCount = reader.ReadUInt32();
         var geometries = new List<IGeometry>();
-        for (var i = 0; i < pointsCount; i++)
+        for (var i = 0u; i < pointsCount; i++)
             geometries.Add(ReadGeometry(reader));
         return new GeometryCollection(geometries);
     }
