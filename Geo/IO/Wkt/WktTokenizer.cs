@@ -71,7 +71,7 @@ internal class WktTokenizer
             return WktTokenType.String;
         }
 
-        if (ch == '-' || ch == '.' || (ch >= '0' && ch <= '9'))
+        if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9'))
             return WktTokenType.Number;
         if (ch == ',')
             return WktTokenType.Comma;
