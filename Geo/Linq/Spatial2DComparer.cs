@@ -13,8 +13,13 @@ public class Spatial2DComparer<T> : IEqualityComparer<T>
         return SpatialObject.Equals2D(x, y);
     }
 
+    // To2D() builds a fresh options object, and this runs once per element - a Distinct2D
+    // over a hundred thousand coordinates allocated a hundred thousand of them. The two
+    // settings it carried over from the ambient options, PoleCoordiantesAreEqual and
+    // AntiMeridianCoordinatesAreEqual, no longer reach a hash, so one shared instance
+    // gives the same answer as a new one every time.
     public int GetHashCode(T obj)
     {
-        return obj.GetHashCode(GeoContext.Current.EqualityOptions.To2D());
+        return obj.GetHashCode(SpatialEqualityOptions.PositionOnly);
     }
 }

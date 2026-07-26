@@ -59,6 +59,32 @@ GeoContext.Current = new GeoContext(Spheroid.Grs80);
 The `To2D()` and `To3D()` helpers return option sets tuned for 2D or 3D
 comparison.
 
+### Hash codes do not follow these options
+
+`Equals(object)` answers to whichever options are in force, but `GetHashCode()`
+does not: it hashes the position alone, leaving out the elevation and the
+measure, and always collapses the longitudes that name one place (every longitude
+at a pole; the anti-meridian written as both `+180` and `-180`).
+
+That is deliberate. A hash has to hold still for as long as an object is a key,
+and equality here does not — so the hash is the coarser one that stays correct
+whichever way the options go. Equal values are therefore never split across two
+buckets, while values that are unequal under the current options may share one.
+
+```csharp
+var stored = new CoordinateZ(1, 2, 30);
+var set = new HashSet<Coordinate> { stored };
+
+GeoContext.Current.EqualityOptions = new SpatialEqualityOptions { UseElevation = false };
+
+set.Contains(stored);                        // still true
+set.Contains(new CoordinateZ(1, 2, 99));     // true — equal under the new options
+```
+
+Where you want the elevation or the measure to spread entries across buckets —
+`Distinct3D` and `Spatial3DComparer` do — use the
+`GetHashCode(SpatialEqualityOptions)` overload, which honours what you pass it.
+
 ## Scope
 
 `GeoContext.Current` is process-wide and mutable — changing it affects every

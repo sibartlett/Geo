@@ -37,16 +37,7 @@ public class CoordinateZ : Coordinate, Is3D
     {
         unchecked
         {
-            var latitude = Latitude;
-            var longitude = Longitude;
-
-            if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90) || Latitude.Equals(-90)))
-                longitude = 0;
-            else if (options.AntiMeridianCoordinatesAreEqual && Longitude.Equals(-180))
-                longitude = 180;
-
-            var hashCode = latitude.GetHashCode();
-            hashCode = (hashCode * 397) ^ longitude.GetHashCode();
+            var hashCode = GetPositionHashCode();
             if (options.UseElevation)
                 hashCode = (hashCode * 397) ^ Elevation.GetHashCode();
             return hashCode;

@@ -19,9 +19,19 @@ public abstract class SpatialObject : ISpatialEquatable
         return Equals(obj, GeoContext.Current.EqualityOptions.To3D());
     }
 
+    /// <remarks>
+    /// Hashed under fixed options rather than whichever are in force, because a hash has to
+    /// hold still for as long as the object is a key. Reading
+    /// <see cref="GeoContext.Current" /> here meant a dictionary or a set could stop finding
+    /// an entry it already held the moment anything changed the ambient options - and,
+    /// while both settings were live, could report an item absent that its own
+    /// <see cref="Equals(object)" /> called equal. Only <see cref="Equals(object)" /> now
+    /// answers to the ambient options; the hash it has to agree with is the coarser one
+    /// that is correct under all of them.
+    /// </remarks>
     public override int GetHashCode()
     {
-        return GetHashCode(GeoContext.Current.EqualityOptions);
+        return GetHashCode(SpatialEqualityOptions.PositionOnly);
     }
 
     public override bool Equals(object? obj)
