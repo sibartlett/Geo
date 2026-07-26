@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Geo.Geometries;
 using Xunit;
 
@@ -14,15 +17,40 @@ public class PointTests
     }
 
     [Fact]
-    public void Empty_returns_a_fresh_instance_that_cannot_corrupt_the_shared_state()
+    public void Coordinate_is_read_only()
     {
-        // Point.Coordinate is mutable, so Empty must hand out a new instance each time;
-        // mutating one must not turn a later Point.Empty into a non-empty point.
-        var first = Point.Empty;
-        first.Coordinate = new Coordinate(1, 2);
+        // A point's equality and its hash code are both derived from its coordinate, so a
+        // settable one was a key able to rewrite itself. Asserted by reflection so that
+        // putting the setter back is a failing test rather than a silent regression.
+        var property = typeof(Point).GetProperty(nameof(Point.Coordinate));
 
-        Assert.NotSame(first, Point.Empty);
-        Assert.True(Point.Empty.IsEmpty);
+        Assert.NotNull(property);
+        Assert.False(property!.CanWrite);
+    }
+
+    [Fact]
+    public void Every_geometry_type_is_immutable()
+    {
+        // Point was the last geometry with public mutable state; the rest have always been
+        // built through their constructors and left alone.
+        var mutable =
+            from type in typeof(Point).Assembly.GetTypes()
+            where type.IsPublic && type.Namespace == typeof(Point).Namespace
+            from property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            where property.SetMethod != null && property.SetMethod.IsPublic
+            select $"{type.Name}.{property.Name}";
+
+        Assert.Empty(mutable.ToArray());
+    }
+
+    [Fact]
+    public void A_point_stays_findable_as_a_dictionary_key()
+    {
+        var point = new Point(1, 2);
+        var dictionary = new Dictionary<Point, string> { [point] = "here" };
+
+        Assert.True(dictionary.ContainsKey(point));
+        Assert.True(dictionary.ContainsKey(new Point(1, 2)));
     }
 
     [Fact]
