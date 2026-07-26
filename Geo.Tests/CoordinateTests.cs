@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using Xunit;
 
 namespace Geo.Tests;
@@ -326,17 +327,80 @@ public class CoordinateTests
         Assert.Null(result);
     }
 
+    [Theory]
+    // The hyphen-separated form used by the FAA and the NGS. The hyphen is a separator,
+    // not a sign: read as one, "40-26-46N" subtracted its own minutes and seconds and came
+    // out 190 km from where it says, and "000-07-12W" drove the ordinate negative and then
+    // let the W negate it again, landing on the wrong side of the meridian entirely.
+    [InlineData("40-26-46N, 079-56-55W", 40.446111111111111, -79.948611111111111)]
+    [InlineData("40-26-46N 079-56-55W", 40.446111111111111, -79.948611111111111)]
+    [InlineData("51-30-00N, 000-07-12W", 51.5, -0.12)]
+    [InlineData("N51-30-00, W000-07-12", 51.5, -0.12)]
+    [InlineData("S33-52-00, E151-12-00", -33.866666666666667, 151.2)]
+    [InlineData("51-30, 0-7", 51.5, 0.11666666666666667)]
+    public void Parse_accepts_hyphen_separated_degrees_minutes_and_seconds(
+        string coordinate,
+        double latitude,
+        double longitude
+    )
+    {
+        var result = Coordinate.Parse(coordinate);
+
+        Assert.Equal(latitude, result.Latitude, 10);
+        Assert.Equal(longitude, result.Longitude, 10);
+    }
+
+    [Theory]
+    // Only the degrees carry a sign. A minutes or seconds field is a magnitude - no
+    // notation writes "51° -30'" - so the hyphen in front of one is the separator that
+    // introduces it, and the field is added rather than subtracted.
+    [InlineData("1 -2, 3", 1.0333333333333333, 3)]
+    [InlineData("51 -30, 0", 51.5, 0)]
+    // A sign on the degrees is still honoured, including where the ordinate that follows
+    // is separated by whitespace alone.
+    [InlineData("51.5 -0.12", 51.5, -0.12)]
+    [InlineData("51.5, -0.12", 51.5, -0.12)]
+    public void Minutes_and_seconds_are_magnitudes(
+        string coordinate,
+        double latitude,
+        double longitude
+    )
+    {
+        var result = Coordinate.Parse(coordinate);
+
+        Assert.Equal(latitude, result.Latitude, 10);
+        Assert.Equal(longitude, result.Longitude, 10);
+    }
+
+    [Theory]
+    // A sign or a stray point glued to a number used to open a fresh minutes or seconds
+    // field, so these returned a position instead of failing. Nothing writes a coordinate
+    // this way, and requiring a separator is what makes the parse linear.
+    [InlineData("1+2, 3")]
+    [InlineData("4, 1+5")]
+    [InlineData("1.2.3, 4")]
+    [InlineData("1..2, 3")]
+    public void TryParse_rejects_a_field_that_is_not_introduced_by_a_separator(string coordinate)
+    {
+        Assert.False(Coordinate.TryParse(coordinate, out var result));
+        Assert.Null(result);
+    }
+
     [Fact]
     public void TryParse_does_not_hang_on_a_long_run_of_digits()
     {
-        // Six number fields whose separators are all optional used to let the engine carve
+        // Six number fields whose separators were all optional used to let the engine carve
         // a digit run up an exponential number of ways before giving up: forty digits took
-        // over five seconds, and each further digit multiplied that.
+        // over five seconds, and each further digit multiplied that. Requiring a separator
+        // in front of the minutes and the seconds leaves one way to read a run, so the
+        // whole thing is linear and needs no match timeout to bound it.
         var stopwatch = Stopwatch.StartNew();
 
-        Assert.False(Coordinate.TryParse(new string('1', 4000), out _));
-        Assert.False(Coordinate.TryParse(new string('1', 4000) + "!", out _));
-        Assert.False(Coordinate.TryParse("N" + new string('1', 4000), out _));
+        Assert.False(Coordinate.TryParse(new string('1', 50000), out _));
+        Assert.False(Coordinate.TryParse(new string('1', 50000) + "!", out _));
+        Assert.False(Coordinate.TryParse("N" + new string('1', 50000), out _));
+        Assert.False(Coordinate.TryParse(string.Concat(Enumerable.Repeat("1-", 50000)), out _));
+        Assert.False(Coordinate.TryParse(string.Concat(Enumerable.Repeat("1-2, ", 50000)), out _));
 
         Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5));
     }

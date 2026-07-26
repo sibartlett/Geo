@@ -10,34 +10,44 @@ namespace Geo;
 
 public class Coordinate : SpatialObject, IPosition
 {
-    // One ordinate's number: an optional sign, then digits with optional decimals, or a
-    // bare fraction. Spelling it this way rather than as (?:\d+\.?\d*|\d*\.?\d+) matches
-    // exactly the same strings but only one way each. The two branches of the old form
-    // both accepted a plain run of digits, and could split one between \d+ and \d* at any
-    // point, so six of these in sequence gave the engine an exponential number of ways to
-    // carve up a long run before admitting the string was not a coordinate at all: forty
-    // digits took over five seconds, and each further digit multiplied that.
-    private const string OrdinateNumber = @"[+-]?(?:\d+(?:\.\d*)?|\.\d+)";
+    // A number, written only one way: digits with optional decimals, or a bare fraction.
+    // Spelling it so rather than as (?:\d+\.?\d*|\d*\.?\d+) matches exactly the same
+    // strings, but that older form had two branches which both accepted a plain run of
+    // digits and could split one between \d+ and \d* at any point. Six of those in
+    // sequence gave the engine an exponential number of ways to carve up a long run before
+    // admitting the string was not a coordinate at all: forty digits took over five
+    // seconds, and every further digit multiplied that.
+    private const string Number = @"(?:\d+(?:\.\d*)?|\.\d+)";
+
+    // Only the degrees carry a sign. A minutes or seconds field is a magnitude - no
+    // notation writes "51° -30'" - and reading one as signed is what made "51-30-00N",
+    // the hyphen-separated form below, subtract its own minutes.
+    private const string DegreesNumber = "[+-]?" + Number;
+
+    // What may stand between the degrees, the minutes and the seconds of one ordinate.
+    // The hyphen is a separator here, as in the FAA/NGS form "40-26-46N 079-56-55W", and
+    // never a sign: a sign belongs to the degrees or to the hemisphere letter.
+    private const string DegreesSeparator = @"[°Dd\s\-]";
+    private const string MinutesSeparator = @"[°'′Mm\s\-]";
+    private const string SecondsSeparator = @"[""″\s]";
+
+    // A minutes or seconds field has to be introduced by at least one separator, so a run
+    // of digits can no longer be divided between the three fields at arbitrary points.
+    // That kept the parse both honest and cheap: "40-26-46N" is 40°26'46" rather than 40
+    // degrees less 26 minutes less 46 seconds, and twenty thousand digits are rejected in
+    // milliseconds instead of hanging the caller.
+    private static string Ordinate(string n) =>
+        $@"(?<Pre{n}>[NnSsEeWw])?\s*(?<Deg{n}>{DegreesNumber}[\r\n]*)"
+        + $@"{DegreesSeparator}*(?:{DegreesSeparator}(?<Min{n}>{Number}[\r\n]*))?"
+        + $@"{MinutesSeparator}*(?:{MinutesSeparator}(?<Sec{n}>{Number}[\r\n]*))?"
+        + $@"{SecondsSeparator}*(?<Dir{n}>[NnSsEeWw])?";
 
     // The hemisphere letter may lead the ordinate ("N51 30.0") as well as follow it
     // ("51 30.0N"): aviation and marine sources overwhelmingly write it in front, and a
     // string of theirs did not parse at all before. Both spellings are optional, and an
     // ordinate that carries the letter on both sides has to say the same thing twice.
     private static readonly string CoordinateRegex =
-        @"^[\(\[\{\s]*"
-        + $@"(?<Pre1>[NnSsEeWw])?\s*(?<Deg1>{OrdinateNumber}[\r\n]*)[°Dd\s]*(?<Min1>{OrdinateNumber}[\r\n]*)?[°'′Mm\s]*(?<Sec1>{OrdinateNumber}[\r\n]*)?[\""″\s]*(?<Dir1>[NnSsEeWw])?"
-        + @"[,\s]+"
-        + $@"(?<Pre2>[NnSsEeWw])?\s*(?<Deg2>{OrdinateNumber}[\r\n]*)[°Dd\s]*(?<Min2>{OrdinateNumber}[\r\n]*)?[°'′Mm\s]*(?<Sec2>{OrdinateNumber}[\r\n]*)?[\""″\s]*(?<Dir2>[NnSsEeWw])?"
-        + @"[\)\]\}\s]*$";
-
-    // A backstop for what the rewrite above cannot reach. Degrees, minutes and seconds are
-    // separated by characters that are all optional, so a long run of digits can still be
-    // divided between the three fields polynomially many ways; that is no longer
-    // exponential, but several hundred digits would still take seconds. Nothing any
-    // coordinate notation produces comes within orders of magnitude of this budget, and a
-    // string that exhausts it is reported as one that does not parse rather than being
-    // allowed to occupy the caller indefinitely.
-    private static readonly TimeSpan MatchTimeout = TimeSpan.FromMilliseconds(250);
+        @"^[\(\[\{\s]*" + Ordinate("1") + @"[,\s]+" + Ordinate("2") + @"[\)\]\}\s]*$";
 
     public Coordinate()
         : this(0, 0) { }
@@ -130,16 +140,7 @@ public class Coordinate : SpatialObject, IPosition
             return false;
         }
 
-        Match match;
-        try
-        {
-            match = Regex.Match(coordinate, CoordinateRegex, RegexOptions.None, MatchTimeout);
-        }
-        catch (RegexMatchTimeoutException)
-        {
-            result = default;
-            return false;
-        }
+        var match = Regex.Match(coordinate, CoordinateRegex);
 
         if (
             match.Success
@@ -217,13 +218,14 @@ public class Coordinate : SpatialObject, IPosition
     /// Assembles one ordinate from its degrees, minutes and seconds groups.
     /// </summary>
     /// <remarks>
-    /// The minutes and seconds are added to the <em>magnitude</em> of the degrees and the
-    /// sign is applied once at the end, because a degrees field of "-0" parses to negative
-    /// zero, which is not less than zero. Deciding the direction by testing the parsed
-    /// value therefore read "-0 7 12" as travelling north/east of zero, and every
-    /// coordinate in the (-1, 0) degree band - which is where most of western Europe's
-    /// longitudes sit - came back on the wrong side of the meridian, up to 111 km out.
-    /// The sign is taken from the text instead, which is the only place it survives.
+    /// Minutes and seconds are magnitudes, always moving the position further from the
+    /// equator or the meridian, and only the degrees carry a sign. That sign is applied
+    /// once, at the end, rather than to each field as it is added: a degrees field of "-0"
+    /// parses to negative zero, which is not less than zero, so deciding the direction by
+    /// testing the parsed value read "-0 7 12" as travelling north/east of zero and put
+    /// every coordinate in the (-1, 0) degree band - which is where most of western
+    /// Europe's longitudes sit - on the wrong side of the meridian, up to 111 km out. The
+    /// sign is taken from the text instead, which is the only place it survives.
     /// </remarks>
     private static double ParseOrdinate(
         Match match,
