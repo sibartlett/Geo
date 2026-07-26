@@ -4,6 +4,11 @@ Geo's geometry types mirror the OGC simple-feature geometries, plus a `Circle`.
 All coordinates are latitude/longitude in degrees (WGS-84), and constructors take
 them in **latitude, longitude** order.
 
+Geometries are **immutable**: they are built through their constructors and never
+change afterwards. Equality and hash codes are derived from their contents, so
+this is what lets a geometry serve as a dictionary key or a set member — build a
+new geometry rather than moving an existing one.
+
 ```csharp
 using Geo;
 using Geo.Geometries;

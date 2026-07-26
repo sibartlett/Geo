@@ -182,10 +182,9 @@ public class WkbReader
         var coordinate = ReadCoordinate(reader, dimensions);
 
         // A point whose position ordinates are all NaN encodes POINT EMPTY, matching
-        // NTS/GEOS/PostGIS. Return a fresh empty point rather than the shared singleton,
-        // since Point.Coordinate is mutable.
+        // NTS/GEOS/PostGIS.
         if (double.IsNaN(coordinate.Latitude) && double.IsNaN(coordinate.Longitude))
-            return new Point();
+            return Point.Empty;
 
         return new Point(coordinate);
     }

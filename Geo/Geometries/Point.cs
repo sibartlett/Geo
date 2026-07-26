@@ -31,7 +31,17 @@ public class Point : Geometry, IPosition
         Coordinate = coordinate;
     }
 
-    public Coordinate? Coordinate { get; set; }
+    /// <summary>
+    /// The position this point holds, or <c>null</c> when it is empty.
+    /// </summary>
+    /// <remarks>
+    /// Read-only, like every other geometry's contents. A point's equality and its hash
+    /// code are both derived from this, so a settable one was a key that could rewrite
+    /// itself: a point put into a dictionary and then given a new coordinate hashed to a
+    /// different bucket and could no longer be found, in the very dictionary holding it.
+    /// Build a new point rather than moving an existing one.
+    /// </remarks>
+    public Coordinate? Coordinate { get; }
 
     public override bool IsEmpty => Coordinate == null;
 
