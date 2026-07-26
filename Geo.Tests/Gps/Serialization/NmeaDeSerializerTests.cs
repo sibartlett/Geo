@@ -147,4 +147,121 @@ public class NmeaDeSerializerTests : SerializerTestFixtureBase
 
         Assert.Equal(first.Waypoints[0].TimeUtc, second.Waypoints[0].TimeUtc);
     }
+
+    private static string Gga(
+        string latitude,
+        string latitudeDirection,
+        string longitude,
+        string longitudeDirection,
+        string time = "104427.591"
+    ) =>
+        $"$GPGGA,{time},{latitude},{latitudeDirection},{longitude},{longitudeDirection},"
+        + "1,05,3.3,78.2,M,23.2,M,0.0,0000*4A";
+
+    private static string Wpl(string latitude, string longitude) =>
+        $"$GPWPL,{latitude},N,{longitude},E,HOME*00";
+
+    private static readonly string GoodFix = Gga("5920.7009", "N", "01803.2938", "E");
+
+    [Fact]
+    public void One_unreadable_sentence_does_not_lose_the_rest_of_the_log()
+    {
+        // The whole point of the fix. An NMEA log is a stream of sentences, not a single
+        // document, and one of any length is likely to hold a truncated or corrupted line.
+        // Reading an ordinate used to throw on such a line, which discarded every fix in the
+        // file rather than just the bad one.
+        var nmea = string.Join("\n", GoodFix, Gga("5", "N", "01803.2938", "E"), GoodFix);
+
+        var data = new NmeaDeSerializer().DeSerialize(Wrap(nmea));
+
+        Assert.Equal(2, data.Tracks[0].Segments[0].Waypoints.Count);
+    }
+
+    [Theory]
+    // Shorter than the degrees field the format fixes the width of, so the split ran off the
+    // end of the string.
+    [InlineData("5", "N", "01803.2938", "E")]
+    [InlineData("5920.7009", "N", "01", "E")]
+    // Exactly the degrees field, leaving nothing for the minutes and an empty double.Parse.
+    [InlineData("51", "N", "01803.2938", "E")]
+    [InlineData("5920.7009", "N", "018", "E")]
+    // A bare fraction, which the sentence pattern admits.
+    [InlineData(".5", "N", "01803.2938", "E")]
+    // Degrees the pattern is free to quote but a position cannot hold.
+    [InlineData("9900.00", "N", "01803.2938", "E")]
+    [InlineData("5920.7009", "N", "19900.00", "E")]
+    public void A_fix_whose_ordinates_cannot_be_read_is_skipped(
+        string latitude,
+        string latitudeDirection,
+        string longitude,
+        string longitudeDirection
+    )
+    {
+        var nmea = Gga(latitude, latitudeDirection, longitude, longitudeDirection);
+
+        var data = new NmeaDeSerializer().DeSerialize(Wrap(nmea));
+
+        Assert.Empty(data.Tracks);
+    }
+
+    [Theory]
+    [InlineData("5", "01803.2938")]
+    [InlineData("51", "01803.2938")]
+    [InlineData("5920.7009", "018")]
+    [InlineData("9900.00", "01803.2938")]
+    public void A_waypoint_whose_ordinates_cannot_be_read_is_skipped(
+        string latitude,
+        string longitude
+    )
+    {
+        var data = new NmeaDeSerializer().DeSerialize(Wrap(Wpl(latitude, longitude)));
+
+        Assert.Empty(data.Waypoints);
+    }
+
+    [Fact]
+    public void A_skipped_sentence_does_not_advance_the_rollover_clock()
+    {
+        // The clock is asked for a timestamp only once the position is known to be good.
+        // Were a skipped sentence to advance it, the 23:00 below would become the time the
+        // 11:00 after it is measured against, and 11:00 being earlier would be taken for a
+        // new day.
+        var nmea = string.Join(
+            "\n",
+            Gga("5920.7009", "N", "01803.2938", "E", time: "100000.00"),
+            Gga("5", "N", "01803.2938", "E", time: "230000.00"),
+            Gga("5920.7010", "N", "01803.2939", "E", time: "110000.00")
+        );
+
+        var waypoints = new NmeaDeSerializer()
+            .DeSerialize(Wrap(nmea))
+            .Tracks[0]
+            .Segments[0]
+            .Waypoints;
+
+        Assert.Equal(2, waypoints.Count);
+        Assert.Equal(waypoints[0].TimeUtc!.Value.Date, waypoints[1].TimeUtc!.Value.Date);
+        Assert.Equal(TimeSpan.FromHours(1), waypoints[1].TimeUtc - waypoints[0].TimeUtc);
+    }
+
+    [Fact]
+    public void Southern_and_western_ordinates_are_negated()
+    {
+        var nmea = string.Join(
+            "\n",
+            Gga("5920.7009", "S", "01803.2938", "W"),
+            Gga("5920.7009", "N", "01803.2938", "E")
+        );
+
+        var waypoints = new NmeaDeSerializer()
+            .DeSerialize(Wrap(nmea))
+            .Tracks[0]
+            .Segments[0]
+            .Waypoints;
+
+        Assert.Equal(-59.345015, waypoints[0].Coordinate.Latitude, 6);
+        Assert.Equal(-18.054897, waypoints[0].Coordinate.Longitude, 6);
+        Assert.Equal(59.345015, waypoints[1].Coordinate.Latitude, 6);
+        Assert.Equal(18.054897, waypoints[1].Coordinate.Longitude, 6);
+    }
 }
