@@ -37,11 +37,11 @@ public struct Area : IMeasure, IEquatable<Area>, IComparable<Area>
         return ConvertTo(unit).ToString();
     }
 
+    // Delegating to double keeps the ordering total; see Distance.CompareTo for why
+    // deriving "greater than" from "neither equal nor less than" does not hold.
     public int CompareTo(Area other)
     {
-        if (Equals(other))
-            return 0;
-        return SiValue < other.SiValue ? -1 : 1;
+        return SiValue.CompareTo(other.SiValue);
     }
 
     public bool Equals(Area other)

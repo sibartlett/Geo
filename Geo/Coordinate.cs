@@ -112,33 +112,8 @@ public class Coordinate : SpatialObject, IPosition
 
         if (match.Success)
         {
-            var deg1 = double.Parse(match.Groups["Deg1"].Value, CultureInfo.InvariantCulture);
-            var deg2 = double.Parse(match.Groups["Deg2"].Value, CultureInfo.InvariantCulture);
-
-            double temp;
-            double dir;
-
-            if (deg1 < 0.0)
-                dir = -1.0;
-            else
-                dir = 1.0;
-
-            if (TryParseOrdinatePart(match, "Min1", out temp))
-                deg1 += dir * temp / 60;
-
-            if (TryParseOrdinatePart(match, "Sec1", out temp))
-                deg1 += dir * temp / 3600;
-
-            if (deg2 < 0.0)
-                dir = -1.0;
-            else
-                dir = 1.0;
-
-            if (TryParseOrdinatePart(match, "Min2", out temp))
-                deg2 += dir * temp / 60;
-
-            if (TryParseOrdinatePart(match, "Sec2", out temp))
-                deg2 += dir * temp / 3600;
+            var deg1 = ParseOrdinate(match, "Deg1", "Min1", "Sec1");
+            var deg2 = ParseOrdinate(match, "Deg2", "Min2", "Sec2");
 
             var dir1 = Regex.IsMatch(match.Groups["Dir1"].Value, "[Ss]") ? -1d : 1d;
             var dir2 = Regex.IsMatch(match.Groups["Dir2"].Value, "[Ww]") ? -1d : 1d;
@@ -152,6 +127,40 @@ public class Coordinate : SpatialObject, IPosition
 
         result = default;
         return false;
+    }
+
+    /// <summary>
+    /// Assembles one ordinate from its degrees, minutes and seconds groups.
+    /// </summary>
+    /// <remarks>
+    /// The minutes and seconds are added to the <em>magnitude</em> of the degrees and the
+    /// sign is applied once at the end, because a degrees field of "-0" parses to negative
+    /// zero, which is not less than zero. Deciding the direction by testing the parsed
+    /// value therefore read "-0 7 12" as travelling north/east of zero, and every
+    /// coordinate in the (-1, 0) degree band - which is where most of western Europe's
+    /// longitudes sit - came back on the wrong side of the meridian, up to 111 km out.
+    /// The sign is taken from the text instead, which is the only place it survives.
+    /// </remarks>
+    private static double ParseOrdinate(
+        Match match,
+        string degreesGroup,
+        string minutesGroup,
+        string secondsGroup
+    )
+    {
+        var text = match.Groups[degreesGroup].Value;
+        var degrees = double.Parse(text, CultureInfo.InvariantCulture);
+        var negative = degrees < 0 || text.TrimStart().StartsWith("-", StringComparison.Ordinal);
+
+        var magnitude = Math.Abs(degrees);
+
+        if (TryParseOrdinatePart(match, minutesGroup, out var minutes))
+            magnitude += minutes / 60;
+
+        if (TryParseOrdinatePart(match, secondsGroup, out var seconds))
+            magnitude += seconds / 3600;
+
+        return negative ? -magnitude : magnitude;
     }
 
     // The minutes and seconds groups must be read with the same invariant culture as the

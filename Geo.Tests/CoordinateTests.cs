@@ -283,6 +283,29 @@ public class CoordinateTests
     }
 
     [Theory]
+    // "-0" parses to negative zero, which is not less than zero, so the sign has to come
+    // from the text: every coordinate in the (-1, 0) degree band would otherwise come back
+    // on the wrong side of the equator or the meridian.
+    [InlineData("51 30 0, -0 7 12", 51.5, -0.12)]
+    [InlineData("51 30 0, 0 7 12", 51.5, 0.12)]
+    [InlineData("-0 30 0, 10 0 0", -0.5, 10)]
+    [InlineData("-0 7.2, -0 7.2", -0.12, -0.12)]
+    [InlineData("-0.5, -0.25", -0.5, -0.25)]
+    // A hemisphere letter still wins over the sign of the degrees, as it always has.
+    [InlineData("0 30 0 S, 0 7 12 W", -0.5, -0.12)]
+    public void Parse_keeps_the_sign_of_a_negative_zero_degrees_field(
+        string coordinate,
+        double latitude,
+        double longitude
+    )
+    {
+        var result = Coordinate.Parse(coordinate);
+
+        Assert.Equal(latitude, result.Latitude, 10);
+        Assert.Equal(longitude, result.Longitude, 10);
+    }
+
+    [Theory]
     [InlineData("91, 0")]
     [InlineData("-91, 0")]
     [InlineData("0, 181")]
