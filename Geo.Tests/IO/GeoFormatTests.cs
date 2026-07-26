@@ -44,7 +44,7 @@ public class GeoFormatTests
     [InlineData("not a geo string")]
     [InlineData("{ \"type\": \"Nonsense\" }")]
     [InlineData("POINT (nope)")]
-    public void Detect_returns_unknown_for_unrecognised_input(string input)
+    public void Detect_returns_unknown_for_unrecognised_input(string? input)
     {
         Assert.Equal(GeoStringFormat.Unknown, GeoFormat.Detect(input));
     }
