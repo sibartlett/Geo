@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/geo-logo.png" alt="Geo" height="103" width="272">
+</p>
+
 # Geo — a geospatial library for .NET
 
 [![NuGet](https://img.shields.io/nuget/v/Geo.svg)](https://nuget.org/packages/Geo)

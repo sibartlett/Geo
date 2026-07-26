@@ -7,6 +7,7 @@
     <Version>1.2.0</Version>
     <Description>A geospatial library for .NET</Description>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageIcon>assets/geo-icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/sibartlett/Geo</PackageProjectUrl>
     <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
@@ -32,6 +33,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\assets\geo-icon.png" Pack="true" PackagePath="assets\" />
+    <None Include="..\assets\geo-logo.png" Pack="true" PackagePath="assets\" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Geo.Tests" />
