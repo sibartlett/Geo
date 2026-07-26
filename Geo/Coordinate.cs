@@ -334,19 +334,33 @@ public class Coordinate : SpatialObject, IPosition
 
     public override int GetHashCode(SpatialEqualityOptions options)
     {
+        return GetPositionHashCode();
+    }
+
+    /// <summary>
+    /// The hash of the position alone, which every coordinate type builds its hash from.
+    /// </summary>
+    /// <remarks>
+    /// The two longitudes that name one place - every longitude at a pole, and the anti-
+    /// meridian written as both +180 and -180 - are collapsed to one value unconditionally,
+    /// rather than only when the options in force say they are equal. A hash may put
+    /// unequal values in one bucket but never equal ones in two, so collapsing them always
+    /// is safe whichever way the options go, and it leaves the hash the same under all of
+    /// them - which is what lets a coordinate stay findable in a dictionary that outlives a
+    /// change to <see cref="GeoContext.Current" />.
+    /// </remarks>
+    private protected int GetPositionHashCode()
+    {
         unchecked
         {
-            var latitude = Latitude;
             var longitude = Longitude;
 
-            if (options.PoleCoordiantesAreEqual && (Latitude.Equals(90) || Latitude.Equals(-90)))
+            if (Latitude.Equals(90d) || Latitude.Equals(-90d))
                 longitude = 0;
-            else if (options.AntiMeridianCoordinatesAreEqual && Longitude.Equals(-180))
+            else if (Longitude.Equals(-180d))
                 longitude = 180;
 
-            var hashCode = latitude.GetHashCode();
-            hashCode = (hashCode * 397) ^ longitude.GetHashCode();
-            return hashCode;
+            return (Latitude.GetHashCode() * 397) ^ longitude.GetHashCode();
         }
     }
 

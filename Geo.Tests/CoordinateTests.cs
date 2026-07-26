@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -140,6 +141,131 @@ public class CoordinateTests
         Assert.False(m.Equals(z, options));
         Assert.False(zm.Equals(z, options));
         Assert.False(zm.Equals(flat, options));
+    }
+
+    [Fact]
+    public void GetHashCode_does_not_depend_on_the_ambient_options()
+    {
+        // A hash has to hold still for as long as the object is a key. Reading
+        // GeoContext.Current here meant a dictionary could stop finding an entry it
+        // already held the moment anything changed the ambient options.
+        var coordinates = new Coordinate[]
+        {
+            new Coordinate(1, 2),
+            new CoordinateZ(1, 2, 30),
+            new CoordinateM(1, 2, 30),
+            new CoordinateZM(1, 2, 30, 40),
+            new Coordinate(90, 150),
+            new Coordinate(4, -180),
+        };
+
+        var previous = GeoContext.Current.EqualityOptions;
+        try
+        {
+            foreach (var coordinate in coordinates)
+            {
+                var hashes = new HashSet<int>();
+                foreach (var useElevation in new[] { true, false })
+                foreach (var useM in new[] { true, false })
+                foreach (var poles in new[] { true, false })
+                foreach (var antiMeridian in new[] { true, false })
+                {
+                    GeoContext.Current.EqualityOptions = new SpatialEqualityOptions
+                    {
+                        UseElevation = useElevation,
+                        UseM = useM,
+                        PoleCoordiantesAreEqual = poles,
+                        AntiMeridianCoordinatesAreEqual = antiMeridian,
+                    };
+
+                    hashes.Add(coordinate.GetHashCode());
+                }
+
+                Assert.Single(hashes);
+            }
+        }
+        finally
+        {
+            GeoContext.Current.EqualityOptions = previous;
+        }
+    }
+
+    [Fact]
+    public void A_set_keeps_finding_its_entries_when_the_ambient_options_change()
+    {
+        var stored = new CoordinateZ(1, 2, 30);
+        var set = new HashSet<Coordinate> { stored };
+
+        var previous = GeoContext.Current.EqualityOptions;
+        try
+        {
+            GeoContext.Current.EqualityOptions = new SpatialEqualityOptions
+            {
+                UseElevation = false,
+            };
+
+            Assert.Contains(stored, set);
+            // Equality still answers to the ambient options, and the set agrees with it:
+            // the coarser hash puts both in the same bucket.
+            Assert.True(stored.Equals(new CoordinateZ(1, 2, 99)));
+            Assert.Contains(new CoordinateZ(1, 2, 99), set);
+        }
+        finally
+        {
+            GeoContext.Current.EqualityOptions = previous;
+        }
+    }
+
+    [Fact]
+    public void Equal_coordinates_share_a_hash_under_every_combination_of_options()
+    {
+        // The one direction the hash contract runs in: unequal values may share a bucket,
+        // equal ones may never be split across two.
+        var coordinates = new Coordinate[]
+        {
+            new Coordinate(1, 2),
+            new CoordinateZ(1, 2, 30),
+            new CoordinateZ(1, 2, 99),
+            new CoordinateM(1, 2, 30),
+            new CoordinateZM(1, 2, 30, 40),
+            new Coordinate(90, 0),
+            new Coordinate(90, 150),
+            new Coordinate(4, 180),
+            new Coordinate(4, -180),
+        };
+
+        var previous = GeoContext.Current.EqualityOptions;
+        try
+        {
+            foreach (var useElevation in new[] { true, false })
+            foreach (var useM in new[] { true, false })
+            foreach (var poles in new[] { true, false })
+            foreach (var antiMeridian in new[] { true, false })
+            {
+                var options = new SpatialEqualityOptions
+                {
+                    UseElevation = useElevation,
+                    UseM = useM,
+                    PoleCoordiantesAreEqual = poles,
+                    AntiMeridianCoordinatesAreEqual = antiMeridian,
+                };
+                GeoContext.Current.EqualityOptions = options;
+
+                foreach (var left in coordinates)
+                foreach (var right in coordinates)
+                {
+                    if (left.Equals(right))
+                        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+
+                    if (left.Equals(right, options))
+                        Assert.Equal(left.GetHashCode(options), right.GetHashCode(options));
+                }
+            }
+        }
+        finally
+        {
+            GeoContext.Current.EqualityOptions = previous;
+        }
     }
 
     [Fact]

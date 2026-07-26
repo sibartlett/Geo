@@ -43,9 +43,11 @@ public class SpatialReadOnlyCollection<TElement> : ReadOnlyCollection<TElement>,
         return Equals(obj, GeoContext.Current.EqualityOptions.To3D());
     }
 
+    // Fixed options, not the ambient ones, so the hash holds still while the collection is
+    // a key. See SpatialObject.GetHashCode.
     public override int GetHashCode()
     {
-        return GetHashCode(GeoContext.Current.EqualityOptions);
+        return GetHashCode(SpatialEqualityOptions.PositionOnly);
     }
 
     public override bool Equals(object? obj)
