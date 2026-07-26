@@ -54,15 +54,27 @@ public class GeoJsonReader
         if (!Json.TryParse(json, out var obj))
             return false;
 
-        if (obj is JsonObject)
-        {
-            if (TryParseGeometry((JsonObject)obj, out result))
-                return true;
-            if (TryParseFeature((JsonObject)obj, out result))
-                return true;
-            if (TryParseFeatureCollection((JsonObject)obj, out result))
-                return true;
-        }
+        if (obj is JsonObject jsonObject)
+            try
+            {
+                if (TryParseGeometry(jsonObject, out result))
+                    return true;
+                if (TryParseFeature(jsonObject, out result))
+                    return true;
+                if (TryParseFeatureCollection(jsonObject, out result))
+                    return true;
+            }
+            // Values the JSON is free to hold but a geometry is not - a latitude past
+            // the pole, a ring that does not close - reach the coordinate and geometry
+            // constructors, which reject them as bad arguments. A TryParse reports a
+            // document it cannot read by returning false, so those are a failed parse
+            // rather than an exception thrown at the caller (and Read turns them into a
+            // SerializationException like every other malformed GeoJSON).
+            catch (ArgumentException)
+            {
+                result = null;
+                return false;
+            }
 
         return false;
     }

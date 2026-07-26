@@ -56,6 +56,13 @@ public class StreamWrapper : Stream
         int read;
         while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
             ms.Write(buffer, 0, read);
+
+        // Rewind, so the wrapper starts at the beginning of what it buffered rather
+        // than at the end of it. Left where the copy finished, a wrapper built from a
+        // non-seekable stream read as empty until something happened to seek it first,
+        // while one built from a seekable stream (and one built by CreateAsync, which
+        // has always rewound) started at the beginning.
+        ms.Position = 0;
         return ms;
     }
 

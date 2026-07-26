@@ -321,4 +321,28 @@ public class GeoJsonReaderWriterTests
         Assert.False(new GeoJsonReader().TryRead(json, out _));
         Assert.Throws<SerializationException>(() => new GeoJsonReader().Read(json));
     }
+
+    [Theory]
+    // a latitude past the pole
+    [InlineData("{\"type\":\"Point\",\"coordinates\":[0,95]}")]
+    // a longitude past the anti-meridian
+    [InlineData("{\"type\":\"Point\",\"coordinates\":[181,0]}")]
+    // an out-of-range ordinate inside a nested geometry
+    [InlineData(
+        "{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"Point\",\"coordinates\":[0,95]}]}"
+    )]
+    // a ring that does not close
+    [InlineData("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,1],[2,2],[3,3]]]}")]
+    // a ring with too few coordinates
+    [InlineData("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,1],[0,0]]]}")]
+    public void Geometry_with_impossible_coordinates_does_not_parse(string json)
+    {
+        // Values the JSON is free to hold but a geometry is not reach the coordinate
+        // and geometry constructors, which reject them as bad arguments. TryRead
+        // reports a document it cannot read by returning false, and Read raises the
+        // same SerializationException as every other malformed GeoJSON, rather than
+        // either of them throwing an argument exception at the caller.
+        Assert.False(new GeoJsonReader().TryRead(json, out _));
+        Assert.Throws<SerializationException>(() => new GeoJsonReader().Read(json));
+    }
 }
