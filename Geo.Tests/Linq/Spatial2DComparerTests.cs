@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Geo.Geometries;
 using Geo.Linq;
 using Xunit;
@@ -25,5 +26,33 @@ public class Spatial2DComparerTests
         var b = new Point(3, 4, 100);
 
         Assert.False(Comparer.Equals(a, b));
+    }
+
+    [Fact]
+    public void GetHashCode_does_not_depend_on_the_ambient_options()
+    {
+        var point = new Point(1, 2, 100);
+        var previous = GeoContext.Current.EqualityOptions;
+        try
+        {
+            var hashes = new HashSet<int>();
+            foreach (var poles in new[] { true, false })
+            foreach (var antiMeridian in new[] { true, false })
+            {
+                GeoContext.Current.EqualityOptions = new SpatialEqualityOptions
+                {
+                    PoleCoordiantesAreEqual = poles,
+                    AntiMeridianCoordinatesAreEqual = antiMeridian,
+                };
+
+                hashes.Add(Comparer.GetHashCode(point));
+            }
+
+            Assert.Single(hashes);
+        }
+        finally
+        {
+            GeoContext.Current.EqualityOptions = previous;
+        }
     }
 }

@@ -27,6 +27,23 @@ public class SpatialEqualityOptions
         UseM = false,
     };
 
+    /// <summary>
+    /// What <see cref="Linq.Spatial3DComparer{TSource}" /> hashes under: the position and
+    /// the elevation, which is what <see cref="To3D" /> asks for. Held as one instance
+    /// because <see cref="To3D" /> allocates, and hashing runs once per element.
+    /// </summary>
+    /// <remarks>
+    /// Shared and never copied, so nothing may write to it. Standing in for
+    /// <see cref="To3D" /> loses nothing: the two options it does not carry over from the
+    /// ambient settings - <see cref="PoleCoordiantesAreEqual" /> and
+    /// <see cref="AntiMeridianCoordinatesAreEqual" /> - no longer reach a hash at all.
+    /// </remarks>
+    internal static readonly SpatialEqualityOptions PositionAndElevation = new()
+    {
+        UseElevation = true,
+        UseM = false,
+    };
+
     public bool UseElevation { get; set; }
     public bool UseM { get; set; }
     public bool PoleCoordiantesAreEqual { get; set; }
