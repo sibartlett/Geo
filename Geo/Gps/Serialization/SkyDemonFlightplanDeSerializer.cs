@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -8,8 +9,21 @@ namespace Geo.Gps.Serialization;
 
 public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightplan>
 {
-    private const string COORD_REGEX1 = @"^(?<dir>[NnSs])(?<d>\d\d)(?<m>\d\d)(?<s>\d\d.\d\d)$";
-    private const string COORD_REGEX2 = @"^(?<dir>[EeWw])(?<d>\d\d\d)(?<m>\d\d)(?<s>\d\d.\d\d)$";
+    // "N514807.00 W0000930.00": a hemisphere letter, then degrees, minutes and seconds run
+    // together.
+    //
+    // The decimal point has to be a literal one. Written as a bare '.' it stood for any
+    // character, so "N514807,00" matched and its seconds came through as "07,00" - which
+    // double.Parse, allowing thousands separators by default, reads as seven hundred. That
+    // placed the position 21 km north and 92 km west of where the file put it, and reported
+    // nothing wrong. The decimals are optional, because a whole number of seconds is no less
+    // valid and was rejected outright.
+    private const string Seconds = @"(?<s>\d\d(?:\.\d+)?)";
+
+    private const string LatitudePattern = @"^(?<dir>[NnSs])(?<d>\d\d)(?<m>\d\d)" + Seconds + "$";
+
+    private const string LongitudePattern =
+        @"^(?<dir>[EeWw])(?<d>\d\d\d)(?<m>\d\d)" + Seconds + "$";
 
     public override GpsFileFormat[] FileFormats
     {
@@ -18,36 +32,101 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
 
     public override GpsFeatures SupportedFeatures => GpsFeatures.Routes;
 
-    private Route ConvertRoute(SkyDemonRoute route)
+    /// <summary>
+    /// The route as a list of waypoints, or <c>null</c> when any of its coordinates cannot
+    /// be read.
+    /// </summary>
+    private static Route? ConvertRoute(SkyDemonRoute route)
     {
+        var start = ParseWaypoint(route.Start);
+        if (start == null)
+            return null;
+
         var result = new Route();
-        result.Waypoints.Add(ParseWaypoint(route.Start!));
-        foreach (var rhumbLine in route.RhumbLineRoute!)
-            result.Waypoints.Add(ParseWaypoint(rhumbLine.To!));
+        result.Waypoints.Add(start);
+
+        // A route may consist of nothing but its starting point, in which case the element
+        // is absent rather than an empty array.
+        foreach (var rhumbLine in route.RhumbLineRoute ?? new SkyDemonRhumbLine[0])
+        {
+            var waypoint = ParseWaypoint(rhumbLine.To);
+            if (waypoint == null)
+                return null;
+
+            result.Waypoints.Add(waypoint);
+        }
+
         return result;
     }
 
-    private Waypoint ParseWaypoint(string c)
+    /// <summary>
+    /// The waypoint <paramref name="value" /> names, or <c>null</c> when it does not hold a
+    /// latitude and a longitude that this format can express.
+    /// </summary>
+    /// <remarks>
+    /// Every way of failing used to leave the deserializer as an exception: a coordinate the
+    /// pattern did not match reached <c>double.Parse</c> as an empty string, one written
+    /// without a space between its ordinates ran off the end of the split, and an absent
+    /// attribute was dereferenced. None of those is something a caller of
+    /// <see cref="GpsData.Parse" /> has reason to expect. A document whose coordinates cannot
+    /// be read is now reported the way this deserializer already reports one it cannot parse
+    /// at all - by returning <c>null</c>.
+    /// </remarks>
+    private static Waypoint? ParseWaypoint(string? value)
     {
-        var ord = c.Trim().Split(' ');
+        if (value == null)
+            return null;
 
-        var match1 = Regex.Match(ord[0], COORD_REGEX1);
-        var match2 = Regex.Match(ord[1], COORD_REGEX2);
+        // Split on whitespace and discard the empties, so a file separating its two
+        // ordinates by more than one space is read, and one separating them by none is
+        // rejected rather than indexed past the end.
+        var ordinates = value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        if (ordinates.Length != 2)
+            return null;
 
-        var lat =
-            double.Parse(match1.Groups["d"].Value, CultureInfo.InvariantCulture)
-            + double.Parse(match1.Groups["m"].Value, CultureInfo.InvariantCulture) / 60
-            + double.Parse(match1.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
+        var latitude = Regex.Match(ordinates[0], LatitudePattern);
+        var longitude = Regex.Match(ordinates[1], LongitudePattern);
+        if (!latitude.Success || !longitude.Success)
+            return null;
 
-        var lon =
-            double.Parse(match2.Groups["d"].Value, CultureInfo.InvariantCulture)
-            + double.Parse(match2.Groups["m"].Value, CultureInfo.InvariantCulture) / 60
-            + double.Parse(match2.Groups["s"].Value, CultureInfo.InvariantCulture) / 3600;
+        try
+        {
+            return new Waypoint(ToDegrees(latitude, 'S'), ToDegrees(longitude, 'W'));
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // Degrees and minutes the pattern accepts but a position cannot hold, such as a
+            // latitude of 99 degrees. What is out of range is the document, not an argument
+            // the caller passed, so it is not raised at them as though it were theirs.
+            return null;
+        }
+    }
 
-        var latd = Regex.IsMatch(match1.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
-        var lond = Regex.IsMatch(match2.Groups["dir"].Value, "[NnEe]") ? 1 : -1;
+    /// <summary>
+    /// One ordinate in degrees, negated when its hemisphere letter is
+    /// <paramref name="negative" />.
+    /// </summary>
+    private static double ToDegrees(Match match, char negative)
+    {
+        var degrees =
+            ParseOrdinatePart(match.Groups["d"].Value)
+            + ParseOrdinatePart(match.Groups["m"].Value) / 60
+            + ParseOrdinatePart(match.Groups["s"].Value) / 3600;
 
-        return new Waypoint(lat * latd, lon * lond);
+        // Each ordinate's pattern admits only its own pair of hemisphere letters, so naming
+        // the negative one settles it. Asking whether both were "N or E" instead, as this
+        // did, quietly made a latitude southern whenever the match had failed and there was
+        // no letter to read.
+        return char.ToUpperInvariant(match.Groups["dir"].Value[0]) == negative ? -degrees : degrees;
+    }
+
+    // NumberStyles.Float, rather than the default that also allows thousands separators -
+    // the leniency that turned a comma standing in for the decimal point into a hundredfold
+    // error. The pattern no longer admits one, and this keeps a later change to it from
+    // bringing the misreading back.
+    private static double ParseOrdinatePart(string value)
+    {
+        return double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
     }
 
     protected override bool CanDeSerialize(XmlReader xml)
@@ -60,15 +139,26 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
         if (xml == null)
             return null;
 
-        //N514807.00 W0000930.00
         var data = new GpsData();
 
         if (xml.PrimaryRoute != null)
-            data.Routes.Add(ConvertRoute(xml.PrimaryRoute));
+        {
+            var primary = ConvertRoute(xml.PrimaryRoute);
+            if (primary == null)
+                return null;
+
+            data.Routes.Add(primary);
+        }
 
         if (xml.Routes != null)
             foreach (var route in xml.Routes)
-                data.Routes.Add(ConvertRoute(route));
+            {
+                var converted = ConvertRoute(route);
+                if (converted == null)
+                    return null;
+
+                data.Routes.Add(converted);
+            }
 
         if (xml.Aircraft != null && xml.Aircraft.Length > 0)
         {
