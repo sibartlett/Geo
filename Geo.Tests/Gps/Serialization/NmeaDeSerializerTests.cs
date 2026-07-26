@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Geo.Gps.Serialization;
@@ -106,5 +107,44 @@ public class NmeaDeSerializerTests : SerializerTestFixtureBase
 
         Assert.Single(result.Tracks);
         Assert.Single(result.Tracks[0].Segments[0].Waypoints);
+    }
+
+    [Fact]
+    public void Fixes_past_midnight_are_dated_to_the_following_day()
+    {
+        // GPGGA carries a time of day and no date, so a track that runs past midnight UTC
+        // restarts at 00:00:00. Stamped onto the same day regardless, the track jumped
+        // back twenty-four hours mid-recording and its duration came out negative.
+        var nmea = string.Join(
+            "\n",
+            "$GPGGA,235800.00,5920.7009,N,01803.2938,E,1,05,3.3,78.2,M,23.2,M,0.0,0000*4A",
+            "$GPGGA,000100.00,5920.7010,N,01803.2939,E,1,05,3.3,78.2,M,23.2,M,0.0,0000*4A"
+        );
+
+        var segment = new NmeaDeSerializer().DeSerialize(Wrap(nmea)).Tracks[0].Segments[0];
+
+        Assert.Equal(
+            segment.Waypoints[0].TimeUtc!.Value.AddMinutes(3),
+            segment.Waypoints[1].TimeUtc
+        );
+        Assert.Equal(TimeSpan.FromMinutes(3), segment.GetDuration());
+    }
+
+    [Fact]
+    public void A_reused_deserializer_does_not_carry_the_day_over_between_files()
+    {
+        // GpsData holds the deserializers as shared singletons, so the rollover state has
+        // to be per-call: the second file must start on the same day as the first did.
+        var nmea = string.Join(
+            "\n",
+            "$GPGGA,235800.00,5920.7009,N,01803.2938,E,1,05,3.3,78.2,M,23.2,M,0.0,0000*4A",
+            "$GPGGA,000100.00,5920.7010,N,01803.2939,E,1,05,3.3,78.2,M,23.2,M,0.0,0000*4A"
+        );
+
+        var parser = new NmeaDeSerializer();
+        var first = parser.DeSerialize(Wrap(nmea)).Tracks[0].Segments[0];
+        var second = parser.DeSerialize(Wrap(nmea)).Tracks[0].Segments[0];
+
+        Assert.Equal(first.Waypoints[0].TimeUtc, second.Waypoints[0].TimeUtc);
     }
 }

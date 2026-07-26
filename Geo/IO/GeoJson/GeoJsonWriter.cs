@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -23,6 +24,11 @@ public class GeoJsonWriter
 
     public string Write(object obj)
     {
+        // Reported as the bad argument it is, rather than as the NullReferenceException
+        // the "not supported by GeoJSON" message threw while naming the type.
+        if (obj == null)
+            throw new ArgumentNullException("obj");
+
         var geometry = obj as IGeometry;
         if (geometry != null)
             return Write(geometry);

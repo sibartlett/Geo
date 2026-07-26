@@ -39,13 +39,16 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
     {
         var data = new GpsData();
         var trackSegment = new TrackSegment();
+        // Local to this call: the deserializers are held as shared singletons by GpsData,
+        // so per-file state cannot live on the instance.
+        var clock = new FixClock();
         streamWrapper.Position = 0;
         using (var reader = new StreamReader(streamWrapper))
         {
             string? line;
             while ((line = reader.ReadLine()) != null)
             {
-                if (ParseFix(line, trackSegment))
+                if (ParseFix(line, trackSegment, clock))
                     continue;
                 if (ParseWaypoint(line, data))
                     continue;
@@ -61,7 +64,7 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
         return data;
     }
 
-    private bool ParseFix(string line, TrackSegment trackSegment)
+    private bool ParseFix(string line, TrackSegment trackSegment, FixClock clock)
     {
         if (string.IsNullOrWhiteSpace(line))
             return false;
@@ -76,12 +79,12 @@ public class NmeaDeSerializer : IGpsFileDeSerializer
             var lat = ConvertOrd(match.Groups["lat"].Value, match.Groups["latd"].Value);
             var lon = ConvertOrd(match.Groups["lon"].Value, match.Groups["lond"].Value);
 
-            var waypoint = new Waypoint(
-                lat,
-                lon,
-                alt,
-                DateTime.MinValue.AddHours(h).AddMinutes(m).AddSeconds(s)
-            );
+            // GPGGA carries no date, so the fixes are stamped onto the first representable
+            // day; only the intervals between them are meaningful.
+            var timeOfDay =
+                TimeSpan.FromHours(h) + TimeSpan.FromMinutes(m) + TimeSpan.FromSeconds(s);
+
+            var waypoint = new Waypoint(lat, lon, alt, clock.Resolve(DateTime.MinValue, timeOfDay));
             trackSegment.Waypoints.Add(waypoint);
 
             return true;

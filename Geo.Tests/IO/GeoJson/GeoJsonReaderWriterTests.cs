@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -197,6 +198,15 @@ public class GeoJsonReaderWriterTests
         Assert.Throws<SerializationException>(() =>
             new GeoJsonWriter().Write((object)"not a geometry")
         );
+    }
+
+    [Fact]
+    public void Write_null_object_throws_argument_null()
+    {
+        // Reported as the bad argument it is, like every other null the readers and
+        // writers are handed, rather than as the NullReferenceException thrown while
+        // building the "not supported" message out of the missing object's type.
+        Assert.Throws<ArgumentNullException>(() => new GeoJsonWriter().Write((object)null!));
     }
 
     [Fact]

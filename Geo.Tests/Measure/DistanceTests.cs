@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Geo.Measure;
 using Xunit;
 
@@ -105,6 +107,33 @@ public class DistanceTests
         Assert.Equal(1, large.CompareTo(small));
         Assert.Equal(-1, small.CompareTo(large));
         Assert.Equal(0, large.CompareTo(new Distance(100)));
+    }
+
+    [Fact]
+    public void CompareTo_is_a_total_order_when_a_value_is_not_a_number()
+    {
+        var nan = new Distance(double.NaN);
+        var value = new Distance(100);
+
+        // Not equal, not less than - but not greater than either. Answering "greater" to
+        // both sides made the comparison self-contradictory, which is enough for a sort to
+        // shuffle unrelated elements out of order or to give up outright.
+        Assert.Equal(-1, Math.Sign(nan.CompareTo(value)));
+        Assert.Equal(1, Math.Sign(value.CompareTo(nan)));
+        Assert.Equal(0, nan.CompareTo(new Distance(double.NaN)));
+    }
+
+    [Fact]
+    public void Sorting_orders_every_value_even_alongside_a_nan()
+    {
+        var distances = new[] { 3d, double.NaN, 1d, 2d, 0d }.Select(x => new Distance(x)).ToArray();
+
+        Array.Sort(distances);
+
+        Assert.Equal(
+            new[] { double.NaN, 0d, 1d, 2d, 3d },
+            distances.Select(x => x.SiValue).ToArray()
+        );
     }
 
     [Fact]

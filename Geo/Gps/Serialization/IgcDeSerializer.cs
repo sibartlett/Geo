@@ -57,6 +57,9 @@ public class IgcDeSerializer : IGpsFileDeSerializer
         var data = new GpsData();
         var date = default(DateTime);
         var trackSegment = new TrackSegment();
+        // Local to this call: the deserializers are held as shared singletons by GpsData,
+        // so per-file state cannot live on the instance.
+        var clock = new FixClock();
 
         streamWrapper.Position = 0;
         using (var reader = new StreamReader(streamWrapper))
@@ -100,7 +103,7 @@ public class IgcDeSerializer : IGpsFileDeSerializer
                 if (ParseMetadata(data, x => x.Vehicle.Crew2, H_CREW2_REGEX, line))
                     continue;
 
-                if (ParseFix(line, trackSegment, date))
+                if (ParseFix(line, trackSegment, date, clock))
                     continue;
             }
         }
@@ -131,7 +134,7 @@ public class IgcDeSerializer : IGpsFileDeSerializer
         return false;
     }
 
-    private bool ParseFix(string line, TrackSegment trackSegment, DateTime date)
+    private bool ParseFix(string line, TrackSegment trackSegment, DateTime date, FixClock clock)
     {
         if (string.IsNullOrWhiteSpace(line))
             return false;
@@ -147,14 +150,18 @@ public class IgcDeSerializer : IGpsFileDeSerializer
             var presAlt = match.Groups["presAlt"].Value;
             var gpsAlt = match.Groups["gpsAlt"].Value;
 
+            var timeOfDay = new TimeSpan(
+                int.Parse(h, CultureInfo.InvariantCulture),
+                int.Parse(m, CultureInfo.InvariantCulture),
+                int.Parse(s, CultureInfo.InvariantCulture)
+            );
+
             var cood = ParseCoordinate(coord);
             var waypoint = new Waypoint(
                 cood.Latitude,
                 cood.Longitude,
                 double.Parse(gpsAlt, CultureInfo.InvariantCulture),
-                date.AddHours(int.Parse(h, CultureInfo.InvariantCulture))
-                    .AddMinutes(int.Parse(m, CultureInfo.InvariantCulture))
-                    .AddSeconds(int.Parse(s, CultureInfo.InvariantCulture))
+                clock.Resolve(date, timeOfDay)
             );
 
             trackSegment.Waypoints.Add(waypoint);

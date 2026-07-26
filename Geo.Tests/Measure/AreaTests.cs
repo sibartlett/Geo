@@ -1,3 +1,4 @@
+using System;
 using Geo.Measure;
 using Xunit;
 
@@ -106,6 +107,16 @@ public class AreaTests
         Assert.True(new Area(100) <= new Area(400));
         Assert.False(new Area(400) <= new Area(100));
         Assert.Equal(-1, new Area(100).CompareTo(new Area(400)));
+    }
+
+    [Fact]
+    public void CompareTo_is_a_total_order_when_a_value_is_not_a_number()
+    {
+        var nan = new Area(double.NaN);
+
+        Assert.Equal(-1, Math.Sign(nan.CompareTo(new Area(100))));
+        Assert.Equal(1, Math.Sign(new Area(100).CompareTo(nan)));
+        Assert.Equal(0, nan.CompareTo(new Area(double.NaN)));
     }
 
     [Theory]

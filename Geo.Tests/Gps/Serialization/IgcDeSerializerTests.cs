@@ -89,6 +89,53 @@ public class IgcDeSerializerTests : SerializerTestFixtureBase
         Assert.Empty(result.Waypoints);
     }
 
+    [Fact]
+    public void Fixes_past_midnight_are_dated_to_the_following_day()
+    {
+        // A B-record carries a time of day and nothing else, so a flight that runs past
+        // midnight UTC restarts at 00:00:00. Stamped onto the header's date regardless,
+        // the track jumped back a day mid-flight and its duration came out negative.
+        var igc = string.Join(
+            "\n",
+            "HFDTE010120",
+            "B2358005411868N00248134WA0050000600",
+            "B2359595411880N00248137WA0050000600",
+            "B0000015411890N00248139WA0050000600",
+            "B0001005411900N00248140WA0050000600"
+        );
+
+        var result = new IgcDeSerializer().DeSerialize(Wrap(igc));
+        var segment = result.Tracks[0].Segments[0];
+
+        Assert.Equal(new DateTime(2020, 1, 1, 23, 58, 0), segment.Waypoints[0].TimeUtc);
+        Assert.Equal(new DateTime(2020, 1, 1, 23, 59, 59), segment.Waypoints[1].TimeUtc);
+        Assert.Equal(new DateTime(2020, 1, 2, 0, 0, 1), segment.Waypoints[2].TimeUtc);
+        Assert.Equal(new DateTime(2020, 1, 2, 0, 1, 0), segment.Waypoints[3].TimeUtc);
+        Assert.Equal(TimeSpan.FromMinutes(3), segment.GetDuration());
+    }
+
+    [Fact]
+    public void A_reused_deserializer_does_not_carry_the_day_over_between_files()
+    {
+        // GpsData holds the deserializers as shared singletons, so the rollover state has
+        // to be per-call: the second file must start on its own header date.
+        var igc = string.Join(
+            "\n",
+            "HFDTE010120",
+            "B2358005411868N00248134WA0050000600",
+            "B0001005411900N00248140WA0050000600"
+        );
+
+        var parser = new IgcDeSerializer();
+        parser.DeSerialize(Wrap(igc));
+        var second = parser.DeSerialize(Wrap(igc));
+
+        Assert.Equal(
+            new DateTime(2020, 1, 1, 23, 58, 0),
+            second.Tracks[0].Segments[0].Waypoints[0].TimeUtc
+        );
+    }
+
     [Theory]
     [InlineData("en-GB")]
     // Calendars whose current year is not the Gregorian one.

@@ -38,11 +38,15 @@ public struct Distance : IMeasure, IEquatable<Distance>, IComparable<Distance>
         return ConvertTo(unit).ToString();
     }
 
+    // Delegating to double keeps the ordering total. Deciding "not equal, and not less
+    // than, therefore greater than" broke down for a NaN measure, which is neither: two
+    // distances could each report themselves the greater, and a sort handed that pair
+    // shuffled the values around it out of order (or gave up with "IComparer.Compare()
+    // method returns inconsistent results"). Double.CompareTo agrees with Equals on the
+    // cases that matter here - NaN compares equal to NaN, and zero to negative zero.
     public int CompareTo(Distance other)
     {
-        if (Equals(other))
-            return 0;
-        return SiValue < other.SiValue ? -1 : 1;
+        return SiValue.CompareTo(other.SiValue);
     }
 
     public bool Equals(Distance other)

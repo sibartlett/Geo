@@ -120,6 +120,16 @@ public class SpeedTests
     }
 
     [Fact]
+    public void CompareTo_is_a_total_order_when_a_value_is_not_a_number()
+    {
+        var nan = new Speed(double.NaN);
+
+        Assert.Equal(-1, Math.Sign(nan.CompareTo(new Speed(10))));
+        Assert.Equal(1, Math.Sign(new Speed(10).CompareTo(nan)));
+        Assert.Equal(0, nan.CompareTo(new Speed(double.NaN)));
+    }
+
+    [Fact]
     public void Equal_speeds_share_a_hash_code()
     {
         Assert.Equal(new Speed(12.5).GetHashCode(), new Speed(12.5).GetHashCode());
