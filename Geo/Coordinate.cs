@@ -10,12 +10,34 @@ namespace Geo;
 
 public class Coordinate : SpatialObject, IPosition
 {
-    private const string CoordinateRegex =
+    // One ordinate's number: an optional sign, then digits with optional decimals, or a
+    // bare fraction. Spelling it this way rather than as (?:\d+\.?\d*|\d*\.?\d+) matches
+    // exactly the same strings but only one way each. The two branches of the old form
+    // both accepted a plain run of digits, and could split one between \d+ and \d* at any
+    // point, so six of these in sequence gave the engine an exponential number of ways to
+    // carve up a long run before admitting the string was not a coordinate at all: forty
+    // digits took over five seconds, and each further digit multiplied that.
+    private const string OrdinateNumber = @"[+-]?(?:\d+(?:\.\d*)?|\.\d+)";
+
+    // The hemisphere letter may lead the ordinate ("N51 30.0") as well as follow it
+    // ("51 30.0N"): aviation and marine sources overwhelmingly write it in front, and a
+    // string of theirs did not parse at all before. Both spellings are optional, and an
+    // ordinate that carries the letter on both sides has to say the same thing twice.
+    private static readonly string CoordinateRegex =
         @"^[\(\[\{\s]*"
-        + @"(?<Deg1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir1>[NnSsEeWw])?"
+        + $@"(?<Pre1>[NnSsEeWw])?\s*(?<Deg1>{OrdinateNumber}[\r\n]*)[°Dd\s]*(?<Min1>{OrdinateNumber}[\r\n]*)?[°'′Mm\s]*(?<Sec1>{OrdinateNumber}[\r\n]*)?[\""″\s]*(?<Dir1>[NnSsEeWw])?"
         + @"[,\s]+"
-        + @"(?<Deg2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir2>[NnSsEeWw])?"
+        + $@"(?<Pre2>[NnSsEeWw])?\s*(?<Deg2>{OrdinateNumber}[\r\n]*)[°Dd\s]*(?<Min2>{OrdinateNumber}[\r\n]*)?[°'′Mm\s]*(?<Sec2>{OrdinateNumber}[\r\n]*)?[\""″\s]*(?<Dir2>[NnSsEeWw])?"
         + @"[\)\]\}\s]*$";
+
+    // A backstop for what the rewrite above cannot reach. Degrees, minutes and seconds are
+    // separated by characters that are all optional, so a long run of digits can still be
+    // divided between the three fields polynomially many ways; that is no longer
+    // exponential, but several hundred digits would still take seconds. Nothing any
+    // coordinate notation produces comes within orders of magnitude of this budget, and a
+    // string that exhausts it is reported as one that does not parse rather than being
+    // allowed to occupy the caller indefinitely.
+    private static readonly TimeSpan MatchTimeout = TimeSpan.FromMilliseconds(250);
 
     public Coordinate()
         : this(0, 0) { }
@@ -108,15 +130,25 @@ public class Coordinate : SpatialObject, IPosition
             return false;
         }
 
-        var match = Regex.Match(coordinate, CoordinateRegex);
+        Match match;
+        try
+        {
+            match = Regex.Match(coordinate, CoordinateRegex, RegexOptions.None, MatchTimeout);
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            result = default;
+            return false;
+        }
 
-        if (match.Success)
+        if (
+            match.Success
+            && TryParseHemisphere(match, "Pre1", "Dir1", 'N', 'S', out var dir1)
+            && TryParseHemisphere(match, "Pre2", "Dir2", 'E', 'W', out var dir2)
+        )
         {
             var deg1 = ParseOrdinate(match, "Deg1", "Min1", "Sec1");
             var deg2 = ParseOrdinate(match, "Deg2", "Min2", "Sec2");
-
-            var dir1 = Regex.IsMatch(match.Groups["Dir1"].Value, "[Ss]") ? -1d : 1d;
-            var dir2 = Regex.IsMatch(match.Groups["Dir2"].Value, "[Ww]") ? -1d : 1d;
 
             if (deg1 is <= 90 and >= -90 && deg2 is <= 180 and >= -180)
             {
@@ -126,6 +158,58 @@ public class Coordinate : SpatialObject, IPosition
         }
 
         result = default;
+        return false;
+    }
+
+    /// <summary>
+    /// The sign the ordinate's hemisphere letter asks for — <c>1</c> for
+    /// <paramref name="positive" /> (and for no letter at all), <c>-1</c> for
+    /// <paramref name="negative" />. Returns <c>false</c> when the letters cannot be
+    /// honoured, which fails the parse.
+    /// </summary>
+    /// <remarks>
+    /// A letter naming the other axis — an E or a W where a latitude belongs — is rejected
+    /// rather than ignored. Ignoring it dropped the hemisphere silently, so "0.12W, 51.5N"
+    /// parsed as if both ordinates were positive and put the position on the wrong side of
+    /// the meridian; refusing it leaves the caller to swap the ordinates into the
+    /// latitude-then-longitude order this method reads them in.
+    /// </remarks>
+    private static bool TryParseHemisphere(
+        Match match,
+        string prefixGroup,
+        string suffixGroup,
+        char positive,
+        char negative,
+        out double sign
+    )
+    {
+        sign = 1;
+
+        var prefix = match.Groups[prefixGroup].Value;
+        var suffix = match.Groups[suffixGroup].Value;
+
+        if (prefix.Length == 0 && suffix.Length == 0)
+            return true;
+
+        // Written on both sides, the two can only be a restatement of one hemisphere.
+        if (
+            prefix.Length > 0
+            && suffix.Length > 0
+            && char.ToUpperInvariant(prefix[0]) != char.ToUpperInvariant(suffix[0])
+        )
+            return false;
+
+        var letter = char.ToUpperInvariant(prefix.Length > 0 ? prefix[0] : suffix[0]);
+
+        if (letter == positive)
+            return true;
+
+        if (letter == negative)
+        {
+            sign = -1;
+            return true;
+        }
+
         return false;
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using Xunit;
 
@@ -280,6 +281,64 @@ public class CoordinateTests
         Assert.False(success);
         Assert.Null(result);
         Assert.Null(Coordinate.TryParse(null));
+    }
+
+    [Theory]
+    // The hemisphere letter written in front of the ordinate, as aviation and marine
+    // sources overwhelmingly write it. None of these parsed at all before.
+    [InlineData("N51 30.0, W000 07.2", 51.5, -0.12)]
+    [InlineData("N51 30.0 W000 07.2", 51.5, -0.12)]
+    [InlineData("N 51 30.0, W 000 07.2", 51.5, -0.12)]
+    [InlineData("N51°30.0', W000°07.2'", 51.5, -0.12)]
+    [InlineData("N51 30 00, W000 07 12", 51.5, -0.12)]
+    [InlineData("S33 52 00, E151 12 00", -33.866666666666667, 151.2)]
+    [InlineData("N51.5, W0.12", 51.5, -0.12)]
+    [InlineData("n51.5, w0.12", 51.5, -0.12)]
+    [InlineData("(N51 30.0, W000 07.2)", 51.5, -0.12)]
+    // Stated on both sides, saying the same thing twice.
+    [InlineData("N51 30.0N, W000 07.2W", 51.5, -0.12)]
+    public void Parse_accepts_a_leading_hemisphere_letter(
+        string coordinate,
+        double latitude,
+        double longitude
+    )
+    {
+        var result = Coordinate.Parse(coordinate);
+
+        Assert.Equal(latitude, result.Latitude, 10);
+        Assert.Equal(longitude, result.Longitude, 10);
+    }
+
+    [Theory]
+    // The two letters contradict each other.
+    [InlineData("N51 30.0S, W000 07.2W")]
+    [InlineData("N51 30.0, W000 07.2E")]
+    // A letter naming the wrong axis. Ignoring it dropped the hemisphere silently and put
+    // the position on the wrong side of the meridian, so it fails the parse instead; the
+    // ordinates are read latitude first, and the caller has to present them that way.
+    [InlineData("E51 30.0, W000 07.2")]
+    [InlineData("N51 30.0, N000 07.2")]
+    [InlineData("W000 07.2, N51 30.0")]
+    [InlineData("0.12W, 51.5N")]
+    public void TryParse_rejects_hemisphere_letters_it_cannot_honour(string coordinate)
+    {
+        Assert.False(Coordinate.TryParse(coordinate, out var result));
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void TryParse_does_not_hang_on_a_long_run_of_digits()
+    {
+        // Six number fields whose separators are all optional used to let the engine carve
+        // a digit run up an exponential number of ways before giving up: forty digits took
+        // over five seconds, and each further digit multiplied that.
+        var stopwatch = Stopwatch.StartNew();
+
+        Assert.False(Coordinate.TryParse(new string('1', 4000), out _));
+        Assert.False(Coordinate.TryParse(new string('1', 4000) + "!", out _));
+        Assert.False(Coordinate.TryParse("N" + new string('1', 4000), out _));
+
+        Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(5));
     }
 
     [Theory]
