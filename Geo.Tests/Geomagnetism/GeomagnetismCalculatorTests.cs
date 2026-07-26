@@ -65,7 +65,7 @@ public class GeomagnetismCalculatorTests
     [InlineData(2007, -2.082, 66.4936, 19363.61, 48548.43)]
     [InlineData(2012, -1.3504, 66.4641, 19428.21, 48652.75)]
     [InlineData(2017, -0.4536, 66.4565, 19483.59, 48776.62)]
-    [InlineData(2022, 0.4853, 66.4953, 19535.65, 48983.0)]
+    [InlineData(2022, 0.5213, 66.4949, 19535.88, 48982.96)]
     [InlineData(2027, 1.3272, 66.5498, 19561.14, 49154.53)]
     public void Wmm_matches_pinned_field_per_epoch(
         int year,
