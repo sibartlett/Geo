@@ -10,12 +10,44 @@ namespace Geo;
 
 public class Coordinate : SpatialObject, IPosition
 {
-    private const string CoordinateRegex =
-        @"^[\(\[\{\s]*"
-        + @"(?<Deg1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec1>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir1>[NnSsEeWw])?"
-        + @"[,\s]+"
-        + @"(?<Deg2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)[°Dd\s]*(?<Min2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[°'′Mm\s]*(?<Sec2>[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*)?[\""″\s]*(?<Dir2>[NnSsEeWw])?"
-        + @"[\)\]\}\s]*$";
+    // A number, written only one way: digits with optional decimals, or a bare fraction.
+    // Spelling it so rather than as (?:\d+\.?\d*|\d*\.?\d+) matches exactly the same
+    // strings, but that older form had two branches which both accepted a plain run of
+    // digits and could split one between \d+ and \d* at any point. Six of those in
+    // sequence gave the engine an exponential number of ways to carve up a long run before
+    // admitting the string was not a coordinate at all: forty digits took over five
+    // seconds, and every further digit multiplied that.
+    private const string Number = @"(?:\d+(?:\.\d*)?|\.\d+)";
+
+    // Only the degrees carry a sign. A minutes or seconds field is a magnitude - no
+    // notation writes "51° -30'" - and reading one as signed is what made "51-30-00N",
+    // the hyphen-separated form below, subtract its own minutes.
+    private const string DegreesNumber = "[+-]?" + Number;
+
+    // What may stand between the degrees, the minutes and the seconds of one ordinate.
+    // The hyphen is a separator here, as in the FAA/NGS form "40-26-46N 079-56-55W", and
+    // never a sign: a sign belongs to the degrees or to the hemisphere letter.
+    private const string DegreesSeparator = @"[°Dd\s\-]";
+    private const string MinutesSeparator = @"[°'′Mm\s\-]";
+    private const string SecondsSeparator = @"[""″\s]";
+
+    // A minutes or seconds field has to be introduced by at least one separator, so a run
+    // of digits can no longer be divided between the three fields at arbitrary points.
+    // That kept the parse both honest and cheap: "40-26-46N" is 40°26'46" rather than 40
+    // degrees less 26 minutes less 46 seconds, and twenty thousand digits are rejected in
+    // milliseconds instead of hanging the caller.
+    private static string Ordinate(string n) =>
+        $@"(?<Pre{n}>[NnSsEeWw])?\s*(?<Deg{n}>{DegreesNumber}[\r\n]*)"
+        + $@"{DegreesSeparator}*(?:{DegreesSeparator}(?<Min{n}>{Number}[\r\n]*))?"
+        + $@"{MinutesSeparator}*(?:{MinutesSeparator}(?<Sec{n}>{Number}[\r\n]*))?"
+        + $@"{SecondsSeparator}*(?<Dir{n}>[NnSsEeWw])?";
+
+    // The hemisphere letter may lead the ordinate ("N51 30.0") as well as follow it
+    // ("51 30.0N"): aviation and marine sources overwhelmingly write it in front, and a
+    // string of theirs did not parse at all before. Both spellings are optional, and an
+    // ordinate that carries the letter on both sides has to say the same thing twice.
+    private static readonly string CoordinateRegex =
+        @"^[\(\[\{\s]*" + Ordinate("1") + @"[,\s]+" + Ordinate("2") + @"[\)\]\}\s]*$";
 
     public Coordinate()
         : this(0, 0) { }
@@ -110,13 +142,14 @@ public class Coordinate : SpatialObject, IPosition
 
         var match = Regex.Match(coordinate, CoordinateRegex);
 
-        if (match.Success)
+        if (
+            match.Success
+            && TryParseHemisphere(match, "Pre1", "Dir1", 'N', 'S', out var dir1)
+            && TryParseHemisphere(match, "Pre2", "Dir2", 'E', 'W', out var dir2)
+        )
         {
             var deg1 = ParseOrdinate(match, "Deg1", "Min1", "Sec1");
             var deg2 = ParseOrdinate(match, "Deg2", "Min2", "Sec2");
-
-            var dir1 = Regex.IsMatch(match.Groups["Dir1"].Value, "[Ss]") ? -1d : 1d;
-            var dir2 = Regex.IsMatch(match.Groups["Dir2"].Value, "[Ww]") ? -1d : 1d;
 
             if (deg1 is <= 90 and >= -90 && deg2 is <= 180 and >= -180)
             {
@@ -130,16 +163,69 @@ public class Coordinate : SpatialObject, IPosition
     }
 
     /// <summary>
+    /// The sign the ordinate's hemisphere letter asks for — <c>1</c> for
+    /// <paramref name="positive" /> (and for no letter at all), <c>-1</c> for
+    /// <paramref name="negative" />. Returns <c>false</c> when the letters cannot be
+    /// honoured, which fails the parse.
+    /// </summary>
+    /// <remarks>
+    /// A letter naming the other axis — an E or a W where a latitude belongs — is rejected
+    /// rather than ignored. Ignoring it dropped the hemisphere silently, so "0.12W, 51.5N"
+    /// parsed as if both ordinates were positive and put the position on the wrong side of
+    /// the meridian; refusing it leaves the caller to swap the ordinates into the
+    /// latitude-then-longitude order this method reads them in.
+    /// </remarks>
+    private static bool TryParseHemisphere(
+        Match match,
+        string prefixGroup,
+        string suffixGroup,
+        char positive,
+        char negative,
+        out double sign
+    )
+    {
+        sign = 1;
+
+        var prefix = match.Groups[prefixGroup].Value;
+        var suffix = match.Groups[suffixGroup].Value;
+
+        if (prefix.Length == 0 && suffix.Length == 0)
+            return true;
+
+        // Written on both sides, the two can only be a restatement of one hemisphere.
+        if (
+            prefix.Length > 0
+            && suffix.Length > 0
+            && char.ToUpperInvariant(prefix[0]) != char.ToUpperInvariant(suffix[0])
+        )
+            return false;
+
+        var letter = char.ToUpperInvariant(prefix.Length > 0 ? prefix[0] : suffix[0]);
+
+        if (letter == positive)
+            return true;
+
+        if (letter == negative)
+        {
+            sign = -1;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Assembles one ordinate from its degrees, minutes and seconds groups.
     /// </summary>
     /// <remarks>
-    /// The minutes and seconds are added to the <em>magnitude</em> of the degrees and the
-    /// sign is applied once at the end, because a degrees field of "-0" parses to negative
-    /// zero, which is not less than zero. Deciding the direction by testing the parsed
-    /// value therefore read "-0 7 12" as travelling north/east of zero, and every
-    /// coordinate in the (-1, 0) degree band - which is where most of western Europe's
-    /// longitudes sit - came back on the wrong side of the meridian, up to 111 km out.
-    /// The sign is taken from the text instead, which is the only place it survives.
+    /// Minutes and seconds are magnitudes, always moving the position further from the
+    /// equator or the meridian, and only the degrees carry a sign. That sign is applied
+    /// once, at the end, rather than to each field as it is added: a degrees field of "-0"
+    /// parses to negative zero, which is not less than zero, so deciding the direction by
+    /// testing the parsed value read "-0 7 12" as travelling north/east of zero and put
+    /// every coordinate in the (-1, 0) degree band - which is where most of western
+    /// Europe's longitudes sit - on the wrong side of the meridian, up to 111 km out. The
+    /// sign is taken from the text instead, which is the only place it survives.
     /// </remarks>
     private static double ParseOrdinate(
         Match match,
