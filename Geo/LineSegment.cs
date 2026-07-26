@@ -27,11 +27,23 @@ public class LineSegment : SpatialObject
 
     #region Equality methods
 
+    /// <remarks>
+    /// The runtime types have to match, not merely be compatible. A
+    /// <see cref="Geodesy.GeodeticLine" /> is a line segment that also carries a distance
+    /// and two bearings, and it compares those; accepting one here made equality
+    /// asymmetric, since a segment equalled a geodetic line running between the same two
+    /// coordinates while the line did not equal the segment. Anything comparing one against
+    /// the other - <c>List.Contains</c>, <c>Remove</c>, <c>IndexOf</c> - then answered
+    /// differently depending on which of the two it was holding, and the pair carried
+    /// different hash codes while still comparing equal one way round.
+    /// </remarks>
     public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
-        var other = obj as LineSegment;
-        return !ReferenceEquals(null, other)
-            && Equals(Coordinate1, other.Coordinate1, options)
+        if (obj == null || obj.GetType() != GetType())
+            return false;
+
+        var other = (LineSegment)obj;
+        return Equals(Coordinate1, other.Coordinate1, options)
             && Equals(Coordinate2, other.Coordinate2, options);
     }
 

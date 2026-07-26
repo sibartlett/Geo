@@ -25,11 +25,15 @@ public class GeodeticLine : LineSegment
 
     #region Equality methods
 
+    // Matched on the runtime type, the same way LineSegment does it, so that the two stay
+    // symmetric by construction rather than by coincidence of the hierarchy.
     public override bool Equals(object? obj, SpatialEqualityOptions options)
     {
-        var other = obj as GeodeticLine;
-        return !ReferenceEquals(null, other)
-            && Equals(Coordinate1, other.Coordinate1, options)
+        if (obj == null || obj.GetType() != GetType())
+            return false;
+
+        var other = (GeodeticLine)obj;
+        return Equals(Coordinate1, other.Coordinate1, options)
             && Equals(Coordinate2, other.Coordinate2, options)
             && Distance.Equals(other.Distance)
             && Bearing12.Equals(other.Bearing12)
