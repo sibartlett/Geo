@@ -18,7 +18,7 @@ $TempDirectory = "$PSScriptRoot\\.nuke\temp"
 
 $DotNetGlobalFile = "$PSScriptRoot\\global.json"
 $DotNetInstallUrl = "https://dot.net/v1/dotnet-install.ps1"
-$DotNetChannel = "STS"
+$DotNetChannel = "LTS"
 
 $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 1
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = 1
@@ -62,6 +62,9 @@ else {
     }
     $env:DOTNET_EXE = "$DotNetDirectory\dotnet.exe"
 }
+
+$DotNetDirectory = Split-Path $env:DOTNET_EXE -Parent
+$env:PATH = "$DotNetDirectory$([IO.Path]::PathSeparator)$env:PATH"
 
 Write-Output "Microsoft (R) .NET SDK version $(& $env:DOTNET_EXE --version)"
 

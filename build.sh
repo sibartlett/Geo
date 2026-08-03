@@ -14,7 +14,7 @@ TEMP_DIRECTORY="$SCRIPT_DIR//.nuke/temp"
 
 DOTNET_GLOBAL_FILE="$SCRIPT_DIR//global.json"
 DOTNET_INSTALL_URL="https://dot.net/v1/dotnet-install.sh"
-DOTNET_CHANNEL="STS"
+DOTNET_CHANNEL="LTS"
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
@@ -55,6 +55,9 @@ else
     fi
     export DOTNET_EXE="$DOTNET_DIRECTORY/dotnet"
 fi
+
+DOTNET_DIRECTORY=$(dirname "$DOTNET_EXE")
+export PATH="$DOTNET_DIRECTORY:$PATH"
 
 echo "Microsoft (R) .NET SDK version $("$DOTNET_EXE" --version)"
 

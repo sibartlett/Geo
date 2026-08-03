@@ -26,8 +26,8 @@ License: **LGPL-3.0-or-later**.
 ```
 Geo.sln                 Solution: Geo, Geo.Tests, _build
 Geo/                    Main library (netstandard2.0)
-Geo.Tests/              xUnit test project (net8.0)
-build/                  NUKE build automation project (_build, net8.0)
+Geo.Tests/              xUnit test project (net10.0)
+build/                  NUKE build automation project (_build, net10.0)
 reference/              Sample data files used by tests (gpx, igc, nmea, garmin, pocketfms, skydemon)
 .config/                dotnet local tools manifest (husky, csharpier)
 .husky/                 Husky.Net git hook config (pre-commit)
@@ -105,7 +105,7 @@ C# conventions observed in the codebase (see `build/.editorconfig`):
 - No `this.` qualification; no explicit accessibility modifiers where the default suffices.
 - Expression-bodied members are preferred for properties/accessors/indexers.
 - Target framework of the library is **netstandard2.0** — keep new code compatible
-  with that (avoid newer BCL APIs not available there). Tests and build target net8.0.
+  with that (avoid newer BCL APIs not available there). Tests and build target net10.0.
 - Geometry types implement value equality plus a spatial-equality overload that
   takes `SpatialEqualityOptions` (see `Geometries/Point.cs` for the pattern:
   `Equals`/`GetHashCode`, `Equals(object, SpatialEqualityOptions)`, `==`/`!=`).
