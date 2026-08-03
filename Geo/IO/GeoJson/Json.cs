@@ -446,13 +446,7 @@ internal static class Json
             case decimal m:
                 builder.Append(m.ToString(CultureInfo.InvariantCulture));
                 break;
-            case sbyte
-            or byte
-            or short
-            or ushort
-            or int
-            or uint
-            or long:
+            case sbyte or byte or short or ushort or int or uint or long:
                 builder.Append(
                     Convert
                         .ToInt64(value, CultureInfo.InvariantCulture)
