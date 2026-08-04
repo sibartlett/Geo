@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/geo-logo.png" alt="Geo" height="103" width="272">
-</p>
+![Geo](https://raw.githubusercontent.com/sibartlett/Geo/master/assets/geo-logo.png)
 
 # Geo — a geospatial library for .NET
 
