@@ -2,11 +2,15 @@
 #
 # SessionStart hook for Claude Code on the web.
 #
-# The cloud container ships without a .NET SDK, and `build.sh` otherwise tries to
-# fetch one from builds.dotnet.microsoft.com / dotnetcli.azureedge.net, which the
-# default network policy blocks. Those hosts are NOT needed: the .NET 8 SDK is
-# available from the allowed Ubuntu archive (and packages.microsoft.com), so we
-# install it here. Once `dotnet` is on PATH, build.sh uses it and skips the CDN.
+# The cloud container ships with an older .NET SDK (8.x) or none at all, and
+# `build.sh` otherwise tries to fetch the version pinned in global.json from
+# builds.dotnet.microsoft.com / dotnetcli.azureedge.net, which the default
+# network policy blocks. That CDN is NOT needed: the .NET 10 SDK is available
+# from the allowed Ubuntu archive, so we install it here. Once a 10.x SDK is on
+# PATH, build.sh uses it and skips the CDN.
+#
+# The archive's SDK is a 10.0.1xx build, which is why global.json pins
+# 10.0.100 with "rollForward": "latestFeature" rather than an exact patch.
 #
 # Runs only in remote (web) sessions. Idempotent and non-interactive.
 #
@@ -47,32 +51,46 @@ persist_env "DOTNET_NOLOGO=1"
 # So build.sh's husky MSBuild target never reaches for the network-blocked CDN.
 persist_env "HUSKY=0"
 
-if command -v dotnet >/dev/null 2>&1; then
-  log "dotnet already present ($(dotnet --version 2>/dev/null || echo unknown)); skipping SDK install."
+# The repo targets net10.0, so a preinstalled 8.x SDK is not good enough: probe
+# for a 10.x SDK specifically rather than for the `dotnet` muxer. `--list-sdks`
+# is used because `dotnet --version` fails outright when global.json cannot be
+# satisfied by any installed SDK.
+installed_dotnet_10() {
+  command -v dotnet >/dev/null 2>&1 &&
+    dotnet --list-sdks 2>/dev/null | grep -q '^10\.'
+}
+
+if installed_dotnet_10; then
+  log "A .NET 10 SDK is already present; skipping SDK install."
 else
-  log "Installing .NET 8 SDK from the Ubuntu archive..."
+  log "Installing .NET 10 SDK from the Ubuntu archive..."
   SUDO=""
   if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; fi
   export DEBIAN_FRONTEND=noninteractive
   # '|| true' on update so a single unrelated PPA 403 doesn't abort the install.
   $SUDO apt-get update -qq >&2 || true
-  if ! $SUDO apt-get install -y -qq dotnet-sdk-8.0 >&2; then
-    log "ERROR: 'apt-get install dotnet-sdk-8.0' failed."
-    echo "SessionStart hook: FAILED to install the .NET 8 SDK. Builds/tests via ./build.sh will not work until dotnet is installed manually."
+  if ! $SUDO apt-get install -y -qq dotnet-sdk-10.0 >&2; then
+    log "ERROR: 'apt-get install dotnet-sdk-10.0' failed."
+    echo "SessionStart hook: FAILED to install the .NET 10 SDK. Builds/tests via ./build.sh will not work until dotnet is installed manually."
     exit 1
   fi
-  log "Installed dotnet $(dotnet --version)."
 fi
 
-# Hard gate: if dotnet still isn't callable, report it on stdout (agent-visible)
-# rather than exiting 0 and letting the agent hit a broken toolchain later.
-if ! command -v dotnet >/dev/null 2>&1; then
-  log "ERROR: dotnet is not on PATH after install."
-  echo "SessionStart hook: .NET SDK is NOT on PATH. Builds/tests via ./build.sh will not work."
+# Hard gate: if a 10.x SDK still isn't callable, report it on stdout
+# (agent-visible) rather than exiting 0 and letting the agent hit a broken
+# toolchain later.
+if ! installed_dotnet_10; then
+  log "ERROR: no .NET 10 SDK on PATH after install."
+  echo "SessionStart hook: no .NET 10 SDK is on PATH. Builds/tests via ./build.sh will not work."
   exit 1
 fi
 
-DOTNET_VERSION="$(dotnet --version 2>/dev/null || echo unknown)"
+# Resolved against global.json; fall back to the newest 10.x the muxer lists.
+DOTNET_VERSION="$(cd "$PROJECT_DIR" && dotnet --version 2>/dev/null)"
+if [ -z "$DOTNET_VERSION" ]; then
+  DOTNET_VERSION="$(dotnet --list-sdks | grep '^10\.' | tail -n 1 | cut -d' ' -f1)"
+  log "warning: 'dotnet --version' failed in $PROJECT_DIR; global.json may pin an SDK that is not installed."
+fi
 
 # Restore the pinned local tools (CSharpier + Husky) so the linter / format gate
 # is runnable. NuGet (api.nuget.org) is on the default allowlist.
@@ -81,6 +99,12 @@ if [ -f "$PROJECT_DIR/.config/dotnet-tools.json" ]; then
   log "Restoring local dotnet tools (csharpier, husky)..."
   if (cd "$PROJECT_DIR" && HUSKY=0 dotnet tool restore >&2); then
     log "Local tools restored."
+    # HUSKY=0 suppresses the MSBuild target that would normally do this, so
+    # wire up the git hooks here; without it 'dotnet husky run --group verify'
+    # (the CheckForUncommittedChanges target) fails with "Could not find Husky path".
+    if ! (cd "$PROJECT_DIR" && dotnet husky install >&2); then
+      log "warning: 'dotnet husky install' failed; './build.sh CheckForUncommittedChanges' may fail."
+    fi
   else
     TOOLS_STATUS="failed"
     log "warning: 'dotnet tool restore' failed; the CSharpier/Husky lint gate may be unavailable."
