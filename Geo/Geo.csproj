@@ -34,7 +34,6 @@
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\assets\geo-icon.png" Pack="true" PackagePath="assets\" />
-    <None Include="..\assets\geo-logo.png" Pack="true" PackagePath="assets\" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Geo.Tests" />

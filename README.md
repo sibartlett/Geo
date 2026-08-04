@@ -1,4 +1,4 @@
-![Geo](https://raw.githubusercontent.com/sibartlett/Geo/master/assets/geo-logo@1x.png)
+![Geo](https://raw.githubusercontent.com/sibartlett/Geo/master/assets/geo-logo.png)
 
 # Geo — a geospatial library for .NET
 
