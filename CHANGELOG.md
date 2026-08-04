@@ -500,4 +500,4 @@ details.
 [#127]: https://github.com/sibartlett/Geo/pull/127
 [#128]: https://github.com/sibartlett/Geo/pull/128
 [#129]: https://github.com/sibartlett/Geo/pull/129
-[2.0.0]: https://github.com/sibartlett/Geo/compare/e584c3f...master
+[2.0.0]: https://github.com/sibartlett/Geo/compare/v1.2.0...master
