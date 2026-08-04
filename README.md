@@ -6,7 +6,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Geo.svg)](https://nuget.org/packages/Geo)
 [![Downloads](https://img.shields.io/nuget/dt/Geo.svg)](https://nuget.org/packages/Geo)
-[![License: LGPL-3.0-or-later](https://img.shields.io/badge/license-LGPL--3.0--or--later-blue.svg)](LICENSE)
+[![License: LGPL-3.0-or-later](https://img.shields.io/badge/license-LGPL--3.0--or--later-blue.svg)](https://github.com/sibartlett/Geo/blob/master/LICENSE)
 
 **Geo** is a spatial library for .NET built specifically for *geographic* data —
 coordinates on the surface of the Earth — rather than planar/projected data. It
@@ -14,9 +14,9 @@ provides geometry and GPS types, serializers for common spatial and GPS file
 formats, and geodetic and geomagnetic calculations.
 
 Wondering how it compares to NetTopologySuite? See
-[Geo vs. NetTopologySuite](docs/geo-vs-nts.md).
+[Geo vs. NetTopologySuite](https://github.com/sibartlett/Geo/blob/master/docs/geo-vs-nts.md).
 
-[Documentation](docs/) · [Changelog](https://github.com/sibartlett/Geo/blob/master/CHANGELOG.md) · [Issues](https://github.com/sibartlett/Geo/issues) · [NuGet](https://nuget.org/packages/Geo)
+[Documentation](https://github.com/sibartlett/Geo/tree/master/docs) · [Changelog](https://github.com/sibartlett/Geo/blob/master/CHANGELOG.md) · [Issues](https://github.com/sibartlett/Geo/issues) · [NuGet](https://nuget.org/packages/Geo)
 
 ## Contents
 
@@ -92,7 +92,7 @@ Coordinates come in four flavours: `Coordinate` (lat/lon), `CoordinateZ`
 
 Don't know a string's format up front? `GeoFormat.Detect` / `GeoFormat.TryParse`
 sniff whether it is a coordinate pair, WKT, or GeoJSON and parse it — see the
-[parsing guide](docs/parsing.md).
+[parsing guide](https://github.com/sibartlett/Geo/blob/master/docs/parsing.md).
 
 ### Serialize / deserialize GPS files
 
@@ -134,7 +134,7 @@ bootstrap scripts, which pin the SDK and run the same targets as CI:
 ./build.sh Test       # build and run tests
 ```
 
-On Windows, use `build.cmd` / `build.ps1`. See [AGENTS.md](AGENTS.md) for a full
+On Windows, use `build.cmd` / `build.ps1`. See [AGENTS.md](https://github.com/sibartlett/Geo/blob/master/AGENTS.md) for a full
 description of the repository layout, build targets, and coding conventions.
 
 ## Contributing
@@ -148,4 +148,4 @@ staged files). New library code must remain compatible with **.NET Standard 2.0*
 
 Geo is licensed under the terms of the **GNU Lesser General Public License,
 version 3 or later** (`LGPL-3.0-or-later`), as published by the Free Software
-Foundation. See [LICENSE](LICENSE) for details.
+Foundation. See [LICENSE](https://github.com/sibartlett/Geo/blob/master/LICENSE) for details.
