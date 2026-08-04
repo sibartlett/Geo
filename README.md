@@ -16,7 +16,7 @@ formats, and geodetic and geomagnetic calculations.
 Wondering how it compares to NetTopologySuite? See
 [Geo vs. NetTopologySuite](docs/geo-vs-nts.md).
 
-[Documentation](docs/) · [Issues](https://github.com/sibartlett/Geo/issues) · [NuGet](https://nuget.org/packages/Geo)
+[Documentation](docs/) · [Changelog](https://github.com/sibartlett/Geo/blob/master/CHANGELOG.md) · [Issues](https://github.com/sibartlett/Geo/issues) · [NuGet](https://nuget.org/packages/Geo)
 
 ## Contents
 
