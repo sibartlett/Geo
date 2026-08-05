@@ -13,10 +13,20 @@
     <PackageTags>geo;spatial;gps;coordinates;wgs84;geography;WKT;WKB;GeoJSON;GPX;IGC;NMEA;Garmin;PocketFMS;SkyDemon;magnetic declination;magnetic variation;geomagnetism;igrf;wmm</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/sibartlett/Geo</RepositoryUrl>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <!--
+    netstandard2.0 cannot carry the trimming and AOT annotations, so the modern
+    target exists to turn the analyzers on: they gate the build against anything
+    that would not survive a NativeAOT publish, which is what replacing
+    XmlSerializer with System.Xml.Linq bought. Geo.AotSmokeTest publishes for real
+    and proves it at runtime.
+  -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn />
@@ -25,12 +35,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3'">
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\assets\geo-icon.png" Pack="true" PackagePath="assets\" />

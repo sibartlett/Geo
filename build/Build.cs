@@ -8,7 +8,12 @@ using Nuke.Common.Tools.DotNet;
     "ci",
     GitHubActionsImage.UbuntuLatest,
     On = new[] { GitHubActionsTrigger.Push },
-    InvokedTargets = new[] { nameof(CheckForUncommittedChanges), nameof(Test) }
+    InvokedTargets = new[]
+    {
+        nameof(CheckForUncommittedChanges),
+        nameof(Test),
+        nameof(AotSmokeTest),
+    }
 )]
 class Build : NukeBuild
 {
@@ -80,6 +85,30 @@ class Build : NukeBuild
                                 .EnableNoBuild()
                         );
                     }
+                });
+
+    // Publishes Geo.AotSmokeTest natively and runs it. The library is meant to be
+    // usable from a NativeAOT application, and nothing else in the build proves that:
+    // the trimming and AOT analysers catch what they can see, but reflection-based
+    // serialization only fails once the published binary runs.
+    Target AotSmokeTest =>
+        _ =>
+            _.DependsOn(Compile)
+                .Executes(() =>
+                {
+                    var project = Solution.GetProject("Geo.AotSmokeTest");
+                    var output = RootDirectory / "artifacts" / "aot-smoke-test";
+
+                    // No runtime identifier: PublishAot infers the host's, so this
+                    // target runs wherever the build does.
+                    DotNetTasks.DotNetPublish(_ =>
+                        _.SetProject(project.Path).SetConfiguration("Release").SetOutput(output)
+                    );
+
+                    var executable =
+                        output
+                        / (EnvironmentInfo.IsWin ? "Geo.AotSmokeTest.exe" : "Geo.AotSmokeTest");
+                    ProcessTasks.StartProcess(executable).AssertZeroExitCode();
                 });
 
     Target Publish =>

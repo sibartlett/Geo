@@ -24,6 +24,7 @@
     "ExecutableTarget": {
       "type": "string",
       "enum": [
+        "AotSmokeTest",
         "CheckForUncommittedChanges",
         "Clean",
         "Compile",

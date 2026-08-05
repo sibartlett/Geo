@@ -6,6 +6,62 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### NativeAOT support
+
+The GPS file serializers no longer use `System.Xml.Serialization`. `XmlSerializer`
+generates and compiles a serialization assembly at runtime by reflecting over
+attributed types, which NativeAOT cannot do, so any application that published
+natively and touched a `Geo` GPS serializer failed at runtime. GPX 1.0/1.1 and the
+Garmin, PocketFMS and SkyDemon flightplan formats are now read and written with
+`System.Xml.Linq`, which needs no runtime code generation.
+
+The unit conversions had the same problem for the same reason: `UnitMetadata` read
+each unit's symbol and factor off the enum members' `[Unit]` attributes through
+`Enum.GetValues(Type)` and `Type.GetField`. The definitions are now a plain table,
+resolved with no reflection.
+
+The library multi-targets `netstandard2.0;net8.0`. The modern target sets
+`IsAotCompatible`, so the trimming and AOT analysers gate the build, and a new
+`Geo.AotSmokeTest` project publishes natively and exercises every serializer as
+part of CI.
+
+### Breaking changes
+
+- **The XML serialization models are gone.** Every type under
+  `Geo.Gps.Serialization.Xml.Gpx`, `.Garmin`, `.PocketFms` and `.SkyDemon`
+  (`GpxFile`, `GpxWaypoint`, `PocketFmsMeta`, `SkyDemonRoute` and the rest) existed
+  only to be bound by `XmlSerializer` and has been removed. The documents are now
+  read straight into `GpsData`.
+- **`GpsXmlDeSerializer<T>` and `GpsXmlSerializer<T>` are no longer generic.** They
+  are now `GpsXmlDeSerializer` and `GpsXmlSerializer`; the abstract members a
+  subclass implements take an `XElement` and return an `XDocument` rather than
+  taking and returning the removed model types. `IGpsFileDeSerializer` and
+  `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
+  interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
+- **`UnitAttribute` has been removed** and the `[Unit(...)]` annotations no longer
+  appear on `AreaUnit`, `DistanceUnit` and `SpeedUnit`. The attribute was
+  `internal`, and the values it carried are unchanged.
+
+### Fixed
+
+- A PocketFMS flightplan with no `<LIB>` leg, or one whose points carry no
+  coordinates, is reported by returning `null` like any other document the
+  deserializer cannot read. It used to index the first leg and dereference an
+  absent `<META>` regardless, raising `IndexOutOfRangeException` or
+  `NullReferenceException` out of `GpsData.Parse`.
+- A Garmin flightplan whose waypoint table repeats an identifier no longer throws;
+  the first entry wins. A route point naming a waypoint that is not in the table is
+  skipped rather than raising.
+
+### Changed
+
+- GPX output now orders each element's children as the GPX schemas sequence them.
+  `XmlSerializer` emitted inherited members first, which put `<link>` and `<fix>`
+  after the rest of a `<wpt>` and made the output invalid against the XSD. Parsing
+  is unaffected — element order was never significant on read.
+
 ## [2.0.0] — 2026-08-04
 
 The first major release since 1.0.0. It is a large correctness release: much of
