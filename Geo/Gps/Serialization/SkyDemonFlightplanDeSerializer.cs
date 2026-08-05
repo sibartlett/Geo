@@ -1,13 +1,14 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
 using Geo.Gps.Serialization.Xml;
-using Geo.Gps.Serialization.Xml.SkyDemon;
 
 namespace Geo.Gps.Serialization;
 
-public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightplan>
+public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer
 {
     // "N514807.00 W0000930.00": a hemisphere letter, then degrees, minutes and seconds run
     // together.
@@ -36,20 +37,20 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
     /// The route as a list of waypoints, or <c>null</c> when any of its coordinates cannot
     /// be read.
     /// </summary>
-    private static Route? ConvertRoute(SkyDemonRoute route)
+    private static Route? ConvertRoute(XElement route, XNamespace ns)
     {
-        var start = ParseWaypoint(route.Start);
+        var start = ParseWaypoint(route.AttributeValue("Start"));
         if (start == null)
             return null;
 
         var result = new Route();
         result.Waypoints.Add(start);
 
-        // A route may consist of nothing but its starting point, in which case the element
-        // is absent rather than an empty array.
-        foreach (var rhumbLine in route.RhumbLineRoute ?? new SkyDemonRhumbLine[0])
+        // A route may consist of nothing but its starting point, in which case the
+        // element is simply absent.
+        foreach (var rhumbLine in route.Elements(ns + "RhumbLineRoute"))
         {
-            var waypoint = ParseWaypoint(rhumbLine.To);
+            var waypoint = ParseWaypoint(rhumbLine.AttributeValue("To"));
             if (waypoint == null)
                 return null;
 
@@ -134,36 +135,38 @@ public class SkyDemonFlightplanDeSerializer : GpsXmlDeSerializer<SkyDemonFlightp
         return xml.Name == "DivelementsFlightPlanner";
     }
 
-    protected override GpsData? DeSerialize(SkyDemonFlightplan xml)
+    protected override GpsData? DeSerialize(XElement root)
     {
-        if (xml == null)
-            return null;
-
+        var ns = root.Name.Namespace;
         var data = new GpsData();
 
-        if (xml.PrimaryRoute != null)
+        var primaryRoute = root.Element(ns + "PrimaryRoute");
+        if (primaryRoute != null)
         {
-            var primary = ConvertRoute(xml.PrimaryRoute);
+            var primary = ConvertRoute(primaryRoute, ns);
             if (primary == null)
                 return null;
 
             data.Routes.Add(primary);
         }
 
-        if (xml.Routes != null)
-            foreach (var route in xml.Routes)
-            {
-                var converted = ConvertRoute(route);
-                if (converted == null)
-                    return null;
-
-                data.Routes.Add(converted);
-            }
-
-        if (xml.Aircraft != null && xml.Aircraft.Length > 0)
+        foreach (var route in root.Elements(ns + "Route"))
         {
-            data.Metadata.Attribute(x => x.Vehicle.Identifier, xml.Aircraft[0].Registration);
-            data.Metadata.Attribute(x => x.Vehicle.Model, xml.Aircraft[0].Type);
+            var converted = ConvertRoute(route, ns);
+            if (converted == null)
+                return null;
+
+            data.Routes.Add(converted);
+        }
+
+        var aircraft = root.Elements(ns + "Aircraft").FirstOrDefault();
+        if (aircraft != null)
+        {
+            data.Metadata.Attribute(
+                x => x.Vehicle.Identifier,
+                aircraft.AttributeValue("Registration")
+            );
+            data.Metadata.Attribute(x => x.Vehicle.Model, aircraft.AttributeValue("Type"));
         }
 
         return data;

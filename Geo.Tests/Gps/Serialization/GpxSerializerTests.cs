@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Geo.Abstractions.Interfaces;
+using Geo.Geometries;
 using Geo.Gps;
 using Geo.Gps.Serialization;
 using Xunit;
@@ -183,6 +186,127 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.NotNull(data);
         Assert.Equal("empty route", data.Routes.Single().Metadata.Attribute(x => x.Name));
         Assert.Empty(data.Routes.Single().Waypoints);
+    }
+
+    [Fact]
+    public void Gpx11_writes_a_waypoints_children_in_schema_order()
+    {
+        // The GPX schema sequences a waypoint's children, and the serializer this
+        // replaced emitted its base class's members first, so <link> and <fix> came
+        // out after everything else. Written by hand, the order is the schema's.
+        var data = new GpsData();
+        data.Waypoints.Add(
+            new Waypoint(
+                new Point(53.4808, -2.2426, 38),
+                new DateTime(2024, 5, 1, 9, 0, 0, DateTimeKind.Utc),
+                "Manchester",
+                "a comment",
+                "a description"
+            )
+        );
+
+        var gpx = XDocument.Parse(new Gpx11Serializer().Serialize(data));
+        XNamespace ns = "http://www.topografix.com/GPX/1/1";
+
+        var children = gpx.Root!.Element(ns + "wpt")!
+            .Elements()
+            .Select(x => x.Name.LocalName)
+            .ToArray();
+
+        Assert.Equal(new[] { "ele", "time", "name", "cmt", "desc" }, children);
+    }
+
+    [Fact]
+    public void Gpx11_writes_the_default_namespace_without_a_prefix()
+    {
+        var data = new GpsData();
+        data.Waypoints.Add(new Waypoint(53.4808, -2.2426));
+
+        var gpx = new Gpx11Serializer().Serialize(data);
+
+        Assert.Contains("xmlns=\"http://www.topografix.com/GPX/1/1\"", gpx);
+        Assert.Contains("<wpt ", gpx);
+    }
+
+    [Fact]
+    public void Gpx10_writes_metadata_as_direct_children_of_gpx()
+    {
+        // 1.0 has no <metadata> element - the fields 1.1 moved into one are children
+        // of the root, in the order the 1.0 schema sequences them.
+        var data = new GpsData();
+        data.Metadata.Attribute(x => x.Name, "Sample");
+        data.Metadata.Attribute(x => x.Description, "A description");
+        data.Metadata.Attribute(x => x.Author.Name, "Ada Lovelace");
+        data.Metadata.Attribute(x => x.Link, "https://example.com/track");
+
+        var gpx = XDocument.Parse(new Gpx10Serializer().Serialize(data));
+        XNamespace ns = "http://www.topografix.com/GPX/1/0";
+
+        var children = gpx.Root!.Elements().Select(x => x.Name.LocalName).ToArray();
+
+        Assert.Equal(new[] { "name", "desc", "author", "url" }, children);
+        Assert.Null(gpx.Root.Element(ns + "metadata"));
+    }
+
+    [Fact]
+    public void Gpx11_omits_the_metadata_element_when_there_is_none()
+    {
+        var data = new GpsData();
+        data.Waypoints.Add(new Waypoint(53.4808, -2.2426));
+
+        Assert.DoesNotContain("<metadata", new Gpx11Serializer().Serialize(data));
+    }
+
+    [Theory]
+    [InlineData("2024-05-01T09:00:00Z", DateTimeKind.Utc)]
+    [InlineData("2024-05-01T09:00:00", DateTimeKind.Unspecified)]
+    [InlineData("2024-05-01T09:00:00.123Z", DateTimeKind.Utc)]
+    public void Gpx11_reads_the_time_formats_the_reference_files_use(
+        string time,
+        DateTimeKind expected
+    )
+    {
+        var gpx =
+            "<?xml version=\"1.0\"?>"
+            + "<gpx version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">"
+            + "<wpt lat=\"53.4808\" lon=\"-2.2426\"><time>"
+            + time
+            + "</time></wpt>"
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx11Serializer().DeSerialize(new StreamWrapper(stream));
+
+        var parsed = data.Waypoints.Single().TimeUtc;
+        Assert.NotNull(parsed);
+        Assert.Equal(expected, parsed!.Value.Kind);
+    }
+
+    [Fact]
+    public void A_waypoint_with_an_unreadable_elevation_is_still_a_waypoint()
+    {
+        // The serializer this replaced skipped content it could not bind rather than
+        // failing the document, and files in the reference corpus depend on it.
+        var gpx =
+            "<?xml version=\"1.0\"?>"
+            + "<gpx version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\">"
+            + "<wpt lat=\"53.4808\" lon=\"-2.2426\"><ele>not a number</ele><name>Manchester</name></wpt>"
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx11Serializer().DeSerialize(new StreamWrapper(stream));
+
+        Assert.NotNull(data);
+        var waypoint = data.Waypoints.Single();
+        Assert.Equal("Manchester", waypoint.Name);
+        Assert.False(waypoint.Coordinate.Is3D);
+    }
+
+    [Fact]
+    public void DeSerialize_returns_null_for_malformed_xml()
+    {
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes("<gpx"));
+        Assert.Null(new Gpx11Serializer().DeSerialize(new StreamWrapper(stream)));
     }
 
     private void Compare(Gpx10Serializer serializer, GpsData data, string gpxData)
