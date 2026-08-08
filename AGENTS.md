@@ -150,6 +150,14 @@ C# conventions observed in the codebase (see `build/.editorconfig`):
   they stay culture-invariant, and `DateTime` uses `RoundtripKind`.
   Take the namespace from the document (`root.Name.Namespace`) rather than
   assuming it, so files missing their default `xmlns` still parse.
+- **GPX extensions are carried through, not modelled.** `GpsData`, `Track`,
+  `TrackSegment`, `Route` and `Waypoint` each hold an `Extensions` list of
+  `XElement`. Elements are copied on the way in and on the way out
+  (`XmlExtensions.Detach`), so the parsed document is not kept alive by a retained
+  extension and serializing does not re-parent a caller's elements. GPX 1.1 wraps
+  them in `<extensions>`; 1.0 carries them inline and has no place for them on
+  `<trkseg>`. Mind the schema sequence when writing: `<extensions>` comes *before*
+  `<rtept>`/`<trkseg>` but last everywhere else.
 - **Geomagnetism models** are code-generated coefficient tables. When a new WMM/IGRF
   epoch is released, add a new `Models/WmmYYYY.cs` (or update `IgrfModelFactory`) —
   follow the existing files exactly and bump the version accordingly.

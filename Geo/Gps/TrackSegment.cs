@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Measure;
@@ -15,6 +16,22 @@ public class TrackSegment : IHasLength
     }
 
     public List<Waypoint> Waypoints { get; set; }
+
+    /// <summary>
+    /// The foreign content carried by this segment's &lt;trkseg&gt; element, as it
+    /// appeared.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="GpsData.Extensions" /> for why this is handed over as XML rather
+    /// than modelled.
+    /// <para>
+    /// This is the one place GPX 1.0 has no room for: its schema ends &lt;trkseg&gt;
+    /// with &lt;trkpt&gt; and admits no foreign element after it. A segment's
+    /// extensions are therefore read and written for 1.1 only, and writing a 1.0
+    /// document drops them.
+    /// </para>
+    /// </remarks>
+    public List<XElement> Extensions { get; } = new List<XElement>();
 
     public Distance GetLength()
     {

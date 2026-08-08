@@ -103,6 +103,19 @@ sniff whether it is a coordinate pair, WKT, or GeoJSON and parse it — see the
 | SkyDemon flightplan     | ✓ |   |
 | PocketFMS flightplan    | ✓ |   |
 
+GPX extensions are read and written for both versions, so vendor content such as
+Garmin's `gpxx` or the Topografix `gpx_style` line styling survives a round-trip.
+`GpsData`, `Track`, `TrackSegment`, `Route` and `Waypoint` each expose the foreign
+content of their element as `XElement`s:
+
+```csharp
+XNamespace style = "http://www.topografix.com/GPX/gpx_style/0/2";
+
+var colour = data.Tracks[0]
+    .Extensions.FirstOrDefault(x => x.Name == style + "line")
+    ?.Element(style + "color")?.Value;
+```
+
 ### Geographic calculations
 
 - Distance and bearing

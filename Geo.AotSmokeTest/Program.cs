@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Geo.Gps;
 using Geo.Measure;
 
@@ -41,7 +42,8 @@ internal static class Program
 
     private const string Gpx11 = """
         <?xml version="1.0" encoding="utf-8"?>
-        <gpx version="1.1" creator="Geo.AotSmokeTest" xmlns="http://www.topografix.com/GPX/1/1">
+        <gpx version="1.1" creator="Geo.AotSmokeTest" xmlns="http://www.topografix.com/GPX/1/1"
+             xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
           <metadata>
             <name>Smoke test</name>
             <desc>A short track</desc>
@@ -51,6 +53,9 @@ internal static class Program
           <rte><name>A route</name><rtept lat="51.5072" lon="-0.1276" /></rte>
           <trk>
             <name>A track</name>
+            <extensions>
+              <gpx_style:line><gpx_style:color>C00000</gpx_style:color></gpx_style:line>
+            </extensions>
             <trkseg>
               <trkpt lat="53.4808" lon="-2.2426"><ele>38</ele><time>2024-05-01T09:00:00Z</time></trkpt>
               <trkpt lat="53.8008" lon="-1.5491"><ele>45</ele><time>2024-05-01T10:00:00Z</time></trkpt>
@@ -152,6 +157,15 @@ internal static class Program
             "round-tripped author email",
             "ada@example.com",
             reparsed.Metadata.Attribute(x => x.Author.Email)
+        );
+
+        // Extension content is carried through as XML, so the round-trip exercises
+        // XElement construction and namespace handling as well as the reader.
+        XNamespace style = "http://www.topografix.com/GPX/gpx_style/0/2";
+        Check(
+            "round-tripped track extension",
+            "C00000",
+            reparsed.Tracks.Single().Extensions.SingleOrDefault()?.Element(style + "color")?.Value
         );
     }
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Geo.Gps.Metadata;
 using Geo.Gps.Serialization;
 
@@ -42,6 +43,26 @@ public class GpsData
     public List<Route> Routes { get; set; }
     public List<Track> Tracks { get; set; }
     public List<Waypoint> Waypoints { get; set; }
+
+    /// <summary>
+    /// The file-level foreign content carried by the GPX document, as it appeared -
+    /// one entry per extension element, each holding its own namespace and children.
+    /// </summary>
+    /// <remarks>
+    /// GPX leaves &lt;extensions&gt; deliberately open, so the elements are handed over
+    /// as XML for the caller to read with LINQ to XML rather than modelled: no fixed
+    /// set of properties could keep up with what Garmin, Gaia GPS, the Topografix
+    /// gpx_style schema and the rest put in there. What the library guarantees is that
+    /// nothing is lost - anything read is written back.
+    /// <para>
+    /// GPX 1.1 keeps this in the &lt;gpx&gt; element's &lt;extensions&gt;; 1.0 has no
+    /// such element and holds the same content inline at the end of &lt;gpx&gt;. Both
+    /// are read here, and each is written in its own version's shape. Content a 1.1
+    /// document holds in &lt;metadata&gt;&lt;extensions&gt; is read here too, and
+    /// written back at the &lt;gpx&gt; level, which is where 1.0 would carry it.
+    /// </para>
+    /// </remarks>
+    public List<XElement> Extensions { get; } = new List<XElement>();
 
     public string ToGpx()
     {

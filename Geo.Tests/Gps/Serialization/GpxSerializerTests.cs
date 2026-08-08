@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -323,11 +324,25 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Compare(data, data2);
     }
 
+    // Extension content must survive being written and read back, which is what makes
+    // reference/gpx-style.gpx and the Garmin extensions in the corpus worth having.
+    // A track segment's extensions are the one exception - GPX 1.0 has nowhere to put
+    // them - so they are compared by the tests that know which version was written.
+    private static void CompareExtensions(List<XElement> expected, List<XElement> actual)
+    {
+        Assert.Equal(
+            expected.Select(x => x.ToString()).ToArray(),
+            actual.Select(x => x.ToString()).ToArray()
+        );
+    }
+
     private void Compare(GpsData data, GpsData data2)
     {
         Assert.Equal(data.Metadata.Count, data2.Metadata.Count);
         foreach (var entry in data.Metadata)
             Assert.Equal(entry.Value, data2.Metadata[entry.Key]);
+
+        CompareExtensions(data.Extensions, data2.Extensions);
 
         Assert.Equal(data.Tracks.Count, data2.Tracks.Count);
         for (var i = 0; i < data.Tracks.Count; i++)
@@ -338,6 +353,8 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             Assert.Equal(track1.Metadata.Count, track2.Metadata.Count);
             foreach (var entry in track1.Metadata)
                 Assert.Equal(entry.Value, track2.Metadata[entry.Key]);
+
+            CompareExtensions(track1.Extensions, track2.Extensions);
 
             Assert.Equal(track1.Segments.Count, track2.Segments.Count);
             for (var s = 0; s < track1.Segments.Count; s++)
@@ -353,6 +370,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
 
                     Compare(f1.Point.Coordinate, f2.Point.Coordinate);
                     Assert.Equal(f1.TimeUtc, f2.TimeUtc);
+                    CompareExtensions(f1.Extensions, f2.Extensions);
                 }
             }
         }
@@ -367,6 +385,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             Assert.Equal(wp1.Description, wp2.Description);
             Assert.Equal(wp1.Comment, wp2.Comment);
             Compare(wp1.Coordinate, wp2.Coordinate);
+            CompareExtensions(wp1.Extensions, wp2.Extensions);
         }
 
         Assert.Equal(data.Routes.Count, data2.Routes.Count);
@@ -378,6 +397,8 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             Assert.Equal(r1.Metadata.Count, r2.Metadata.Count);
             foreach (var entry in r1.Metadata)
                 Assert.Equal(entry.Value, r2.Metadata[entry.Key]);
+
+            CompareExtensions(r1.Extensions, r2.Extensions);
 
             Assert.Equal(r1.Waypoints.Count, r2.Waypoints.Count);
             for (var c = 0; c < r1.Waypoints.Count; c++)
@@ -392,6 +413,8 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.Equal(wp1.Name, wp2.Name);
         Assert.Equal(wp1.Description, wp2.Description);
         Assert.Equal(wp1.Comment, wp2.Comment);
+
+        CompareExtensions(wp1.Extensions, wp2.Extensions);
     }
 
     private static void Compare(Coordinate coord1, Coordinate coord2)

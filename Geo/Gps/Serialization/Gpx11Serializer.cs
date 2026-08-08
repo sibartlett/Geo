@@ -66,7 +66,8 @@ public class Gpx11Serializer : GpsXmlSerializer
             SerializeMetadata(data, ns),
             SerializeWaypoints(data, ns),
             SerializeRoutes(data, ns),
-            SerializeTracks(data, ns)
+            SerializeTracks(data, ns),
+            XmlExtensions.ExtensionsElement(ns, data.Extensions)
         );
 
         return new XDocument(new XDeclaration("1.0", "utf-8", null), root);
@@ -164,9 +165,12 @@ public class Gpx11Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetTrackMetadata(track, x => x.Description)
                 ),
+                // The schema sequences <extensions> before <trkseg>, not after it.
+                XmlExtensions.ExtensionsElement(ns, track.Extensions),
                 track.Segments.Select(segment => new XElement(
                     ns + "trkseg",
-                    segment.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "trkpt"))
+                    segment.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "trkpt")),
+                    XmlExtensions.ExtensionsElement(ns, segment.Extensions)
                 ))
             );
         }
@@ -184,6 +188,8 @@ public class Gpx11Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetRouteMetadata(route, x => x.Description)
                 ),
+                // The schema sequences <extensions> before <rtept>, not after it.
+                XmlExtensions.ExtensionsElement(ns, route.Extensions),
                 route.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "rtept"))
             );
         }
@@ -209,17 +215,26 @@ public class Gpx11Serializer : GpsXmlSerializer
                 : null,
             XmlExtensions.OptionalElement(ns + "name", waypoint.Name),
             XmlExtensions.OptionalElement(ns + "cmt", waypoint.Comment),
-            XmlExtensions.OptionalElement(ns + "desc", waypoint.Description)
+            XmlExtensions.OptionalElement(ns + "desc", waypoint.Description),
+            XmlExtensions.ExtensionsElement(ns, waypoint.Extensions)
         );
     }
 
     private static void ParseMetadata(XElement root, XNamespace ns, GpsData data)
     {
         data.Metadata.Attribute(x => x.Software, root.AttributeValue("creator"));
+        data.Extensions.AddRange(root.WrappedExtensions(ns));
 
         var metadata = root.Element(ns + "metadata");
         if (metadata == null)
             return;
+
+        // <metadata> has an <extensions> of its own. There is nowhere in the domain
+        // model that belongs to the metadata element specifically, and GPX 1.0 has no
+        // such element at all, so its content joins the file-level extensions and is
+        // written back at the <gpx> level - which is stable, since reading that
+        // document again puts it in the same place.
+        data.Extensions.AddRange(metadata.WrappedExtensions(ns));
 
         data.Metadata.Attribute(x => x.Name, metadata.ElementValue(ns + "name"));
         data.Metadata.Attribute(x => x.Description, metadata.ElementValue(ns + "desc"));
@@ -267,19 +282,24 @@ public class Gpx11Serializer : GpsXmlSerializer
             track.Metadata.Attribute(x => x.Name, trkType.ElementValue(ns + "name"));
             track.Metadata.Attribute(x => x.Description, trkType.ElementValue(ns + "desc"));
             track.Metadata.Attribute(x => x.Comment, trkType.ElementValue(ns + "cmt"));
+            track.Extensions.AddRange(trkType.WrappedExtensions(ns));
 
             foreach (var trksegType in trkType.Elements(ns + "trkseg"))
             {
                 var trkpt = trksegType.Elements(ns + "trkpt").ToList();
+                var extensions = trksegType.WrappedExtensions(ns).ToList();
 
-                // A segment with no <trkpt> carries nothing and is left out, as it
-                // was when an absent element deserialized to a null array.
-                if (trkpt.Count == 0)
+                // A segment with no <trkpt> and no extensions carries nothing and is
+                // left out, as it was when an absent element deserialized to a null
+                // array. One holding only extensions still has something to carry, so
+                // dropping it would lose them.
+                if (trkpt.Count == 0 && extensions.Count == 0)
                     continue;
 
                 var segment = new TrackSegment();
                 foreach (var wptType in trkpt)
                     segment.Waypoints.Add(ConvertWaypoint(wptType, ns));
+                segment.Extensions.AddRange(extensions);
                 track.Segments.Add(segment);
             }
 
@@ -295,6 +315,7 @@ public class Gpx11Serializer : GpsXmlSerializer
             route.Metadata.Attribute(x => x.Name, rteType.ElementValue(ns + "name"));
             route.Metadata.Attribute(x => x.Description, rteType.ElementValue(ns + "desc"));
             route.Metadata.Attribute(x => x.Comment, rteType.ElementValue(ns + "cmt"));
+            route.Extensions.AddRange(rteType.WrappedExtensions(ns));
 
             // <rtept> is optional in the GPX schema, so a route may carry only
             // metadata.
@@ -320,12 +341,15 @@ public class Gpx11Serializer : GpsXmlSerializer
             ? new Point(latitude, longitude, (double)elevation.Value)
             : new Point(latitude, longitude);
 
-        return new Waypoint(
+        var waypoint = new Waypoint(
             point,
             wptType.DateTimeElement(ns + "time"),
             wptType.ElementValue(ns + "name"),
             wptType.ElementValue(ns + "cmt"),
             wptType.ElementValue(ns + "desc")
         );
+
+        waypoint.Extensions.AddRange(wptType.WrappedExtensions(ns));
+        return waypoint;
     }
 }

@@ -72,7 +72,8 @@ public class Gpx10Serializer : GpsXmlSerializer
             XmlExtensions.OptionalElement(ns + "keywords", GetMetadata(data, x => x.Keywords)),
             SerializeWaypoints(data, ns),
             SerializeRoutes(data, ns),
-            SerializeTracks(data, ns)
+            SerializeTracks(data, ns),
+            XmlExtensions.InlineExtensionsElements(data.Extensions)
         );
 
         return new XDocument(new XDeclaration("1.0", "utf-8", null), root);
@@ -95,6 +96,10 @@ public class Gpx10Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetTrackMetadata(track, x => x.Description)
                 ),
+                // The 1.0 schema admits foreign elements before <trkseg>, not after it.
+                // It admits none at all inside <trkseg>, so a segment's extensions have
+                // nowhere to go in this version and are left out.
+                XmlExtensions.InlineExtensionsElements(track.Extensions),
                 track.Segments.Select(segment => new XElement(
                     ns + "trkseg",
                     segment.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "trkpt"))
@@ -115,6 +120,8 @@ public class Gpx10Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetRouteMetadata(route, x => x.Description)
                 ),
+                // The 1.0 schema admits foreign elements before <rtept>, not after it.
+                XmlExtensions.InlineExtensionsElements(route.Extensions),
                 route.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "rtept"))
             );
         }
@@ -140,8 +147,28 @@ public class Gpx10Serializer : GpsXmlSerializer
                 : null,
             XmlExtensions.OptionalElement(ns + "name", waypoint.Name),
             XmlExtensions.OptionalElement(ns + "cmt", waypoint.Comment),
-            XmlExtensions.OptionalElement(ns + "desc", waypoint.Description)
+            XmlExtensions.OptionalElement(ns + "desc", waypoint.Description),
+            XmlExtensions.InlineExtensionsElements(waypoint.Extensions)
         );
+    }
+
+    // GPX 1.0 has no <extensions> element - foreign content sits inline - but writers
+    // that also emit 1.1 often add one to a 1.0 document anyway. Both shapes are read,
+    // so nothing is dropped, and both are written back inline where the 1.0 schema
+    // wants them.
+    //
+    // What comes out of <extensions> is filtered to foreign namespaces, unlike in 1.1
+    // where it is taken as it stands. The two differ because 1.0 writes extensions
+    // inline: a child of <extensions> written without a prefix inherits the GPX
+    // namespace, and moving it inline would make it indistinguishable from a real GPX
+    // element. An <extensions> holding a bare <ele> would come back as the waypoint's
+    // elevation. Neither version admits such an element in the first place, so it is
+    // dropped rather than allowed to change what the file says.
+    private static IEnumerable<XElement> ReadExtensions(XElement? parent, XNamespace ns)
+    {
+        return parent
+            .InlineExtensions(ns)
+            .Concat(parent.WrappedExtensions(ns).Where(x => x.Name.Namespace != ns));
     }
 
     private static void ParseMetadata(XElement root, XNamespace ns, GpsData data)
@@ -153,6 +180,7 @@ public class Gpx10Serializer : GpsXmlSerializer
         data.Metadata.Attribute(x => x.Link, root.ElementValue(ns + "url"));
         data.Metadata.Attribute(x => x.Author.Name, root.ElementValue(ns + "author"));
         data.Metadata.Attribute(x => x.Author.Email, root.ElementValue(ns + "email"));
+        data.Extensions.AddRange(ReadExtensions(root, ns));
     }
 
     private static void ParseTracks(XElement root, XNamespace ns, GpsData data)
@@ -164,6 +192,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             track.Metadata.Attribute(x => x.Name, trkType.ElementValue(ns + "name"));
             track.Metadata.Attribute(x => x.Description, trkType.ElementValue(ns + "desc"));
             track.Metadata.Attribute(x => x.Comment, trkType.ElementValue(ns + "cmt"));
+            track.Extensions.AddRange(ReadExtensions(trkType, ns));
 
             foreach (var trksegType in trkType.Elements(ns + "trkseg"))
             {
@@ -192,6 +221,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             route.Metadata.Attribute(x => x.Name, rteType.ElementValue(ns + "name"));
             route.Metadata.Attribute(x => x.Description, rteType.ElementValue(ns + "desc"));
             route.Metadata.Attribute(x => x.Comment, rteType.ElementValue(ns + "cmt"));
+            route.Extensions.AddRange(ReadExtensions(rteType, ns));
 
             // <rtept> is optional in the GPX schema, so a route may carry only
             // metadata.
@@ -217,12 +247,15 @@ public class Gpx10Serializer : GpsXmlSerializer
             ? new Point(latitude, longitude, (double)elevation.Value)
             : new Point(latitude, longitude);
 
-        return new Waypoint(
+        var waypoint = new Waypoint(
             point,
             wptType.DateTimeElement(ns + "time"),
             wptType.ElementValue(ns + "name"),
             wptType.ElementValue(ns + "cmt"),
             wptType.ElementValue(ns + "desc")
         );
+
+        waypoint.Extensions.AddRange(ReadExtensions(wptType, ns));
+        return waypoint;
     }
 }

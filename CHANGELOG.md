@@ -8,6 +8,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **GPX extensions are read and written** ([#64]). `GpsData`, `Track`,
+  `TrackSegment`, `Route` and `Waypoint` each expose an `Extensions` collection
+  holding the foreign content of their GPX element as `XElement`s. Anything read is
+  written back, so extension data is no longer silently dropped on a round-trip,
+  and a caller can query it with LINQ to XML:
+
+  ```csharp
+  XNamespace style = "http://www.topografix.com/GPX/gpx_style/0/2";
+
+  var colour = data.Tracks[0]
+      .Extensions.FirstOrDefault(x => x.Name == style + "line")
+      ?.Element(style + "color")?.Value;
+  ```
+
+  The content is handed over as XML rather than modelled because `<extensions>` is
+  deliberately open — no fixed set of properties could keep up with what Garmin,
+  Gaia GPS, the Topografix `gpx_style` schema and the rest put in there. Both GPX
+  versions are supported, each written in its own shape: 1.1 wraps the content in
+  an `<extensions>` element, while 1.0 has no such element and carries it inline.
+
+  Three limits worth knowing. A `TrackSegment`'s extensions are 1.1-only — the GPX
+  1.0 schema ends `<trkseg>` with `<trkpt>` and admits no foreign element after
+  it — so writing 1.0 drops them. Content a 1.1 document holds in
+  `<metadata><extensions>` is read into `GpsData.Extensions` and written back at
+  the `<gpx>` level, which is where 1.0 would carry it; reading that output again
+  gives the same result. And an `<extensions>` element in a GPX 1.0 document — not
+  something that version has, but writers emit one anyway — is read, except for
+  children left in the GPX namespace: 1.0 carries extensions inline, so an
+  unprefixed `<ele>` moved out of `<extensions>` would be indistinguishable from a
+  real elevation.
+
+[#64]: https://github.com/sibartlett/Geo/issues/64
+
 ### NativeAOT support
 
 The GPS file serializers no longer use `System.Xml.Serialization`. `XmlSerializer`

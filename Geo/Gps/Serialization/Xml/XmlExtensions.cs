@@ -145,4 +145,75 @@ internal static class XmlExtensions
     {
         return string.IsNullOrWhiteSpace(value) ? null : new XElement(name, value!);
     }
+
+    /// <summary>
+    /// The foreign content GPX 1.1 holds in <paramref name="parent" />'s
+    /// &lt;extensions&gt; element.
+    /// </summary>
+    public static IEnumerable<XElement> WrappedExtensions(this XElement? parent, XNamespace ns)
+    {
+        return parent?.Element(ns + "extensions").ElementsOrEmpty().Select(Detach)
+            ?? Enumerable.Empty<XElement>();
+    }
+
+    /// <summary>
+    /// The foreign content GPX 1.0 holds inline, as children of
+    /// <paramref name="parent" /> that belong to some other namespace.
+    /// </summary>
+    /// <remarks>
+    /// 1.0 has no &lt;extensions&gt; element; its schema ends each type with an
+    /// <c>xsd:any namespace="##other"</c> instead, so what marks content as foreign is
+    /// its namespace rather than its position. Comparing against the namespace the
+    /// document actually used means this holds for a file missing its default xmlns
+    /// too, where the GPX elements are in no namespace and an extension still is not.
+    /// </remarks>
+    public static IEnumerable<XElement> InlineExtensions(this XElement? parent, XNamespace ns)
+    {
+        return parent.ElementsOrEmpty().Where(x => x.Name.Namespace != ns).Select(Detach);
+    }
+
+    /// <summary>
+    /// An &lt;extensions&gt; element holding <paramref name="extensions" />, or
+    /// <c>null</c> when there are none - GPX 1.1 makes the element optional, and an
+    /// empty one carries nothing.
+    /// </summary>
+    public static XElement? ExtensionsElement(XNamespace ns, IEnumerable<XElement>? extensions)
+    {
+        if (extensions == null)
+            return null;
+
+        var content = extensions.Where(x => x != null).Select(Detach).ToList();
+        return content.Count == 0 ? null : new XElement(ns + "extensions", content);
+    }
+
+    /// <summary>
+    /// <paramref name="extensions" /> ready to be written inline, as GPX 1.0 carries
+    /// them.
+    /// </summary>
+    public static IEnumerable<XElement> InlineExtensionsElements(IEnumerable<XElement>? extensions)
+    {
+        return extensions == null
+            ? Enumerable.Empty<XElement>()
+            : extensions.Where(x => x != null).Select(Detach);
+    }
+
+    private static IEnumerable<XElement> ElementsOrEmpty(this XElement? element)
+    {
+        return element == null ? Enumerable.Empty<XElement>() : element.Elements();
+    }
+
+    /// <summary>
+    /// A copy of <paramref name="element" /> belonging to no document.
+    /// </summary>
+    /// <remarks>
+    /// Copied in both directions, which keeps the two trees independent. An element
+    /// kept from a parse would otherwise hold its whole source document alive through
+    /// its parent chain, and one handed to the writer would be re-parented into the
+    /// document being written - so serializing would quietly reach back and modify the
+    /// <see cref="GpsData" /> it was given.
+    /// </remarks>
+    private static XElement Detach(XElement element)
+    {
+        return new XElement(element);
+    }
 }
