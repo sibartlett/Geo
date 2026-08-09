@@ -84,6 +84,26 @@ public abstract class GpsXmlSerializer : GpsXmlDeSerializer, IGpsFileSerializer
 
     protected abstract XDocument SerializeInternal(GpsData data);
 
+    // Both GPX schemas declare creator use="required". It used to be left out when
+    // the metadata said nothing about what produced the file, which made every such
+    // document invalid against the schema it announces in its own root element.
+    private const string DefaultCreator = "Geo";
+
+    /// <summary>
+    /// What to name as the document's creator: what the data says produced it, or this
+    /// library when it says nothing.
+    /// </summary>
+    /// <remarks>
+    /// A creator that was read from a file is kept rather than replaced. The attribute
+    /// names the software the document came from, and that a file has since passed
+    /// through Geo does not make Geo its origin - a round-trip should not quietly
+    /// reassign authorship of somebody's track.
+    /// </remarks>
+    protected static string GetCreator(GpsData data)
+    {
+        return GetMetadata(data, x => x.Software) ?? DefaultCreator;
+    }
+
     // The three accessors below answer null for an attribute that is unset or blank,
     // so a caller can pass the result straight into XElement's constructor - which
     // ignores null content - instead of testing it first.

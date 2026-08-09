@@ -61,9 +61,7 @@ public class Gpx10Serializer : GpsXmlSerializer
         var root = new XElement(
             ns + "gpx",
             new XAttribute("version", "1.0"),
-            GetMetadata(data, x => x.Software) is { } creator
-                ? new XAttribute("creator", creator)
-                : null,
+            new XAttribute("creator", GetCreator(data)),
             XmlExtensions.OptionalElement(ns + "name", GetMetadata(data, x => x.Name)),
             XmlExtensions.OptionalElement(ns + "desc", GetMetadata(data, x => x.Description)),
             XmlExtensions.OptionalElement(ns + "author", GetMetadata(data, x => x.Author.Name)),

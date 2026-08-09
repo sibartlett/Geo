@@ -60,9 +60,7 @@ public class Gpx11Serializer : GpsXmlSerializer
         var root = new XElement(
             ns + "gpx",
             new XAttribute("version", "1.1"),
-            GetMetadata(data, x => x.Software) is { } creator
-                ? new XAttribute("creator", creator)
-                : null,
+            new XAttribute("creator", GetCreator(data)),
             SerializeMetadata(data, ns),
             SerializeWaypoints(data, ns),
             SerializeRoutes(data, ns),
