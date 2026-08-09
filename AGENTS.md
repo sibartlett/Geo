@@ -125,6 +125,13 @@ C# conventions observed in the codebase (see `build/.editorconfig`):
   (e.g. `Null_input_string_throws_argument_exception`).
 - Serializer tests read sample files from the top-level `reference/` directory
   (see `Gps/Serialization/SerializerTestFixtureBase.cs`). Add new sample data there.
+- **GPX output is validated against the real schemas** in `reference/schemas/`
+  (`GpxSchemaValidationTests`). The round-trip tests only prove Geo's writer and
+  reader agree with each other, which is how `<gpx>` came to be written without its
+  required `creator`; the schemas are the independent check. Note the ignore rule
+  there: GPX 1.0's `xsd:any` is *strict*, so a 1.0 document carrying any extension
+  cannot validate without every vendor's schema, and errors reported against
+  non-GPX elements are skipped.
 
 ## Key architectural notes
 

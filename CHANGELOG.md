@@ -81,6 +81,18 @@ part of CI.
 
 ### Fixed
 
+- **Written GPX always carries its `creator` attribute.** Both schemas declare it
+  `use="required"`, but it was written only when the metadata said what produced
+  the file — so every document Geo built from scratch was invalid against the
+  schema its own root element announces. A `creator` read from a file is still
+  preserved rather than replaced; only the empty case now falls back, to `Geo`.
+
+  GPX output is now validated against the bundled `reference/schemas/gpx10.xsd`
+  and `gpx11.xsd` as part of the test suite — what every reference file writes
+  back in both versions, plus documents built by hand. That is what turned this
+  up, and it is a standing gate on the class of bug where Geo's reader and writer
+  agree with each other but not with GPX.
+
 - A PocketFMS flightplan with no `<LIB>` leg, or one whose points carry no
   coordinates, is reported by returning `null` like any other document the
   deserializer cannot read. It used to index the first leg and dereference an
