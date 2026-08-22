@@ -67,7 +67,11 @@ public class Gpx10Serializer : GpsXmlSerializer
             XmlExtensions.OptionalElement(ns + "author", GetMetadata(data, x => x.Author.Name)),
             XmlExtensions.OptionalElement(ns + "email", GetMetadata(data, x => x.Author.Email)),
             XmlExtensions.OptionalElement(ns + "url", GetMetadata(data, x => x.Link)),
+            data.Metadata.TimeUtc.HasValue
+                ? new XElement(ns + "time", XmlExtensions.ToString(data.Metadata.TimeUtc.Value))
+                : null,
             XmlExtensions.OptionalElement(ns + "keywords", GetMetadata(data, x => x.Keywords)),
+            XmlExtensions.BoundsElement(ns, data.GetBounds()),
             SerializeWaypoints(data, ns),
             SerializeRoutes(data, ns),
             SerializeTracks(data, ns),
@@ -178,6 +182,12 @@ public class Gpx10Serializer : GpsXmlSerializer
         data.Metadata.Attribute(x => x.Link, root.ElementValue(ns + "url"));
         data.Metadata.Attribute(x => x.Author.Name, root.ElementValue(ns + "author"));
         data.Metadata.Attribute(x => x.Author.Email, root.ElementValue(ns + "email"));
+        data.Metadata.TimeUtc = root.DateTimeElement(ns + "time");
+
+        // <bounds> is not read: it only restates the extent of the coordinates that
+        // follow it, and GpsData.GetBounds computes that from the data itself. Keeping
+        // the file's copy would mean writing back an extent that stopped being true as
+        // soon as a caller added a waypoint.
         data.Extensions.AddRange(ReadExtensions(root, ns));
     }
 

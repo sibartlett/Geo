@@ -252,10 +252,24 @@ public class GpxSerializerTests : SerializerTestFixtureBase
     [Fact]
     public void Gpx11_omits_the_metadata_element_when_there_is_none()
     {
+        // Nothing to describe and nothing to take an extent of.
+        Assert.DoesNotContain("<metadata", new Gpx11Serializer().Serialize(new GpsData()));
+    }
+
+    [Fact]
+    public void Gpx11_writes_a_metadata_element_for_bounds_alone()
+    {
+        // Data with no metadata still has an extent, and <bounds> lives inside
+        // <metadata> in 1.1 - so the element appears where it used to be left out.
         var data = new GpsData();
         data.Waypoints.Add(new Waypoint(53.4808, -2.2426));
 
-        Assert.DoesNotContain("<metadata", new Gpx11Serializer().Serialize(data));
+        var gpx = XDocument.Parse(new Gpx11Serializer().Serialize(data));
+        XNamespace ns = "http://www.topografix.com/GPX/1/1";
+
+        var metadata = gpx.Root!.Element(ns + "metadata");
+        Assert.NotNull(metadata);
+        Assert.Equal(new[] { "bounds" }, metadata!.Elements().Select(x => x.Name.LocalName));
     }
 
     [Theory]
@@ -343,6 +357,10 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             Assert.Equal(entry.Value, data2.Metadata[entry.Key]);
 
         CompareExtensions(data.Extensions, data2.Extensions);
+
+        // TimeUtc is a property rather than one of the keyed attributes, so the
+        // dictionary comparison above does not reach it.
+        Assert.Equal(data.Metadata.TimeUtc, data2.Metadata.TimeUtc);
 
         Assert.Equal(data.Tracks.Count, data2.Tracks.Count);
         for (var i = 0; i < data.Tracks.Count; i++)

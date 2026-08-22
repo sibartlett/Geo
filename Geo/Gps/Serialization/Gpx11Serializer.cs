@@ -79,6 +79,8 @@ public class Gpx11Serializer : GpsXmlSerializer
         var copyright = SerializeCopyright(data, ns);
         var link = GetMetadata(data, x => x.Link);
 
+        // In the order the schema sequences them: name, desc, author, copyright, link,
+        // time, keywords, bounds.
         var metadata = new XElement(
             ns + "metadata",
             XmlExtensions.OptionalElement(ns + "name", GetMetadata(data, x => x.Name)),
@@ -86,7 +88,11 @@ public class Gpx11Serializer : GpsXmlSerializer
             author,
             copyright,
             link == null ? null : new XElement(ns + "link", new XAttribute("href", link)),
-            XmlExtensions.OptionalElement(ns + "keywords", GetMetadata(data, x => x.Keywords))
+            data.Metadata.TimeUtc.HasValue
+                ? new XElement(ns + "time", XmlExtensions.ToString(data.Metadata.TimeUtc.Value))
+                : null,
+            XmlExtensions.OptionalElement(ns + "keywords", GetMetadata(data, x => x.Keywords)),
+            XmlExtensions.BoundsElement(ns, data.GetBounds())
         );
 
         return metadata.HasElements ? metadata : null;
@@ -237,6 +243,12 @@ public class Gpx11Serializer : GpsXmlSerializer
         data.Metadata.Attribute(x => x.Name, metadata.ElementValue(ns + "name"));
         data.Metadata.Attribute(x => x.Description, metadata.ElementValue(ns + "desc"));
         data.Metadata.Attribute(x => x.Keywords, metadata.ElementValue(ns + "keywords"));
+        data.Metadata.TimeUtc = metadata.DateTimeElement(ns + "time");
+
+        // <bounds> is not read: it only restates the extent of the coordinates that
+        // follow it, and GpsData.GetBounds computes that from the data itself. Keeping
+        // the file's copy would mean writing back an extent that stopped being true as
+        // soon as a caller added a waypoint.
 
         var link = metadata.Elements(ns + "link").FirstOrDefault();
         if (link != null)

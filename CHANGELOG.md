@@ -10,6 +10,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The file-level `<time>` and `<bounds>` are no longer dropped.** 56 of the 65
+  reference files carry a `<time>` and 55 a `<bounds>`; both went unread and
+  unwritten. They are handled differently, because they are different kinds of
+  thing:
+
+  - `GpsMetadata.TimeUtc` (`DateTime?`) holds when the file says it was created —
+    something only the file can tell you, so it is kept and written back. A
+    property rather than one of the keyed metadata attributes because those are
+    strings and GPX declares the element `xsd:dateTime`; a value kept as text
+    could be written back in a form no other reader would accept.
+    `Waypoint.TimeUtc` already carried a GPX time this way.
+  - `<bounds>` is **computed at write time, not stored.** GPX defines it as the
+    extent of the coordinates in the file, so keeping the file's copy would mean
+    writing back an extent that stopped being true the moment a caller added a
+    waypoint.
+
+- **`GetBounds()` on `GpsData`, `Track`, `TrackSegment` and `Route`**, returning
+  the `Envelope` covering their coordinates, or `null` when they hold none. There
+  was previously no way to ask any of them for its extent.
+
+  Two consequences of computing rather than storing. Of the 55 reference files
+  with a `<bounds>`, 53 match what Geo computes and 2 do not — in both the file's
+  own bounds disagrees with its own coordinates, and the written output now
+  corrects it. And because `<bounds>` lives inside `<metadata>` in GPX 1.1, a
+  document with data but no metadata now gains a `<metadata>` element holding just
+  the bounds, where the element used to be omitted.
+
 - **GPX extensions are read and written** ([#64]). `GpsData`, `Track`,
   `TrackSegment`, `Route` and `Waypoint` each expose an `Extensions` collection
   holding the foreign content of their GPX element as `XElement`s. Anything read is

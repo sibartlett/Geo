@@ -157,6 +157,12 @@ C# conventions observed in the codebase (see `build/.editorconfig`):
   they stay culture-invariant, and `DateTime` uses `RoundtripKind`.
   Take the namespace from the document (`root.Name.Namespace`) rather than
   assuming it, so files missing their default `xmlns` still parse.
+- **`<bounds>` is computed, never stored.** `GpsData`/`Track`/`TrackSegment`/`Route`
+  expose `GetBounds()`, and the GPX writers call it. GPX defines the element as the
+  extent of the coordinates in the file, so a value read and kept would go stale as
+  soon as a caller changed the data. The file-level `<time>` *is* kept, on
+  `GpsMetadata.TimeUtc` - a typed property rather than a keyed attribute, since the
+  attributes are strings and the element is `xsd:dateTime`.
 - **GPX extensions are carried through, not modelled.** `GpsData`, `Track`,
   `TrackSegment`, `Route` and `Waypoint` each hold an `Extensions` list of
   `XElement`. Elements are copied on the way in and on the way out

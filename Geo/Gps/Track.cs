@@ -40,6 +40,26 @@ public class Track : IHasLength
         return new LineString(Segments.SelectMany(x => x.Waypoints).Select(x => x.Coordinate));
     }
 
+    /// <summary>
+    /// The smallest envelope containing every coordinate in this track, or <c>null</c> when there
+    /// are none.
+    /// </summary>
+    /// <remarks>
+    /// GPX defines its &lt;bounds&gt; element as the extent of the coordinates in the
+    /// file, so the serializers compute it from the data at the point of writing rather
+    /// than storing what they read. Kept, it would go stale the moment a caller added a
+    /// waypoint, and the file would then carry an extent that did not describe it.
+    /// </remarks>
+    public Envelope? GetBounds()
+    {
+        return Segments.Aggregate(
+            (Envelope?)null,
+            // A segment with no waypoints has no bounds to fold in; Combine is an
+            // instance method, so the null has to be stepped around rather than passed.
+            (bounds, segment) => segment.GetBounds()?.Combine(bounds) ?? bounds
+        );
+    }
+
     public TrackSegment? GetFirstSegment()
     {
         return Segments.Count == 0 ? default : Segments[0];

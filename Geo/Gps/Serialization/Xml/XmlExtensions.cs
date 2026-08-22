@@ -147,6 +147,29 @@ internal static class XmlExtensions
     }
 
     /// <summary>
+    /// A &lt;bounds&gt; element describing <paramref name="bounds" />, or <c>null</c>
+    /// when there is nothing to describe.
+    /// </summary>
+    /// <remarks>
+    /// The same four required attributes in both GPX versions. The element is optional,
+    /// so data holding no coordinates simply writes none rather than an envelope of
+    /// zeroes, which would claim the file covers a point off the coast of Africa.
+    /// </remarks>
+    public static XElement? BoundsElement(XNamespace ns, Envelope? bounds)
+    {
+        if (bounds == null)
+            return null;
+
+        return new XElement(
+            ns + "bounds",
+            new XAttribute("minlat", ToString((decimal)bounds.MinLat)),
+            new XAttribute("minlon", ToString((decimal)bounds.MinLon)),
+            new XAttribute("maxlat", ToString((decimal)bounds.MaxLat)),
+            new XAttribute("maxlon", ToString((decimal)bounds.MaxLon))
+        );
+    }
+
+    /// <summary>
     /// The foreign content GPX 1.1 holds in <paramref name="parent" />'s
     /// &lt;extensions&gt; element.
     /// </summary>

@@ -38,4 +38,25 @@ public class Route : IHasLength
     {
         return new LineString(Waypoints.Select(wp => wp.Coordinate));
     }
+
+    /// <summary>
+    /// The smallest envelope containing every coordinate on this route, or <c>null</c> when there
+    /// are none.
+    /// </summary>
+    /// <remarks>
+    /// GPX defines its &lt;bounds&gt; element as the extent of the coordinates in the
+    /// file, so the serializers compute it from the data at the point of writing rather
+    /// than storing what they read. Kept, it would go stale the moment a caller added a
+    /// waypoint, and the file would then carry an extent that did not describe it.
+    /// </remarks>
+    public Envelope? GetBounds()
+    {
+        return Waypoints.Aggregate(
+            (Envelope?)null,
+            // Point.GetBounds is null-safe where Waypoint.Coordinate is not: a waypoint
+            // holding an empty Point has no coordinate, and this promises null for data
+            // with none rather than faulting on it.
+            (bounds, waypoint) => waypoint.Point.GetBounds()?.Combine(bounds) ?? bounds
+        );
+    }
 }

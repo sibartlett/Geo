@@ -64,6 +64,39 @@ public class GpsData
     /// </remarks>
     public List<XElement> Extensions { get; } = new List<XElement>();
 
+    /// <summary>
+    /// The smallest envelope containing every coordinate this holds - waypoints, route
+    /// points and track points alike - or <c>null</c> when there are none.
+    /// </summary>
+    /// <remarks>
+    /// GPX defines its &lt;bounds&gt; element as the extent of the coordinates in the
+    /// file, so the serializers compute it from the data at the point of writing rather
+    /// than storing what they read. Kept, it would go stale the moment a caller added a
+    /// waypoint, and the file would then carry an extent that did not describe it.
+    /// </remarks>
+    public Envelope? GetBounds()
+    {
+        var bounds = Waypoints.Aggregate(
+            (Envelope?)null,
+            // Point.GetBounds is null-safe where Waypoint.Coordinate is not: a waypoint
+            // holding an empty Point has no coordinate, and this promises null for data
+            // with none rather than faulting on it.
+            (current, waypoint) => waypoint.Point.GetBounds()?.Combine(current) ?? current
+        );
+
+        // A route or track holding no waypoints has no bounds to fold in; Combine is an
+        // instance method, so the null has to be stepped around rather than passed.
+        bounds = Routes.Aggregate(
+            bounds,
+            (current, route) => route.GetBounds()?.Combine(current) ?? current
+        );
+
+        return Tracks.Aggregate(
+            bounds,
+            (current, track) => track.GetBounds()?.Combine(current) ?? current
+        );
+    }
+
     public string ToGpx()
     {
         return FileSerializers[1].Serialize(this);
