@@ -49,7 +49,10 @@ internal static class Program
             <desc>A short track</desc>
             <author><name>Ada Lovelace</name><email id="ada" domain="example.com" /></author>
           </metadata>
-          <wpt lat="53.4808" lon="-2.2426"><ele>38</ele><name>Manchester</name></wpt>
+          <wpt lat="53.4808" lon="-2.2426"><ele>38</ele><name>Manchester</name>
+            <link href="https://example.com/one"><text>one</text></link>
+            <link href="https://example.com/two"><text>two</text></link>
+          </wpt>
           <rte><name>A route</name><rtept lat="51.5072" lon="-0.1276" /></rte>
           <trk>
             <name>A track</name>
@@ -158,6 +161,9 @@ internal static class Program
             "ada@example.com",
             reparsed.Metadata.Attribute(x => x.Author.Email)
         );
+
+        Check("round-tripped links", 2, reparsed.Waypoints[0].Links.Count);
+        Check("round-tripped link text", "two", reparsed.Waypoints[0].Links[1].Text);
 
         // Extension content is carried through as XML, so the round-trip exercises
         // XElement construction and namespace handling as well as the reader.

@@ -10,6 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Links are read and written, as a typed model.** `GpsData`, `Waypoint`, `Route`
+  and `Track` each expose a `Links` collection of the new `GpsLink` (`Href`, `Text`,
+  `Type`):
+
+  ```csharp
+  var waypoint = data.Waypoints[0];
+  waypoint.Links.Add(new GpsLink("https://example.com", "More about here", "text/html"));
+  ```
+
+  GPX 1.1 allows any number of `<link>` elements on each of those four, with a text
+  and a media type. GPX 1.0 has a single `<url>`/`<urlname>` pair in the same
+  places, so a document written as 1.0 keeps the first link and drops every media
+  type — there is nowhere in that version to put them. Reading 1.0 fills the same
+  collection, so links cross between the versions.
+
+  This replaces the `link` metadata attribute, which held one address and dropped
+  its text — see **Breaking changes**. It also picks up `<urlname>` and the
+  per-element `<url>`s, neither of which was read or written before.
+
 - **The file-level `<time>` and `<bounds>` are no longer dropped.** 56 of the 65
   reference files carry a `<time>` and 55 a `<bounds>`; both went unread and
   unwritten. They are handled differently, because they are different kinds of
@@ -102,6 +121,25 @@ part of CI.
   taking and returning the removed model types. `IGpsFileDeSerializer` and
   `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
   interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
+- **The `link` metadata attribute has been replaced by `Links`.**
+  `data.Metadata.Attribute(x => x.Link)` no longer compiles; use `data.Links`
+  instead. The attribute could hold only a single address and dropped the link's
+  text, which lost 82 of the 88 links in the reference corpus — most of them on
+  waypoints, where the attribute had no equivalent at all.
+
+  ```csharp
+  // before
+  data.Metadata.Attribute(x => x.Link, "https://example.com");
+  var href = data.Metadata.Attribute(x => x.Link);
+
+  // after
+  data.Links.Add(new GpsLink("https://example.com"));
+  var href = data.Links.FirstOrDefault()?.Href;
+  ```
+
+  `Author.Link` is unchanged. GPX allows a person only one link, so the single
+  string attribute still expresses it.
+
 - **`UnitAttribute` has been removed** and the `[Unit(...)]` annotations no longer
   appear on `AreaUnit`, `DistanceUnit` and `SpeedUnit`. The attribute was
   `internal`, and the values it carried are unchanged.

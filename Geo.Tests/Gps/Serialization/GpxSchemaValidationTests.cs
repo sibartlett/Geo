@@ -85,6 +85,22 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
         return errors;
     }
 
+    /// <summary>
+    /// Reference files that cannot produce a schema-valid document no matter how
+    /// faithfully they are written, mapped to why.
+    /// </summary>
+    /// <remarks>
+    /// Named rather than filtered by message, so that adding one is a deliberate act
+    /// and the reason travels with it.
+    /// </remarks>
+    private static readonly Dictionary<string, string> CannotBeValid = new()
+    {
+        ["tpo-sample3.gpx"] =
+            "its <url> elements hold Windows file paths (w:\\photo.jpg, c:document.txt) "
+            + "rather than URIs, and carrying them through unchanged is more useful than "
+            + "dropping or rewriting a caller's data",
+    };
+
     [Fact]
     public void Everything_written_from_the_reference_files_is_valid()
     {
@@ -95,6 +111,9 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
 
         foreach (var fileInfo in GetReferenceFileDirectory("gpx").EnumerateFiles())
         {
+            if (CannotBeValid.ContainsKey(fileInfo.Name))
+                continue;
+
             using var stream = new FileStream(fileInfo.FullName, FileMode.Open);
             var wrapper = new StreamWrapper(stream);
 
@@ -144,7 +163,7 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
         data.Metadata.Attribute(x => x.Name, "Sample");
         data.Metadata.Attribute(x => x.Description, "A description");
         data.Metadata.Attribute(x => x.Keywords, "one, two");
-        data.Metadata.Attribute(x => x.Link, "https://example.com/track");
+        data.Links.Add(new GpsLink("https://example.com/track", "The track", "text/html"));
         data.Metadata.Attribute(x => x.Author.Name, "Ada Lovelace");
         data.Metadata.Attribute(x => x.Author.Email, "ada@example.com");
         data.Metadata.Attribute(x => x.Author.Link, "https://example.com/ada");
@@ -204,6 +223,27 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
 
         Assert.Contains("<extensions>", written);
         Assert.Empty(Validate(LoadSchemas(), written));
+    }
+
+    [Fact]
+    public void An_unusable_url_is_carried_through_rather_than_dropped()
+    {
+        // The one reference file excluded above, and why. Its <url> values are Windows
+        // file paths, so anything written from it is invalid against the schema - but
+        // the alternative is losing a caller's data or inventing a URI for them, and
+        // neither is the serializer's call to make.
+        var fileInfo = GetReferenceFileDirectory("gpx").EnumerateFiles("tpo-sample3.gpx").Single();
+
+        using var stream = new FileStream(fileInfo.FullName, FileMode.Open);
+        var data = GpsData.Parse(stream);
+
+        Assert.NotNull(data);
+        Assert.Contains(data!.Waypoints.SelectMany(x => x.Links), x => x.Href == @"w:\photo.jpg");
+
+        // Written back as it arrived, and the schema does object - which is the file's
+        // problem, not the writer's.
+        Assert.Contains(@"w:\photo.jpg", data.ToGpx());
+        Assert.NotEmpty(Validate(LoadSchemas(), data.ToGpx()));
     }
 
     [Fact]

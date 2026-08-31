@@ -34,7 +34,6 @@ public class GpsMetadata : Metadata<GpsMetadata.MetadataKeys>
         public string Name => "name";
         public string Description => "description";
         public string Keywords => "keywords";
-        public string Link => "link";
         public string Software => "creator";
 
         public class AuthorKeys

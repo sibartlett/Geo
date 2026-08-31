@@ -65,6 +65,19 @@ public class GpsData
     public List<XElement> Extensions { get; } = new List<XElement>();
 
     /// <summary>
+    /// Links describing the file as a whole.
+    /// </summary>
+    /// <remarks>
+    /// Replaces the single <c>link</c> metadata attribute of earlier versions, which
+    /// could hold only one address and dropped its text.
+    /// <para>
+    /// GPX 1.1 allows any number here; 1.0 has only a single &lt;url&gt; and
+    /// &lt;urlname&gt;, so writing 1.0 keeps the first and drops the rest.
+    /// </para>
+    /// </remarks>
+    public List<GpsLink> Links { get; } = new List<GpsLink>();
+
+    /// <summary>
     /// The smallest envelope containing every coordinate this holds - waypoints, route
     /// points and track points alike - or <c>null</c> when there are none.
     /// </summary>

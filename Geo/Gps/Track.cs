@@ -30,6 +30,15 @@ public class Track : IHasLength
     /// </remarks>
     public List<XElement> Extensions { get; } = new List<XElement>();
 
+    /// <summary>
+    /// Links describing this track.
+    /// </summary>
+    /// <remarks>
+    /// GPX 1.1 allows any number here; 1.0 has only a single &lt;url&gt; and
+    /// &lt;urlname&gt;, so writing 1.0 keeps the first and drops the rest.
+    /// </remarks>
+    public List<GpsLink> Links { get; } = new List<GpsLink>();
+
     public Distance GetLength()
     {
         return ToLineString().GetLength();

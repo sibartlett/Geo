@@ -101,7 +101,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         data.Metadata.Attribute(x => x.Name, "Sample track");
         data.Metadata.Attribute(x => x.Description, "A sample description");
         data.Metadata.Attribute(x => x.Keywords, "hiking, sample, gpx");
-        data.Metadata.Attribute(x => x.Link, "https://example.com/track");
+        data.Links.Add(new GpsLink("https://example.com/track", "The track", null));
         data.Metadata.Attribute(x => x.Author.Name, "Ada Lovelace");
         data.Metadata.Attribute(x => x.Author.Email, "ada@example.com");
         data.Metadata.Attribute(x => x.Author.Link, "https://example.com/ada");
@@ -238,14 +238,16 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         data.Metadata.Attribute(x => x.Name, "Sample");
         data.Metadata.Attribute(x => x.Description, "A description");
         data.Metadata.Attribute(x => x.Author.Name, "Ada Lovelace");
-        data.Metadata.Attribute(x => x.Link, "https://example.com/track");
+        data.Links.Add(new GpsLink("https://example.com/track", "The track", null));
 
         var gpx = XDocument.Parse(new Gpx10Serializer().Serialize(data));
         XNamespace ns = "http://www.topografix.com/GPX/1/0";
 
         var children = gpx.Root!.Elements().Select(x => x.Name.LocalName).ToArray();
 
-        Assert.Equal(new[] { "name", "desc", "author", "url" }, children);
+        // <urlname> carries the link's text, which the single Link metadata attribute
+        // this replaced had nowhere to put.
+        Assert.Equal(new[] { "name", "desc", "author", "url", "urlname" }, children);
         Assert.Null(gpx.Root.Element(ns + "metadata"));
     }
 
@@ -328,14 +330,14 @@ public class GpxSerializerTests : SerializerTestFixtureBase
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpxData));
         var data2 = serializer.DeSerialize(new StreamWrapper(stream));
-        Compare(data, data2);
+        Compare(data, data2, writtenAsGpx10: true);
     }
 
     private void Compare(Gpx11Serializer serializer, GpsData data, string gpxData)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpxData));
         var data2 = serializer.DeSerialize(new StreamWrapper(stream));
-        Compare(data, data2);
+        Compare(data, data2, writtenAsGpx10: false);
     }
 
     // Extension content must survive being written and read back, which is what makes
@@ -350,13 +352,37 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         );
     }
 
-    private void Compare(GpsData data, GpsData data2)
+    // GPX 1.0 has a single <url>/<urlname> pair where 1.1 has any number of <link>
+    // elements, so a document written as 1.0 keeps only the first link and never a
+    // media type. Comparing the whole list either way would fail on the four links
+    // reference/gpx/multiple-links.gpx puts on one waypoint.
+    private static void CompareLinks(
+        List<GpsLink> expected,
+        List<GpsLink> actual,
+        bool writtenAsGpx10
+    )
+    {
+        var kept = writtenAsGpx10 ? expected.Take(1).ToList() : expected;
+
+        Assert.Equal(kept.Count, actual.Count);
+        for (var i = 0; i < kept.Count; i++)
+        {
+            Assert.Equal(kept[i].Href, actual[i].Href);
+            Assert.Equal(kept[i].Text, actual[i].Text);
+
+            if (!writtenAsGpx10)
+                Assert.Equal(kept[i].Type, actual[i].Type);
+        }
+    }
+
+    private void Compare(GpsData data, GpsData data2, bool writtenAsGpx10)
     {
         Assert.Equal(data.Metadata.Count, data2.Metadata.Count);
         foreach (var entry in data.Metadata)
             Assert.Equal(entry.Value, data2.Metadata[entry.Key]);
 
         CompareExtensions(data.Extensions, data2.Extensions);
+        CompareLinks(data.Links, data2.Links, writtenAsGpx10);
 
         // TimeUtc is a property rather than one of the keyed attributes, so the
         // dictionary comparison above does not reach it.
@@ -373,6 +399,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
                 Assert.Equal(entry.Value, track2.Metadata[entry.Key]);
 
             CompareExtensions(track1.Extensions, track2.Extensions);
+            CompareLinks(track1.Links, track2.Links, writtenAsGpx10);
 
             Assert.Equal(track1.Segments.Count, track2.Segments.Count);
             for (var s = 0; s < track1.Segments.Count; s++)
@@ -389,6 +416,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
                     Compare(f1.Point.Coordinate, f2.Point.Coordinate);
                     Assert.Equal(f1.TimeUtc, f2.TimeUtc);
                     CompareExtensions(f1.Extensions, f2.Extensions);
+                    CompareLinks(f1.Links, f2.Links, writtenAsGpx10);
                 }
             }
         }
@@ -404,6 +432,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             Assert.Equal(wp1.Comment, wp2.Comment);
             Compare(wp1.Coordinate, wp2.Coordinate);
             CompareExtensions(wp1.Extensions, wp2.Extensions);
+            CompareLinks(wp1.Links, wp2.Links, writtenAsGpx10);
         }
 
         Assert.Equal(data.Routes.Count, data2.Routes.Count);
@@ -417,14 +446,15 @@ public class GpxSerializerTests : SerializerTestFixtureBase
                 Assert.Equal(entry.Value, r2.Metadata[entry.Key]);
 
             CompareExtensions(r1.Extensions, r2.Extensions);
+            CompareLinks(r1.Links, r2.Links, writtenAsGpx10);
 
             Assert.Equal(r1.Waypoints.Count, r2.Waypoints.Count);
             for (var c = 0; c < r1.Waypoints.Count; c++)
-                Compare(r1.Waypoints[c], r2.Waypoints[c]);
+                Compare(r1.Waypoints[c], r2.Waypoints[c], writtenAsGpx10);
         }
     }
 
-    private static void Compare(Waypoint wp1, Waypoint wp2)
+    private static void Compare(Waypoint wp1, Waypoint wp2, bool writtenAsGpx10)
     {
         Compare(wp1.Coordinate, wp2.Coordinate);
 
@@ -433,6 +463,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.Equal(wp1.Comment, wp2.Comment);
 
         CompareExtensions(wp1.Extensions, wp2.Extensions);
+        CompareLinks(wp1.Links, wp2.Links, writtenAsGpx10);
     }
 
     private static void Compare(Coordinate coord1, Coordinate coord2)

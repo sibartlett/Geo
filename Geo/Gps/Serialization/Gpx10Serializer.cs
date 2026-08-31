@@ -66,7 +66,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             XmlExtensions.OptionalElement(ns + "desc", GetMetadata(data, x => x.Description)),
             XmlExtensions.OptionalElement(ns + "author", GetMetadata(data, x => x.Author.Name)),
             XmlExtensions.OptionalElement(ns + "email", GetMetadata(data, x => x.Author.Email)),
-            XmlExtensions.OptionalElement(ns + "url", GetMetadata(data, x => x.Link)),
+            XmlExtensions.UrlElements(ns, data.Links),
             data.Metadata.TimeUtc.HasValue
                 ? new XElement(ns + "time", XmlExtensions.ToString(data.Metadata.TimeUtc.Value))
                 : null,
@@ -98,6 +98,7 @@ public class Gpx10Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetTrackMetadata(track, x => x.Description)
                 ),
+                XmlExtensions.UrlElements(ns, track.Links),
                 // The 1.0 schema admits foreign elements before <trkseg>, not after it.
                 // It admits none at all inside <trkseg>, so a segment's extensions have
                 // nowhere to go in this version and are left out.
@@ -122,6 +123,7 @@ public class Gpx10Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetRouteMetadata(route, x => x.Description)
                 ),
+                XmlExtensions.UrlElements(ns, route.Links),
                 // The 1.0 schema admits foreign elements before <rtept>, not after it.
                 XmlExtensions.InlineExtensionsElements(route.Extensions),
                 route.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "rtept"))
@@ -150,6 +152,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             XmlExtensions.OptionalElement(ns + "name", waypoint.Name),
             XmlExtensions.OptionalElement(ns + "cmt", waypoint.Comment),
             XmlExtensions.OptionalElement(ns + "desc", waypoint.Description),
+            XmlExtensions.UrlElements(ns, waypoint.Links),
             XmlExtensions.InlineExtensionsElements(waypoint.Extensions)
         );
     }
@@ -179,9 +182,9 @@ public class Gpx10Serializer : GpsXmlSerializer
         data.Metadata.Attribute(x => x.Name, root.ElementValue(ns + "name"));
         data.Metadata.Attribute(x => x.Description, root.ElementValue(ns + "desc"));
         data.Metadata.Attribute(x => x.Keywords, root.ElementValue(ns + "keywords"));
-        data.Metadata.Attribute(x => x.Link, root.ElementValue(ns + "url"));
         data.Metadata.Attribute(x => x.Author.Name, root.ElementValue(ns + "author"));
         data.Metadata.Attribute(x => x.Author.Email, root.ElementValue(ns + "email"));
+        data.Links.AddRange(root.ReadUrl(ns));
         data.Metadata.TimeUtc = root.DateTimeElement(ns + "time");
 
         // <bounds> is not read: it only restates the extent of the coordinates that
@@ -200,6 +203,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             track.Metadata.Attribute(x => x.Name, trkType.ElementValue(ns + "name"));
             track.Metadata.Attribute(x => x.Description, trkType.ElementValue(ns + "desc"));
             track.Metadata.Attribute(x => x.Comment, trkType.ElementValue(ns + "cmt"));
+            track.Links.AddRange(trkType.ReadUrl(ns));
             track.Extensions.AddRange(ReadExtensions(trkType, ns));
 
             foreach (var trksegType in trkType.Elements(ns + "trkseg"))
@@ -229,6 +233,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             route.Metadata.Attribute(x => x.Name, rteType.ElementValue(ns + "name"));
             route.Metadata.Attribute(x => x.Description, rteType.ElementValue(ns + "desc"));
             route.Metadata.Attribute(x => x.Comment, rteType.ElementValue(ns + "cmt"));
+            route.Links.AddRange(rteType.ReadUrl(ns));
             route.Extensions.AddRange(ReadExtensions(rteType, ns));
 
             // <rtept> is optional in the GPX schema, so a route may carry only
@@ -263,6 +268,7 @@ public class Gpx10Serializer : GpsXmlSerializer
             wptType.ElementValue(ns + "desc")
         );
 
+        waypoint.Links.AddRange(wptType.ReadUrl(ns));
         waypoint.Extensions.AddRange(ReadExtensions(wptType, ns));
         return waypoint;
     }

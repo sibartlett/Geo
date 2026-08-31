@@ -147,6 +147,84 @@ internal static class XmlExtensions
     }
 
     /// <summary>
+    /// The links GPX 1.1 holds as <paramref name="parent" />'s &lt;link&gt; elements.
+    /// </summary>
+    /// <remarks>
+    /// A link with no href is skipped rather than carried with an empty one: the
+    /// attribute is required, so a link without it could not be written back.
+    /// </remarks>
+    public static IEnumerable<GpsLink> ReadLinks(this XElement? parent, XNamespace ns)
+    {
+        return parent
+            .ElementsOrEmpty(ns + "link")
+            .Select(x => new
+            {
+                Href = x.AttributeValue("href"),
+                Text = x.ElementValue(ns + "text"),
+                Type = x.ElementValue(ns + "type"),
+            })
+            .Where(x => !string.IsNullOrWhiteSpace(x.Href))
+            .Select(x => new GpsLink(x.Href!, x.Text, x.Type));
+    }
+
+    /// <summary>
+    /// The single link GPX 1.0 holds as <paramref name="parent" />'s &lt;url&gt; and
+    /// &lt;urlname&gt;, as a list so that it reads like the 1.1 shape.
+    /// </summary>
+    public static IEnumerable<GpsLink> ReadUrl(this XElement? parent, XNamespace ns)
+    {
+        var href = parent.ElementValue(ns + "url");
+        if (string.IsNullOrWhiteSpace(href))
+            yield break;
+
+        yield return new GpsLink(href!, parent.ElementValue(ns + "urlname"), null);
+    }
+
+    /// <summary>
+    /// <paramref name="links" /> as GPX 1.1 &lt;link&gt; elements.
+    /// </summary>
+    public static IEnumerable<XElement> LinkElements(XNamespace ns, IEnumerable<GpsLink>? links)
+    {
+        if (links == null)
+            yield break;
+
+        foreach (var link in links)
+        {
+            if (link == null || string.IsNullOrWhiteSpace(link.Href))
+                continue;
+
+            yield return new XElement(
+                ns + "link",
+                new XAttribute("href", link.Href),
+                OptionalElement(ns + "text", link.Text),
+                OptionalElement(ns + "type", link.Type)
+            );
+        }
+    }
+
+    /// <summary>
+    /// The first of <paramref name="links" /> as GPX 1.0's &lt;url&gt; and
+    /// &lt;urlname&gt; pair.
+    /// </summary>
+    /// <remarks>
+    /// 1.0 has room for one link and no media type, so anything past the first is
+    /// dropped along with every <see cref="GpsLink.Type" />. There is nowhere in the
+    /// version to put them.
+    /// </remarks>
+    public static IEnumerable<XElement> UrlElements(XNamespace ns, IEnumerable<GpsLink>? links)
+    {
+        var link = links?.FirstOrDefault(x => x != null && !string.IsNullOrWhiteSpace(x.Href));
+        if (link == null)
+            yield break;
+
+        yield return new XElement(ns + "url", link.Href);
+
+        var urlname = OptionalElement(ns + "urlname", link.Text);
+        if (urlname != null)
+            yield return urlname;
+    }
+
+    /// <summary>
     /// A &lt;bounds&gt; element describing <paramref name="bounds" />, or <c>null</c>
     /// when there is nothing to describe.
     /// </summary>

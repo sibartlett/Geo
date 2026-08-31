@@ -30,6 +30,11 @@ public class TrackSegment : IHasLength
     /// extensions are therefore read and written for 1.1 only, and writing a 1.0
     /// document drops them.
     /// </para>
+    /// <para>
+    /// A segment holding nothing but extensions does not survive that at all: with
+    /// them gone it has no content 1.0 can express, so the segment itself is lost
+    /// rather than coming back empty.
+    /// </para>
     /// </remarks>
     public List<XElement> Extensions { get; } = new List<XElement>();
 

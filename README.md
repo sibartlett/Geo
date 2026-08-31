@@ -103,6 +103,11 @@ sniff whether it is a coordinate pair, WKT, or GeoJSON and parse it — see the
 | SkyDemon flightplan     | ✓ |   |
 | PocketFMS flightplan    | ✓ |   |
 
+Links are read and written for both versions - `GpsData`, `Waypoint`, `Route` and
+`Track` each expose a `Links` collection of `GpsLink` (href, text, media type). GPX
+1.1 allows any number; GPX 1.0 has a single `<url>`/`<urlname>` pair, so writing 1.0
+keeps the first.
+
 GPX extensions are read and written for both versions, so vendor content such as
 Garmin's `gpxx` or the Topografix `gpx_style` line styling survives a round-trip.
 `GpsData`, `Track`, `TrackSegment`, `Route` and `Waypoint` each expose the foreign

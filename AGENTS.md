@@ -157,6 +157,10 @@ C# conventions observed in the codebase (see `build/.editorconfig`):
   they stay culture-invariant, and `DateTime` uses `RoundtripKind`.
   Take the namespace from the document (`root.Name.Namespace`) rather than
   assuming it, so files missing their default `xmlns` still parse.
+- **Links are a typed model, not a metadata attribute.** `GpsData`/`Waypoint`/
+  `Route`/`Track` expose `Links` (a `GpsLink` list of href/text/type). GPX 1.1 allows
+  any number of `<link>`; 1.0 has one `<url>`/`<urlname>` pair, so writing 1.0 keeps
+  the first and drops every media type.
 - **`<bounds>` is computed, never stored.** `GpsData`/`Track`/`TrackSegment`/`Route`
   expose `GetBounds()`, and the GPX writers call it. GPX defines the element as the
   extent of the coordinates in the file, so a value read and kept would go stale as

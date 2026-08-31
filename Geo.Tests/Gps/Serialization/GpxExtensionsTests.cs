@@ -242,6 +242,31 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
     }
 
     [Fact]
+    public void A_segment_holding_only_extensions_does_not_survive_gpx10_at_all()
+    {
+        // Not just its extensions: with them gone the segment has no content GPX 1.0
+        // can express, so it is written as an empty <trkseg /> and read back as
+        // nothing. Recorded because the loss is larger than the extensions themselves.
+        var gpx =
+            "<?xml version=\"1.0\"?>"
+            + "<gpx version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\""
+            + " xmlns:gpx_style=\"http://www.topografix.com/GPX/gpx_style/0/2\">"
+            + "<trk><name>t</name>"
+            + "<trkseg><extensions><gpx_style:seg>s</gpx_style:seg></extensions></trkseg>"
+            + "<trkseg><trkpt lat=\"5\" lon=\"6\" /></trkseg>"
+            + "</trk>"
+            + "</gpx>";
+
+        var data = Parse(gpx);
+        Assert.Equal(2, data.Tracks.Single().Segments.Count);
+
+        // The one carrying points survives; the one carrying only extensions does not.
+        var asGpx10 = Parse(data.ToGpx(1));
+        var segment = Assert.Single(asGpx10.Tracks.Single().Segments);
+        Assert.Single(segment.Waypoints);
+    }
+
+    [Fact]
     public void A_track_segments_extensions_are_dropped_when_writing_gpx10()
     {
         // The one place 1.0 has no room for: its schema ends <trkseg> with <trkpt>
