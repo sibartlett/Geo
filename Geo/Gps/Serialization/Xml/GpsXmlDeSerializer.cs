@@ -1,22 +1,12 @@
-using System;
 using System.Xml;
-using System.Xml.Serialization;
+using System.Xml.Linq;
 
 namespace Geo.Gps.Serialization.Xml;
 
-public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
+public abstract class GpsXmlDeSerializer : IGpsFileDeSerializer
 {
-    protected readonly XmlSerializer _xmlSerializer = new(typeof(T));
-
     public abstract GpsFileFormat[] FileFormats { get; }
     public abstract GpsFeatures SupportedFeatures { get; }
-
-    // When non-null, elements read from documents that are missing a namespace
-    // are treated as belonging to this namespace during deserialization. This
-    // lets malformed files (e.g. GPX exports without the default xmlns) parse
-    // against the namespace-qualified models. Formats that do not need this
-    // (or want strict matching) leave it null.
-    protected virtual string? Namespace => null;
 
     public bool CanDeSerialize(StreamWrapper streamWrapper)
     {
@@ -44,8 +34,7 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
 
     public GpsData? DeSerialize(StreamWrapper streamWrapper)
     {
-        streamWrapper.Position = 0;
-        T doc;
+        XDocument document;
 
         try
         {
@@ -57,26 +46,29 @@ public abstract class GpsXmlDeSerializer<T> : IGpsFileDeSerializer
                 )
             )
             {
-                var effectiveReader =
-                    Namespace == null ? reader : new NamespaceCoercingXmlReader(reader, Namespace);
-                doc = (T)_xmlSerializer.Deserialize(effectiveReader);
+                document = XDocument.Load(reader);
             }
         }
-        // XmlSerializer.Deserialize wraps malformed/unexpected XML in an
-        // InvalidOperationException (with an inner XmlException), so catch both to
-        // signal "cannot parse this document" by returning null.
+        // A document that is not well-formed is not one this deserializer can read,
+        // which is reported by returning null rather than by raising at the caller.
         catch (XmlException)
         {
             return null;
         }
-        catch (InvalidOperationException)
-        {
-            return null;
-        }
 
-        return DeSerialize(doc);
+        return document.Root == null ? null : DeSerialize(document.Root);
     }
 
+    /// <summary>
+    /// Whether this deserializer claims the document whose root element
+    /// <paramref name="xml" /> is positioned on.
+    /// </summary>
+    /// <remarks>
+    /// Given a streaming reader rather than the loaded document, so that deciding which
+    /// of the registered deserializers owns a file costs only the root element - the
+    /// whole list is asked in turn before any of them parses anything.
+    /// </remarks>
     protected abstract bool CanDeSerialize(XmlReader xml);
-    protected abstract GpsData? DeSerialize(T xml);
+
+    protected abstract GpsData? DeSerialize(XElement root);
 }

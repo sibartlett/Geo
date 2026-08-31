@@ -1,16 +1,17 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
-using Geo.Gps.Serialization.Xml.Gpx.Gpx10;
 
 namespace Geo.Gps.Serialization;
 
-public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
+public class Gpx10Serializer : GpsXmlSerializer
 {
+    private const string GpxNamespace = "http://www.topografix.com/GPX/1/0";
+
     public override GpsFileFormat[] FileFormats
     {
         get
@@ -24,192 +25,251 @@ public class Gpx10Serializer : GpsXmlSerializer<GpxFile>
 
     public override GpsFeatures SupportedFeatures => GpsFeatures.All;
 
-    protected override string Namespace => "http://www.topografix.com/GPX/1/0";
-
     protected override bool CanDeSerialize(XmlReader xml)
     {
         if (xml.LocalName != "gpx")
             return false;
-        if (xml.NamespaceURI == Namespace)
+        if (xml.NamespaceURI == GpxNamespace)
             return true;
         // Missing namespace: only claim the document when it explicitly declares
         // GPX 1.0; otherwise defer to the 1.1 serializer.
         return string.IsNullOrEmpty(xml.NamespaceURI) && xml.GetAttribute("version") == "1.0";
     }
 
-    protected override GpsData DeSerialize(GpxFile xml)
+    protected override GpsData DeSerialize(XElement root)
     {
+        // The namespace is taken from the document rather than assumed, so a file
+        // whose root is missing its default xmlns - a common defect in real-world
+        // exports - reads through the same lookups as a well-formed one. For those
+        // documents this is XNamespace.None and every child is looked up unqualified.
+        var ns = root.Name.Namespace;
+
         var data = new GpsData();
-        ParseMetadata(xml, data);
-        ParseRoute(xml, data);
-        ParseTracks(xml, data);
-        ParseWaypoints(xml, data);
+        ParseMetadata(root, ns, data);
+        ParseRoute(root, ns, data);
+        ParseTracks(root, ns, data);
+        ParseWaypoints(root, ns, data);
         return data;
     }
 
-    protected override GpxFile SerializeInternal(GpsData data)
+    // GPX 1.0 carries its metadata as direct children of <gpx>, in the order the
+    // schema sequences them, rather than in the <metadata> element 1.1 introduced.
+    protected override XDocument SerializeInternal(GpsData data)
     {
-        var xml = new GpxFile();
-        SerializeMetadata(data, xml, x => x.Software, (gpx, s) => gpx.creator = s);
-        SerializeMetadata(data, xml, x => x.Name, (gpx, s) => gpx.name = s);
-        SerializeMetadata(data, xml, x => x.Description, (gpx, s) => gpx.desc = s);
-        SerializeMetadata(data, xml, x => x.Keywords, (gpx, s) => gpx.keywords = s);
-        SerializeMetadata(data, xml, x => x.Link, (gpx, s) => gpx.url = s);
-        SerializeMetadata(data, xml, x => x.Author.Name, (gpx, s) => gpx.author = s);
-        SerializeMetadata(data, xml, x => x.Author.Email, (gpx, s) => gpx.email = s);
+        XNamespace ns = GpxNamespace;
 
-        xml.trk = SerializeTracks(data).ToArray();
-        xml.rte = SerializeRoutes(data).ToArray();
-        xml.wpt = SerializeWaypoints(data).ToArray();
+        var root = new XElement(
+            ns + "gpx",
+            new XAttribute("version", "1.0"),
+            new XAttribute("creator", GetCreator(data)),
+            XmlExtensions.OptionalElement(ns + "name", GetMetadata(data, x => x.Name)),
+            XmlExtensions.OptionalElement(ns + "desc", GetMetadata(data, x => x.Description)),
+            XmlExtensions.OptionalElement(ns + "author", GetMetadata(data, x => x.Author.Name)),
+            XmlExtensions.OptionalElement(ns + "email", GetMetadata(data, x => x.Author.Email)),
+            XmlExtensions.UrlElements(ns, data.Links),
+            data.Metadata.TimeUtc.HasValue
+                ? new XElement(ns + "time", XmlExtensions.ToString(data.Metadata.TimeUtc.Value))
+                : null,
+            XmlExtensions.OptionalElement(ns + "keywords", GetMetadata(data, x => x.Keywords)),
+            XmlExtensions.BoundsElement(ns, data.GetBounds()),
+            SerializeWaypoints(data, ns),
+            SerializeRoutes(data, ns),
+            SerializeTracks(data, ns),
+            XmlExtensions.InlineExtensionsElements(data.Extensions)
+        );
 
-        return xml;
+        return new XDocument(new XDeclaration("1.0", "utf-8", null), root);
     }
 
-    private IEnumerable<GpxPoint> SerializeWaypoints(GpsData data)
+    private IEnumerable<XElement> SerializeWaypoints(GpsData data, XNamespace ns)
     {
-        return data.Waypoints.Select(waypoint => ConvertToGpxPoint(waypoint));
+        return data.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "wpt"));
     }
 
-    private IEnumerable<GpxTrack> SerializeTracks(GpsData data)
+    private IEnumerable<XElement> SerializeTracks(GpsData data, XNamespace ns)
     {
         foreach (var track in data.Tracks)
         {
-            var trk = new GpxTrack();
-
-            SerializeTrackMetadata(track, trk, x => x.Name, (gpx, s) => gpx.name = s);
-            SerializeTrackMetadata(track, trk, x => x.Description, (gpx, s) => gpx.desc = s);
-            SerializeTrackMetadata(track, trk, x => x.Comment, (gpx, s) => gpx.cmt = s);
-
-            trk.trkseg = new GpxTrackSegment[track.Segments.Count];
-            for (var i = 0; i < track.Segments.Count; i++)
-            {
-                var segment = track.Segments[i];
-                var pts = new GpxTrackPoint[segment.Waypoints.Count];
-                for (var j = 0; j < segment.Waypoints.Count; j++)
-                    pts[j] = ConvertToGpxTrackPoint(segment.Waypoints[j]);
-                trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
-            }
-
-            yield return trk;
+            yield return new XElement(
+                ns + "trk",
+                XmlExtensions.OptionalElement(ns + "name", GetTrackMetadata(track, x => x.Name)),
+                XmlExtensions.OptionalElement(ns + "cmt", GetTrackMetadata(track, x => x.Comment)),
+                XmlExtensions.OptionalElement(
+                    ns + "desc",
+                    GetTrackMetadata(track, x => x.Description)
+                ),
+                XmlExtensions.UrlElements(ns, track.Links),
+                // The 1.0 schema admits foreign elements before <trkseg>, not after it.
+                // It admits none at all inside <trkseg>, so a segment's extensions have
+                // nowhere to go in this version and are left out.
+                XmlExtensions.InlineExtensionsElements(track.Extensions),
+                track.Segments.Select(segment => new XElement(
+                    ns + "trkseg",
+                    segment.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "trkpt"))
+                ))
+            );
         }
     }
 
-    private IEnumerable<GpxRoute> SerializeRoutes(GpsData data)
+    private IEnumerable<XElement> SerializeRoutes(GpsData data, XNamespace ns)
     {
         foreach (var route in data.Routes)
         {
-            var rte = new GpxRoute();
-
-            SerializeRouteMetadata(route, rte, x => x.Name, (gpx, s) => gpx.name = s);
-            SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
-            SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
-
-            rte.rtept = new GpxPoint[route.Waypoints.Count];
-            for (var j = 0; j < route.Waypoints.Count; j++)
-                rte.rtept[j] = ConvertToGpxPoint(route.Waypoints[j]);
-            yield return rte;
+            yield return new XElement(
+                ns + "rte",
+                XmlExtensions.OptionalElement(ns + "name", GetRouteMetadata(route, x => x.Name)),
+                XmlExtensions.OptionalElement(ns + "cmt", GetRouteMetadata(route, x => x.Comment)),
+                XmlExtensions.OptionalElement(
+                    ns + "desc",
+                    GetRouteMetadata(route, x => x.Description)
+                ),
+                XmlExtensions.UrlElements(ns, route.Links),
+                // The 1.0 schema admits foreign elements before <rtept>, not after it.
+                XmlExtensions.InlineExtensionsElements(route.Extensions),
+                route.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "rtept"))
+            );
         }
     }
 
-    private static void ParseMetadata(GpxFile xml, GpsData data)
+    // Children are emitted in the order the GPX 1.0 schema sequences them.
+    private static XElement SerializeWaypoint(Waypoint waypoint, XName name)
     {
-        data.Metadata.Attribute(x => x.Software, xml.creator);
-        data.Metadata.Attribute(x => x.Name, xml.name);
-        data.Metadata.Attribute(x => x.Description, xml.desc);
-        data.Metadata.Attribute(x => x.Keywords, xml.keywords);
-        data.Metadata.Attribute(x => x.Link, xml.url);
-        data.Metadata.Attribute(x => x.Author.Name, xml.author);
-        data.Metadata.Attribute(x => x.Author.Email, xml.email);
+        XNamespace ns = name.Namespace;
+
+        return new XElement(
+            name,
+            new XAttribute("lat", XmlExtensions.ToString((decimal)waypoint.Coordinate.Latitude)),
+            new XAttribute("lon", XmlExtensions.ToString((decimal)waypoint.Coordinate.Longitude)),
+            waypoint.Coordinate.Is3D
+                ? new XElement(
+                    ns + "ele",
+                    XmlExtensions.ToString((decimal)((Is3D)waypoint.Coordinate).Elevation)
+                )
+                : null,
+            waypoint.TimeUtc.HasValue
+                ? new XElement(ns + "time", XmlExtensions.ToString(waypoint.TimeUtc.Value))
+                : null,
+            XmlExtensions.OptionalElement(ns + "name", waypoint.Name),
+            XmlExtensions.OptionalElement(ns + "cmt", waypoint.Comment),
+            XmlExtensions.OptionalElement(ns + "desc", waypoint.Description),
+            XmlExtensions.UrlElements(ns, waypoint.Links),
+            XmlExtensions.InlineExtensionsElements(waypoint.Extensions)
+        );
     }
 
-    private static void ParseTracks(GpxFile xml, GpsData data)
+    // GPX 1.0 has no <extensions> element - foreign content sits inline - but writers
+    // that also emit 1.1 often add one to a 1.0 document anyway. Both shapes are read,
+    // so nothing is dropped, and both are written back inline where the 1.0 schema
+    // wants them.
+    //
+    // What comes out of <extensions> is filtered to foreign namespaces, unlike in 1.1
+    // where it is taken as it stands. The two differ because 1.0 writes extensions
+    // inline: a child of <extensions> written without a prefix inherits the GPX
+    // namespace, and moving it inline would make it indistinguishable from a real GPX
+    // element. An <extensions> holding a bare <ele> would come back as the waypoint's
+    // elevation. Neither version admits such an element in the first place, so it is
+    // dropped rather than allowed to change what the file says.
+    private static IEnumerable<XElement> ReadExtensions(XElement? parent, XNamespace ns)
     {
-        if (xml.trk != null)
-            foreach (var trkType in xml.trk)
-            {
-                var track = new Track();
-
-                track.Metadata.Attribute(x => x.Name, trkType.name);
-                track.Metadata.Attribute(x => x.Description, trkType.desc);
-                track.Metadata.Attribute(x => x.Comment, trkType.cmt);
-
-                if (trkType.trkseg != null)
-                    foreach (var trksegTrkpt in trkType.trkseg.Where(seg => seg.trkpt != null))
-                    {
-                        var segment = new TrackSegment();
-                        foreach (var wptType in trksegTrkpt.trkpt!)
-                            segment.Waypoints.Add(ConvertWaypoint(wptType));
-                        track.Segments.Add(segment);
-                    }
-
-                data.Tracks.Add(track);
-            }
+        return parent
+            .InlineExtensions(ns)
+            .Concat(parent.WrappedExtensions(ns).Where(x => x.Name.Namespace != ns));
     }
 
-    private static void ParseRoute(GpxFile xml, GpsData data)
+    private static void ParseMetadata(XElement root, XNamespace ns, GpsData data)
     {
-        if (xml.rte != null)
-            foreach (var rteType in xml.rte)
-            {
-                var route = new Route();
-                route.Metadata.Attribute(x => x.Name, rteType.name);
-                route.Metadata.Attribute(x => x.Description, rteType.desc);
-                route.Metadata.Attribute(x => x.Comment, rteType.cmt);
+        data.Metadata.Attribute(x => x.Software, root.AttributeValue("creator"));
+        data.Metadata.Attribute(x => x.Name, root.ElementValue(ns + "name"));
+        data.Metadata.Attribute(x => x.Description, root.ElementValue(ns + "desc"));
+        data.Metadata.Attribute(x => x.Keywords, root.ElementValue(ns + "keywords"));
+        data.Metadata.Attribute(x => x.Author.Name, root.ElementValue(ns + "author"));
+        data.Metadata.Attribute(x => x.Author.Email, root.ElementValue(ns + "email"));
+        data.Links.AddRange(root.ReadUrl(ns));
+        data.Metadata.TimeUtc = root.DateTimeElement(ns + "time");
 
-                // <rtept> is optional in the GPX schema, so a route may carry only
-                // metadata; the element is absent (null) rather than an empty array.
-                if (rteType.rtept != null)
-                    foreach (var wptType in rteType.rtept)
-                        route.Waypoints.Add(ConvertWaypoint(wptType));
-                data.Routes.Add(route);
-            }
+        // <bounds> is not read: it only restates the extent of the coordinates that
+        // follow it, and GpsData.GetBounds computes that from the data itself. Keeping
+        // the file's copy would mean writing back an extent that stopped being true as
+        // soon as a caller added a waypoint.
+        data.Extensions.AddRange(ReadExtensions(root, ns));
     }
 
-    private static void ParseWaypoints(GpxFile xml, GpsData data)
+    private static void ParseTracks(XElement root, XNamespace ns, GpsData data)
     {
-        if (xml.wpt != null)
-            foreach (var wptType in xml.wpt)
-                data.Waypoints.Add(ConvertWaypoint(wptType));
-    }
-
-    private static Waypoint ConvertWaypoint(GpxPoint wptType)
-    {
-        var point = wptType.eleSpecified
-            ? new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele)
-            : new Point((double)wptType.lat, (double)wptType.lon);
-        var time = wptType.timeSpecified ? wptType.time : (DateTime?)null;
-        return new Waypoint(point, time, wptType.name, wptType.cmt, wptType.desc);
-    }
-
-    private static GpxTrackPoint ConvertToGpxTrackPoint(Waypoint waypoint)
-    {
-        return new GpxTrackPoint
+        foreach (var trkType in root.Elements(ns + "trk"))
         {
-            lat = (decimal)waypoint.Coordinate.Latitude,
-            lon = (decimal)waypoint.Coordinate.Longitude,
-            ele = waypoint.Coordinate.Is3D ? (decimal)((Is3D)waypoint.Coordinate).Elevation : 0m,
-            eleSpecified = waypoint.Coordinate.Is3D,
-            time = waypoint.TimeUtc.HasValue ? waypoint.TimeUtc.Value : DateTime.MinValue,
-            timeSpecified = waypoint.TimeUtc.HasValue,
-            name = waypoint.Name,
-            desc = waypoint.Description,
-            cmt = waypoint.Comment,
-        };
+            var track = new Track();
+
+            track.Metadata.Attribute(x => x.Name, trkType.ElementValue(ns + "name"));
+            track.Metadata.Attribute(x => x.Description, trkType.ElementValue(ns + "desc"));
+            track.Metadata.Attribute(x => x.Comment, trkType.ElementValue(ns + "cmt"));
+            track.Links.AddRange(trkType.ReadUrl(ns));
+            track.Extensions.AddRange(ReadExtensions(trkType, ns));
+
+            foreach (var trksegType in trkType.Elements(ns + "trkseg"))
+            {
+                var trkpt = trksegType.Elements(ns + "trkpt").ToList();
+
+                // A segment with no <trkpt> carries nothing and is left out, as it
+                // was when an absent element deserialized to a null array.
+                if (trkpt.Count == 0)
+                    continue;
+
+                var segment = new TrackSegment();
+                foreach (var wptType in trkpt)
+                    segment.Waypoints.Add(ConvertWaypoint(wptType, ns));
+                track.Segments.Add(segment);
+            }
+
+            data.Tracks.Add(track);
+        }
     }
 
-    private static GpxPoint ConvertToGpxPoint(Waypoint waypoint)
+    private static void ParseRoute(XElement root, XNamespace ns, GpsData data)
     {
-        return new GpxPoint
+        foreach (var rteType in root.Elements(ns + "rte"))
         {
-            lat = (decimal)waypoint.Coordinate.Latitude,
-            lon = (decimal)waypoint.Coordinate.Longitude,
-            ele = waypoint.Coordinate.Is3D ? (decimal)((Is3D)waypoint.Coordinate).Elevation : 0m,
-            eleSpecified = waypoint.Coordinate.Is3D,
-            time = waypoint.TimeUtc.HasValue ? waypoint.TimeUtc.Value : DateTime.MinValue,
-            timeSpecified = waypoint.TimeUtc.HasValue,
-            name = waypoint.Name,
-            desc = waypoint.Description,
-            cmt = waypoint.Comment,
-        };
+            var route = new Route();
+            route.Metadata.Attribute(x => x.Name, rteType.ElementValue(ns + "name"));
+            route.Metadata.Attribute(x => x.Description, rteType.ElementValue(ns + "desc"));
+            route.Metadata.Attribute(x => x.Comment, rteType.ElementValue(ns + "cmt"));
+            route.Links.AddRange(rteType.ReadUrl(ns));
+            route.Extensions.AddRange(ReadExtensions(rteType, ns));
+
+            // <rtept> is optional in the GPX schema, so a route may carry only
+            // metadata.
+            foreach (var wptType in rteType.Elements(ns + "rtept"))
+                route.Waypoints.Add(ConvertWaypoint(wptType, ns));
+            data.Routes.Add(route);
+        }
+    }
+
+    private static void ParseWaypoints(XElement root, XNamespace ns, GpsData data)
+    {
+        foreach (var wptType in root.Elements(ns + "wpt"))
+            data.Waypoints.Add(ConvertWaypoint(wptType, ns));
+    }
+
+    private static Waypoint ConvertWaypoint(XElement wptType, XNamespace ns)
+    {
+        var latitude = (double)(wptType.DecimalAttribute("lat") ?? 0m);
+        var longitude = (double)(wptType.DecimalAttribute("lon") ?? 0m);
+        var elevation = wptType.DecimalElement(ns + "ele");
+
+        var point = elevation.HasValue
+            ? new Point(latitude, longitude, (double)elevation.Value)
+            : new Point(latitude, longitude);
+
+        var waypoint = new Waypoint(
+            point,
+            wptType.DateTimeElement(ns + "time"),
+            wptType.ElementValue(ns + "name"),
+            wptType.ElementValue(ns + "cmt"),
+            wptType.ElementValue(ns + "desc")
+        );
+
+        waypoint.Links.AddRange(wptType.ReadUrl(ns));
+        waypoint.Extensions.AddRange(ReadExtensions(wptType, ns));
+        return waypoint;
     }
 }

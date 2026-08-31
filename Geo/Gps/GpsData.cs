@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Geo.Gps.Metadata;
 using Geo.Gps.Serialization;
 
@@ -10,16 +12,15 @@ namespace Geo.Gps;
 
 public class GpsData
 {
+    private static readonly Gpx10Serializer Gpx10Writer = new Gpx10Serializer();
+    private static readonly Gpx11Serializer Gpx11Writer = new Gpx11Serializer();
+
     private static readonly List<IGpsFileSerializer> FileSerializers;
     private static readonly List<IGpsFileDeSerializer> FileParsers;
 
     static GpsData()
     {
-        FileSerializers = new List<IGpsFileSerializer>
-        {
-            new Gpx10Serializer(),
-            new Gpx11Serializer(),
-        };
+        FileSerializers = new List<IGpsFileSerializer> { Gpx10Writer, Gpx11Writer };
         FileParsers = new List<IGpsFileDeSerializer>(FileSerializers.OfType<IGpsFileDeSerializer>())
         {
             new IgcDeSerializer(),
@@ -43,15 +44,99 @@ public class GpsData
     public List<Track> Tracks { get; set; }
     public List<Waypoint> Waypoints { get; set; }
 
-    public string ToGpx()
+    /// <summary>
+    /// The file-level foreign content carried by the GPX document, as it appeared -
+    /// one entry per extension element, each holding its own namespace and children.
+    /// </summary>
+    /// <remarks>
+    /// GPX leaves &lt;extensions&gt; deliberately open, so the elements are handed over
+    /// as XML for the caller to read with LINQ to XML rather than modelled: no fixed
+    /// set of properties could keep up with what Garmin, Gaia GPS, the Topografix
+    /// gpx_style schema and the rest put in there. What the library guarantees is that
+    /// nothing is lost - anything read is written back.
+    /// <para>
+    /// GPX 1.1 keeps this in the &lt;gpx&gt; element's &lt;extensions&gt;; 1.0 has no
+    /// such element and holds the same content inline at the end of &lt;gpx&gt;. Both
+    /// are read here, and each is written in its own version's shape. Content a 1.1
+    /// document holds in &lt;metadata&gt;&lt;extensions&gt; is read here too, and
+    /// written back at the &lt;gpx&gt; level, which is where 1.0 would carry it.
+    /// </para>
+    /// </remarks>
+    public List<XElement> Extensions { get; } = new List<XElement>();
+
+    /// <summary>
+    /// Links describing the file as a whole.
+    /// </summary>
+    /// <remarks>
+    /// Replaces the single <c>link</c> metadata attribute of earlier versions, which
+    /// could hold only one address and dropped its text.
+    /// <para>
+    /// GPX 1.1 allows any number here; 1.0 has only a single &lt;url&gt; and
+    /// &lt;urlname&gt;, so writing 1.0 keeps the first and drops the rest.
+    /// </para>
+    /// </remarks>
+    public List<GpsLink> Links { get; } = new List<GpsLink>();
+
+    /// <summary>
+    /// The smallest envelope containing every coordinate this holds - waypoints, route
+    /// points and track points alike - or <c>null</c> when there are none.
+    /// </summary>
+    /// <remarks>
+    /// GPX defines its &lt;bounds&gt; element as the extent of the coordinates in the
+    /// file, so the serializers compute it from the data at the point of writing rather
+    /// than storing what they read. Kept, it would go stale the moment a caller added a
+    /// waypoint, and the file would then carry an extent that did not describe it.
+    /// </remarks>
+    public Envelope? GetBounds()
     {
-        return FileSerializers[1].Serialize(this);
+        var bounds = Waypoints.Aggregate(
+            (Envelope?)null,
+            // Point.GetBounds is null-safe where Waypoint.Coordinate is not: a waypoint
+            // holding an empty Point has no coordinate, and this promises null for data
+            // with none rather than faulting on it.
+            (current, waypoint) => waypoint.Point.GetBounds()?.Combine(current) ?? current
+        );
+
+        // A route or track holding no waypoints has no bounds to fold in; Combine is an
+        // instance method, so the null has to be stepped around rather than passed.
+        bounds = Routes.Aggregate(
+            bounds,
+            (current, route) => route.GetBounds()?.Combine(current) ?? current
+        );
+
+        return Tracks.Aggregate(
+            bounds,
+            (current, track) => track.GetBounds()?.Combine(current) ?? current
+        );
     }
 
-    public string ToGpx(decimal version)
+    /// <summary>
+    /// This data as a GPX document.
+    /// </summary>
+    /// <param name="version">
+    /// Which version of GPX to write. Defaults to 1.1, the current one.
+    /// </param>
+    /// <remarks>
+    /// Replaces a <c>decimal</c> parameter where 1 meant GPX 1.0 and every other value
+    /// - including 1.1 itself, and 99 - meant GPX 1.1. Naming the versions makes the
+    /// choice legible and turns an unrecognised one into an error rather than silently
+    /// writing the other version.
+    /// </remarks>
+    public string ToGpx(GpxVersion version = GpxVersion.Gpx11)
     {
-        var index = version == 1m ? 0 : 1;
-        return FileSerializers[index].Serialize(this);
+        switch (version)
+        {
+            case GpxVersion.Gpx10:
+                return Gpx10Writer.Serialize(this);
+            case GpxVersion.Gpx11:
+                return Gpx11Writer.Serialize(this);
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(version),
+                    version,
+                    "Not a version of GPX this can write."
+                );
+        }
     }
 
     public static IEnumerable<GpsFileFormat> SupportedGpsFileFormats()

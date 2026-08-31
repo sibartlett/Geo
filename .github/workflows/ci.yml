@@ -31,5 +31,5 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: CheckForUncommittedChanges, Test'
-        run: ./build.cmd CheckForUncommittedChanges Test
+      - name: 'Run: CheckForUncommittedChanges, Test, AotSmokeTest'
+        run: ./build.cmd CheckForUncommittedChanges Test AotSmokeTest

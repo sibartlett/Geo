@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Publishes natively and exercises every XML-backed serializer, so that a change
+    reintroducing runtime code generation fails the build rather than the consumer.
+    Analyzers alone would not catch it: XmlSerializer's incompatibility only showed
+    itself when the published binary ran.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>default</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Anything the AOT or trim analysers flag in Geo must fail here, not warn. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Geo\Geo.csproj" />
+  </ItemGroup>
+</Project>

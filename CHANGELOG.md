@@ -6,6 +6,216 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+A NativeAOT release — and, because of what that required, a GPX release.
+
+`XmlSerializer` cannot be published natively: it generates and compiles a
+serialization assembly at runtime by reflecting over attributed types. Any
+application that published natively and touched a `Geo` GPS serializer failed at
+runtime, so the library could not be used from one at all. GPX 1.0/1.1 and the
+Garmin, PocketFMS and SkyDemon flightplan formats are now read and written with
+`System.Xml.Linq`, which needs no runtime code generation, and the ~70 model
+classes that existed only to be bound by `XmlSerializer` are gone with it.
+
+The unit conversions had the same problem for the same reason: `UnitMetadata` read
+each unit's symbol and factor off the enum members' `[Unit]` attributes through
+`Enum.GetValues(Type)` and `Type.GetField`. The definitions are now a plain table,
+resolved with no reflection.
+
+Rewriting the GPX serializers meant reading the schemas properly, which turned up
+how much the old ones had been dropping. Extensions, links, and the file-level
+`<time>` and `<bounds>` are now carried; `<gpx>` gets the `creator` attribute the
+schema requires of it; and every element is written in the order its schema
+sequences them, which the old output did not do. Written GPX is now validated
+against the official schemas as part of the test suite, so it stays that way.
+
+The library multi-targets `netstandard2.0` and `net8.0`. The modern target sets
+`IsAotCompatible`, so the trimming and AOT analysers gate the build, and a new
+`Geo.AotSmokeTest` project publishes natively and exercises every serializer as
+part of CI.
+
+Nothing about that narrows where the package runs: **.NET Standard 2.0** is still
+a target, and Geo still has no dependencies. The `net8.0` asset exists so the
+analysers have something to analyse.
+
+### Breaking changes
+
+The first two are what ordinary callers touch. The last two affect only code
+that referenced the serialization models directly or subclassed the XML base
+classes to add a format.
+
+- **`GpsData.ToGpx` takes a `GpxVersion` rather than a `decimal`.** The old
+  parameter recognised one value and silently wrote GPX 1.1 for everything else —
+  so `ToGpx(1)` gave 1.0, but `ToGpx(1.0m)` and `ToGpx(99)` both gave 1.1.
+
+  ```csharp
+  // before
+  data.ToGpx(1m);              // GPX 1.0
+  data.ToGpx(1.1m);            // GPX 1.1, and so did any other value
+
+  // after
+  data.ToGpx(GpxVersion.Gpx10);
+  data.ToGpx(GpxVersion.Gpx11);   // also the default, so ToGpx() is unchanged
+  ```
+
+  A version the writer does not recognise now throws `ArgumentOutOfRangeException`
+  instead of quietly producing the other one. `ToGpx()` with no argument still
+  writes GPX 1.1.
+
+- **The `link` metadata attribute has been replaced by `Links`.**
+  `data.Metadata.Attribute(x => x.Link)` no longer compiles; use `data.Links`
+  instead. The attribute could hold only a single address and dropped the link's
+  text, which lost 82 of the 88 links in the reference corpus — most of them on
+  waypoints, where the attribute had no equivalent at all.
+
+  ```csharp
+  // before
+  data.Metadata.Attribute(x => x.Link, "https://example.com");
+  var href = data.Metadata.Attribute(x => x.Link);
+
+  // after
+  data.Links.Add(new GpsLink("https://example.com"));
+  var href = data.Links.FirstOrDefault()?.Href;
+  ```
+
+  `Author.Link` is unchanged. GPX allows a person only one link, so the single
+  string attribute still expresses it.
+
+- **The XML serialization models are gone.** Every type under
+  `Geo.Gps.Serialization.Xml.Gpx`, `.Garmin`, `.PocketFms` and `.SkyDemon`
+  (`GpxFile`, `GpxWaypoint`, `PocketFmsMeta`, `SkyDemonRoute` and the rest) existed
+  only to be bound by `XmlSerializer` and has been removed. The documents are now
+  read straight into `GpsData`.
+
+- **`GpsXmlDeSerializer<T>` and `GpsXmlSerializer<T>` are no longer generic.** They
+  are now `GpsXmlDeSerializer` and `GpsXmlSerializer`; the abstract members a
+  subclass implements take an `XElement` and return an `XDocument` rather than
+  taking and returning the removed model types. `IGpsFileDeSerializer` and
+  `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
+  interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
+
+### Added
+
+- **Links are read and written, as a typed model.** `GpsData`, `Waypoint`, `Route`
+  and `Track` each expose a `Links` collection of the new `GpsLink` (`Href`, `Text`,
+  `Type`):
+
+  ```csharp
+  var waypoint = data.Waypoints[0];
+  waypoint.Links.Add(new GpsLink("https://example.com", "More about here", "text/html"));
+  ```
+
+  GPX 1.1 allows any number of `<link>` elements on each of those four, with a text
+  and a media type. GPX 1.0 has a single `<url>`/`<urlname>` pair in the same
+  places, so a document written as 1.0 keeps the first link and drops every media
+  type — there is nowhere in that version to put them. Reading 1.0 fills the same
+  collection, so links cross between the versions.
+
+  This replaces the `link` metadata attribute, which held one address and dropped
+  its text — see **Breaking changes**. It also picks up `<urlname>` and the
+  per-element `<url>`s, neither of which was read or written before.
+
+- **The file-level `<time>` and `<bounds>` are no longer dropped.** 56 of the 65
+  reference files carry a `<time>` and 55 a `<bounds>`; both went unread and
+  unwritten. They are handled differently, because they are different kinds of
+  thing:
+
+  - `GpsMetadata.TimeUtc` (`DateTime?`) holds when the file says it was created —
+    something only the file can tell you, so it is kept and written back. A
+    property rather than one of the keyed metadata attributes because those are
+    strings and GPX declares the element `xsd:dateTime`; a value kept as text
+    could be written back in a form no other reader would accept.
+    `Waypoint.TimeUtc` already carried a GPX time this way.
+  - `<bounds>` is **computed at write time, not stored.** GPX defines it as the
+    extent of the coordinates in the file, so keeping the file's copy would mean
+    writing back an extent that stopped being true the moment a caller added a
+    waypoint.
+
+- **`GetBounds()` on `GpsData`, `Track`, `TrackSegment` and `Route`**, returning
+  the `Envelope` covering their coordinates, or `null` when they hold none. There
+  was previously no way to ask any of them for its extent.
+
+  Two consequences of computing rather than storing. Of the 55 reference files
+  with a `<bounds>`, 53 match what Geo computes and 2 do not — in both the file's
+  own bounds disagrees with its own coordinates, and the written output now
+  corrects it. And because `<bounds>` lives inside `<metadata>` in GPX 1.1, a
+  document with data but no metadata now gains a `<metadata>` element holding just
+  the bounds, where the element used to be omitted.
+
+- **GPX extensions are read and written** ([#64]). `GpsData`, `Track`,
+  `TrackSegment`, `Route` and `Waypoint` each expose an `Extensions` collection
+  holding the foreign content of their GPX element as `XElement`s. Anything read is
+  written back, so extension data is no longer silently dropped on a round-trip,
+  and a caller can query it with LINQ to XML:
+
+  ```csharp
+  XNamespace style = "http://www.topografix.com/GPX/gpx_style/0/2";
+
+  var colour = data.Tracks[0]
+      .Extensions.FirstOrDefault(x => x.Name == style + "line")
+      ?.Element(style + "color")?.Value;
+  ```
+
+  The content is handed over as XML rather than modelled because `<extensions>` is
+  deliberately open — no fixed set of properties could keep up with what Garmin,
+  Gaia GPS, the Topografix `gpx_style` schema and the rest put in there. Both GPX
+  versions are supported, each written in its own shape: 1.1 wraps the content in
+  an `<extensions>` element, while 1.0 has no such element and carries it inline.
+
+  Three limits worth knowing. A `TrackSegment`'s extensions are 1.1-only — the GPX
+  1.0 schema ends `<trkseg>` with `<trkpt>` and admits no foreign element after
+  it — so writing 1.0 drops them. Content a 1.1 document holds in
+  `<metadata><extensions>` is read into `GpsData.Extensions` and written back at
+  the `<gpx>` level, which is where 1.0 would carry it; reading that output again
+  gives the same result. And an `<extensions>` element in a GPX 1.0 document — not
+  something that version has, but writers emit one anyway — is read, except for
+  children left in the GPX namespace: 1.0 carries extensions inline, so an
+  unprefixed `<ele>` moved out of `<extensions>` would be indistinguishable from a
+  real elevation.
+
+### Fixed
+
+- **Written GPX always carries its `creator` attribute.** Both schemas declare it
+  `use="required"`, but it was written only when the metadata said what produced
+  the file — so every document Geo built from scratch was invalid against the
+  schema its own root element announces. A `creator` read from a file is still
+  preserved rather than replaced; only the empty case now falls back, to `Geo`.
+
+  GPX output is now validated against the bundled `reference/schemas/gpx10.xsd`
+  and `gpx11.xsd` as part of the test suite — what every reference file writes
+  back in both versions, plus documents built by hand. That is what turned this
+  up, and it is a standing gate on the class of bug where Geo's reader and writer
+  agree with each other but not with GPX.
+
+- A PocketFMS flightplan with no `<LIB>` leg, or one whose points carry no
+  coordinates, is reported by returning `null` like any other document the
+  deserializer cannot read. It used to index the first leg and dereference an
+  absent `<META>` regardless, raising `IndexOutOfRangeException` or
+  `NullReferenceException` out of `GpsData.Parse`.
+- A Garmin flightplan whose waypoint table repeats an identifier no longer throws;
+  the first entry wins. A route point naming a waypoint that is not in the table is
+  skipped rather than raising.
+
+### Changed
+
+- GPX output now orders each element's children as the GPX schemas sequence them.
+  `XmlSerializer` emitted inherited members first, which put `<link>` and `<fix>`
+  after the rest of a `<wpt>` and made the output invalid against the XSD. Parsing
+  is unaffected — element order was never significant on read.
+
+- The `[Unit(...)]` annotations no longer appear on `AreaUnit`, `DistanceUnit` and
+  `SpeedUnit`, and `UnitAttribute` is gone with them. Both were `internal`, so no
+  consumer could reference either; the symbols and conversion factors they carried
+  are unchanged.
+
+- `Spatial2DComparer<T>.Equals` and `Spatial3DComparer<T>.Equals` are now declared
+  `Equals(T? x, T? y)`. The `net8.0` reference assemblies annotate
+  `IEqualityComparer<T>` where netstandard2.0's do not, so the annotation is
+  required to implement the interface without a warning. Both already forwarded to
+  a null-tolerant comparison, so behaviour is the same — but code compiled with
+  nullable reference types may see warnings shift.
+
 ## [2.0.0] — 2026-08-04
 
 The first major release since 1.0.0. It is a large correctness release: much of
@@ -454,6 +664,7 @@ details.
 [#48]: https://github.com/sibartlett/Geo/issues/48
 [#54]: https://github.com/sibartlett/Geo/issues/54
 [#55]: https://github.com/sibartlett/Geo/issues/55
+[#64]: https://github.com/sibartlett/Geo/issues/64
 [#66]: https://github.com/sibartlett/Geo/pull/66
 [#67]: https://github.com/sibartlett/Geo/pull/67
 [#70]: https://github.com/sibartlett/Geo/pull/70

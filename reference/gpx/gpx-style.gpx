@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A GPX 1.1 export in the shape Gaia GPS produces, carrying line styling from the
+  Topografix gpx_style schema (https://www.topografix.com/GPX/gpx_style/0/2) as
+  track and route extensions, and a waypoint extension alongside it.
+
+  The library treats extension content opaquely, so this file is here to hold the
+  round-trip honest - everything below must survive being read and written back -
+  rather than to assert anything about what the gpx_style schema permits.
+-->
+<gpx
+  version="1.1"
+  creator="Geo reference data"
+  xmlns="http://www.topografix.com/GPX/1/1"
+  xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2"
+>
+  <metadata>
+    <name>Styled track</name>
+  </metadata>
+  <wpt lat="53.480800" lon="-2.242600">
+    <ele>38.0</ele>
+    <name>Trailhead</name>
+    <extensions>
+      <gpx_style:line>
+        <gpx_style:color>1B7F3B</gpx_style:color>
+      </gpx_style:line>
+    </extensions>
+  </wpt>
+  <rte>
+    <name>Styled route</name>
+    <extensions>
+      <gpx_style:line>
+        <gpx_style:color>0000FF</gpx_style:color>
+        <gpx_style:width>2.0</gpx_style:width>
+      </gpx_style:line>
+    </extensions>
+    <rtept lat="53.480800" lon="-2.242600" />
+    <rtept lat="53.800800" lon="-1.549100" />
+  </rte>
+  <trk>
+    <name>Styled track</name>
+    <extensions>
+      <gpx_style:line>
+        <gpx_style:color>C00000</gpx_style:color>
+        <gpx_style:opacity>0.59</gpx_style:opacity>
+        <gpx_style:width>4.0</gpx_style:width>
+      </gpx_style:line>
+    </extensions>
+    <trkseg>
+      <trkpt lat="53.480800" lon="-2.242600">
+        <ele>38.0</ele>
+        <time>2025-11-17T01:58:26Z</time>
+      </trkpt>
+      <trkpt lat="53.800800" lon="-1.549100">
+        <ele>45.0</ele>
+        <time>2025-11-17T02:58:26Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

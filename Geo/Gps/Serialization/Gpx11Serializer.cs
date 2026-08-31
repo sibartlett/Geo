@@ -2,15 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using Geo.Abstractions.Interfaces;
 using Geo.Geometries;
 using Geo.Gps.Serialization.Xml;
-using Geo.Gps.Serialization.Xml.Gpx.Gpx11;
 
 namespace Geo.Gps.Serialization;
 
-public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
+public class Gpx11Serializer : GpsXmlSerializer
 {
+    private const string GpxNamespace = "http://www.topografix.com/GPX/1/1";
+
     public override GpsFileFormat[] FileFormats
     {
         get
@@ -24,335 +26,343 @@ public class Gpx11Serializer : GpsXmlSerializer<GpxFile>
 
     public override GpsFeatures SupportedFeatures => GpsFeatures.All;
 
-    protected override string Namespace => "http://www.topografix.com/GPX/1/1";
-
     protected override bool CanDeSerialize(XmlReader xml)
     {
         if (xml.LocalName != "gpx")
             return false;
-        if (xml.NamespaceURI == Namespace)
+        if (xml.NamespaceURI == GpxNamespace)
             return true;
         // Missing namespace: fall back to the version attribute, defaulting to
         // 1.1 when it is absent so namespaceless files still parse.
         return string.IsNullOrEmpty(xml.NamespaceURI) && xml.GetAttribute("version") != "1.0";
     }
 
-    protected override GpsData DeSerialize(GpxFile xml)
+    protected override GpsData DeSerialize(XElement root)
     {
+        // The namespace is taken from the document rather than assumed, so a file
+        // whose root is missing its default xmlns - a common defect in real-world
+        // exports - reads through the same lookups as a well-formed one. For those
+        // documents this is XNamespace.None and every child is looked up unqualified.
+        var ns = root.Name.Namespace;
+
         var data = new GpsData();
-        ParseMetadata(xml, data);
-        ParseRoute(xml, data);
-        ParseTracks(xml, data);
-        ParseWaypoints(xml, data);
+        ParseMetadata(root, ns, data);
+        ParseRoute(root, ns, data);
+        ParseTracks(root, ns, data);
+        ParseWaypoints(root, ns, data);
         return data;
     }
 
-    protected override GpxFile SerializeInternal(GpsData data)
+    protected override XDocument SerializeInternal(GpsData data)
     {
-        var xml = new GpxFile();
-        SerializeMetadata(data, xml, x => x.Software, (gpx, s) => gpx.creator = s);
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Name,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                gpx.metadata.name = s;
-            }
-        );
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Description,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                gpx.metadata.desc = s;
-            }
-        );
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Keywords,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                gpx.metadata.keywords = s;
-            }
+        XNamespace ns = GpxNamespace;
+
+        var root = new XElement(
+            ns + "gpx",
+            new XAttribute("version", "1.1"),
+            new XAttribute("creator", GetCreator(data)),
+            SerializeMetadata(data, ns),
+            SerializeWaypoints(data, ns),
+            SerializeRoutes(data, ns),
+            SerializeTracks(data, ns),
+            XmlExtensions.ExtensionsElement(ns, data.Extensions)
         );
 
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Link,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.link == null)
-                    gpx.metadata.link = new GpxLink[1];
-                gpx.metadata.link[0] = new GpxLink { href = s };
-            }
-        );
-
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Copyright.Author,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.copyright == null)
-                    gpx.metadata.copyright = new GpxCopyright();
-                gpx.metadata.copyright.author = s;
-            }
-        );
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Copyright.License,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.copyright == null)
-                    gpx.metadata.copyright = new GpxCopyright();
-                gpx.metadata.copyright.license = s;
-            }
-        );
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Copyright.Year,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.copyright == null)
-                    gpx.metadata.copyright = new GpxCopyright();
-                gpx.metadata.copyright.year = s;
-            }
-        );
-
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Author.Name,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.author == null)
-                    gpx.metadata.author = new GpxPerson();
-                gpx.metadata.author.name = s;
-            }
-        );
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Author.Email,
-            (gpx, s) =>
-            {
-                // GPX 1.1 splits an address into an id and a domain, so one that has no
-                // '@' to split on - or nothing on either side of it - cannot be written
-                // at all. Leave the element out rather than indexing past the end of the
-                // split and taking the whole serialization down with it.
-                var at = s.IndexOf('@');
-                if (at <= 0 || at == s.Length - 1)
-                    return;
-
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.author == null)
-                    gpx.metadata.author = new GpxPerson();
-
-                gpx.metadata.author.email = new GpxEmail
-                {
-                    id = s.Substring(0, at),
-                    domain = s.Substring(at + 1),
-                };
-            }
-        );
-
-        SerializeMetadata(
-            data,
-            xml,
-            x => x.Author.Link,
-            (gpx, s) =>
-            {
-                if (gpx.metadata == null)
-                    gpx.metadata = new GpxMetadata();
-                if (gpx.metadata.author == null)
-                    gpx.metadata.author = new GpxPerson();
-                if (gpx.metadata.author.link == null)
-                    gpx.metadata.author.link = new GpxLink();
-                gpx.metadata.author.link.href = s;
-            }
-        );
-
-        xml.trk = SerializeTracks(data).ToArray();
-        xml.rte = SerializeRoutes(data).ToArray();
-        xml.wpt = SerializeWaypoints(data).ToArray();
-
-        return xml;
+        return new XDocument(new XDeclaration("1.0", "utf-8", null), root);
     }
 
-    private IEnumerable<GpxWaypoint> SerializeWaypoints(GpsData data)
+    // The <metadata> element, or null when none of the fields it can hold are set -
+    // GPX 1.1 makes it optional, and an empty one carries nothing.
+    private XElement? SerializeMetadata(GpsData data, XNamespace ns)
     {
-        return data.Waypoints.Select(waypoint => ConvertToGpxWaypoint(waypoint));
+        var author = SerializeAuthor(data, ns);
+        var copyright = SerializeCopyright(data, ns);
+
+        // In the order the schema sequences them: name, desc, author, copyright, link,
+        // time, keywords, bounds.
+        var metadata = new XElement(
+            ns + "metadata",
+            XmlExtensions.OptionalElement(ns + "name", GetMetadata(data, x => x.Name)),
+            XmlExtensions.OptionalElement(ns + "desc", GetMetadata(data, x => x.Description)),
+            author,
+            copyright,
+            XmlExtensions.LinkElements(ns, data.Links),
+            data.Metadata.TimeUtc.HasValue
+                ? new XElement(ns + "time", XmlExtensions.ToString(data.Metadata.TimeUtc.Value))
+                : null,
+            XmlExtensions.OptionalElement(ns + "keywords", GetMetadata(data, x => x.Keywords)),
+            XmlExtensions.BoundsElement(ns, data.GetBounds())
+        );
+
+        return metadata.HasElements ? metadata : null;
     }
 
-    private IEnumerable<GpxTrack> SerializeTracks(GpsData data)
+    private XElement? SerializeAuthor(GpsData data, XNamespace ns)
+    {
+        var name = GetMetadata(data, x => x.Author.Name);
+        var link = GetMetadata(data, x => x.Author.Link);
+        var email = SerializeEmail(GetMetadata(data, x => x.Author.Email), ns);
+
+        if (name == null && link == null && email == null)
+            return null;
+
+        return new XElement(
+            ns + "author",
+            XmlExtensions.OptionalElement(ns + "name", name),
+            email,
+            link == null ? null : new XElement(ns + "link", new XAttribute("href", link))
+        );
+    }
+
+    // GPX 1.1 splits an address into an id and a domain, so one that has no '@' to
+    // split on - or nothing on either side of it - cannot be written at all. Leave
+    // the element out rather than indexing past the end of the split and taking the
+    // whole serialization down with it.
+    private static XElement? SerializeEmail(string? address, XNamespace ns)
+    {
+        if (address == null)
+            return null;
+
+        var at = address.IndexOf('@');
+        if (at <= 0 || at == address.Length - 1)
+            return null;
+
+        return new XElement(
+            ns + "email",
+            new XAttribute("id", address.Substring(0, at)),
+            new XAttribute("domain", address.Substring(at + 1))
+        );
+    }
+
+    private XElement? SerializeCopyright(GpsData data, XNamespace ns)
+    {
+        var author = GetMetadata(data, x => x.Copyright.Author);
+        var year = GetMetadata(data, x => x.Copyright.Year);
+        var license = GetMetadata(data, x => x.Copyright.License);
+
+        if (author == null && year == null && license == null)
+            return null;
+
+        return new XElement(
+            ns + "copyright",
+            author == null ? null : new XAttribute("author", author),
+            XmlExtensions.OptionalElement(ns + "year", year),
+            XmlExtensions.OptionalElement(ns + "license", license)
+        );
+    }
+
+    private IEnumerable<XElement> SerializeWaypoints(GpsData data, XNamespace ns)
+    {
+        return data.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "wpt"));
+    }
+
+    private IEnumerable<XElement> SerializeTracks(GpsData data, XNamespace ns)
     {
         foreach (var track in data.Tracks)
         {
-            var trk = new GpxTrack();
-
-            SerializeTrackMetadata(track, trk, x => x.Name, (gpx, s) => gpx.name = s);
-            SerializeTrackMetadata(track, trk, x => x.Description, (gpx, s) => gpx.desc = s);
-            SerializeTrackMetadata(track, trk, x => x.Comment, (gpx, s) => gpx.cmt = s);
-
-            trk.trkseg = new GpxTrackSegment[track.Segments.Count];
-            for (var i = 0; i < track.Segments.Count; i++)
-            {
-                var segment = track.Segments[i];
-                var pts = new GpxWaypoint[segment.Waypoints.Count];
-                for (var j = 0; j < segment.Waypoints.Count; j++)
-                    pts[j] = ConvertToGpxWaypoint(segment.Waypoints[j]);
-                trk.trkseg[i] = new GpxTrackSegment { trkpt = pts };
-            }
-
-            yield return trk;
+            yield return new XElement(
+                ns + "trk",
+                XmlExtensions.OptionalElement(ns + "name", GetTrackMetadata(track, x => x.Name)),
+                XmlExtensions.OptionalElement(ns + "cmt", GetTrackMetadata(track, x => x.Comment)),
+                XmlExtensions.OptionalElement(
+                    ns + "desc",
+                    GetTrackMetadata(track, x => x.Description)
+                ),
+                XmlExtensions.LinkElements(ns, track.Links),
+                // The schema sequences <extensions> before <trkseg>, not after it.
+                XmlExtensions.ExtensionsElement(ns, track.Extensions),
+                track.Segments.Select(segment => new XElement(
+                    ns + "trkseg",
+                    segment.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "trkpt")),
+                    XmlExtensions.ExtensionsElement(ns, segment.Extensions)
+                ))
+            );
         }
     }
 
-    private IEnumerable<GpxRoute> SerializeRoutes(GpsData data)
+    private IEnumerable<XElement> SerializeRoutes(GpsData data, XNamespace ns)
     {
         foreach (var route in data.Routes)
         {
-            var rte = new GpxRoute();
-
-            SerializeRouteMetadata(route, rte, x => x.Name, (gpx, s) => gpx.name = s);
-            SerializeRouteMetadata(route, rte, x => x.Description, (gpx, s) => gpx.desc = s);
-            SerializeRouteMetadata(route, rte, x => x.Comment, (gpx, s) => gpx.cmt = s);
-
-            rte.rtept = new GpxWaypoint[route.Waypoints.Count];
-            for (var j = 0; j < route.Waypoints.Count; j++)
-                rte.rtept[j] = ConvertToGpxWaypoint(route.Waypoints[j]);
-            yield return rte;
+            yield return new XElement(
+                ns + "rte",
+                XmlExtensions.OptionalElement(ns + "name", GetRouteMetadata(route, x => x.Name)),
+                XmlExtensions.OptionalElement(ns + "cmt", GetRouteMetadata(route, x => x.Comment)),
+                XmlExtensions.OptionalElement(
+                    ns + "desc",
+                    GetRouteMetadata(route, x => x.Description)
+                ),
+                XmlExtensions.LinkElements(ns, route.Links),
+                // The schema sequences <extensions> before <rtept>, not after it.
+                XmlExtensions.ExtensionsElement(ns, route.Extensions),
+                route.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "rtept"))
+            );
         }
     }
 
-    private static void ParseMetadata(GpxFile xml, GpsData data)
+    // Children are emitted in the order the GPX 1.1 schema sequences them.
+    private static XElement SerializeWaypoint(Waypoint waypoint, XName name)
     {
-        data.Metadata.Attribute(x => x.Software, xml.creator);
-        if (xml.metadata != null)
+        XNamespace ns = name.Namespace;
+
+        return new XElement(
+            name,
+            new XAttribute("lat", XmlExtensions.ToString((decimal)waypoint.Coordinate.Latitude)),
+            new XAttribute("lon", XmlExtensions.ToString((decimal)waypoint.Coordinate.Longitude)),
+            waypoint.Coordinate.Is3D
+                ? new XElement(
+                    ns + "ele",
+                    XmlExtensions.ToString((decimal)((Is3D)waypoint.Coordinate).Elevation)
+                )
+                : null,
+            waypoint.TimeUtc.HasValue
+                ? new XElement(ns + "time", XmlExtensions.ToString(waypoint.TimeUtc.Value))
+                : null,
+            XmlExtensions.OptionalElement(ns + "name", waypoint.Name),
+            XmlExtensions.OptionalElement(ns + "cmt", waypoint.Comment),
+            XmlExtensions.OptionalElement(ns + "desc", waypoint.Description),
+            XmlExtensions.LinkElements(ns, waypoint.Links),
+            XmlExtensions.ExtensionsElement(ns, waypoint.Extensions)
+        );
+    }
+
+    private static void ParseMetadata(XElement root, XNamespace ns, GpsData data)
+    {
+        data.Metadata.Attribute(x => x.Software, root.AttributeValue("creator"));
+        data.Extensions.AddRange(root.WrappedExtensions(ns));
+
+        var metadata = root.Element(ns + "metadata");
+        if (metadata == null)
+            return;
+
+        // <metadata> has an <extensions> of its own. There is nowhere in the domain
+        // model that belongs to the metadata element specifically, and GPX 1.0 has no
+        // such element at all, so its content joins the file-level extensions and is
+        // written back at the <gpx> level - which is stable, since reading that
+        // document again puts it in the same place.
+        data.Extensions.AddRange(metadata.WrappedExtensions(ns));
+
+        data.Metadata.Attribute(x => x.Name, metadata.ElementValue(ns + "name"));
+        data.Metadata.Attribute(x => x.Description, metadata.ElementValue(ns + "desc"));
+        data.Metadata.Attribute(x => x.Keywords, metadata.ElementValue(ns + "keywords"));
+        data.Metadata.TimeUtc = metadata.DateTimeElement(ns + "time");
+
+        // <bounds> is not read: it only restates the extent of the coordinates that
+        // follow it, and GpsData.GetBounds computes that from the data itself. Keeping
+        // the file's copy would mean writing back an extent that stopped being true as
+        // soon as a caller added a waypoint.
+
+        data.Links.AddRange(metadata.ReadLinks(ns));
+
+        var author = metadata.Element(ns + "author");
+        if (author != null)
         {
-            data.Metadata.Attribute(x => x.Name, xml.metadata.name);
-            data.Metadata.Attribute(x => x.Description, xml.metadata.desc);
-            data.Metadata.Attribute(x => x.Keywords, xml.metadata.keywords);
+            data.Metadata.Attribute(x => x.Author.Name, author.ElementValue(ns + "name"));
 
-            if (xml.metadata.link != null && xml.metadata.link.Length > 0)
-                data.Metadata.Attribute(x => x.Link, xml.metadata.link[0].href);
+            var email = author.Element(ns + "email");
+            if (email != null)
+                data.Metadata.Attribute(
+                    x => x.Author.Email,
+                    email.AttributeValue("id") + "@" + email.AttributeValue("domain")
+                );
 
-            if (xml.metadata.author != null)
-            {
-                data.Metadata.Attribute(x => x.Author.Name, xml.metadata.author.name);
-                if (xml.metadata.author.email != null)
-                    data.Metadata.Attribute(
-                        x => x.Author.Email,
-                        xml.metadata.author.email.id + "@" + xml.metadata.author.email.domain
-                    );
-                if (xml.metadata.author.link != null)
-                    data.Metadata.Attribute(x => x.Author.Link, xml.metadata.author.link.href);
-            }
+            var authorLink = author.Element(ns + "link");
+            if (authorLink != null)
+                data.Metadata.Attribute(x => x.Author.Link, authorLink.AttributeValue("href"));
+        }
 
-            if (xml.metadata.copyright != null)
-            {
-                data.Metadata.Attribute(x => x.Copyright.Author, xml.metadata.copyright.author);
-                data.Metadata.Attribute(x => x.Copyright.License, xml.metadata.copyright.license);
-                data.Metadata.Attribute(x => x.Copyright.Year, xml.metadata.copyright.year);
-            }
+        var copyright = metadata.Element(ns + "copyright");
+        if (copyright != null)
+        {
+            data.Metadata.Attribute(x => x.Copyright.Author, copyright.AttributeValue("author"));
+            data.Metadata.Attribute(
+                x => x.Copyright.License,
+                copyright.ElementValue(ns + "license")
+            );
+            data.Metadata.Attribute(x => x.Copyright.Year, copyright.ElementValue(ns + "year"));
         }
     }
 
-    private static void ParseTracks(GpxFile xml, GpsData data)
+    private static void ParseTracks(XElement root, XNamespace ns, GpsData data)
     {
-        if (xml.trk != null)
-            foreach (var trkType in xml.trk)
-            {
-                var track = new Track();
-
-                track.Metadata.Attribute(x => x.Name, trkType.name);
-                track.Metadata.Attribute(x => x.Description, trkType.desc);
-                track.Metadata.Attribute(x => x.Comment, trkType.cmt);
-
-                if (trkType.trkseg != null)
-                    foreach (var trksegType in trkType.trkseg.Where(seg => seg.trkpt != null))
-                    {
-                        var segment = new TrackSegment();
-                        foreach (var wptType in trksegType.trkpt!)
-                            segment.Waypoints.Add(ConvertWaypoint(wptType));
-                        track.Segments.Add(segment);
-                    }
-
-                data.Tracks.Add(track);
-            }
-    }
-
-    private static void ParseRoute(GpxFile xml, GpsData data)
-    {
-        if (xml.rte != null)
-            foreach (var rteType in xml.rte)
-            {
-                var route = new Route();
-                route.Metadata.Attribute(x => x.Name, rteType.name);
-                route.Metadata.Attribute(x => x.Description, rteType.desc);
-                route.Metadata.Attribute(x => x.Comment, rteType.cmt);
-
-                // <rtept> is optional in the GPX schema, so a route may carry only
-                // metadata; the element is absent (null) rather than an empty array.
-                if (rteType.rtept != null)
-                    foreach (var wptType in rteType.rtept)
-                        route.Waypoints.Add(ConvertWaypoint(wptType));
-                data.Routes.Add(route);
-            }
-    }
-
-    private static void ParseWaypoints(GpxFile xml, GpsData data)
-    {
-        if (xml.wpt != null)
-            foreach (var wptType in xml.wpt)
-                data.Waypoints.Add(ConvertWaypoint(wptType));
-    }
-
-    private static Waypoint ConvertWaypoint(GpxWaypoint wptType)
-    {
-        var point = wptType.eleSpecified
-            ? new Point((double)wptType.lat, (double)wptType.lon, (double)wptType.ele)
-            : new Point((double)wptType.lat, (double)wptType.lon);
-        var time = wptType.timeSpecified ? wptType.time : (DateTime?)null;
-        return new Waypoint(point, time, wptType.name, wptType.cmt, wptType.desc);
-    }
-
-    private static GpxWaypoint ConvertToGpxWaypoint(Waypoint waypoint)
-    {
-        return new GpxWaypoint
+        foreach (var trkType in root.Elements(ns + "trk"))
         {
-            lat = (decimal)waypoint.Coordinate.Latitude,
-            lon = (decimal)waypoint.Coordinate.Longitude,
-            ele = waypoint.Coordinate.Is3D ? (decimal)((Is3D)waypoint.Coordinate).Elevation : 0m,
-            eleSpecified = waypoint.Coordinate.Is3D,
-            time = waypoint.TimeUtc.HasValue ? waypoint.TimeUtc.Value : DateTime.MinValue,
-            timeSpecified = waypoint.TimeUtc.HasValue,
-            name = waypoint.Name,
-            desc = waypoint.Description,
-            cmt = waypoint.Comment,
-        };
+            var track = new Track();
+
+            track.Metadata.Attribute(x => x.Name, trkType.ElementValue(ns + "name"));
+            track.Metadata.Attribute(x => x.Description, trkType.ElementValue(ns + "desc"));
+            track.Metadata.Attribute(x => x.Comment, trkType.ElementValue(ns + "cmt"));
+            track.Links.AddRange(trkType.ReadLinks(ns));
+            track.Extensions.AddRange(trkType.WrappedExtensions(ns));
+
+            foreach (var trksegType in trkType.Elements(ns + "trkseg"))
+            {
+                var trkpt = trksegType.Elements(ns + "trkpt").ToList();
+                var extensions = trksegType.WrappedExtensions(ns).ToList();
+
+                // A segment with no <trkpt> and no extensions carries nothing and is
+                // left out, as it was when an absent element deserialized to a null
+                // array. One holding only extensions still has something to carry, so
+                // dropping it would lose them.
+                if (trkpt.Count == 0 && extensions.Count == 0)
+                    continue;
+
+                var segment = new TrackSegment();
+                foreach (var wptType in trkpt)
+                    segment.Waypoints.Add(ConvertWaypoint(wptType, ns));
+                segment.Extensions.AddRange(extensions);
+                track.Segments.Add(segment);
+            }
+
+            data.Tracks.Add(track);
+        }
+    }
+
+    private static void ParseRoute(XElement root, XNamespace ns, GpsData data)
+    {
+        foreach (var rteType in root.Elements(ns + "rte"))
+        {
+            var route = new Route();
+            route.Metadata.Attribute(x => x.Name, rteType.ElementValue(ns + "name"));
+            route.Metadata.Attribute(x => x.Description, rteType.ElementValue(ns + "desc"));
+            route.Metadata.Attribute(x => x.Comment, rteType.ElementValue(ns + "cmt"));
+            route.Links.AddRange(rteType.ReadLinks(ns));
+            route.Extensions.AddRange(rteType.WrappedExtensions(ns));
+
+            // <rtept> is optional in the GPX schema, so a route may carry only
+            // metadata.
+            foreach (var wptType in rteType.Elements(ns + "rtept"))
+                route.Waypoints.Add(ConvertWaypoint(wptType, ns));
+            data.Routes.Add(route);
+        }
+    }
+
+    private static void ParseWaypoints(XElement root, XNamespace ns, GpsData data)
+    {
+        foreach (var wptType in root.Elements(ns + "wpt"))
+            data.Waypoints.Add(ConvertWaypoint(wptType, ns));
+    }
+
+    private static Waypoint ConvertWaypoint(XElement wptType, XNamespace ns)
+    {
+        var latitude = (double)(wptType.DecimalAttribute("lat") ?? 0m);
+        var longitude = (double)(wptType.DecimalAttribute("lon") ?? 0m);
+        var elevation = wptType.DecimalElement(ns + "ele");
+
+        var point = elevation.HasValue
+            ? new Point(latitude, longitude, (double)elevation.Value)
+            : new Point(latitude, longitude);
+
+        var waypoint = new Waypoint(
+            point,
+            wptType.DateTimeElement(ns + "time"),
+            wptType.ElementValue(ns + "name"),
+            wptType.ElementValue(ns + "cmt"),
+            wptType.ElementValue(ns + "desc")
+        );
+
+        waypoint.Links.AddRange(wptType.ReadLinks(ns));
+        waypoint.Extensions.AddRange(wptType.WrappedExtensions(ns));
+        return waypoint;
     }
 }

@@ -71,4 +71,49 @@ public class PocketFmsFlightplanDeSerializerTests : SerializerTestFixtureBase
     {
         Assert.Null(new PocketFmsFlightplanDeSerializer().DeSerialize(Wrap("<broken")));
     }
+
+    [Fact]
+    public void DeSerialize_returns_null_for_a_flightplan_with_no_legs()
+    {
+        // A document with no <LIB> holds no route. It used to be indexed at [0]
+        // regardless, so a file this deserializer had already claimed left it as an
+        // IndexOutOfRangeException instead of the null it reports for one it cannot
+        // read.
+        Assert.Null(
+            new PocketFmsFlightplanDeSerializer().DeSerialize(
+                Wrap("<PocketFMSFlightplan><META /></PocketFMSFlightplan>")
+            )
+        );
+    }
+
+    [Fact]
+    public void DeSerialize_returns_null_when_a_leg_has_no_coordinates()
+    {
+        Assert.Null(
+            new PocketFmsFlightplanDeSerializer().DeSerialize(
+                Wrap(
+                    "<PocketFMSFlightplan><LIB><FromPoint /><ToPoint /></LIB></PocketFMSFlightplan>"
+                )
+            )
+        );
+    }
+
+    [Fact]
+    public void A_flightplan_without_metadata_is_parsed()
+    {
+        // <META> is not needed to read the route, and its absence used to be
+        // dereferenced.
+        var data = new PocketFmsFlightplanDeSerializer().DeSerialize(
+            Wrap(
+                "<PocketFMSFlightplan><LIB>"
+                    + "<FromPoint><Latitude>51.1</Latitude><Longitude>14.9</Longitude></FromPoint>"
+                    + "<ToPoint><Latitude>51.3</Latitude><Longitude>15.1</Longitude></ToPoint>"
+                    + "</LIB></PocketFMSFlightplan>"
+            )
+        );
+
+        Assert.NotNull(data);
+        Assert.Equal(2, data!.Routes.Single().Waypoints.Count);
+        Assert.Empty(data.Metadata);
+    }
 }
