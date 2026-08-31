@@ -35,19 +35,16 @@ The library multi-targets `netstandard2.0` and `net8.0`. The modern target sets
 `Geo.AotSmokeTest` project publishes natively and exercises every serializer as
 part of CI.
 
+Nothing about that narrows where the package runs: **.NET Standard 2.0** is still
+a target, and Geo still has no dependencies. The `net8.0` asset exists so the
+analysers have something to analyse.
+
 ### Breaking changes
 
-- **The XML serialization models are gone.** Every type under
-  `Geo.Gps.Serialization.Xml.Gpx`, `.Garmin`, `.PocketFms` and `.SkyDemon`
-  (`GpxFile`, `GpxWaypoint`, `PocketFmsMeta`, `SkyDemonRoute` and the rest) existed
-  only to be bound by `XmlSerializer` and has been removed. The documents are now
-  read straight into `GpsData`.
-- **`GpsXmlDeSerializer<T>` and `GpsXmlSerializer<T>` are no longer generic.** They
-  are now `GpsXmlDeSerializer` and `GpsXmlSerializer`; the abstract members a
-  subclass implements take an `XElement` and return an `XDocument` rather than
-  taking and returning the removed model types. `IGpsFileDeSerializer` and
-  `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
-  interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
+The first two are what ordinary callers touch. The last two affect only code
+that referenced the serialization models directly or subclassed the XML base
+classes to add a format.
+
 - **`GpsData.ToGpx` takes a `GpxVersion` rather than a `decimal`.** The old
   parameter recognised one value and silently wrote GPX 1.1 for everything else —
   so `ToGpx(1)` gave 1.0, but `ToGpx(1.0m)` and `ToGpx(99)` both gave 1.1.
@@ -85,9 +82,18 @@ part of CI.
   `Author.Link` is unchanged. GPX allows a person only one link, so the single
   string attribute still expresses it.
 
-- **`UnitAttribute` has been removed** and the `[Unit(...)]` annotations no longer
-  appear on `AreaUnit`, `DistanceUnit` and `SpeedUnit`. The attribute was
-  `internal`, and the values it carried are unchanged.
+- **The XML serialization models are gone.** Every type under
+  `Geo.Gps.Serialization.Xml.Gpx`, `.Garmin`, `.PocketFms` and `.SkyDemon`
+  (`GpxFile`, `GpxWaypoint`, `PocketFmsMeta`, `SkyDemonRoute` and the rest) existed
+  only to be bound by `XmlSerializer` and has been removed. The documents are now
+  read straight into `GpsData`.
+
+- **`GpsXmlDeSerializer<T>` and `GpsXmlSerializer<T>` are no longer generic.** They
+  are now `GpsXmlDeSerializer` and `GpsXmlSerializer`; the abstract members a
+  subclass implements take an `XElement` and return an `XDocument` rather than
+  taking and returning the removed model types. `IGpsFileDeSerializer` and
+  `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
+  interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
 
 ### Added
 
@@ -197,6 +203,18 @@ part of CI.
   `XmlSerializer` emitted inherited members first, which put `<link>` and `<fix>`
   after the rest of a `<wpt>` and made the output invalid against the XSD. Parsing
   is unaffected — element order was never significant on read.
+
+- The `[Unit(...)]` annotations no longer appear on `AreaUnit`, `DistanceUnit` and
+  `SpeedUnit`, and `UnitAttribute` is gone with them. Both were `internal`, so no
+  consumer could reference either; the symbols and conversion factors they carried
+  are unchanged.
+
+- `Spatial2DComparer<T>.Equals` and `Spatial3DComparer<T>.Equals` are now declared
+  `Equals(T? x, T? y)`. The `net8.0` reference assemblies annotate
+  `IEqualityComparer<T>` where netstandard2.0's do not, so the annotation is
+  required to implement the interface without a warning. Both already forwarded to
+  a null-tolerant comparison, so behaviour is the same — but code compiled with
+  nullable reference types may see warnings shift.
 
 ## [2.0.0] — 2026-08-04
 
