@@ -8,6 +8,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+A NativeAOT release — and, because of what that required, a GPX release.
+
+`XmlSerializer` cannot be published natively: it generates and compiles a
+serialization assembly at runtime by reflecting over attributed types. Any
+application that published natively and touched a `Geo` GPS serializer failed at
+runtime, so the library could not be used from one at all. GPX 1.0/1.1 and the
+Garmin, PocketFMS and SkyDemon flightplan formats are now read and written with
+`System.Xml.Linq`, which needs no runtime code generation, and the ~70 model
+classes that existed only to be bound by `XmlSerializer` are gone with it.
+
+The unit conversions had the same problem for the same reason: `UnitMetadata` read
+each unit's symbol and factor off the enum members' `[Unit]` attributes through
+`Enum.GetValues(Type)` and `Type.GetField`. The definitions are now a plain table,
+resolved with no reflection.
+
+Rewriting the GPX serializers meant reading the schemas properly, which turned up
+how much the old ones had been dropping. Extensions, links, and the file-level
+`<time>` and `<bounds>` are now carried; `<gpx>` gets the `creator` attribute the
+schema requires of it; and every element is written in the order its schema
+sequences them, which the old output did not do. Written GPX is now validated
+against the official schemas as part of the test suite, so it stays that way.
+
+The library multi-targets `netstandard2.0` and `net8.0`. The modern target sets
+`IsAotCompatible`, so the trimming and AOT analysers gate the build, and a new
+`Geo.AotSmokeTest` project publishes natively and exercises every serializer as
+part of CI.
+
+### Breaking changes
+
+- **The XML serialization models are gone.** Every type under
+  `Geo.Gps.Serialization.Xml.Gpx`, `.Garmin`, `.PocketFms` and `.SkyDemon`
+  (`GpxFile`, `GpxWaypoint`, `PocketFmsMeta`, `SkyDemonRoute` and the rest) existed
+  only to be bound by `XmlSerializer` and has been removed. The documents are now
+  read straight into `GpsData`.
+- **`GpsXmlDeSerializer<T>` and `GpsXmlSerializer<T>` are no longer generic.** They
+  are now `GpsXmlDeSerializer` and `GpsXmlSerializer`; the abstract members a
+  subclass implements take an `XElement` and return an `XDocument` rather than
+  taking and returning the removed model types. `IGpsFileDeSerializer` and
+  `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
+  interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
+- **`GpsData.ToGpx` takes a `GpxVersion` rather than a `decimal`.** The old
+  parameter recognised one value and silently wrote GPX 1.1 for everything else —
+  so `ToGpx(1)` gave 1.0, but `ToGpx(1.0m)` and `ToGpx(99)` both gave 1.1.
+
+  ```csharp
+  // before
+  data.ToGpx(1m);              // GPX 1.0
+  data.ToGpx(1.1m);            // GPX 1.1, and so did any other value
+
+  // after
+  data.ToGpx(GpxVersion.Gpx10);
+  data.ToGpx(GpxVersion.Gpx11);   // also the default, so ToGpx() is unchanged
+  ```
+
+  A version the writer does not recognise now throws `ArgumentOutOfRangeException`
+  instead of quietly producing the other one. `ToGpx()` with no argument still
+  writes GPX 1.1.
+
+- **The `link` metadata attribute has been replaced by `Links`.**
+  `data.Metadata.Attribute(x => x.Link)` no longer compiles; use `data.Links`
+  instead. The attribute could hold only a single address and dropped the link's
+  text, which lost 82 of the 88 links in the reference corpus — most of them on
+  waypoints, where the attribute had no equivalent at all.
+
+  ```csharp
+  // before
+  data.Metadata.Attribute(x => x.Link, "https://example.com");
+  var href = data.Metadata.Attribute(x => x.Link);
+
+  // after
+  data.Links.Add(new GpsLink("https://example.com"));
+  var href = data.Links.FirstOrDefault()?.Href;
+  ```
+
+  `Author.Link` is unchanged. GPX allows a person only one link, so the single
+  string attribute still expresses it.
+
+- **`UnitAttribute` has been removed** and the `[Unit(...)]` annotations no longer
+  appear on `AreaUnit`, `DistanceUnit` and `SpeedUnit`. The attribute was
+  `internal`, and the values it carried are unchanged.
+
 ### Added
 
 - **Links are read and written, as a typed model.** `GpsData`, `Waypoint`, `Route`
@@ -86,81 +167,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   children left in the GPX namespace: 1.0 carries extensions inline, so an
   unprefixed `<ele>` moved out of `<extensions>` would be indistinguishable from a
   real elevation.
-
-[#64]: https://github.com/sibartlett/Geo/issues/64
-
-### NativeAOT support
-
-The GPS file serializers no longer use `System.Xml.Serialization`. `XmlSerializer`
-generates and compiles a serialization assembly at runtime by reflecting over
-attributed types, which NativeAOT cannot do, so any application that published
-natively and touched a `Geo` GPS serializer failed at runtime. GPX 1.0/1.1 and the
-Garmin, PocketFMS and SkyDemon flightplan formats are now read and written with
-`System.Xml.Linq`, which needs no runtime code generation.
-
-The unit conversions had the same problem for the same reason: `UnitMetadata` read
-each unit's symbol and factor off the enum members' `[Unit]` attributes through
-`Enum.GetValues(Type)` and `Type.GetField`. The definitions are now a plain table,
-resolved with no reflection.
-
-The library multi-targets `netstandard2.0;net8.0`. The modern target sets
-`IsAotCompatible`, so the trimming and AOT analysers gate the build, and a new
-`Geo.AotSmokeTest` project publishes natively and exercises every serializer as
-part of CI.
-
-### Breaking changes
-
-- **The XML serialization models are gone.** Every type under
-  `Geo.Gps.Serialization.Xml.Gpx`, `.Garmin`, `.PocketFms` and `.SkyDemon`
-  (`GpxFile`, `GpxWaypoint`, `PocketFmsMeta`, `SkyDemonRoute` and the rest) existed
-  only to be bound by `XmlSerializer` and has been removed. The documents are now
-  read straight into `GpsData`.
-- **`GpsXmlDeSerializer<T>` and `GpsXmlSerializer<T>` are no longer generic.** They
-  are now `GpsXmlDeSerializer` and `GpsXmlSerializer`; the abstract members a
-  subclass implements take an `XElement` and return an `XDocument` rather than
-  taking and returning the removed model types. `IGpsFileDeSerializer` and
-  `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
-  interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
-- **`GpsData.ToGpx` takes a `GpxVersion` rather than a `decimal`.** The old
-  parameter recognised one value and silently wrote GPX 1.1 for everything else —
-  so `ToGpx(1)` gave 1.0, but `ToGpx(1.0m)` and `ToGpx(99)` both gave 1.1.
-
-  ```csharp
-  // before
-  data.ToGpx(1m);              // GPX 1.0
-  data.ToGpx(1.1m);            // GPX 1.1, and so did any other value
-
-  // after
-  data.ToGpx(GpxVersion.Gpx10);
-  data.ToGpx(GpxVersion.Gpx11);   // also the default, so ToGpx() is unchanged
-  ```
-
-  A version the writer does not recognise now throws `ArgumentOutOfRangeException`
-  instead of quietly producing the other one. `ToGpx()` with no argument still
-  writes GPX 1.1.
-
-- **The `link` metadata attribute has been replaced by `Links`.**
-  `data.Metadata.Attribute(x => x.Link)` no longer compiles; use `data.Links`
-  instead. The attribute could hold only a single address and dropped the link's
-  text, which lost 82 of the 88 links in the reference corpus — most of them on
-  waypoints, where the attribute had no equivalent at all.
-
-  ```csharp
-  // before
-  data.Metadata.Attribute(x => x.Link, "https://example.com");
-  var href = data.Metadata.Attribute(x => x.Link);
-
-  // after
-  data.Links.Add(new GpsLink("https://example.com"));
-  var href = data.Links.FirstOrDefault()?.Href;
-  ```
-
-  `Author.Link` is unchanged. GPX allows a person only one link, so the single
-  string attribute still expresses it.
-
-- **`UnitAttribute` has been removed** and the `[Unit(...)]` annotations no longer
-  appear on `AreaUnit`, `DistanceUnit` and `SpeedUnit`. The attribute was
-  `internal`, and the values it carried are unchanged.
 
 ### Fixed
 
@@ -640,6 +646,7 @@ details.
 [#48]: https://github.com/sibartlett/Geo/issues/48
 [#54]: https://github.com/sibartlett/Geo/issues/54
 [#55]: https://github.com/sibartlett/Geo/issues/55
+[#64]: https://github.com/sibartlett/Geo/issues/64
 [#66]: https://github.com/sibartlett/Geo/pull/66
 [#67]: https://github.com/sibartlett/Geo/pull/67
 [#70]: https://github.com/sibartlett/Geo/pull/70
