@@ -61,7 +61,7 @@ run the same targets as CI:
 ./build.sh Test                     # build + run tests
 ./build.sh CheckForUncommittedChanges Test   # exactly what CI runs
 ./build.sh Clean
-./build.sh Publish                  # dotnet publish in Release
+./build.sh Publish                  # pack the NuGet package into artifacts/package
 ```
 
 On Windows use `build.cmd` / `build.ps1` (same targets).
@@ -72,7 +72,9 @@ NUKE targets are defined in `build/Build.cs`:
 - `Clean` runs before `Restore`
 - `CheckForUncommittedChanges` runs `dotnet husky run --group verify`, which
   runs `csharpier check .` — it fails if any file is not formatted.
-- `Publish` produces the Release package.
+- `Publish` packs the `Geo` project in Release and writes `Geo.<version>.nupkg`
+  to `artifacts/package`. It builds first because `GeneratePackageOnBuild` makes
+  `dotnet pack` imply `--no-build`.
 
 You can also use plain dotnet if the SDK is already present:
 
