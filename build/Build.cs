@@ -111,10 +111,30 @@ class Build : NukeBuild
                     ProcessTasks.StartProcess(executable).AssertZeroExitCode();
                 });
 
+    // Packs the library for release. This is `pack`, not `publish`: the release
+    // artifact of a library is its NuGet package, where `dotnet publish` lays out
+    // the assemblies an application runs from — which nothing consumes here, and
+    // which the SDK will not produce for Geo at all now that it multi-targets
+    // (NETSDK1129: publish needs a single framework). Packing the one project also
+    // keeps the test and smoke-test projects out of it; the solution-wide publish
+    // swept those in.
     Target Publish =>
         _ =>
             _.Executes(() =>
             {
-                DotNetTasks.DotNetPublish(_ => _.SetConfiguration("Release"));
+                var project = Solution.GetProject("Geo").Path;
+                var output = RootDirectory / "artifacts" / "package";
+
+                // Built first because Geo sets GeneratePackageOnBuild, which makes
+                // pack imply --no-build: left to itself it would look for Release
+                // assemblies nothing had produced (NU5026).
+                DotNetTasks.DotNetBuild(_ => _.SetProjectFile(project).SetConfiguration("Release"));
+
+                DotNetTasks.DotNetPack(_ =>
+                    _.SetProject(project)
+                        .SetConfiguration("Release")
+                        .EnableNoBuild()
+                        .SetOutputDirectory(output)
+                );
             });
 }
