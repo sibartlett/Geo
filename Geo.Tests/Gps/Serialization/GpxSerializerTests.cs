@@ -30,7 +30,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
                 var gpxData = data.ToGpx();
                 Compare(gpx11, data, gpxData);
 
-                gpxData = data.ToGpx(1);
+                gpxData = data.ToGpx(GpxVersion.Gpx10);
                 Compare(gpx10, data, gpxData);
             }
             else if (gpx11.CanDeSerialize(streamWrapper))
@@ -39,7 +39,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
                 var gpxData = data.ToGpx();
                 Compare(gpx11, data, gpxData);
 
-                gpxData = data.ToGpx(1);
+                gpxData = data.ToGpx(GpxVersion.Gpx10);
                 Compare(gpx10, data, gpxData);
             }
             else

@@ -121,6 +121,24 @@ part of CI.
   taking and returning the removed model types. `IGpsFileDeSerializer` and
   `IGpsFileSerializer` are unchanged, so code that consumes serializers through the
   interfaces — including `GpsData.Parse` and `GpsData.ToGpx` — is unaffected.
+- **`GpsData.ToGpx` takes a `GpxVersion` rather than a `decimal`.** The old
+  parameter recognised one value and silently wrote GPX 1.1 for everything else —
+  so `ToGpx(1)` gave 1.0, but `ToGpx(1.0m)` and `ToGpx(99)` both gave 1.1.
+
+  ```csharp
+  // before
+  data.ToGpx(1m);              // GPX 1.0
+  data.ToGpx(1.1m);            // GPX 1.1, and so did any other value
+
+  // after
+  data.ToGpx(GpxVersion.Gpx10);
+  data.ToGpx(GpxVersion.Gpx11);   // also the default, so ToGpx() is unchanged
+  ```
+
+  A version the writer does not recognise now throws `ArgumentOutOfRangeException`
+  instead of quietly producing the other one. `ToGpx()` with no argument still
+  writes GPX 1.1.
+
 - **The `link` metadata attribute has been replaced by `Links`.**
   `data.Metadata.Attribute(x => x.Link)` no longer compiles; use `data.Links`
   instead. The attribute could hold only a single address and dropped the link's

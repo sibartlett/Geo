@@ -141,7 +141,7 @@ public class GpxLinksTests : SerializerTestFixtureBase
         Assert.Equal("The waypoint", data.Waypoints.Single().Links.Single().Text);
 
         // And back out again as the same pair.
-        var written = XDocument.Parse(data.ToGpx(1));
+        var written = XDocument.Parse(data.ToGpx(GpxVersion.Gpx10));
         XNamespace ns = "http://www.topografix.com/GPX/1/0";
 
         Assert.Empty(written.Descendants(ns + "link"));
@@ -156,7 +156,7 @@ public class GpxLinksTests : SerializerTestFixtureBase
     {
         // 1.0 has one <url> per element and no media type, so this is where the two
         // versions genuinely differ in what they can hold.
-        var asGpx10 = Parse(Parse(Gpx11WithLinks).ToGpx(1));
+        var asGpx10 = Parse(Parse(Gpx11WithLinks).ToGpx(GpxVersion.Gpx10));
         var link = asGpx10.Waypoints.Single().Links.Single();
 
         Assert.Equal("https://example.com/one", link.Href);
@@ -189,7 +189,7 @@ public class GpxLinksTests : SerializerTestFixtureBase
         data.Waypoints.Add(new Waypoint(1, 2));
 
         Assert.DoesNotContain("<link", data.ToGpx());
-        Assert.DoesNotContain("<url", data.ToGpx(1));
+        Assert.DoesNotContain("<url", data.ToGpx(GpxVersion.Gpx10));
     }
 
     [Fact]

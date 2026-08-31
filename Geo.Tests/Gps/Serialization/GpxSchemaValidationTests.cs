@@ -125,7 +125,11 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
             Assert.NotNull(data);
 
             foreach (
-                var (version, written) in new[] { ("1.1", data!.ToGpx()), ("1.0", data.ToGpx(1)) }
+                var (version, written) in new[]
+                {
+                    ("1.1", data!.ToGpx()),
+                    ("1.0", data.ToGpx(GpxVersion.Gpx10)),
+                }
             )
                 failures.AddRange(
                     Validate(schemas, written)
@@ -137,9 +141,9 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void A_document_with_no_metadata_at_all_is_valid(int version)
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void A_document_with_no_metadata_at_all_is_valid(GpxVersion version)
     {
         // creator is use="required" in both schemas. It used to be left out whenever
         // the metadata said nothing about what produced the file, so everything Geo
@@ -147,16 +151,16 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
         var data = new GpsData();
         data.Waypoints.Add(new Waypoint(53.4808, -2.2426));
 
-        var written = version == 0 ? data.ToGpx() : data.ToGpx(1);
+        var written = data.ToGpx(version);
 
         Assert.Contains("creator=\"Geo\"", written);
         Assert.Empty(Validate(LoadSchemas(), written));
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void A_fully_populated_document_is_valid(int version)
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void A_fully_populated_document_is_valid(GpxVersion version)
     {
         var data = new GpsData();
         data.Metadata.Attribute(x => x.Software, "Geo.Tests");
@@ -185,7 +189,7 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
         track.Segments.Add(segment);
         data.Tracks.Add(track);
 
-        var written = version == 0 ? data.ToGpx() : data.ToGpx(1);
+        var written = data.ToGpx(version);
 
         Assert.Empty(Validate(LoadSchemas(), written));
     }

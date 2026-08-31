@@ -52,24 +52,24 @@ public class GpxTimeAndBoundsTests : SerializerTestFixtureBase
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void The_file_time_survives_a_round_trip(int version)
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void The_file_time_survives_a_round_trip(GpxVersion version)
     {
         var data = WithAWaypoint();
         data.Metadata.TimeUtc = Time;
 
-        var roundTripped = Parse(version == 0 ? data.ToGpx() : data.ToGpx(1));
+        var roundTripped = Parse(data.ToGpx(version));
 
         Assert.Equal(Time, roundTripped.Metadata.TimeUtc);
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void A_file_with_no_time_writes_none(int version)
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void A_file_with_no_time_writes_none(GpxVersion version)
     {
-        var written = version == 0 ? WithAWaypoint().ToGpx() : WithAWaypoint().ToGpx(1);
+        var written = WithAWaypoint().ToGpx(version);
 
         Assert.DoesNotContain("<time>", written);
         Assert.Null(Parse(written).Metadata.TimeUtc);
@@ -92,7 +92,7 @@ public class GpxTimeAndBoundsTests : SerializerTestFixtureBase
 
         // 1.0 has no <metadata>; the same fields are children of <gpx>, and the
         // waypoint follows them.
-        var root = XDocument.Parse(data.ToGpx(1)).Root!;
+        var root = XDocument.Parse(data.ToGpx(GpxVersion.Gpx10)).Root!;
         Assert.Equal(
             new[] { "name", "time", "keywords", "bounds", "wpt" },
             root.Elements().Select(x => x.Name.LocalName)
@@ -119,15 +119,15 @@ public class GpxTimeAndBoundsTests : SerializerTestFixtureBase
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void The_bounds_are_written_from_the_data(int version)
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void The_bounds_are_written_from_the_data(GpxVersion version)
     {
         var data = new GpsData();
         data.Waypoints.Add(new Waypoint(10, 20));
         data.Waypoints.Add(new Waypoint(-5, 40));
 
-        var written = version == 0 ? data.ToGpx() : data.ToGpx(1);
+        var written = data.ToGpx(version);
         var bounds = XDocument
             .Parse(written)
             .Descendants()
@@ -140,15 +140,15 @@ public class GpxTimeAndBoundsTests : SerializerTestFixtureBase
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    public void Data_with_no_coordinates_writes_no_bounds(int version)
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void Data_with_no_coordinates_writes_no_bounds(GpxVersion version)
     {
         // An envelope of zeroes would claim the file covers a point in the Atlantic.
         var data = new GpsData();
         data.Metadata.Attribute(x => x.Name, "nothing here");
 
-        var written = version == 0 ? data.ToGpx() : data.ToGpx(1);
+        var written = data.ToGpx(version);
 
         Assert.Null(data.GetBounds());
         Assert.DoesNotContain("<bounds", written);

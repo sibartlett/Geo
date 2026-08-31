@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,16 +12,15 @@ namespace Geo.Gps;
 
 public class GpsData
 {
+    private static readonly Gpx10Serializer Gpx10Writer = new Gpx10Serializer();
+    private static readonly Gpx11Serializer Gpx11Writer = new Gpx11Serializer();
+
     private static readonly List<IGpsFileSerializer> FileSerializers;
     private static readonly List<IGpsFileDeSerializer> FileParsers;
 
     static GpsData()
     {
-        FileSerializers = new List<IGpsFileSerializer>
-        {
-            new Gpx10Serializer(),
-            new Gpx11Serializer(),
-        };
+        FileSerializers = new List<IGpsFileSerializer> { Gpx10Writer, Gpx11Writer };
         FileParsers = new List<IGpsFileDeSerializer>(FileSerializers.OfType<IGpsFileDeSerializer>())
         {
             new IgcDeSerializer(),
@@ -110,15 +110,33 @@ public class GpsData
         );
     }
 
-    public string ToGpx()
+    /// <summary>
+    /// This data as a GPX document.
+    /// </summary>
+    /// <param name="version">
+    /// Which version of GPX to write. Defaults to 1.1, the current one.
+    /// </param>
+    /// <remarks>
+    /// Replaces a <c>decimal</c> parameter where 1 meant GPX 1.0 and every other value
+    /// - including 1.1 itself, and 99 - meant GPX 1.1. Naming the versions makes the
+    /// choice legible and turns an unrecognised one into an error rather than silently
+    /// writing the other version.
+    /// </remarks>
+    public string ToGpx(GpxVersion version = GpxVersion.Gpx11)
     {
-        return FileSerializers[1].Serialize(this);
-    }
-
-    public string ToGpx(decimal version)
-    {
-        var index = version == 1m ? 0 : 1;
-        return FileSerializers[index].Serialize(this);
+        switch (version)
+        {
+            case GpxVersion.Gpx10:
+                return Gpx10Writer.Serialize(this);
+            case GpxVersion.Gpx11:
+                return Gpx11Writer.Serialize(this);
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(version),
+                    version,
+                    "Not a version of GPX this can write."
+                );
+        }
     }
 
     public static IEnumerable<GpsFileFormat> SupportedGpsFileFormats()

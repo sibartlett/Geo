@@ -183,7 +183,7 @@ internal static class Program
 
         Check("GPX 1.0 author", "Ada Lovelace", data.Metadata.Attribute(x => x.Author.Name));
 
-        var reparsed = Parse("GPX 1.0 round-trip", data.ToGpx(1));
+        var reparsed = Parse("GPX 1.0 round-trip", data.ToGpx(GpxVersion.Gpx10));
         if (reparsed == null)
             return;
 

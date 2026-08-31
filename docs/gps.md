@@ -130,8 +130,8 @@ using Geo.Gps;
 var data = new GpsData();
 data.Waypoints.Add(new Waypoint(51.5074, -0.1278));
 
-string gpx11 = data.ToGpx();     // GPX 1.1 (default)
-string gpx10 = data.ToGpx(1m);   // GPX 1.0
+string gpx11 = data.ToGpx();                     // GPX 1.1 (default)
+string gpx10 = data.ToGpx(GpxVersion.Gpx10);     // GPX 1.0
 ```
 
 To write GPX straight to a stream, use a serializer directly. `Serialize`

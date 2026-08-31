@@ -140,7 +140,7 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
         Assert.Equal(Style + "line", data.Waypoints.Single().Extensions.Single().Name);
         Assert.Equal(Style + "line", data.Tracks.Single().Extensions.Single().Name);
 
-        var written = XDocument.Parse(data.ToGpx(1));
+        var written = XDocument.Parse(data.ToGpx(GpxVersion.Gpx10));
         XNamespace ns = "http://www.topografix.com/GPX/1/0";
 
         // Written back inline, not wrapped.
@@ -174,7 +174,7 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
         Assert.Equal("1B7F3B", extension.Element(Style + "color")!.Value);
 
         // Written back inline, where the 1.0 schema puts it.
-        var written = XDocument.Parse(data.ToGpx(1));
+        var written = XDocument.Parse(data.ToGpx(GpxVersion.Gpx10));
         XNamespace ns = "http://www.topografix.com/GPX/1/0";
 
         Assert.Empty(written.Descendants(ns + "extensions"));
@@ -202,7 +202,7 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
         Assert.Empty(waypoint.Extensions);
         Assert.False(waypoint.Coordinate.Is3D);
 
-        var roundTripped = Parse(Parse(gpx).ToGpx(1)).Waypoints.Single();
+        var roundTripped = Parse(Parse(gpx).ToGpx(GpxVersion.Gpx10)).Waypoints.Single();
         Assert.False(roundTripped.Coordinate.Is3D);
     }
 
@@ -232,7 +232,7 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
     public void Extensions_cross_between_the_two_versions()
     {
         // A 1.1 file written as 1.0 keeps its extensions, and the other way round.
-        var asGpx10 = Parse(Parse(Gpx11WithExtensions).ToGpx(1));
+        var asGpx10 = Parse(Parse(Gpx11WithExtensions).ToGpx(GpxVersion.Gpx10));
 
         Assert.Equal(Style + "line", asGpx10.Waypoints.Single().Extensions.Single().Name);
         Assert.Equal(Style + "line", asGpx10.Tracks.Single().Extensions.Single().Name);
@@ -261,7 +261,7 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
         Assert.Equal(2, data.Tracks.Single().Segments.Count);
 
         // The one carrying points survives; the one carrying only extensions does not.
-        var asGpx10 = Parse(data.ToGpx(1));
+        var asGpx10 = Parse(data.ToGpx(GpxVersion.Gpx10));
         var segment = Assert.Single(asGpx10.Tracks.Single().Segments);
         Assert.Single(segment.Waypoints);
     }
@@ -271,7 +271,7 @@ public class GpxExtensionsTests : SerializerTestFixtureBase
     {
         // The one place 1.0 has no room for: its schema ends <trkseg> with <trkpt>
         // and admits no foreign element after it.
-        var asGpx10 = Parse(Parse(Gpx11WithExtensions).ToGpx(1));
+        var asGpx10 = Parse(Parse(Gpx11WithExtensions).ToGpx(GpxVersion.Gpx10));
 
         Assert.Empty(asGpx10.Tracks.Single().Segments.Single().Extensions);
     }

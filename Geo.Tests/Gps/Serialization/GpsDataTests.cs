@@ -77,15 +77,20 @@ public class GpsDataTests : SerializerTestFixtureBase
     }
 
     [Fact]
-    public void ToGpx_with_version_1_emits_gpx_1_0()
+    public void ToGpx_writes_the_version_it_is_given()
     {
-        Assert.Contains("version=\"1.0\"", SampleData().ToGpx(1m));
+        Assert.Contains("version=\"1.0\"", SampleData().ToGpx(GpxVersion.Gpx10));
+        Assert.Contains("version=\"1.1\"", SampleData().ToGpx(GpxVersion.Gpx11));
     }
 
     [Fact]
-    public void ToGpx_with_version_1_1_emits_gpx_1_1()
+    public void ToGpx_rejects_a_version_it_cannot_write()
     {
-        Assert.Contains("version=\"1.1\"", SampleData().ToGpx(1.1m));
+        // The decimal parameter this replaced took any number and quietly wrote GPX
+        // 1.1 for all but one of them, so ToGpx(99) - or ToGpx(1.0m), meaning 1.0 -
+        // produced a document the caller had not asked for. An unrecognised version is
+        // now an error.
+        Assert.Throws<ArgumentOutOfRangeException>(() => SampleData().ToGpx((GpxVersion)99));
     }
 
     [Fact]
