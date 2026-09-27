@@ -74,7 +74,13 @@ public class SpheroidCalculator : IGeodeticCalculator
             cz = 0,
             e = 0;
 
-        while (Math.Abs(y - c) > EPS)
+        // Iterate until sigma stops changing. A looser tolerance used to stop a fraction of a
+        // millimetre short on a 30 km line, enough that a there-and-back trip missed its start
+        // (https://github.com/sibartlett/Geo/issues/137). The cap guards against the last
+        // bit flip-flopping forever.
+        const double convergence = 1E-15;
+        const int maxIterations = 100;
+        for (var i = 0; i < maxIterations && Math.Abs(y - c) > convergence; i++)
         {
             sy = Math.Sin(y);
             cy = Math.Cos(y);
