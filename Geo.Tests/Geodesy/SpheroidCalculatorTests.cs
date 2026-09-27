@@ -308,4 +308,40 @@ public class SpheroidCalculatorTests
         Assert.Equal(direct.Bearing12, inverse.Bearing12, Millionth);
         Assert.Equal(direct.Bearing21, inverse.Bearing21, Millionth);
     }
+
+    // Regression test for https://github.com/sibartlett/Geo/issues/137: the direct
+    // solution stopped iterating early, so going out and straight back missed the start.
+    [Fact]
+    public void Going_north_and_straight_back_returns_to_the_start()
+    {
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+        var start = new Coordinate(0, 0);
+
+        var there = calculator.CalculateOrthodromicLine(start, 0, 30000);
+        var back = calculator.CalculateOrthodromicLine(there.Coordinate2, 180, 30000);
+
+        Assert.True(start.Equals2D(back.Coordinate2));
+    }
+
+    [Theory]
+    [InlineData(0, 0, 0)]
+    [InlineData(0, 0, 45)]
+    [InlineData(51.5, -0.1, 0)]
+    [InlineData(51.5, -0.1, 135)]
+    [InlineData(-33.9, 151.2, 300)]
+    public void Direct_solution_lands_at_the_distance_it_was_asked_for(
+        double lat,
+        double lon,
+        double heading
+    )
+    {
+        var calculator = new SpheroidCalculator(Spheroid.Wgs84);
+        var start = new Coordinate(lat, lon);
+
+        var direct = calculator.CalculateOrthodromicLine(start, heading, 30000);
+        var inverse = calculator.CalculateOrthodromicLine(start, direct.Coordinate2);
+
+        // Within a micrometre; the loose tolerance was out by about 0.14 mm.
+        Assert.Equal(30000, inverse.Distance.SiValue, 0.000001);
+    }
 }
