@@ -6,6 +6,17 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] — 2026-09-27
+
+### Fixed
+
+- **`SpheroidCalculator` lands where it is told to.** Given a start, a heading and
+  a distance, it stopped refining the destination too early and came up about
+  0.14 mm short on a 30 km line. Small, but enough that going out and straight
+  back did not return to the start, so `Equals2D` reported the two as different.
+  It now refines until the answer stops changing, which typically takes one or two
+  more passes. ([#137], [#138])
+
 ## [3.0.0] — 2026-08-31
 
 A NativeAOT release — and, because of what that required, a GPX release.
@@ -711,5 +722,8 @@ details.
 [#127]: https://github.com/sibartlett/Geo/pull/127
 [#128]: https://github.com/sibartlett/Geo/pull/128
 [#129]: https://github.com/sibartlett/Geo/pull/129
+[#137]: https://github.com/sibartlett/Geo/issues/137
+[#138]: https://github.com/sibartlett/Geo/pull/138
 [2.0.0]: https://github.com/sibartlett/Geo/compare/v1.2.0...v2.0.0
 [3.0.0]: https://github.com/sibartlett/Geo/compare/v2.0.0...v3.0.0
+[3.0.1]: https://github.com/sibartlett/Geo/compare/v3.0.0...v3.0.1
