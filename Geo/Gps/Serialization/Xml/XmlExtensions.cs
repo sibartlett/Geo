@@ -116,6 +116,25 @@ internal static class XmlExtensions
         }
     }
 
+    /// <summary>
+    /// <paramref name="value" /> trimmed, when it is an <c>xsd:nonNegativeInteger</c>;
+    /// otherwise <c>null</c>.
+    /// </summary>
+    /// <remarks>
+    /// Kept as text rather than converted, because the type is unbounded and no
+    /// integral type would hold every value a file may carry.
+    /// </remarks>
+    public static string? ToNonNegativeInteger(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        var trimmed = value!.Trim();
+        var digits = trimmed[0] == '+' ? trimmed.Substring(1) : trimmed;
+
+        return digits.Length > 0 && digits.All(c => c >= '0' && c <= '9') ? trimmed : null;
+    }
+
     public static string ToString(decimal value)
     {
         return XmlConvert.ToString(value);
