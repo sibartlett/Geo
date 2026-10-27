@@ -6,6 +6,18 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] — 2026-10-27
+
+### Added
+
+- **GPX tracks and routes keep their `src`, `number` and `type`.** These were
+  dropped on read, because `TrackMetadata` and `RouteMetadata` only had keys for
+  the name, description and comment. Both now also have `Source`, `Number` and
+  `Type`, and both GPX serializers read and write them. `number` is kept only
+  when it is a non-negative integer, as the schema requires. GPX 1.0 has no
+  `<type>` (it only proposes one in a comment), so writing 1.0 leaves it out.
+  ([#141], [#142])
+
 ## [3.0.1] — 2026-09-27
 
 ### Fixed
@@ -724,6 +736,9 @@ details.
 [#129]: https://github.com/sibartlett/Geo/pull/129
 [#137]: https://github.com/sibartlett/Geo/issues/137
 [#138]: https://github.com/sibartlett/Geo/pull/138
+[#141]: https://github.com/sibartlett/Geo/issues/141
+[#142]: https://github.com/sibartlett/Geo/pull/142
 [2.0.0]: https://github.com/sibartlett/Geo/compare/v1.2.0...v2.0.0
 [3.0.0]: https://github.com/sibartlett/Geo/compare/v2.0.0...v3.0.0
 [3.0.1]: https://github.com/sibartlett/Geo/compare/v3.0.0...v3.0.1
+[3.1.0]: https://github.com/sibartlett/Geo/compare/v3.0.1...v3.1.0
