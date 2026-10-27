@@ -179,6 +179,12 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
 
         var route = new Route();
         route.Metadata.Attribute(x => x.Name, "A route");
+        route.Metadata.Attribute(x => x.Comment, "A comment");
+        route.Metadata.Attribute(x => x.Description, "A description");
+        route.Metadata.Attribute(x => x.Source, "A source");
+        route.Links.Add(new GpsLink("https://example.com/route"));
+        route.Metadata.Attribute(x => x.Number, "7");
+        route.Metadata.Attribute(x => x.Type, "Hiking");
         route.Waypoints.Add(new Waypoint(51.5072, -0.1276));
         data.Routes.Add(route);
 
@@ -186,6 +192,12 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
         segment.Waypoints.Add(new Waypoint(53.4808, -2.2426));
         var track = new Track();
         track.Metadata.Attribute(x => x.Name, "A track");
+        track.Metadata.Attribute(x => x.Comment, "A comment");
+        track.Metadata.Attribute(x => x.Description, "A description");
+        track.Metadata.Attribute(x => x.Source, "A source");
+        track.Links.Add(new GpsLink("https://example.com/track"));
+        track.Metadata.Attribute(x => x.Number, "7");
+        track.Metadata.Attribute(x => x.Type, "Hiking");
         track.Segments.Add(segment);
         data.Tracks.Add(track);
 

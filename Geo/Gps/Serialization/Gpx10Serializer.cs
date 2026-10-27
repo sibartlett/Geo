@@ -98,7 +98,13 @@ public class Gpx10Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetTrackMetadata(track, x => x.Description)
                 ),
+                XmlExtensions.OptionalElement(ns + "src", GetTrackMetadata(track, x => x.Source)),
                 XmlExtensions.UrlElements(ns, track.Links),
+                XmlExtensions.OptionalElement(
+                    ns + "number",
+                    XmlExtensions.ToNonNegativeInteger(GetTrackMetadata(track, x => x.Number))
+                ),
+                // GPX 1.0 has no <type>; it only proposes one in a comment.
                 // The 1.0 schema admits foreign elements before <trkseg>, not after it.
                 // It admits none at all inside <trkseg>, so a segment's extensions have
                 // nowhere to go in this version and are left out.
@@ -123,7 +129,13 @@ public class Gpx10Serializer : GpsXmlSerializer
                     ns + "desc",
                     GetRouteMetadata(route, x => x.Description)
                 ),
+                XmlExtensions.OptionalElement(ns + "src", GetRouteMetadata(route, x => x.Source)),
                 XmlExtensions.UrlElements(ns, route.Links),
+                XmlExtensions.OptionalElement(
+                    ns + "number",
+                    XmlExtensions.ToNonNegativeInteger(GetRouteMetadata(route, x => x.Number))
+                ),
+                // GPX 1.0 has no <type>; it only proposes one in a comment.
                 // The 1.0 schema admits foreign elements before <rtept>, not after it.
                 XmlExtensions.InlineExtensionsElements(route.Extensions),
                 route.Waypoints.Select(waypoint => SerializeWaypoint(waypoint, ns + "rtept"))
@@ -203,6 +215,11 @@ public class Gpx10Serializer : GpsXmlSerializer
             track.Metadata.Attribute(x => x.Name, trkType.ElementValue(ns + "name"));
             track.Metadata.Attribute(x => x.Description, trkType.ElementValue(ns + "desc"));
             track.Metadata.Attribute(x => x.Comment, trkType.ElementValue(ns + "cmt"));
+            track.Metadata.Attribute(x => x.Source, trkType.ElementValue(ns + "src"));
+            track.Metadata.Attribute(
+                x => x.Number,
+                XmlExtensions.ToNonNegativeInteger(trkType.ElementValue(ns + "number"))
+            );
             track.Links.AddRange(trkType.ReadUrl(ns));
             track.Extensions.AddRange(ReadExtensions(trkType, ns));
 
@@ -233,6 +250,11 @@ public class Gpx10Serializer : GpsXmlSerializer
             route.Metadata.Attribute(x => x.Name, rteType.ElementValue(ns + "name"));
             route.Metadata.Attribute(x => x.Description, rteType.ElementValue(ns + "desc"));
             route.Metadata.Attribute(x => x.Comment, rteType.ElementValue(ns + "cmt"));
+            route.Metadata.Attribute(x => x.Source, rteType.ElementValue(ns + "src"));
+            route.Metadata.Attribute(
+                x => x.Number,
+                XmlExtensions.ToNonNegativeInteger(rteType.ElementValue(ns + "number"))
+            );
             route.Links.AddRange(rteType.ReadUrl(ns));
             route.Extensions.AddRange(ReadExtensions(rteType, ns));
 

@@ -326,6 +326,106 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.Null(new Gpx11Serializer().DeSerialize(new StreamWrapper(stream)));
     }
 
+    private const string TrackAndRouteDetails =
+        "<rte><name>R</name><src>Route source</src><number>4</number><type>Road</type></rte>"
+        + "<trk><name>T</name><src>Track source</src><number>12</number><type>Hiking</type></trk>";
+
+    [Fact]
+    public void Gpx11_track_and_route_source_number_and_type_are_read()
+    {
+        var gpx =
+            "<gpx version=\"1.1\" creator=\"x\" xmlns=\"http://www.topografix.com/GPX/1/1\">"
+            + TrackAndRouteDetails
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx11Serializer().DeSerialize(new StreamWrapper(stream));
+
+        Assert.NotNull(data);
+        var route = data.Routes.Single();
+        Assert.Equal("Route source", route.Metadata.Attribute(x => x.Source));
+        Assert.Equal("4", route.Metadata.Attribute(x => x.Number));
+        Assert.Equal("Road", route.Metadata.Attribute(x => x.Type));
+
+        var track = data.Tracks.Single();
+        Assert.Equal("Track source", track.Metadata.Attribute(x => x.Source));
+        Assert.Equal("12", track.Metadata.Attribute(x => x.Number));
+        Assert.Equal("Hiking", track.Metadata.Attribute(x => x.Type));
+    }
+
+    [Fact]
+    public void Gpx10_track_and_route_source_and_number_are_read()
+    {
+        var gpx =
+            "<gpx version=\"1.0\" creator=\"x\" xmlns=\"http://www.topografix.com/GPX/1/0\">"
+            + TrackAndRouteDetails
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx10Serializer().DeSerialize(new StreamWrapper(stream));
+
+        Assert.NotNull(data);
+        var route = data.Routes.Single();
+        Assert.Equal("Route source", route.Metadata.Attribute(x => x.Source));
+        Assert.Equal("4", route.Metadata.Attribute(x => x.Number));
+
+        var track = data.Tracks.Single();
+        Assert.Equal("Track source", track.Metadata.Attribute(x => x.Source));
+        Assert.Equal("12", track.Metadata.Attribute(x => x.Number));
+    }
+
+    [Theory]
+    [InlineData(GpxVersion.Gpx11, true)]
+    [InlineData(GpxVersion.Gpx10, false)]
+    public void Track_and_route_source_number_and_type_are_written(
+        GpxVersion version,
+        bool typeWritten
+    )
+    {
+        var data = new GpsData();
+        var route = new Route();
+        route.Metadata.Attribute(x => x.Source, "Route source");
+        route.Metadata.Attribute(x => x.Number, "4");
+        route.Metadata.Attribute(x => x.Type, "Road");
+        data.Routes.Add(route);
+        var track = new Track();
+        track.Metadata.Attribute(x => x.Source, "Track source");
+        track.Metadata.Attribute(x => x.Number, "12");
+        track.Metadata.Attribute(x => x.Type, "Hiking");
+        data.Tracks.Add(track);
+
+        var root = XDocument.Parse(data.ToGpx(version)).Root!;
+        var ns = root.Name.Namespace;
+        var rte = root.Element(ns + "rte")!;
+        var trk = root.Element(ns + "trk")!;
+
+        Assert.Equal("Route source", rte.Element(ns + "src")?.Value);
+        Assert.Equal("4", rte.Element(ns + "number")?.Value);
+        Assert.Equal(typeWritten ? "Road" : null, rte.Element(ns + "type")?.Value);
+        Assert.Equal("Track source", trk.Element(ns + "src")?.Value);
+        Assert.Equal("12", trk.Element(ns + "number")?.Value);
+        Assert.Equal(typeWritten ? "Hiking" : null, trk.Element(ns + "type")?.Value);
+    }
+
+    [Fact]
+    public void A_number_that_is_not_a_non_negative_integer_is_neither_read_nor_written()
+    {
+        var gpx =
+            "<gpx version=\"1.1\" creator=\"x\" xmlns=\"http://www.topografix.com/GPX/1/1\">"
+            + "<trk><number>-1</number></trk><rte><number>two</number></rte>"
+            + "</gpx>";
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpx));
+        var data = new Gpx11Serializer().DeSerialize(new StreamWrapper(stream));
+
+        Assert.NotNull(data);
+        Assert.Null(data.Tracks.Single().Metadata.Attribute(x => x.Number));
+        Assert.Null(data.Routes.Single().Metadata.Attribute(x => x.Number));
+
+        data.Tracks.Single().Metadata.Attribute(x => x.Number, "1.5");
+        Assert.DoesNotContain("<number>", data.ToGpx());
+    }
+
     private void Compare(Gpx10Serializer serializer, GpsData data, string gpxData)
     {
         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(gpxData));
@@ -375,6 +475,20 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         }
     }
 
+    // GPX 1.0 has no <type> on a track or route, so a document written as 1.0 loses it.
+    private static void CompareMetadata(
+        Dictionary<string, string> expected,
+        Dictionary<string, string> actual,
+        bool writtenAsGpx10
+    )
+    {
+        var kept = expected.Where(x => !(writtenAsGpx10 && x.Key == "type")).ToList();
+
+        Assert.Equal(kept.Count, actual.Count);
+        foreach (var entry in kept)
+            Assert.Equal(entry.Value, actual[entry.Key]);
+    }
+
     private void Compare(GpsData data, GpsData data2, bool writtenAsGpx10)
     {
         Assert.Equal(data.Metadata.Count, data2.Metadata.Count);
@@ -394,9 +508,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             var track1 = data.Tracks[i];
             var track2 = data2.Tracks[i];
 
-            Assert.Equal(track1.Metadata.Count, track2.Metadata.Count);
-            foreach (var entry in track1.Metadata)
-                Assert.Equal(entry.Value, track2.Metadata[entry.Key]);
+            CompareMetadata(track1.Metadata, track2.Metadata, writtenAsGpx10);
 
             CompareExtensions(track1.Extensions, track2.Extensions);
             CompareLinks(track1.Links, track2.Links, writtenAsGpx10);
@@ -441,9 +553,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             var r1 = data.Routes[i];
             var r2 = data2.Routes[i];
 
-            Assert.Equal(r1.Metadata.Count, r2.Metadata.Count);
-            foreach (var entry in r1.Metadata)
-                Assert.Equal(entry.Value, r2.Metadata[entry.Key]);
+            CompareMetadata(r1.Metadata, r2.Metadata, writtenAsGpx10);
 
             CompareExtensions(r1.Extensions, r2.Extensions);
             CompareLinks(r1.Links, r2.Links, writtenAsGpx10);
