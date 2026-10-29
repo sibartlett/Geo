@@ -175,7 +175,12 @@ public class GpxSchemaValidationTests : SerializerTestFixtureBase
         data.Metadata.Attribute(x => x.Copyright.License, "https://example.com/licence");
         data.Metadata.Attribute(x => x.Copyright.Year, "2026");
 
-        data.Waypoints.Add(new Waypoint(new Point(53.4808, -2.2426, 38), "n", "c", "d"));
+        var waypoint = new Waypoint(new Point(53.4808, -2.2426, 38), "n", "c", "d")
+        {
+            Type = "Summit",
+        };
+        waypoint.Links.Add(new GpsLink("https://example.com/summit"));
+        data.Waypoints.Add(waypoint);
 
         var route = new Route();
         route.Metadata.Attribute(x => x.Name, "A route");

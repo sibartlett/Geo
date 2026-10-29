@@ -234,6 +234,7 @@ public class Gpx11Serializer : GpsXmlSerializer
             XmlExtensions.OptionalElement(ns + "cmt", waypoint.Comment),
             XmlExtensions.OptionalElement(ns + "desc", waypoint.Description),
             XmlExtensions.LinkElements(ns, waypoint.Links),
+            XmlExtensions.OptionalElement(ns + "type", waypoint.Type),
             XmlExtensions.ExtensionsElement(ns, waypoint.Extensions)
         );
     }
@@ -385,6 +386,7 @@ public class Gpx11Serializer : GpsXmlSerializer
             wptType.ElementValue(ns + "desc")
         );
 
+        waypoint.Type = wptType.ElementValue(ns + "type");
         waypoint.Links.AddRange(wptType.ReadLinks(ns));
         waypoint.Extensions.AddRange(wptType.WrappedExtensions(ns));
         return waypoint;
