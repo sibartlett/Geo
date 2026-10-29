@@ -6,6 +6,16 @@ this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] — 2026-10-29
+
+### Added
+
+- **GPX waypoints keep their `type`.** `Waypoint` had no property for it, so the
+  `<type>` GPX defines on `<wpt>`, `<rtept>` and `<trkpt>` was dropped on read
+  and could not be written. `Waypoint.Type` now carries it, and both GPX
+  serializers read and write it; unlike a track's or route's type, GPX 1.0 has
+  this one too. ([#144], [#145])
+
 ## [3.1.0] — 2026-10-27
 
 ### Added
@@ -738,7 +748,10 @@ details.
 [#138]: https://github.com/sibartlett/Geo/pull/138
 [#141]: https://github.com/sibartlett/Geo/issues/141
 [#142]: https://github.com/sibartlett/Geo/pull/142
+[#144]: https://github.com/sibartlett/Geo/issues/144
+[#145]: https://github.com/sibartlett/Geo/pull/145
 [2.0.0]: https://github.com/sibartlett/Geo/compare/v1.2.0...v2.0.0
 [3.0.0]: https://github.com/sibartlett/Geo/compare/v2.0.0...v3.0.0
 [3.0.1]: https://github.com/sibartlett/Geo/compare/v3.0.0...v3.0.1
 [3.1.0]: https://github.com/sibartlett/Geo/compare/v3.0.1...v3.1.0
+[3.2.0]: https://github.com/sibartlett/Geo/compare/v3.1.0...v3.2.0
