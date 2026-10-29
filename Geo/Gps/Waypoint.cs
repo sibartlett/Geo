@@ -59,6 +59,14 @@ public class Waypoint : IHasLength
     public string? Comment { get; }
     public string? Description { get; }
 
+    /// <summary>
+    /// The type (classification) of this waypoint, or <c>null</c> when it has none.
+    /// </summary>
+    /// <remarks>
+    /// GPX holds this as the waypoint's &lt;type&gt;, in both 1.0 and 1.1.
+    /// </remarks>
+    public string? Type { get; set; }
+
     public Point Point { get; set; }
     public DateTime? TimeUtc { get; set; }
 

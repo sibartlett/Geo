@@ -407,6 +407,42 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.Equal(typeWritten ? "Hiking" : null, trk.Element(ns + "type")?.Value);
     }
 
+    [Theory]
+    [InlineData(GpxVersion.Gpx11)]
+    [InlineData(GpxVersion.Gpx10)]
+    public void Waypoint_type_is_written_and_read_back(GpxVersion version)
+    {
+        var data = new GpsData();
+        data.Waypoints.Add(new Waypoint(53.4808, -2.2426) { Type = "Summit" });
+        data.Routes.Add(new Route());
+        data.Routes[0].Waypoints.Add(new Waypoint(51.5072, -0.1276) { Type = "Junction" });
+        data.Tracks.Add(new Track());
+        data.Tracks[0].Segments.Add(new TrackSegment());
+        data.Tracks[0].Segments[0].Waypoints.Add(new Waypoint(52.4862, -1.8904) { Type = "Fix" });
+
+        var written = data.ToGpx(version);
+        var root = XDocument.Parse(written).Root!;
+        var ns = root.Name.Namespace;
+        Assert.Equal("Summit", root.Element(ns + "wpt")?.Element(ns + "type")?.Value);
+
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(written));
+        var read = GpsData.Parse(stream);
+
+        Assert.NotNull(read);
+        Assert.Equal("Summit", read.Waypoints.Single().Type);
+        Assert.Equal("Junction", read.Routes.Single().Waypoints.Single().Type);
+        Assert.Equal("Fix", read.Tracks.Single().Segments.Single().Waypoints.Single().Type);
+    }
+
+    [Fact]
+    public void A_waypoint_without_a_type_writes_none()
+    {
+        var data = new GpsData();
+        data.Waypoints.Add(new Waypoint(53.4808, -2.2426));
+
+        Assert.DoesNotContain("<type>", data.ToGpx());
+    }
+
     [Fact]
     public void A_number_that_is_not_a_non_negative_integer_is_neither_read_nor_written()
     {
@@ -527,6 +563,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
 
                     Compare(f1.Point.Coordinate, f2.Point.Coordinate);
                     Assert.Equal(f1.TimeUtc, f2.TimeUtc);
+                    Assert.Equal(f1.Type, f2.Type);
                     CompareExtensions(f1.Extensions, f2.Extensions);
                     CompareLinks(f1.Links, f2.Links, writtenAsGpx10);
                 }
@@ -542,6 +579,8 @@ public class GpxSerializerTests : SerializerTestFixtureBase
             Assert.Equal(wp1.Name, wp2.Name);
             Assert.Equal(wp1.Description, wp2.Description);
             Assert.Equal(wp1.Comment, wp2.Comment);
+            Assert.Equal(wp1.Type, wp2.Type);
+            Assert.Equal(wp1.Type, wp2.Type);
             Compare(wp1.Coordinate, wp2.Coordinate);
             CompareExtensions(wp1.Extensions, wp2.Extensions);
             CompareLinks(wp1.Links, wp2.Links, writtenAsGpx10);
@@ -571,6 +610,7 @@ public class GpxSerializerTests : SerializerTestFixtureBase
         Assert.Equal(wp1.Name, wp2.Name);
         Assert.Equal(wp1.Description, wp2.Description);
         Assert.Equal(wp1.Comment, wp2.Comment);
+        Assert.Equal(wp1.Type, wp2.Type);
 
         CompareExtensions(wp1.Extensions, wp2.Extensions);
         CompareLinks(wp1.Links, wp2.Links, writtenAsGpx10);
